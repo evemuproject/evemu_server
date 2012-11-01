@@ -27,6 +27,7 @@
 #define __PAPERDOLLSERVICE__H__INCL__
 
 #include "PyService.h"
+#include "character/PaperDollDB.h"
 
 /**
  * \class PaperDollService
@@ -46,6 +47,8 @@ public:
 private:
     class Dispatcher;
     Dispatcher *const m_dispatch;
+
+	PaperDollDB p_DB;
 
     PyCallable_DECL_CALL(GetPaperDollData)
     PyCallable_DECL_CALL(ConvertAndSavePaperDoll)
