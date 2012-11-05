@@ -1024,12 +1024,13 @@ void DestinyManager::SetShipCapabilities(InventoryItemRef ship)
     Ga::GaVec3 inertia_tensor = Ga::Parameter::VEC3_ONE;
     m_body->setMassMatrix(mass, center_of_gravity, inertia_tensor);
 */
-
-    m_radius = radius;
-    m_mass = mass;
+	//radius, mass and inertia are beeing hardcoded for the moment to get space working again
+	//attributes changed and until we find how this is the fix
+    m_radius = 10;
+    m_mass = 1163000;
     m_maxShipVelocity = maxVelocity;
     m_shipAgility = agility;
-    m_shipInertia = Inertia;
+    m_shipInertia = 1;
 //    m_maxShipAcceleration = maxShipAcceleration;
 
     _log(PHYSICS__TRACE, "Entity %u is using ship attributes: Radius=%f, Mass=%f, maxVelocity=%f, agility=%f, inertia=%f",
