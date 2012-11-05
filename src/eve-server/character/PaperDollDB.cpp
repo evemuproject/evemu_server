@@ -28,7 +28,7 @@
 
 #include "character/PaperDollDB.h"
 
-PyRep* PaperDollDB::GetMyPaperDollData() const {
+PyRep *PaperDollDB::GetMyPaperDollData() {
 
     DBQueryResult res;
     if (!sDatabase.RunQuery(res,

@@ -32,7 +32,7 @@
 class PaperDollDB: public ServiceDB
 {
 public:
-    PyRep* GetMyPaperDollData() const;
+    PyRep* GetMyPaperDollData();
 };
 
 #endif
