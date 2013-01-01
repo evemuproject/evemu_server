@@ -350,13 +350,13 @@ void ItemAttributeMgr::_SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *n
 /************************************************************************/
 /* Start of new attribute system                                        */
 /************************************************************************/
-AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item), mChanged(false), mDefault(false)
+AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item), mChanged(true), mDefault(false)
 {
     // load the initial attributes for this item
     //Load();
 }
 
-AttributeMap::AttributeMap( InventoryItem & item, bool bDefaultMap ) : mItem(item), mChanged(false), mDefault(bDefaultMap)
+AttributeMap::AttributeMap( InventoryItem & item, bool bDefaultMap ) : mItem(item), mChanged(true), mDefault(bDefaultMap)
 {
     // load the initial attributes for this item, if we are acting as container for "default" attributes
     //if(mDefault)
@@ -386,6 +386,7 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
             return false;
 
     itr->second = num;
+    mChanged = true;
     return true;
 }
 
@@ -763,7 +764,7 @@ bool AttributeMap::Save()
     /* if nothing changed... it means this action has been successful we return true... */
     if (mChanged == false)
         return true;
-
+    
     AttrMapItr itr = mAttributes.begin();
     AttrMapItr itr_end = mAttributes.end();
     for (; itr != itr_end; itr++)
