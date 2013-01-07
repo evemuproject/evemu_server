@@ -140,7 +140,7 @@ PyRep *MarketDB::GetOrders( uint32 regionID, uint32 typeID )
     if(!sDatabase.RunQuery(res,
         "SELECT"
         "    price, volRemaining, typeID, `range`, orderID,"
-        "   volEntered, minVolume, bid, issued, duration,"
+        "   volEntered, minVolume, bid, issued as issueDate, duration,"
         "   stationID, regionID, solarSystemID, jumps"
         " FROM market_orders "
         " WHERE regionID=%u AND typeID=%u AND bid=%d", regionID, typeID, TransactionTypeSell))
@@ -158,7 +158,7 @@ PyRep *MarketDB::GetOrders( uint32 regionID, uint32 typeID )
     if(!sDatabase.RunQuery(res,
         "SELECT"
         "    price, volRemaining, typeID, `range`, orderID,"
-        "   volEntered, minVolume, bid, issued, duration,"
+        "   volEntered, minVolume, bid, issued as issueDate, duration,"
         "   stationID, regionID, solarSystemID, jumps"
         " FROM market_orders "
         " WHERE regionID=%u AND typeID=%u AND bid=%d", regionID, typeID, TransactionTypeBuy))
