@@ -433,121 +433,50 @@ static void _PropigateItems(std::map< int, std::set<uint32> > &types, std::map<i
 
 //this is a crap load of work... there HAS to be a better way to do this..
 PyRep *MarketDB::GetMarketGroups() {
+    
     DBQueryResult res;
-
-    //returns cached object marketProxy.GetMarketGroups
-//    //marketGroupID, parentGroupID, marketGroupName, description, graphicID, hasTypes, types
-//    //this is going to be a real pain... another "nested" query thing...
-//    // I really wanna know how they do this crap with their MS SQL server..
-//    // I hope its not as much of a nightmare as it is for us....
-//
-//    //first we need to query out all the types because we need them to
-//    // fill in the 'types' subquery for each row of the result
-//    std::map< int, std::set<uint32> > types;    //maps marketGroupID -> typeID
-//    if(!sDatabase.RunQuery(res,
-//        "SELECT"
-//        "    marketGroupID,typeID"
-//        " FROM invTypes"
-//        " WHERE marketGroupID IS NOT NULL"
-//        " ORDER BY marketGroupID"))
-//    {
-//        codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-//        return NULL;
-//    }
-//
     DBResultRow row;
-//    while(res.GetRow(row))
-//        types[row.GetUInt(0)].insert(row.GetUInt(1));
-//
-//    if(!sDatabase.RunQuery(res,
-//        "SELECT"
-//        "    marketGroupID, parentGroupID"
-//        " FROM invMarketGroups"))
-//    {
-//        codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
-//        return NULL;
-//    }
-//
-//    std::map<int, int> parentChild;    //maps child -> parent
-//    std::map<int, std::set<int> > childParent; //maps parent -> all children.
-//    while(res.GetRow(row)) {
-//        //figure out the parent ID, mapping NULL to -1 for our map.
-//        int marketGroupID = row.GetUInt(0);
-//        int parentGroupID = row.IsNull(1) ? -1 : row.GetUInt(1);
-//
-//        parentChild[marketGroupID] = parentGroupID;
-//        childParent[parentGroupID].insert(marketGroupID);
-//    }
-//
-//    //now we need to propigate all of the items up the tree (a parent group's items list contains ALL items of its children.)
-//    _PropigateItems(types, parentChild, childParent, -1);
 
-    //now we get to do the other query.
     if(!sDatabase.RunQuery(res,
-        "SELECT"
-        "    marketGroupID, parentGroupID, marketGroupName, description, iconID, hasTypes"
+        "SELECT * "
+        //"    marketGroupID, parentGroupID, marketGroupName, description, iconID, hasTypes"
         " FROM invMarketGroups"))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
     }
 
-    //doing this the long (non XML) way to avoid the extra copies due to the huge volume of data here.
-    //PyDict *args = new PyDict();
+	DBRowDescriptor *header = new DBRowDescriptor(res);
+    for( int i=0; i<header->ColumnCount(); i++) {
+        sLog.Debug("MarketDB::GetMarketGroups", "  column %s type %d", 
+                header->GetColumnName(i), header->GetColumnType(i));
+    }
 
-    //PyDict *parentSets = new PyDict();
-    //PyList *header = new PyList();
-	
-	/*
-    header->AddItemString("marketGroupID");
-    header->AddItemString("parentGroupID");
-    header->AddItemString("marketGroupName");
-    header->AddItemString("description");
-    header->AddItemString("iconID");
-    header->AddItemString("hasTypes");
-    header->AddItemString("types");    //this column really contains an entire list.
-    header->AddItemString("dataID");
-	*/
-
-	DBRowDescriptor *header = new DBRowDescriptor();
-
-	header->AddColumn("parentGroupID", DBTYPE_I4);
-	header->AddColumn("marketGroupID", DBTYPE_I4);
-	header->AddColumn("marketGroupName", DBTYPE_WSTR);
-	header->AddColumn("description", DBTYPE_WSTR);
-	header->AddColumn("graphicID", DBTYPE_I4);
-	header->AddColumn("hasTypes", DBTYPE_BOOL);
-	header->AddColumn("iconID", DBTYPE_I4);
-	header->AddColumn("dataID", DBTYPE_I4);
-	header->AddColumn("marketGroupNameID", DBTYPE_I4);
-	header->AddColumn("descriptionID", DBTYPE_I4);
+//    DBRowDescriptor *header = new DBRowDescriptor();
+//	header->AddColumn("parentGroupID", DBTYPE_I4);
+//	header->AddColumn("marketGroupID", DBTYPE_I4);
+//	header->AddColumn("marketGroupName", DBTYPE_WSTR);
+//	header->AddColumn("description", DBTYPE_WSTR);
+//	header->AddColumn("graphicID", DBTYPE_I4);
+//	header->AddColumn("hasTypes", DBTYPE_BOOL);
+//	header->AddColumn("iconID", DBTYPE_I4);
+//	header->AddColumn("dataID", DBTYPE_I4);
+//	header->AddColumn("marketGroupNameID", DBTYPE_I4);
+//	header->AddColumn("descriptionID", DBTYPE_I4);
     
     CFilterRowSet *filterRowset = new CFilterRowSet(&header);
 
     PyDict *keywords = filterRowset->GetKeywords();
 	keywords->SetItemString("giveMeSets", new PyBool(false)); //+
-    //keywords->SetItemString("header", header); //+
 	keywords->SetItemString("allowDuplicateCompoundKeys", new PyBool(false)); //+
 	keywords->SetItemString("indexName", new PyNone); //+
 	keywords->SetItemString("columnName", new PyString("parentGroupID")); //+
-   // args->SetItemString("idName", new PyString("parentGroupID"));
-    //args->SetItemString("RowClass", new PyToken("util.Row"));
-    //args->SetItemString("idName2", new PyNone);
-   // args->SetItemString("items", parentSets);
-	//filterRowset->SetItemString("items", parentSets);
 
-    //now fill in items.
-    // we have to satisfy this structure... which uses parentGroupID as the
-    // main dict key, each dict entry is then a list of MarketGroup_Entrys
-    // which have that parentGroupID
-    //marketGroupID, parentGroupID, marketGroupName, description, graphicID, hasTypes, types
     std::map< int, PyRep* > tt;
-//    MarketGroup_Entry entry;
-//    PyList* list;
-//    PyList* parents = new PyList();
+
     while( res.GetRow(row) )
     {
-        int parentGroupID = ( row.IsNull( 1 ) ? -1 : row.GetUInt( 1 ) );
+        int parentGroupID = ( row.IsNull( 0 ) ? -1 : row.GetUInt( 0 ) );
         PyRep *pid;
         CRowSet *rowset;
         if(tt.count(parentGroupID) == 0) {
@@ -560,48 +489,22 @@ PyRep *MarketDB::GetMarketGroups() {
         }
         
         PyPackedRow* pyrow = rowset->NewRow();
-        pyrow->SetField((uint32)0, pid); //prentGroupID
-        pyrow->SetField(1, new PyInt(row.GetUInt( 0 )) ); //marketGroupID
-        pyrow->SetField(2, new PyString(row.GetText( 2 )) ); //marketGroupName
-        pyrow->SetField(3, new PyString(row.GetText( 3 ) ) ); //description
-        pyrow->SetField(4, row.IsNull( 4 ) ? (PyRep*)(new PyNone()) : new PyInt(row.GetUInt( 4 ))  ); //graphicID
-        pyrow->SetField(5, new PyBool(row.GetUInt( 5 ) ) ); //hasTypes
-        pyrow->SetField(6, pyrow->GetField(4) ); // iconID same as graphicsID
-        //TODO: where do we find these??
-        pyrow->SetField(7, new PyInt(0)  ); //dataID
-        pyrow->SetField(8, new PyInt(0)  ); //marketGroupNameID
-        pyrow->SetField(9, new PyInt(0)  ); //descriptionID
-//        entry.marketGroupID = row.GetUInt( 0 );
-//
-//        //figure out the parent ID, mapping NULL to -1 for our map.
-//        entry.parentGroupID = ( row.IsNull( 1 ) ? -1 : row.GetUInt( 1 ) );
-//
-//        entry.marketGroupName = row.GetText( 2 );
-//        entry.description = row.GetText( 3 );
-//        entry.graphicID = ( row.IsNull( 4 ) ? -1 : row.GetUInt( 4 ) );
-//        entry.hasTypes = row.GetUInt( 5 );
-//
-//        // Insert all types
-//        entry.types.clear();
-//        tt = types.find( entry.marketGroupID );
-//        if( tt != types.end() )
-//            entry.types.insert( entry.types.begin(), tt->second.begin(), tt->second.end() );
-//
-//        if(entry.parentGroupID == -1)
-//            list = parents;
-//        else
-//            list = static_cast<PyList*> (parentSets->GetItem(new PyInt( entry.parentGroupID )));
-//        if(list == NULL)
-//            list = new PyList();
-//        list->AddItem(entry.Encode());
-//        PySafeIncRef(list);
-//        if(entry.parentGroupID != -1)
-//            //parentSets->SetItem(new PyInt(entry.parentGroupID), list);
-//			parentSets->SetItem(new PyNone, list);
-    }
-//    parentSets->SetItem(new PyNone, parents);
 
-    return filterRowset;//new PyObject( "util.FilterRowset", filterRowset );
+        pyrow->SetField((uint32)0, pid); //prentGroupID
+        pyrow->SetField(1, new PyInt(row.GetUInt( 1 ) ) ); //marketGroupID
+        pyrow->SetField(2, new PyString(row.GetText( 2 ) ) ); //marketGroupName
+        pyrow->SetField(3, new PyString(row.GetText( 3 ) ) ); //description
+        pyrow->SetField(4, row.IsNull( 4 ) ? 
+            (PyRep*)(new PyNone()) : new PyInt(row.GetUInt( 4 ))  ); //graphicID
+        pyrow->SetField(5, new PyBool(row.GetBool( 5 ) ) ); //hasTypes
+        pyrow->SetField(6, row.IsNull( 6 ) ? 
+            (PyRep*)(new PyNone()) : new PyInt(row.GetUInt( 6 ))  ); // iconID 
+        pyrow->SetField(7, new PyInt( row.GetUInt(7) )  ); //dataID
+        pyrow->SetField(8, new PyInt( row.GetUInt(8) )  ); //marketGroupNameID
+        pyrow->SetField(9, new PyInt( row.GetUInt(9) )  ); //descriptionID
+    }
+
+    return filterRowset;
 }
 
 uint32 MarketDB::StoreBuyOrder(
