@@ -161,8 +161,8 @@ PyResult ReprocessingServiceBound::Handle_GetReprocessingInfo(PyCallArgs &call) 
 
     Rsp_GetReprocessingInfo rsp;
 
-    rsp.tax = m_tax;
-    rsp.reputation = 0.0;   // this should be drain from DB
+    rsp.tax = m_tax;//TODO: probably multiply by standings
+    rsp.reputation = 0.0;   //TODO: this should be drain from DB
     rsp.yield = m_staEfficiency;
     rsp.combinedyield = _CalcReprocessingEfficiency(call.client);
 
@@ -260,6 +260,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         cur_rec = recoverables.begin();
         end_rec = recoverables.end();
         for(; cur_rec != end_rec; cur_rec++) {
+            //TODO: standings should be used in the formula above (with m_tax)
             uint32 quantity = static_cast<uint32>(cur_rec->amountPerBatch * efficiency * (1.0 - m_tax) * item->quantity() / item->type().portionSize());
             if(quantity == 0)
                 continue;
@@ -342,8 +343,8 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
     res.lines = new PyList;
     res.leftOvers = item->quantity() % item->type().portionSize();
     res.quantityToProcess = item->quantity() - res.leftOvers;
-    res.playerStanding = 0.0;   // hack
-
+    res.playerStanding = 0.0;   //TODO: fix corp standing
+    
     if(item->quantity() >= item->type().portionSize()) {
         std::vector<Recoverable> recoverables;
         if( !m_db.GetRecoverables( item->typeID(), recoverables ) )
@@ -362,6 +363,7 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
 
             line.typeID =           cur->typeID;
             line.unrecoverable =    uint32((1.0 - efficiency)           * ratio);
+            //TODO: use standings with m_tax in formulas below
             line.station =          uint32(efficiency * m_tax           * ratio);
             line.client =           uint32(efficiency * (1.0 - m_tax)   * ratio);
 
