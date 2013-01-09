@@ -347,6 +347,7 @@
     <elementDef name="Call_Reprocess">
       <tupleInline>
           <listInt name="items" />
+          <int name="fromLocation" />
           <int name="ownerID" none_marker="0" />
           <int name="flag" none_marker="0" />
           <bool name="unknown" />
@@ -357,6 +358,7 @@
   <elementDef name="Call_GetQuotes">
       <tupleInline>
           <listInt name="itemIDs" />
+          <int name="activeShipID" />
       </tupleInline>
   </elementDef>
 

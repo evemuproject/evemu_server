@@ -197,7 +197,8 @@ PyResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
         PyRep *quote = NULL;
         try {
             quote = _GetQuote(*cur, call.client);
-        } catch(PyException &) {
+        } catch(PyException &e) {
+            sLog.Error("ReprocessingServiceBound::Handle_GetQuotes", "error %s", e.ssException->AsString()->content().c_str() );
             // ignore all exceptions
             continue;
         }
