@@ -447,10 +447,6 @@ PyRep *MarketDB::GetMarketGroups() {
     }
 
 	DBRowDescriptor *header = new DBRowDescriptor(res);
-    for( int i=0; i<header->ColumnCount(); i++) {
-        sLog.Debug("MarketDB::GetMarketGroups", "  column %s type %d", 
-                header->GetColumnName(i), header->GetColumnType(i));
-    }
 
 //    DBRowDescriptor *header = new DBRowDescriptor();
 //	header->AddColumn("parentGroupID", DBTYPE_I4);
