@@ -182,7 +182,7 @@ PyRep *MarketDB::GetCharOrders(uint32 characterID) {
         "SELECT"
         "   orderID, typeID, charID, regionID, stationID,"
         "   `range`, bid, price, volEntered, volRemaining,"
-        "   issued, orderState, minVolume, contraband,"
+        "   issued as issueDate, orderState, minVolume, contraband,"
         "   accountID, duration, isCorp, solarSystemID,"
         "   escrow"
         " FROM market_orders "
@@ -201,7 +201,7 @@ PyRep *MarketDB::GetOrderRow(uint32 orderID) {
     if(!sDatabase.RunQuery(res,
         "SELECT"
         "    price, volRemaining, typeID, `range`, orderID,"
-        "   volEntered, minVolume, bid, issued, duration,"
+        "   volEntered, minVolume, bid, issued as issueDate, duration,"
         "   stationID, regionID, solarSystemID, jumps"
         " FROM market_orders"
         " WHERE orderID=%u", orderID))
