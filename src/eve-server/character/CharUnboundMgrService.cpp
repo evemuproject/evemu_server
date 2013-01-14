@@ -142,6 +142,7 @@ PyResult CharUnboundMgrService::Handle_CancelCharacterDeletePrepare(PyCallArgs &
 }
 
 PyResult CharUnboundMgrService::Handle_GetCharacterInfo(PyCallArgs &call) {
+    _log(CLIENT__MESSAGE, "Called GetCharacterInfo stub");
     return NULL;
 }
 

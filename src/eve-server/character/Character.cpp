@@ -824,8 +824,8 @@ void Character::UpdateSkillQueue()
             EvilNumber SPPerMinute = GetSPPerMin( currentTraining );
             EvilNumber NextLevel = currentTraining->GetAttribute(AttrSkillLevel) + 1;
             EvilNumber SPToNextLevel = currentTraining->GetSPForLevel( NextLevel ) - currentTraining->GetAttribute(AttrSkillPoints);
-            sLog.Debug( "    ", "Training skill at %f SP/min", SPPerMinute.get_float() );
-            sLog.Debug( "    ", "%f SP to next Level of %d", SPToNextLevel.get_float(), NextLevel.get_int() );
+            sLog.Debug( "Character::UpdateSkillQueue()", "  Training skill at %f SP/min", SPPerMinute.get_float() );
+            sLog.Debug( "Character::UpdateSkillQueue()", "  %f SP to next Level of %d", SPToNextLevel.get_float(), NextLevel.get_int() );
 
             SPPerMinute.to_float();
             SPToNextLevel.to_float();
@@ -1071,7 +1071,7 @@ void Character::SaveCharacter()
 }
 
 void Character::SaveSkillQueue() const {
-    _log( ITEM__TRACE, "Saving skill queue of character %u.", itemID() );
+    sLog.Debug( "Character::SaveSkillQueue()", "Saving skill queue of character %u.", itemID() );
 
     // skill queue
     m_factory.db().SaveSkillQueue(
@@ -1082,7 +1082,7 @@ void Character::SaveSkillQueue() const {
 
 void Character::SaveCertificates() const
 {
-    _log( ITEM__TRACE, "Saving Implants of character %u", itemID() );
+    sLog.Debug( "Character::SaveCertificates", "Saving Implants of character %u", itemID() );
 
     m_factory.db().SaveCertificates(
         itemID(),

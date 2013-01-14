@@ -370,8 +370,11 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
     /* most attribute have default value's which are related to the item type */
     if (itr == mAttributes.end()) {
         mAttributes.insert(std::make_pair(attributeId, num));
+        mChanged = true;	// Mark the map as having been modified
+        
         if (nofity == true)
             return Add(attributeId, num);
+        
         return true;
     }
 
@@ -386,7 +389,6 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
             return false;
 
     itr->second = num;
-
 	mChanged = true;	// Mark the map as having been modified
 
     return true;
@@ -550,7 +552,7 @@ bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
     //this isn't particularly efficient, but until I write a better solution, this will do
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res, "SELECT * FROM dgmtypeattributes WHERE typeID='%u'", mItem.typeID())) {
+    if(!sDatabase.RunQuery(res, "SELECT * FROM dgmTypeAttributes WHERE typeID='%u'", mItem.typeID())) {
         sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
@@ -623,6 +625,8 @@ bool AttributeMap::Load()
             attr_value = row.GetDouble(3);
         SetAttribute(attributeID, attr_value, false);
     }
+    
+    mChanged = false;  // map has just been loaded from DB, no need to save
 
     return true;
 
@@ -766,7 +770,7 @@ bool AttributeMap::Save()
     /* if nothing changed... it means this action has been successful we return true... */
     if (mChanged == false)
         return true;
-
+    
     AttrMapItr itr = mAttributes.begin();
     AttrMapItr itr_end = mAttributes.end();
     for (; itr != itr_end; itr++)
@@ -855,6 +859,10 @@ bool AttributeMap::Delete()
 			return false;
 		}
 	}
+    
+    mAttributes.clear();
+    
+    mChanged = false; // just synced with database, no need to save
 
     return true;
 }
