@@ -459,6 +459,10 @@ public:
      */
     void GetCertificates( Certificates &crt );
 
+	/* Returns standing an agent/corp has towards this character.
+	 */
+	double GetEffectiveStandingFromNPC(uint32 itemID);
+	
     // NOTE: We do not handle Split/Merge logic since singleton-restricted construction does this for us.
 
     /**
@@ -651,6 +655,9 @@ protected:
     EvilNumber m_totalSPtrained;
 
     Certificates m_certificates;
+	
+private:
+	CharacterDB m_db;
 };
 
 #endif /* !__CHARACTER__H__INCL__ */

@@ -763,6 +763,10 @@ def IsJunkLocation(locationID):
 // This is the 
 #define EVEMU_MINIMUM_ID 140000000
 
+
+#define IsNPCCorp(itemID) \
+	((itemID >= 1000000) && (itemID < 1001000))
+
 #define IsAgent(itemID) \
     ((itemID >= 3008416) && (itemID < 3020000))
 

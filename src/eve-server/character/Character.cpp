@@ -883,6 +883,18 @@ void Character::UpdateSkillQueue()
     SaveSkillQueue();
 }
 
+
+double Character::GetEffectiveStandingFromNPC(uint32 itemID){
+    
+    double res = m_db.GetCharRawStandingFromNPC(this->itemID(), itemID);
+    
+    if(res > 0) res += (10-res) * 0.04*GetSkillLevel(skillConnections);  //TODO: also use skillCriminalConnections
+    else
+    if(res < 0) res += (10-res) * 0.04*GetSkillLevel(skillDiplomacy);
+
+    return res;
+}
+
 PyDict *Character::CharGetInfo() {
     //TODO: verify that we are a char?
 
