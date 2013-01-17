@@ -40,7 +40,7 @@ class ReprocessingDB
 public:
     bool IsRefinable(const uint32 typeID);
     bool IsRecyclable(const uint32 typeID);
-    bool LoadStatic(const uint32 stationID, double &efficiency, double &tax);
+    bool LoadStatic(const uint32 stationID, double &efficiency, double &tax, uint32 &corpID);
     bool GetRecoverables(const uint32 typeID, std::vector<Recoverable> &into);
 };
 

@@ -68,11 +68,11 @@ bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
     return(res.GetRow(row));
 }
 
-bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, double &tax) {
+bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, double &tax, uint32 &corpID) {
     DBQueryResult res;
 
     if(!sDatabase.RunQuery(res,
-                "SELECT reprocessingEfficiency, reprocessingStationsTake"
+                "SELECT reprocessingEfficiency, reprocessingStationsTake, corporationID"
                 " FROM staStations"
                 " WHERE stationID=%u",
                 stationID))
@@ -90,6 +90,7 @@ bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, doub
 
     efficiency = row.GetDouble(0);
     tax = row.GetDouble(1);
+    corpID = row.GetUInt(2);
 
     return true;
 }
