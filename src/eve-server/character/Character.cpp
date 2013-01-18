@@ -514,6 +514,19 @@ bool Character::HasSkillTrainedToLevel(uint32 skillTypeID, uint32 skillLevel) co
     return true;
 }
 
+uint Character::GetSkillLevel(uint32 skillTypeID, bool zeroForNotInjected) const
+{
+    SkillRef requiredSkill;
+
+    // First, check for existence of skill trained or in training:
+    requiredSkill = GetSkill( skillTypeID );
+    if( !requiredSkill )
+        return zeroForNotInjected ? 0 : -1;
+
+    return requiredSkill->GetAttribute(AttrSkillLevel).get_int() ;
+        
+}
+
 bool Character::HasCertificate( uint32 certificateID ) const
 {
     uint32 i = 0;
