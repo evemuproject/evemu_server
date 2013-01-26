@@ -982,3 +982,26 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
         return false;
     }
 }
+
+
+double CharacterDB::GetCharRawStandingFromNPC(uint32 characterID, uint32 itemID) {
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,
+        "SELECT standing"
+        " FROM chrNPCStandings"
+        " WHERE characterID=%u AND fromID=%u", characterID, itemID
+    ))
+    {
+        _log(SERVICE__ERROR, "Error in GetCharNPCStandings query: %s", res.error.c_str());
+        return 0;
+    }
+    
+    if(res.GetRowCount() == 0)
+        return 0;
+    DBResultRow row;
+    res.GetRow(row);
+    return row.GetDouble(0);
+}
+
+

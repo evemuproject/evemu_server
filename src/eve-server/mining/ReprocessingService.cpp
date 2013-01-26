@@ -52,10 +52,13 @@ protected:
     ReprocessingDB& m_db;
 
     uint32 m_stationID;
+    uint32 m_stationCorpID; //NPC (or not?) corp that owns station. Used for standing
     double m_staEfficiency;
     double m_tax;
 
     double _CalcReprocessingEfficiency(const Client *client, InventoryItemRef item = InventoryItemRef()) const;
+    double _CalcTax(const CharacterRef ch) const;
+    double _CalcTax(double standing) const;
     PyRep *_GetQuote(uint32 itemID, const Client *c) const;
 };
 
@@ -104,7 +107,8 @@ ReprocessingServiceBound::ReprocessingServiceBound(PyServiceMgr *mgr, Reprocessi
   m_db(db),
   m_stationID(stationID),
   m_staEfficiency(0.0),
-  m_tax(0.0)
+  m_tax(0.0),
+  m_stationCorpID(0)
 {
     _SetCallDispatcher(m_dispatch);
 
@@ -126,7 +130,7 @@ void ReprocessingServiceBound::Release() {
 }
 
 bool ReprocessingServiceBound::Load() {
-    return(m_db.LoadStatic(m_stationID, m_staEfficiency, m_tax));
+    return(m_db.LoadStatic(m_stationID, m_staEfficiency, m_tax, m_stationCorpID));
 }
 
 PyResult ReprocessingServiceBound::Handle_GetOptionsForItemTypes(PyCallArgs &call) {
@@ -161,8 +165,8 @@ PyResult ReprocessingServiceBound::Handle_GetReprocessingInfo(PyCallArgs &call) 
 
     Rsp_GetReprocessingInfo rsp;
 
-    rsp.tax = m_tax;
-    rsp.reputation = 0.0;   // this should be drain from DB
+    rsp.reputation = call.client->GetChar()->GetEffectiveStandingFromNPC( m_stationCorpID );
+    rsp.tax = _CalcTax( rsp.reputation );
     rsp.yield = m_staEfficiency;
     rsp.combinedyield = _CalcReprocessingEfficiency(call.client);
 
@@ -197,7 +201,8 @@ PyResult ReprocessingServiceBound::Handle_GetQuotes(PyCallArgs &call) {
         PyRep *quote = NULL;
         try {
             quote = _GetQuote(*cur, call.client);
-        } catch(PyException &) {
+        } catch(PyException &e) {
+            sLog.Error("ReprocessingServiceBound::Handle_GetQuotes", "error %s", e.ssException->AsString()->content().c_str() );
             // ignore all exceptions
             continue;
         }
@@ -226,6 +231,8 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
 
     if(call_args.flag == 0)
         call_args.flag = flagHangar;
+    
+    double tax = _CalcTax(call.client->GetChar() );
 
     std::vector<int32>::iterator cur, end;
     cur = call_args.items.begin();
@@ -250,7 +257,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         }
 
         double efficiency = _CalcReprocessingEfficiency( call.client, item );
-
+        
         std::vector<Recoverable> recoverables;
         if( !m_db.GetRecoverables( item->typeID(), recoverables ) )
             continue;
@@ -259,7 +266,10 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         cur_rec = recoverables.begin();
         end_rec = recoverables.end();
         for(; cur_rec != end_rec; cur_rec++) {
-            uint32 quantity = static_cast<uint32>(cur_rec->amountPerBatch * efficiency * (1.0 - m_tax) * item->quantity() / item->type().portionSize());
+            uint32 full = cur_rec->amountPerBatch * item->quantity() / item->type().portionSize();
+            
+            uint32 quantity = uint32(full * efficiency * (1.0 - tax) );
+            
             if(quantity == 0)
                 continue;
 
@@ -289,27 +299,27 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
 }
 
 double ReprocessingServiceBound::_CalcReprocessingEfficiency(const Client *c, InventoryItemRef item) const {
-    std::set<EVEItemFlags> flags;
+    /*std::set<EVEItemFlags> flags;
     flags.insert(flagSkill);
     flags.insert(flagSkillInTraining);
 
     std::vector<InventoryItemRef> skills;
 
-    c->GetChar()->FindByFlagSet(flags, skills);
+    c->GetChar()->FindByFlagSet(flags, skills);*/
 
     // formula is: reprocessingEfficiency + 0.375*(1 + 0.02*RefiningSkill)*(1 + 0.04*RefineryEfficiencySkill)*(1 + 0.05*OreProcessingSkill)
-    // commented out until we have skills working different way ...
-    double efficiency = 0.375;
-    /*double efficiency =   0.375*(1 + 0.02*GetSkillLevel(skills, skillRefining))*
-                        (1 + 0.04*GetSkillLevel(skills, skillRefineryEfficiency));
+    
+    CharacterRef ch = c->GetChar();
+    double efficiency =   0.375*(1 + 0.02 * ch->GetSkillLevel(skillRefining)) 
+                            *(1 + 0.04 * ch->GetSkillLevel(skillRefineryEfficiency));
 
     if(item != NULL) {
-        uint32 specificSkill = item->reprocessingSkillType();
+        uint32 specificSkill = item->GetAttribute(AttrReprocessingSkillType).get_int();
         if(specificSkill != 0)
-            efficiency *= 1 + 0.05*GetSkillLevel(skills, specificSkill);
+            efficiency *= 1 + 0.05 * ch->GetSkillLevel(specificSkill);
         else
-            efficiency *= 1 + 0.05*GetSkillLevel(skills, skillScrapmetalProcessing);    // use Scrapmetal Processing as default
-    }*/
+            efficiency *= 1 + 0.05 * ch->GetSkillLevel(skillScrapmetalProcessing);    // use Scrapmetal Processing as default
+    }
 
     efficiency += m_staEfficiency;
 
@@ -341,8 +351,10 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
     res.lines = new PyList;
     res.leftOvers = item->quantity() % item->type().portionSize();
     res.quantityToProcess = item->quantity() - res.leftOvers;
-    res.playerStanding = 0.0;   // hack
-
+    res.playerStanding = c->GetChar()->GetEffectiveStandingFromNPC(m_stationCorpID);
+    
+    double tax = _CalcTax( res.playerStanding );
+    
     if(item->quantity() >= item->type().portionSize()) {
         std::vector<Recoverable> recoverables;
         if( !m_db.GetRecoverables( item->typeID(), recoverables ) )
@@ -360,10 +372,11 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
             Rsp_GetQuote_Recoverables_Line line;
 
             line.typeID =           cur->typeID;
-            line.unrecoverable =    uint32((1.0 - efficiency)           * ratio);
-            line.station =          uint32(efficiency * m_tax           * ratio);
-            line.client =           uint32(efficiency * (1.0 - m_tax)   * ratio);
-
+            
+            line.client =           uint32(efficiency * (1.0 - tax)   * ratio);
+            line.station =          uint32(efficiency * tax           * ratio);
+            line.unrecoverable =    ratio - line.client - line.station;
+            
             res.lines->AddItem( line.Encode() );
         }
     }
@@ -371,3 +384,12 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
     return res.Encode();
 }
 
+double ReprocessingServiceBound::_CalcTax(const CharacterRef ch) const {
+    return _CalcTax( ch->GetEffectiveStandingFromNPC( m_stationCorpID ));
+}
+
+double ReprocessingServiceBound::_CalcTax(double standing) const {
+    double res = m_tax - 0.75/100*standing;
+    if(res<0) res=0;
+    return res;
+}

@@ -369,6 +369,18 @@ public:
      * @return True if character has the skill AND that skill has been trained to at least the level specified, False otherwise
      */
     bool HasSkillTrainedToLevel(uint32 skillTypeID, uint32 skillLevel) const;
+	
+    /**
+     * Gets level of skill that is trained.
+     *
+     * @param[in] skillTypeID ID of skill type to be checked
+	 * @param[in] zeroForNotInjected true if method should return 0 for un injected skills, 
+	 *	false if it shuold return -1
+     * @return value 0..5 - the level of skill trained, or, if it was not injected,
+	 *  0 if zeroForNotInjected.is true, -1 otherwise
+     */
+    uint GetSkillLevel(uint32 skillTypeID, bool zeroForNotInjected=true) const;
+
     /**
      * Returns skill.
      *
@@ -460,6 +472,10 @@ public:
      */
     void GetCertificates( Certificates &crt );
 
+	/* Returns standing an agent/corp has towards this character.
+	 */
+	double GetEffectiveStandingFromNPC(uint32 itemID);
+	
     // NOTE: We do not handle Split/Merge logic since singleton-restricted construction does this for us.
 
     /**
@@ -652,6 +668,9 @@ protected:
     EvilNumber m_totalSPtrained;
 
     Certificates m_certificates;
+	
+private:
+	CharacterDB m_db;
 };
 
 #endif /* !__CHARACTER__H__INCL__ */

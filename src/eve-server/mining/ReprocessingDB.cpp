@@ -32,7 +32,7 @@ bool ReprocessingDB::IsRefinable(const uint32 typeID) {
 
     if(!sDatabase.RunQuery(res,
                 "SELECT NULL"
-                " FROM typeActivityMaterials"
+                " FROM ramTypeRequirements"
                 " WHERE typeID=%u"
                 " AND recycle = 0"
                 " LIMIT 1",
@@ -50,7 +50,7 @@ bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
     DBQueryResult res;
 
     if(!sDatabase.RunQuery(res,
-                "SELECT NULL FROM typeActivityMaterials"
+                "SELECT NULL FROM ramTypeRequirements"
                 " LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
                 " WHERE damagePerJob = 1 AND ("
                 "   (activityID = 6 AND typeID = %u)"
@@ -68,11 +68,11 @@ bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
     return(res.GetRow(row));
 }
 
-bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, double &tax) {
+bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, double &tax, uint32 &corpID) {
     DBQueryResult res;
 
     if(!sDatabase.RunQuery(res,
-                "SELECT reprocessingEfficiency, reprocessingStationsTake"
+                "SELECT reprocessingEfficiency, reprocessingStationsTake, corporationID"
                 " FROM staStations"
                 " WHERE stationID=%u",
                 stationID))
@@ -90,6 +90,7 @@ bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, doub
 
     efficiency = row.GetDouble(0);
     tax = row.GetDouble(1);
+    corpID = row.GetUInt(2);
 
     return true;
 }
@@ -99,7 +100,7 @@ bool ReprocessingDB::GetRecoverables(const uint32 typeID, std::vector<Recoverabl
     DBResultRow row;
 
     if(!sDatabase.RunQuery(res,
-                "SELECT requiredTypeID, MIN(quantity) FROM typeActivityMaterials"
+                "SELECT requiredTypeID, MIN(quantity) FROM ramTypeRequirements"
                 " LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
                 " WHERE damagePerJob = 1 AND ("
                 "   (activityID = 6 AND typeID = %u)"
@@ -113,7 +114,27 @@ bool ReprocessingDB::GetRecoverables(const uint32 typeID, std::vector<Recoverabl
     }
 
     Recoverable rec;
-
+    bool gotFromRamTable=false;
+    
+    while(res.GetRow(row)) {
+        gotFromRamTable = true;
+        rec.typeID = row.GetInt(0);
+        rec.amountPerBatch = row.GetInt(1);
+        into.push_back(rec);
+    }
+    
+    //eve-dev says tech 2 items contain both basic materials and advanced materials
+    //if(gotFromRamTable) return true;
+    
+    if(!sDatabase.RunQuery(res,
+                "SELECT materialTypeID, quantity"
+                " FROM invTypeMaterials"
+                " WHERE typeID=%d",
+                typeID))
+    {
+        _log(DATABASE__ERROR, "Unable to get recoverables for ore ID %u: '%s'", typeID, res.error.c_str());
+        return false;
+    }
     while(res.GetRow(row)) {
         rec.typeID = row.GetInt(0);
         rec.amountPerBatch = row.GetInt(1);

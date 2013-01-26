@@ -527,6 +527,19 @@ bool Character::HasSkillTrainedToLevel(uint32 skillTypeID, uint32 skillLevel) co
     return true;
 }
 
+uint Character::GetSkillLevel(uint32 skillTypeID, bool zeroForNotInjected) const
+{
+    SkillRef requiredSkill;
+
+    // First, check for existence of skill trained or in training:
+    requiredSkill = GetSkill( skillTypeID );
+    if( !requiredSkill )
+        return zeroForNotInjected ? 0 : -1;
+
+    return requiredSkill->GetAttribute(AttrSkillLevel).get_int() ;
+        
+}
+
 bool Character::HasCertificate( uint32 certificateID ) const
 {
     uint32 i = 0;
@@ -824,8 +837,8 @@ void Character::UpdateSkillQueue()
             EvilNumber SPPerMinute = GetSPPerMin( currentTraining );
             EvilNumber NextLevel = currentTraining->GetAttribute(AttrSkillLevel) + 1;
             EvilNumber SPToNextLevel = currentTraining->GetSPForLevel( NextLevel ) - currentTraining->GetAttribute(AttrSkillPoints);
-            sLog.Debug( "    ", "Training skill at %f SP/min", SPPerMinute.get_float() );
-            sLog.Debug( "    ", "%f SP to next Level of %d", SPToNextLevel.get_float(), NextLevel.get_int() );
+            sLog.Debug( "Character::UpdateSkillQueue()", "  Training skill at %f SP/min", SPPerMinute.get_float() );
+            sLog.Debug( "Character::UpdateSkillQueue()", "  %f SP to next Level of %d", SPToNextLevel.get_float(), NextLevel.get_int() );
 
             SPPerMinute.to_float();
             SPToNextLevel.to_float();
@@ -894,6 +907,18 @@ void Character::UpdateSkillQueue()
     // Save character and skill data:
     SaveCharacter();
     SaveSkillQueue();
+}
+
+
+double Character::GetEffectiveStandingFromNPC(uint32 itemID){
+    
+    double res = m_db.GetCharRawStandingFromNPC(this->itemID(), itemID);
+    
+    if(res > 0) res += (10-res) * 0.04*GetSkillLevel(skillConnections);  //TODO: also use skillCriminalConnections
+    else
+    if(res < 0) res += (10-res) * 0.04*GetSkillLevel(skillDiplomacy);
+
+    return res;
 }
 
 PyDict *Character::CharGetInfo() {
@@ -1071,7 +1096,7 @@ void Character::SaveCharacter()
 }
 
 void Character::SaveSkillQueue() const {
-    _log( ITEM__TRACE, "Saving skill queue of character %u.", itemID() );
+    sLog.Debug( "Character::SaveSkillQueue()", "Saving skill queue of character %u.", itemID() );
 
     // skill queue
     m_factory.db().SaveSkillQueue(
@@ -1082,7 +1107,7 @@ void Character::SaveSkillQueue() const {
 
 void Character::SaveCertificates() const
 {
-    _log( ITEM__TRACE, "Saving Implants of character %u", itemID() );
+    sLog.Debug( "Character::SaveCertificates", "Saving Implants of character %u", itemID() );
 
     m_factory.db().SaveCertificates(
         itemID(),
