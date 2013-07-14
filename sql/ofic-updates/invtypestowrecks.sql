@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : o shit
-Source Server Version : 50524
+Source Server Version : 50532
 Source Host           : localhost:3306
 Source Database       : evemu
 
 Target Server Type    : MYSQL
-Target Server Version : 50524
+Target Server Version : 50532
 File Encoding         : 65001
 
-Date: 2013-07-13 16:31:58
+Date: 2013-07-14 07:52:25
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -217,6 +217,11 @@ INSERT INTO `invtypestowrecks` VALUES ('11932', '26575', 'Guristas Eradicator');
 INSERT INTO `invtypestowrecks` VALUES ('11933', '26575', 'Guristas Obliterator');
 INSERT INTO `invtypestowrecks` VALUES ('11934', '26575', 'Guristas Dismantler');
 INSERT INTO `invtypestowrecks` VALUES ('11935', '26575', 'Guristas Extinguisher');
+INSERT INTO `invtypestowrecks` VALUES ('12245', '27286', 'Angel Fugitive');
+INSERT INTO `invtypestowrecks` VALUES ('12246', '27286', 'Blood Fugitive');
+INSERT INTO `invtypestowrecks` VALUES ('12247', '27286', 'Guristas Fugitive');
+INSERT INTO `invtypestowrecks` VALUES ('12248', '27286', 'Sansha\'s Fugitive');
+INSERT INTO `invtypestowrecks` VALUES ('12249', '27286', 'Serpentis Fugitive');
 INSERT INTO `invtypestowrecks` VALUES ('13032', '26561', 'Arch Angel Rogue');
 INSERT INTO `invtypestowrecks` VALUES ('13033', '26561', 'Arch Angel Thug');
 INSERT INTO `invtypestowrecks` VALUES ('13035', '26561', 'Arch Angel Hijacker');
@@ -257,7 +262,16 @@ INSERT INTO `invtypestowrecks` VALUES ('13654', '26590', 'Cormack Vaaja');
 INSERT INTO `invtypestowrecks` VALUES ('13659', '26590', 'Tuvan Orth');
 INSERT INTO `invtypestowrecks` VALUES ('13661', '26590', 'Brynn Jerdola');
 INSERT INTO `invtypestowrecks` VALUES ('13667', '26590', 'Setele Schellan');
+INSERT INTO `invtypestowrecks` VALUES ('15493', '27286', 'TEST Speed');
 INSERT INTO `invtypestowrecks` VALUES ('16562', '26561', 'Angel Webifier');
+INSERT INTO `invtypestowrecks` VALUES ('19379', '27286', 'NEGATIVE LOOT TEST DOOD');
+INSERT INTO `invtypestowrecks` VALUES ('19380', '27286', 'POSTIVE LOOT TEST DOOD');
+INSERT INTO `invtypestowrecks` VALUES ('20357', '27286', 'TEST Guristas for COMSOMS LOOT');
+INSERT INTO `invtypestowrecks` VALUES ('21845', '27286', 'Automated Coreli Training Vessel');
+INSERT INTO `invtypestowrecks` VALUES ('21846', '27286', 'Automated Gisti Training Vessel');
+INSERT INTO `invtypestowrecks` VALUES ('21847', '27286', 'Automated Corpii Training Vessel');
+INSERT INTO `invtypestowrecks` VALUES ('21848', '27286', 'Automated Pithi Training Vessel');
+INSERT INTO `invtypestowrecks` VALUES ('21849', '27286', 'Automated Centii Training Vessel');
 INSERT INTO `invtypestowrecks` VALUES ('21974', '26543', 'Outlaw Arrogator');
 INSERT INTO `invtypestowrecks` VALUES ('21975', '26543', 'Outlaw Imputor');
 INSERT INTO `invtypestowrecks` VALUES ('21976', '26543', 'Outlaw Infiltrator');
@@ -282,6 +296,8 @@ INSERT INTO `invtypestowrecks` VALUES ('22011', '26561', 'Cyber Ambusher');
 INSERT INTO `invtypestowrecks` VALUES ('22012', '26561', 'Cyber Raider');
 INSERT INTO `invtypestowrecks` VALUES ('22013', '26561', 'Cyber Hunter');
 INSERT INTO `invtypestowrecks` VALUES ('22014', '26561', 'Cyber Impaler');
+INSERT INTO `invtypestowrecks` VALUES ('22053', '27286', 'Automated Centii Keyholder');
+INSERT INTO `invtypestowrecks` VALUES ('22626', '27286', 'NewFrigateRank1Test');
 INSERT INTO `invtypestowrecks` VALUES ('22812', '26561', 'Angel Shatterer');
 INSERT INTO `invtypestowrecks` VALUES ('22813', '26561', 'Angel Defacer');
 INSERT INTO `invtypestowrecks` VALUES ('22814', '26561', 'Angel Haunter');
@@ -477,3 +493,43 @@ INSERT INTO `invtypestowrecks` VALUES ('24387', '26567', 'Warrior Diviner');
 INSERT INTO `invtypestowrecks` VALUES ('24388', '26567', 'Warrior Reaver');
 INSERT INTO `invtypestowrecks` VALUES ('24389', '26567', 'Warrior Engraver');
 INSERT INTO `invtypestowrecks` VALUES ('24407', '26567', 'Warrior Seeker');
+INSERT INTO `invtypestowrecks` VALUES ('24442', '27286', 'Test Cap Drain');
+INSERT INTO `invtypestowrecks` VALUES ('24626', '27286', 'TEST JAMMER');
+INSERT INTO `invtypestowrecks` VALUES ('24627', '27286', 'TEST DISRUPTOR');
+INSERT INTO `invtypestowrecks` VALUES ('24628', '27286', 'TEST STASIS SCRAMBLER');
+INSERT INTO `invtypestowrecks` VALUES ('24629', '27286', 'TEST DAMPEN');
+INSERT INTO `invtypestowrecks` VALUES ('25209', '27286', 'Tempest 50ms 1000m');
+INSERT INTO `invtypestowrecks` VALUES ('25210', '27286', 'Rupture 100ms 625m');
+INSERT INTO `invtypestowrecks` VALUES ('25211', '27286', 'Cyclone 75ms 750m');
+INSERT INTO `invtypestowrecks` VALUES ('25213', '27286', 'Thrasher 150ms 425m');
+INSERT INTO `invtypestowrecks` VALUES ('25214', '27286', 'Rifter 225ms 125m');
+INSERT INTO `invtypestowrecks` VALUES ('25215', '27286', 'Apocalypse 125ms 2500m');
+INSERT INTO `invtypestowrecks` VALUES ('25216', '27286', 'Prophecy 150ms 1500m');
+INSERT INTO `invtypestowrecks` VALUES ('25217', '27286', 'Maller 175ms 1000m');
+INSERT INTO `invtypestowrecks` VALUES ('25218', '27286', 'Coercer 225ms 750m');
+INSERT INTO `invtypestowrecks` VALUES ('25219', '27286', 'Punisher 300ms 500m');
+INSERT INTO `invtypestowrecks` VALUES ('25220', '27286', 'Ferox 125ms 1250m');
+INSERT INTO `invtypestowrecks` VALUES ('25221', '27286', 'Raven 100ms 2000m');
+INSERT INTO `invtypestowrecks` VALUES ('25222', '27286', 'Moa 150ms 875m');
+INSERT INTO `invtypestowrecks` VALUES ('25223', '27286', 'Cormorant 200ms 625m');
+INSERT INTO `invtypestowrecks` VALUES ('25224', '27286', 'Merlin 275ms 375m');
+INSERT INTO `invtypestowrecks` VALUES ('25225', '27286', 'Brutix 100ms 1000m');
+INSERT INTO `invtypestowrecks` VALUES ('25226', '27286', 'Megathron 75ms 1500m');
+INSERT INTO `invtypestowrecks` VALUES ('25227', '27286', 'Thorax 125ms 750m');
+INSERT INTO `invtypestowrecks` VALUES ('25228', '27286', 'Catalyst 175ms 500m');
+INSERT INTO `invtypestowrecks` VALUES ('25229', '27286', 'Tristan 250ms 250m');
+INSERT INTO `invtypestowrecks` VALUES ('26886', '27286', 'TEST Missiles NPC');
+INSERT INTO `invtypestowrecks` VALUES ('26887', '27286', 'TEST Turrets NPC');
+INSERT INTO `invtypestowrecks` VALUES ('27002', '27286', 'TEST Moussa Dread Guristas Assassin');
+INSERT INTO `invtypestowrecks` VALUES ('27003', '27286', 'TEST RANGE Dire Pithi Wrecker');
+INSERT INTO `invtypestowrecks` VALUES ('27005', '27286', 'TEST UPDATE Ammatar Navy Sergeant');
+INSERT INTO `invtypestowrecks` VALUES ('27228', '27286', 'TEST CARRIER Serpentis Duke');
+INSERT INTO `invtypestowrecks` VALUES ('27310', '27286', 'TEST Skin');
+INSERT INTO `invtypestowrecks` VALUES ('27311', '27286', 'TEST FedSkin');
+INSERT INTO `invtypestowrecks` VALUES ('27312', '27286', 'TEST COPY Dire Pithi Wrecker');
+INSERT INTO `invtypestowrecks` VALUES ('27529', '27286', 'TEST Amarr Carrier');
+INSERT INTO `invtypestowrecks` VALUES ('27566', '27286', 'TEST Caldari Carrier');
+INSERT INTO `invtypestowrecks` VALUES ('27571', '27286', 'TEST Gallente Carrier');
+INSERT INTO `invtypestowrecks` VALUES ('27764', '27286', 'TEST ICON Carrier Amarr');
+INSERT INTO `invtypestowrecks` VALUES ('27801', '27286', 'Petty Thief');
+INSERT INTO `invtypestowrecks` VALUES ('29038', '27286', 'Defender Tester');
