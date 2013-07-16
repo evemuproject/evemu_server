@@ -10,13 +10,13 @@ Target Server Type    : MYSQL
 Target Server Version : 50532
 File Encoding         : 65001
 
-Date: 2013-07-14 07:52:25
+Date: 2013-07-15 01:09:21
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `invtypestowrecks`
+-- Table structure for invtypestowrecks
 -- ----------------------------
 DROP TABLE IF EXISTS `invtypestowrecks`;
 CREATE TABLE `invtypestowrecks` (
@@ -177,6 +177,7 @@ INSERT INTO `invtypestowrecks` VALUES ('11137', '26972', 'Imperial Navy Fleet Ma
 INSERT INTO `invtypestowrecks` VALUES ('11138', '26972', 'Caldari Navy Fleet Admiral');
 INSERT INTO `invtypestowrecks` VALUES ('11139', '26972', 'Federation Navy Fleet General');
 INSERT INTO `invtypestowrecks` VALUES ('11140', '26972', 'Republic Fleet High Commander');
+INSERT INTO `invtypestowrecks` VALUES ('11719', '26562', 'Angel Cartel Transport Ship');
 INSERT INTO `invtypestowrecks` VALUES ('11894', '26562', 'Angel Breaker');
 INSERT INTO `invtypestowrecks` VALUES ('11895', '26562', 'Angel Defeater');
 INSERT INTO `invtypestowrecks` VALUES ('11896', '26562', 'Angel Marauder');
@@ -262,8 +263,39 @@ INSERT INTO `invtypestowrecks` VALUES ('13654', '26590', 'Cormack Vaaja');
 INSERT INTO `invtypestowrecks` VALUES ('13659', '26590', 'Tuvan Orth');
 INSERT INTO `invtypestowrecks` VALUES ('13661', '26590', 'Brynn Jerdola');
 INSERT INTO `invtypestowrecks` VALUES ('13667', '26590', 'Setele Schellan');
+INSERT INTO `invtypestowrecks` VALUES ('14345', '26562', 'Renegade Angel Goon');
 INSERT INTO `invtypestowrecks` VALUES ('15493', '27286', 'TEST Speed');
+INSERT INTO `invtypestowrecks` VALUES ('16165', '26562', 'Angel Cartel Personnel Transport');
 INSERT INTO `invtypestowrecks` VALUES ('16562', '26561', 'Angel Webifier');
+INSERT INTO `invtypestowrecks` VALUES ('16875', '26562', 'Gistum Depredator');
+INSERT INTO `invtypestowrecks` VALUES ('16880', '26562', 'Gistum Crusher');
+INSERT INTO `invtypestowrecks` VALUES ('16881', '26562', 'Gistum Smasher');
+INSERT INTO `invtypestowrecks` VALUES ('16884', '26562', 'Gistum Predator');
+INSERT INTO `invtypestowrecks` VALUES ('16889', '26562', 'Gistum Breaker');
+INSERT INTO `invtypestowrecks` VALUES ('16891', '26562', 'Gistum Marauder');
+INSERT INTO `invtypestowrecks` VALUES ('16892', '26563', 'Gist Commander');
+INSERT INTO `invtypestowrecks` VALUES ('16893', '26563', 'Gist General');
+INSERT INTO `invtypestowrecks` VALUES ('16896', '26562', 'Gistum Liquidator');
+INSERT INTO `invtypestowrecks` VALUES ('16898', '26562', 'Gistum Defeater');
+INSERT INTO `invtypestowrecks` VALUES ('16899', '26563', 'Gist Warlord');
+INSERT INTO `invtypestowrecks` VALUES ('16900', '26563', 'Gist War General');
+INSERT INTO `invtypestowrecks` VALUES ('16906', '26562', 'Gistum Domination Depredator');
+INSERT INTO `invtypestowrecks` VALUES ('16909', '26562', 'Gistum Domination Crusher');
+INSERT INTO `invtypestowrecks` VALUES ('16910', '26562', 'Gistum Domination Smasher');
+INSERT INTO `invtypestowrecks` VALUES ('16912', '26562', 'Gistum Domination Predator');
+INSERT INTO `invtypestowrecks` VALUES ('16915', '26562', 'Gistum Domination Breaker');
+INSERT INTO `invtypestowrecks` VALUES ('16916', '26562', 'Gistum Domination Defeater');
+INSERT INTO `invtypestowrecks` VALUES ('16917', '26562', 'Gistum Domination Maraude');
+INSERT INTO `invtypestowrecks` VALUES ('16918', '26562', 'Gistum Domination Phalanx');
+INSERT INTO `invtypestowrecks` VALUES ('16919', '26562', 'Gistum Domination Liquidator');
+INSERT INTO `invtypestowrecks` VALUES ('16920', '26562', 'Gistum Domination Centurion');
+INSERT INTO `invtypestowrecks` VALUES ('16921', '26563', 'Gist Domination Commander');
+INSERT INTO `invtypestowrecks` VALUES ('16922', '26563', 'Gist Domination General');
+INSERT INTO `invtypestowrecks` VALUES ('16923', '26563', 'Gist Domination War General');
+INSERT INTO `invtypestowrecks` VALUES ('16924', '26563', 'Gist Domination Saint');
+INSERT INTO `invtypestowrecks` VALUES ('16925', '26563', 'Gist Domination Nephilim');
+INSERT INTO `invtypestowrecks` VALUES ('16926', '26563', 'Gist Domination Warlord');
+INSERT INTO `invtypestowrecks` VALUES ('17641', '26563', 'Arch Angel Raelek');
 INSERT INTO `invtypestowrecks` VALUES ('19379', '27286', 'NEGATIVE LOOT TEST DOOD');
 INSERT INTO `invtypestowrecks` VALUES ('19380', '27286', 'POSTIVE LOOT TEST DOOD');
 INSERT INTO `invtypestowrecks` VALUES ('20357', '27286', 'TEST Guristas for COMSOMS LOOT');
@@ -478,6 +510,35 @@ INSERT INTO `invtypestowrecks` VALUES ('23840', '26562', 'Arch Angel Breaker');
 INSERT INTO `invtypestowrecks` VALUES ('23841', '26562', 'Arch Angel Defeater');
 INSERT INTO `invtypestowrecks` VALUES ('23940', '26573', 'Vagrant Nihilist');
 INSERT INTO `invtypestowrecks` VALUES ('23941', '26573', 'Vagrant Anarchist');
+INSERT INTO `invtypestowrecks` VALUES ('23999', '26562', 'Gistatis Legionnaire');
+INSERT INTO `invtypestowrecks` VALUES ('24004', '26562', 'Gistatis Primus');
+INSERT INTO `invtypestowrecks` VALUES ('24005', '26562', 'Gistatis Tribuni');
+INSERT INTO `invtypestowrecks` VALUES ('24006', '26562', 'Gistatis Praefectus');
+INSERT INTO `invtypestowrecks` VALUES ('24007', '26562', 'Gistatis Tribunus');
+INSERT INTO `invtypestowrecks` VALUES ('24008', '26562', 'Gistatis Legatus');
+INSERT INTO `invtypestowrecks` VALUES ('24111', '26562', 'Gistum Phalanx');
+INSERT INTO `invtypestowrecks` VALUES ('24112', '26562', 'Gistum Centurion');
+INSERT INTO `invtypestowrecks` VALUES ('24113', '26562', 'Arch Gistum Depredator');
+INSERT INTO `invtypestowrecks` VALUES ('24114', '26562', 'Arch Gistum Predator');
+INSERT INTO `invtypestowrecks` VALUES ('24115', '26562', 'Arch Gistum Smasher');
+INSERT INTO `invtypestowrecks` VALUES ('24116', '26562', 'Arch Gistum Crusher');
+INSERT INTO `invtypestowrecks` VALUES ('24117', '26562', 'Arch Gistum Breaker');
+INSERT INTO `invtypestowrecks` VALUES ('24125', '26563', 'Gist Saint');
+INSERT INTO `invtypestowrecks` VALUES ('24126', '26563', 'Gist Nephilim');
+INSERT INTO `invtypestowrecks` VALUES ('24127', '26563', 'Gist Malakim');
+INSERT INTO `invtypestowrecks` VALUES ('24128', '26563', 'Gist Throne');
+INSERT INTO `invtypestowrecks` VALUES ('24129', '26563', 'Gist Cherubim');
+INSERT INTO `invtypestowrecks` VALUES ('24130', '26563', 'Gist Seraphim');
+INSERT INTO `invtypestowrecks` VALUES ('24131', '26563', 'Gist Domination Malakim');
+INSERT INTO `invtypestowrecks` VALUES ('24132', '26563', 'Gist Domination Throne');
+INSERT INTO `invtypestowrecks` VALUES ('24133', '26563', 'Gist Domination Cherubim');
+INSERT INTO `invtypestowrecks` VALUES ('24134', '26563', 'Gist Domination Seraphim');
+INSERT INTO `invtypestowrecks` VALUES ('24175', '26562', 'Gistatis Domination Legionnaire');
+INSERT INTO `invtypestowrecks` VALUES ('24176', '26562', 'Gistatis Domination Primus');
+INSERT INTO `invtypestowrecks` VALUES ('24177', '26562', 'Gistatis Domination Tribuni');
+INSERT INTO `invtypestowrecks` VALUES ('24178', '26562', 'Gistatis Domination Praefectus');
+INSERT INTO `invtypestowrecks` VALUES ('24179', '26562', 'Gistatis Domination Tribunus');
+INSERT INTO `invtypestowrecks` VALUES ('24180', '26562', 'Gistatis Domination Legatus');
 INSERT INTO `invtypestowrecks` VALUES ('24265', '26972', 'Thukker Wingman');
 INSERT INTO `invtypestowrecks` VALUES ('24361', '26585', 'Crook Spy');
 INSERT INTO `invtypestowrecks` VALUES ('24362', '26585', 'Crook Agent');
@@ -518,6 +579,8 @@ INSERT INTO `invtypestowrecks` VALUES ('25226', '27286', 'Megathron 75ms 1500m')
 INSERT INTO `invtypestowrecks` VALUES ('25227', '27286', 'Thorax 125ms 750m');
 INSERT INTO `invtypestowrecks` VALUES ('25228', '27286', 'Catalyst 175ms 500m');
 INSERT INTO `invtypestowrecks` VALUES ('25229', '27286', 'Tristan 250ms 250m');
+INSERT INTO `invtypestowrecks` VALUES ('25822', '26563', 'Gist_Defender Battleship');
+INSERT INTO `invtypestowrecks` VALUES ('26816', '26563', 'vlgergh');
 INSERT INTO `invtypestowrecks` VALUES ('26886', '27286', 'TEST Missiles NPC');
 INSERT INTO `invtypestowrecks` VALUES ('26887', '27286', 'TEST Turrets NPC');
 INSERT INTO `invtypestowrecks` VALUES ('27002', '27286', 'TEST Moussa Dread Guristas Assassin');
@@ -533,3 +596,5 @@ INSERT INTO `invtypestowrecks` VALUES ('27571', '27286', 'TEST Gallente Carrier'
 INSERT INTO `invtypestowrecks` VALUES ('27764', '27286', 'TEST ICON Carrier Amarr');
 INSERT INTO `invtypestowrecks` VALUES ('27801', '27286', 'Petty Thief');
 INSERT INTO `invtypestowrecks` VALUES ('29038', '27286', 'Defender Tester');
+INSERT INTO `invtypestowrecks` VALUES ('32298', '26563', 'Karkoti Rend');
+INSERT INTO `invtypestowrecks` VALUES ('32403', '26563', 'Angel Battleship Vessel');
