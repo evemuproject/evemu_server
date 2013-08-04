@@ -74,8 +74,12 @@ INSERT INTO entity (itemID, itemName, typeID, ownerID, singleton, quantity, x, y
  SELECT solarSystemID, solarSystemName, 5, 1, 1, 1, x, y, z
  FROM mapSolarSystems;
 /*
- * Insert stations
+ * Insert stations, however due to a irregularity in the CCP dump we have to fix 4 records before inserting the data
+ * (see commit comment for more details)
  */
+
+UPDATE staStations SET corporationID = 1000002 WHERE corporationID = NULL;
+
 INSERT INTO entity (itemID, itemName, typeID, ownerID, locationID, singleton, quantity, x, y, z)
  SELECT stationID, stationName, stationTypeID, corporationID, solarSystemID, 1, 1, x, y, z
  FROM staStations;
