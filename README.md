@@ -17,6 +17,7 @@ do with the source code downloaded from this project.
 - Walking in station is now possible
 - Items and Ships display in station
 - Undocking and Docking is working
+- SkillTraining is working again
 
 
 # Legal
