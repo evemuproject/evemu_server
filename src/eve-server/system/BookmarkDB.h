@@ -35,17 +35,18 @@ public:
     PyObjectEx *GetBookmarks(uint32 ownerID);
     PyObjectEx *GetFolders(uint32 ownerID);
 
-       uint32 GetNextAvailableBookmarkID();
-
+    uint32 GetNextAvailableBookmarkID();
     uint32 FindBookmarkTypeID(uint32 itemID);
 
     bool GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint32 &itemID, uint32 &typeID,
                                 uint32 &flag, std::string &memo, uint64 &created, double &x, double &y,
-                                double &z, uint32 &locationID);
+                                double &z, uint32 &locationID, std::string &note, uint32 &creatorID,
+                                uint32 folderID);
 
     bool SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, uint32 itemID,
                                    uint32 typeID, uint32 flag, std::string memo, uint64 created,
-                                   double x, double y, double z, uint32 locationID);
+                                   double x, double y, double z, uint32 locationID, std::string note,
+                                   uint32 creatorID, uint32 folderID);
 
     bool DeleteBookmarksFromDatabase(uint32 ownerID, std::vector<unsigned long> * bookmarkList);
 

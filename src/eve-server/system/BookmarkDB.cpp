@@ -21,6 +21,7 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:        Bloody.Rabbit
+    Updated:        Allan (Zhy)   18Jan14
 */
 
 #include "eve-server.h"
@@ -33,17 +34,17 @@ PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
 
     if(!sDatabase.RunQuery(res,
         "SELECT"
-        " CAST(bookmarkID AS SIGNED INTEGER) AS bookmarkID,"
-        " CAST(ownerID AS SIGNED INTEGER) AS ownerID,"
-        " CAST(itemID AS SIGNED INTEGER) AS itemID,"
-        " CAST(typeID AS SIGNED INTEGER) AS typeID,"
-        " memo,"
-        " created,"
-        " x, y, z,"
-        " CAST(locationID AS SIGNED INTEGER) AS locationID,"
-        " note,"
-        " creatorID,"
-        " folderID"
+        "  bookmarkID,"
+        "  ownerID,"
+        "  itemID,"
+        "  typeID,"
+        "  memo,"
+        "  created,"
+        "  x, y, z,"
+        "  locationID,"
+        "  note,"
+        "  creatorID,"
+        "  folderID"
         " FROM bookmarks"
         " WHERE ownerID = %u",
         ownerID))
@@ -60,10 +61,10 @@ PyObjectEx *BookmarkDB::GetFolders(uint32 ownerID) {
 
     if(!sDatabase.RunQuery(res,
         "SELECT"
-        " ownerID,"
-        " folderID,"
-        " folderName,"
-        " creatorID"
+        "  ownerID,"
+        "  folderID,"
+        "  folderName,"
+        "  creatorID"
         " FROM bookmarkFolders"
         " WHERE ownerID = %u",
         ownerID))
@@ -80,8 +81,8 @@ uint32 BookmarkDB::GetNextAvailableBookmarkID()
     DBQueryResult res;
 
     if (!sDatabase.RunQuery(res,
-        " SELECT "
-        "    bookmarkID "
+        "SELECT"
+        "  bookmarkID "
         " FROM bookmarks "
         " WHERE bookmarkID >= %u ", 0))
     {
@@ -174,25 +175,29 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
 
 bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint32 &itemID, uint32 &typeID,
                                         uint32 &flag, std::string &memo, uint64 &created, double &x, double &y,
-                                        double &z, uint32 &locationID)
+                                        double &z, uint32 &locationID, std::string &note, uint32 &creatorID,
+                                        uint32 folderID)
 {
     DBQueryResult res;
-       DBResultRow row;
+    DBResultRow row;
 
     // Query database 'bookmarks' table for the supplied bookmarkID and retrieve entire row:
     if (!sDatabase.RunQuery(res,
-        " SELECT "
-        "    bookmarkID, "
-        "   ownerID, "
-        "   itemID, "
-        "   typeID, "
-        "   flag, "
-        "   memo, "
-        "   created, "
-        "   x, "
-        "   y, "
-        "   z, "
-        "   locationID "
+        "SELECT "
+        "  bookmarkID, "
+        "  ownerID, "
+        "  itemID, "
+        "  typeID, "
+        "  flag, "
+        "  memo, "
+        "  created, "
+        "  x, "
+        "  y, "
+        "  z, "
+        "  locationID, "
+        "  note,"
+        "  creatorID,"
+        "  folderID"
         " FROM bookmarks "
         " WHERE bookmarkID = %u ", bookmarkID))
     {
@@ -215,6 +220,9 @@ bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint
     y = row.GetDouble(8);
     z = row.GetDouble(9);
     locationID = row.GetUInt(10);
+    note = row.GetUInt(11);
+    creatorID = row.GetUInt(12);
+    folderID = row.GetUInt(13);
 
     return true;
 }
@@ -222,7 +230,8 @@ bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint
 
 bool BookmarkDB::SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, uint32 itemID,
                                uint32 typeID, uint32 flag, std::string memo, uint64 created,
-                               double x, double y, double z, uint32 locationID)
+                               double x, double y, double z, uint32 locationID, std::string note,
+                               uint32 creatorID, uint32 folderID)
 {
     DBQueryResult res;
     DBerror err;
@@ -232,9 +241,9 @@ bool BookmarkDB::SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, u
 
     if (!sDatabase.RunQuery(err,
         " INSERT INTO bookmarks "
-        " (bookmarkID, ownerID, itemID, typeID, flag, memo, created, x, y, z, locationID)"
-        " VALUES (%u, %u, %u, %u, %u, '%s', %" PRIu64 ", %f, %f, %f, %u) ",
-        bookmarkID, ownerID, itemID, typeID, flag, memo.c_str(), created, x, y, z, locationID
+        " (bookmarkID, ownerID, itemID, typeID, flag, memo, created, x, y, z, locationID, note, creatorID, folderID)"
+        " VALUES (%u, %u, %u, %u, %u, '%s', %" PRIu64 ", %f, %f, %f, %u, '%s', %u, %u) ",
+        bookmarkID, ownerID, itemID, typeID, flag, memo.c_str(), created, x, y, z, locationID, note.c_str(), creatorID, folderID
         ))
     {
         sLog.Error( "BookmarkDB::SaveNewBookmarkToDatabase()", "Error in query, Bookmark content couldn't be saved: %s", err.c_str() );
