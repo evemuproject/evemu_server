@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Luck, Aknor Jaden
+    Author:        Aknor Jaden, Luck
 */
 
 #ifndef MODULE_DB_H
@@ -36,14 +36,13 @@ public:
 
     static void GetAllDgmEffects(DBQueryResult &res);
     static void GetAllDgmEffectsInfo(DBQueryResult &res);
-    static void GetAllDgmEffectsActions(DBQueryResult &res);
-    static void GetAllDgmTypeAttributeModifiers(DBQueryResult &res);
+    static void GetAllDgmSkillBonusModifiers(DBQueryResult &res);
+    static void GetAllDgmShipBonusModifiers(DBQueryResult &res);
 
     static void GetDgmEffects(uint32 effectID, DBQueryResult &res);
     static void GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res);
-    static void GetDgmEffectsActions(uint32 effectID, DBQueryResult &res);
-    static void GetDgmTypeEffectsInformation(uint32 typeID, DBQueryResult &res);
-
+    static void GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res);
+    static void GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res);
 };
 
 

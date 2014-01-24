@@ -25,46 +25,102 @@
 
 #include "eve-core.h"
 
-#include "log/HTML_Log.h"
+#include "log/Basic_Log.h"
 #include "log/logtypes.h"
 #include "log/logsys.h"
 
 /*************************************************************************/
-/* HTML_Log                                                                */
+/* Basic_Log                                                                */
 /*************************************************************************/
-HTML_Log::HTML_Log()
+#ifdef HAVE_WINDOWS_H
+const WORD Basic_Log::COLOR_TABLE[ COLOR_COUNT ] =
 {
-	mLogfile = NULL;
-	mTime = 0;
-	mLogFilename = "";
+    ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE                        ), // COLOR_DEFAULT
+    ( 0                                                                          ), // COLOR_BLACK
+    ( FOREGROUND_RED                                      | FOREGROUND_INTENSITY ), // COLOR_RED
+    (                  FOREGROUND_GREEN                   | FOREGROUND_INTENSITY ), // COLOR_GREEN
+    ( FOREGROUND_RED | FOREGROUND_GREEN                   | FOREGROUND_INTENSITY ), // COLOR_YELLOW
+    (                                     FOREGROUND_BLUE | FOREGROUND_INTENSITY ), // COLOR_BLUE
+    ( FOREGROUND_RED                    | FOREGROUND_BLUE | FOREGROUND_INTENSITY ), // COLOR_MAGENTA
+    (                  FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY ), // COLOR_CYAN
+    ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY )  // COLOR_WHITE
+};
+#else /* !HAVE_WINDOWS_H */
+const char* const Basic_Log::COLOR_TABLE[ COLOR_COUNT ] =
+{
+    "\033[" "00"    "m", // COLOR_DEFAULT
+    "\033[" "30;22" "m", // COLOR_BLACK
+    "\033[" "31;22" "m", // COLOR_RED
+    "\033[" "32;22" "m", // COLOR_GREEN
+    "\033[" "33;01" "m", // COLOR_YELLOW
+    "\033[" "34;01" "m", // COLOR_BLUE
+    "\033[" "35;22" "m", // COLOR_MAGENTA
+    "\033[" "36;01" "m", // COLOR_CYAN
+    "\033[" "37;01" "m"  // COLOR_WHITE
+};
+#endif /* !HAVE_WINDOWS_H */
+
+Basic_Log::Basic_Log()
+: mLogfile( NULL ),
+  mTime( 0 ),
+  mLogFilename( "" )
+{
 	assert(false);		// DO NOT EVER call the empty parameter constructor!
     m_initialized = false;
 }
 
-HTML_Log::HTML_Log(std::string logPath, std::string logSubdirectory, std::string logFilename)
-	: Basic_Log(logPath,logSubdirectory,logFilename)
-{
-}
-
-HTML_Log::~HTML_Log()
-{
-}
-
-/*
-void HTML_Log::InitializeLogging( std::string logPath )
+Basic_Log::Basic_Log(std::string logPath, std::string logSubdirectory, std::string logFilename)
+: mLogfile( NULL ),
+  mTime( 0 ),
+  mLogFilename( "" )
 {
     // use default logpath if logPath is empty
     if( logPath.empty() )
         logPath = EVEMU_ROOT "/log/";
 
-    m_initialized = true;
+	if( logFilename.empty() )
+		logFilename = "name_your_log_file.log";
 
-    SetLogfileDefault(logPath + mLogFilename);
+	if( !(logSubdirectory.empty()) )
+		CreateDirectory( (logPath + logSubdirectory).c_str(), NULL );
 
-	Debug( mLogFilename.c_str(), "Log system initiated" );
+	mLogPath = logPath + logSubdirectory + "/";
+	mLogFilename = logFilename;
+
+    m_initialized = false;
 }
 
-void HTML_Log::Log( const char* source, const char* fmt, ... )
+Basic_Log::~Basic_Log()
+{
+	Debug( mLogFilename.c_str(), "Log system shutting down" );
+
+    // close logfile
+    SetLogfile( (FILE*)NULL );
+}
+
+void Basic_Log::InitializeLogging(std::string logPath, std::string logSubdirectory, std::string logFilename)
+{
+    // use default logpath if logPath is empty
+    if( logPath.empty() )
+        logPath = EVEMU_ROOT "/log/";
+
+	if( logFilename.empty() )
+		logFilename = "name_your_log_file.log";
+
+	if( !(logSubdirectory.empty()) )
+		CreateDirectory( (logPath + logSubdirectory).c_str(), NULL );
+
+	mLogPath = logPath + logSubdirectory + "/";
+	mLogFilename = logFilename;
+
+    m_initialized = true;
+
+	SetLogfileDefault(mLogPath + mLogFilename);
+
+    Debug( "Log", "Log system initiated" );
+}
+
+void Basic_Log::Log( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -74,7 +130,7 @@ void HTML_Log::Log( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void HTML_Log::Error( const char* source, const char* fmt, ... )
+void Basic_Log::Error( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -84,7 +140,7 @@ void HTML_Log::Error( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void HTML_Log::Warning( const char* source, const char* fmt, ... )
+void Basic_Log::Warning( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -94,7 +150,7 @@ void HTML_Log::Warning( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void HTML_Log::Success( const char* source, const char* fmt, ... )
+void Basic_Log::Success( const char* source, const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -104,7 +160,7 @@ void HTML_Log::Success( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void HTML_Log::Debug( const char* source, const char* fmt, ... )
+void Basic_Log::Debug( const char* source, const char* fmt, ... )
 {
 //#ifndef NDEBUG
     if( is_log_enabled( DEBUG__DEBUG ) )
@@ -116,10 +172,10 @@ void HTML_Log::Debug( const char* source, const char* fmt, ... )
 
         va_end( ap );
     }
-//#endif // !NDEBUG
+//#endif /* !NDEBUG */
 }
 
-bool HTML_Log::SetLogfile( const char* filename )
+bool Basic_Log::SetLogfile( const char* filename )
 {
     MutexLock l( mMutex );
 
@@ -135,7 +191,7 @@ bool HTML_Log::SetLogfile( const char* filename )
     return SetLogfile( file );
 }
 
-bool HTML_Log::SetLogfile( FILE* file )
+bool Basic_Log::SetLogfile( FILE* file )
 {
     MutexLock l( mMutex );
 
@@ -145,9 +201,8 @@ bool HTML_Log::SetLogfile( FILE* file )
     mLogfile = file;
     return true;
 }
-*/
 
-void HTML_Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap )
+void Basic_Log::PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap )
 {
     if( !m_initialized )
         return;
@@ -173,7 +228,7 @@ void HTML_Log::PrintMsg( Color color, char pfx, const char* source, const char* 
     SetColor( COLOR_DEFAULT );
 }
 
-void HTML_Log::PrintTime()
+void Basic_Log::PrintTime()
 {
     MutexLock l( mMutex );
 
@@ -186,7 +241,7 @@ void HTML_Log::PrintTime()
     Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
 }
 
-void HTML_Log::Print( const char* fmt, ... )
+void Basic_Log::Print( const char* fmt, ... )
 {
     va_list ap;
     va_start( ap, fmt );
@@ -196,7 +251,7 @@ void HTML_Log::Print( const char* fmt, ... )
     va_end( ap );
 }
 
-void HTML_Log::PrintVa( const char* fmt, va_list ap )
+void Basic_Log::PrintVa( const char* fmt, va_list ap )
 {
     MutexLock l( mMutex );
 
@@ -219,14 +274,14 @@ void HTML_Log::PrintVa( const char* fmt, va_list ap )
     vprintf( fmt, ap );
 }
 
-void HTML_Log::SetColor( Color color )
+void Basic_Log::SetColor( Color color )
 {
     assert( 0 <= color && color < COLOR_COUNT );
 
     MutexLock l( mMutex );
 }
 
-void HTML_Log::SetLogfileDefault(std::string logPath)
+void Basic_Log::SetLogfileDefault(std::string logPath)
 {
     MutexLock l( mMutex );
 
@@ -238,7 +293,7 @@ void HTML_Log::SetLogfileDefault(std::string logPath)
 
     // open default logfile
     char filename[ FILENAME_MAX + 1 ];
-    std::string logFile = logPath + "log_%02u-%02u-%04u-%02u-%02u.log";
+    std::string logFile = logPath + "_log_%02u-%02u-%04u-%02u-%02u.log";
     snprintf( filename, FILENAME_MAX + 1, logFile.c_str(),
               t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min );
     //snprintf( filename, FILENAME_MAX + 1, EVEMU_ROOT "/log/log_%02u-%02u-%04u-%02u-%02u.log",

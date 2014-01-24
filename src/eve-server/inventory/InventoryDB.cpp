@@ -174,7 +174,7 @@ bool InventoryDB::GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into) {
 		into.push_back( row.GetUInt(0) );
 
     if( into.size() == 0 ) {
-        _log(DATABASE__ERROR, "Type %u not found.", typeID);
+        _log(ITEM__DEBUG, "No type effects found for type %u.", typeID);
         return false;
     }
 
@@ -197,7 +197,6 @@ bool InventoryDB::GetBlueprintType(uint32 blueprintTypeID, BlueprintTypeData &in
         " productivityModifier,"
         " materialModifier,"
         " wasteFactor / 100,"   // we have it in db as percentage ...
-        " chanceOfReverseEngineering,"
         " maxProductionLimit"
         " FROM invBlueprintTypes"
         " WHERE blueprintTypeID=%u",
@@ -224,8 +223,7 @@ bool InventoryDB::GetBlueprintType(uint32 blueprintTypeID, BlueprintTypeData &in
     into.productivityModifier = row.GetUInt(8);
     into.materialModifier = row.GetUInt(9);
     into.wasteFactor = row.GetDouble(10);
-    into.chanceOfReverseEngineering = row.GetDouble(11);
-    into.maxProductionLimit = row.GetUInt(12);
+    into.maxProductionLimit = row.GetUInt(11);
 
     return true;
 }

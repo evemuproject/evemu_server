@@ -59,9 +59,11 @@ public:
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, bool self_only) const;
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, std::vector<PyTuple *> &events, bool self_only) const;
 
+	// Information query functions:
     const GPoint &GetPosition() const { return(m_position); }
     const GVector &GetVelocity() const { return(m_velocity); }
     double GetSpeedFraction() { return(m_activeSpeedFraction); }
+	SystemManager * const GetSystemManager() { return m_system; }
 
     //called whenever an entity is going away and can no longer be used as a target
     void EntityRemoved(SystemEntity *who);
@@ -129,6 +131,10 @@ protected:
     double m_accelerationFactor;		//crazy units
     double m_velocityAdjuster;			//unitless
 
+	double m_warpNumerator;
+	double m_warpDenomenator;
+	double m_warpExpFactor;
+	double m_warpVelocityMagnitudeFactorDivisor;
     double m_warpDecelerateFactor;
 
     //User controlled information used by a state to determine what to do.

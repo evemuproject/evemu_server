@@ -167,11 +167,11 @@ int main( int argc, char* argv[] )
     sLog.Log("server init", "Loading server configuration...");
 
     sLog.Log("", "" );
-    sLog.Log("version", "EVEmu " EVEMU_VERSION );
+    sLog.Log("SERVER VERSION", "EVEmu " EVEMU_VERSION );
     sLog.Log("", "" );
-    sLog.Log("source", "get at " EVEMU_REPOSITORY );
+    sLog.Log("SOURCE", "get at " EVEMU_REPOSITORY );
     sLog.Log("", "" );
-    sLog.Log("server init", "\n"
+    sLog.Log("SERVER INIT", "\n"
         "\tSupported Client: %s\n"
         "\tVersion %.2f\n"
         "\tBuild %d\n"
@@ -338,7 +338,14 @@ int main( int argc, char* argv[] )
 
     // start up the image server
     sLog.Log("server init", "Loading Dynamic Database Table Objects...");
-    sDGM_Effects_Table.Initialize();
+
+	// Create In-Memory Database Objects for Critical Systems, such as ModuleManager:
+	sLog.Log("server init", "---> sDGM_Effects_Table: Loading...");
+	sDGM_Effects_Table.Initialize();
+	sLog.Log("server init", "---> sDGM_Skill_Bonus_Modifiers_Table: Loading...");
+	sDGM_Skill_Bonus_Modifiers_Table.Initialize();
+	//sLog.Log("server init", "---> sDGM_Ship_Bonus_Modifiers_Table: Loading...");
+	//sDGM_Ship_Bonus_Modifiers_Table.Initialize();
 
     sLog.Log("server init", "Init done.");
 
