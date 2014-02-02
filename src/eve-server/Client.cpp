@@ -84,6 +84,7 @@ Client::~Client() {
         GetShip()->SaveShip();                              // Save Ship's and Modules' attributes and info to DB
         GetChar()->SaveCharacter();                         // Save Character info to DB
         GetChar()->SaveSkillQueue();                        // Save Skill Queue to DB
+        GetChar()->UpdateSkillQueueEndTime();               // Save Queue End Time to DB
 
         // remove ourselves from system
         if(m_system != NULL)
