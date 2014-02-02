@@ -438,6 +438,7 @@ public:
      * Update skill training end time on char select screen.
      * @author allan
      */
+    void UpdateSkillQueueEndTime();
     void UpdateSkillQueueEndTime( const SkillQueue &queue);
 
     /* GrantCertificate( uint32 certificateID )

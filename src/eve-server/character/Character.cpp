@@ -902,8 +902,6 @@ void Character::UpdateSkillQueue()
     SaveCharacter();
     SaveSkillQueue();
 
-    // update queue end time:
-    UpdateSkillQueueEndTime(m_skillQueue);
 }
 
 //  this still needs work...have to check for multiple levels of same skill.
@@ -929,6 +927,11 @@ void Character::UpdateSkillQueueEndTime(const SkillQueue &queue)
         return;
     }
     return;
+}
+
+void Character::UpdateSkillQueueEndTime()
+{
+    UpdateSkillQueueEndTime(m_skillQueue);
 }
 
 PyDict *Character::CharGetInfo() {
