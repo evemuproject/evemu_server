@@ -350,7 +350,7 @@ int main( int argc, char* argv[] )
 	sLog.Log("server init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
 	sDGM_Types_to_Wrecks_Table.Initialize();
 
-    sLog.Log("server init", "Init done.");
+        sLog.Log("server init", "Init done.");
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	//     !!!  DO NOT PUT ANY INITIALIZATION CODE OR CALLS BELOW THIS LINE   !!!
