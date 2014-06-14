@@ -130,3 +130,4 @@ release/
 /src/eve-xmlpktgen/eve-xmlpktgen
 
 # evemu output
+/evemu_client_stack_trace.txt
