@@ -90,5 +90,43 @@ Generated_Code #added for RIA/Silverlight projects
 MySQL/
 zlib/
 
-# evemu output
+# compiler files
+*.gch
+
+# CMake files
+cmake_install.cmake
+CTestTestfile.cmake
+CMakeCache.txt
+CMakeFiles/
+CPackSourceConfig.cmake
+CPackConfig.cmake
+Makefile
+/config.h
+
+# netbeans project and build files.
+nbproject/
 build/
+release/
+
+# auto-generated documentation.
+/doc/Doxyfile
+/doc/html/
+
+# dependancy builds
+/lua-5.1.5/
+/utf8_v2_3_2/
+/utf8_v2_3_2.zip
+/lua-5.1.5.tar.gz
+/compile_commands.json
+
+#some source and header files that are auto-generated.
+/src/eve-common/packets/*.h
+/src/eve-common/packets/*.cpp
+/src/eve-test/eve-test.cpp
+
+#some executables that are generated
+/src/eve-tool/eve-tool
+/src/eve-test/eve-test
+/src/eve-xmlpktgen/eve-xmlpktgen
+
+# evemu output
