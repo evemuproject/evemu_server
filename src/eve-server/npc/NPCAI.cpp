@@ -35,9 +35,9 @@
 
 NPCAIMgr::NPCAIMgr(NPC *who)
 : m_state(Idle),
-  m_entityFlyRange2(who->Item()->GetAttribute(AttrEntityFlyRange)*who->Item()->GetAttribute(AttrEntityFlyRange)),
-  m_entityChaseMaxDistance2(who->Item()->GetAttribute(AttrEntityChaseMaxDistance)*who->Item()->GetAttribute(AttrEntityChaseMaxDistance)),
-  m_entityAttackRange2(who->Item()->GetAttribute(AttrEntityAttackRange)*who->Item()->GetAttribute(AttrEntityAttackRange)),
+  m_entityFlyRange2(EvilNumber::pow(who->Item()->GetAttribute(AttrEntityFlyRange), 2) ),
+  m_entityChaseMaxDistance2(EvilNumber::pow(who->Item()->GetAttribute(AttrEntityChaseMaxDistance), 2) ),
+  m_entityAttackRange2(EvilNumber::pow(who->Item()->GetAttribute(AttrEntityAttackRange), 2) ),
   m_npc(who),
   m_processTimer(50),    //arbitrary.
   m_mainAttackTimer(1),    //we want this to always trigger the first time through.
@@ -234,17 +234,18 @@ void NPCAIMgr::_EnterEngaged(SystemEntity *target) {
     //m_npc->Destiny()->Follow(target, m_npc->Item()->entityFlyRange());
     //not sure if we should use orbitRange or entityFlyRange...
     EvilNumber orbit_range = m_npc->Item()->GetAttribute(AttrOrbitRange);
-    if( orbit_range > m_npc->Item()->GetAttribute(AttrEntityAttackRange) )
-	{
+    EvilNumber attack_range = m_npc->Item()->GetAttribute(AttrEntityAttackRange);
+    if( orbit_range > attack_range )
+    {
         orbit_range = m_npc->Item()->GetAttribute(AttrMaxRange);
-		if( orbit_range > m_npc->Item()->GetAttribute(AttrEntityAttackRange) )
-			orbit_range = m_npc->Item()->GetAttribute(AttrEntityFlyRange);
+        if( orbit_range > attack_range )
+            orbit_range = m_npc->Item()->GetAttribute(AttrEntityFlyRange);
     }
-	if( orbit_range.get_float() == 0.0 )
-	{
-		GVector vectorToTarget( m_npc->GetPosition(), target->GetPosition() );
-    	orbit_range = vectorToTarget.length();
-	}
+    if( orbit_range.get_float() == 0.0 )
+    {
+        GVector vectorToTarget( m_npc->GetPosition(), target->GetPosition() );
+        orbit_range = vectorToTarget.length();
+    }
     m_npc->Destiny()->OrbitingCruise(target, orbit_range.get_float(),true, m_npc->Item()->GetAttribute(AttrEntityCruiseSpeed).get_float());
     m_state = Engaged;
 }

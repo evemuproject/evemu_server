@@ -229,17 +229,19 @@ void EnergyTurret::DoCycle()
 		double thermal_damage = 0.0;
 		double em_damage = 0.0;
 		double explosive_damage = 0.0;
+                double damageMultiplier = m_Item->GetAttribute(AttrDamageMultiplier).get_float();
+                EvilNumber damage;
 
 		// This still somehow needs skill, ship, module, and implant bonuses to be applied:
 		// This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-		if( m_chargeRef->HasAttribute(AttrKineticDamage) )
-			kinetic_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrKineticDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrThermalDamage) )
-			thermal_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrThermalDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrEmDamage) )
-			em_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrEmDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrExplosiveDamage) )
-			explosive_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrExplosiveDamage)).get_float();
+		if( m_chargeRef->HasAttribute(AttrKineticDamage, damage) )
+			kinetic_damage = damageMultiplier * damage.get_float();
+		if( m_chargeRef->HasAttribute(AttrThermalDamage, damage) )
+			thermal_damage = damageMultiplier * damage.get_float();
+		if( m_chargeRef->HasAttribute(AttrEmDamage, damage) )
+			em_damage = damageMultiplier * damage.get_float();
+		if( m_chargeRef->HasAttribute(AttrExplosiveDamage, damage) )
+			explosive_damage = damageMultiplier * damage.get_float();
 
 		Damage damageDealt
 		(

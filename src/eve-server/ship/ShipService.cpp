@@ -996,11 +996,13 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     GPoint shipPosition = call.client->GetPosition();
     uint32 oldShipItemID = call.client->GetShipID();
     GPoint capsulePosition = call.client->GetPosition();
+    // get radius once for efficiency.
+    double attrRadius = call.client->GetShip()->GetAttribute(AttrRadius).get_float();
 
     //set capsule position 500m off from old ship:
-    capsulePosition.x += call.client->GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
-    capsulePosition.y += call.client->GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
-    capsulePosition.z += call.client->GetShip()->GetAttribute(AttrRadius).get_float() - 100.0;
+    capsulePosition.x += attrRadius + 100.0;
+    capsulePosition.y += attrRadius + 100.0;
+    capsulePosition.z += attrRadius - 100.0;
 
     //spawn capsule (inside ship, flagCapsule, singleton)
     ItemData idata(
