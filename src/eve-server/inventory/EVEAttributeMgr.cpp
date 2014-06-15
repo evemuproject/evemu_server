@@ -402,6 +402,14 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
     return EvilNumber(0);
 }
 
+EvilNumber AttributeMap::GetAttribute( const uint32 attributeId, const EvilNumber &defaultValue ) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeId);
+    if (itr != mAttributes.end())
+        return itr->second;
+    return defaultValue;
+}
+
 bool AttributeMap::HasAttribute(const uint32 attributeID) const
 {
     AttrMapConstItr itr = mAttributes.find(attributeID);

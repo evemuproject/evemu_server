@@ -723,7 +723,7 @@ ModuleManager::ModuleManager(Ship *const ship)
                                     (uint32)ship->GetAttribute(AttrMedSlots).get_int(),
                                     (uint32)ship->GetAttribute(AttrHiSlots).get_int(),
                                     (uint32)ship->GetAttribute(AttrRigSlots).get_int(),
-                                    (uint32)ship->GetAttribute(AttrSubSystemSlot).get_int(),
+                                    (uint32)ship->GetAttribute(AttrSubSystemSlot, 0).get_int(),
                                     (uint32)ship->GetAttribute(AttrTurretSlotsLeft).get_int(),
                                     (uint32)ship->GetAttribute(AttrLauncherSlotsLeft).get_int(),
                                     this);

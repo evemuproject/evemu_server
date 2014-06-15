@@ -411,7 +411,7 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
         for(uint32 index=0; index<subSystemList.size(); index++)
         {
             subSystemItem = m_manager->item_factory.GetItem( subSystemList.at( index ) );
-            subSystemItem->MoveInto( *ship, (EVEItemFlags)(subSystemItem->GetAttribute(AttrSubSystemSlot).get_int()), true );
+            subSystemItem->MoveInto( *ship, (EVEItemFlags)(subSystemItem->GetAttribute(AttrSubSystemSlot, 0).get_int()), true );
         }
     }
 

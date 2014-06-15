@@ -1214,6 +1214,11 @@ EvilNumber InventoryItem::GetAttribute( const uint32 attributeID ) const
      return mAttributeMap.GetAttribute(attributeID);
 }
 
+EvilNumber InventoryItem::GetAttribute( const uint32 attributeID , const EvilNumber &defaultValue ) const
+{
+     return mAttributeMap.GetAttribute(attributeID, defaultValue);
+}
+
 EvilNumber InventoryItem::GetDefaultAttribute( const uint32 attributeID ) const
 {
      return mDefaultAttributeMap.GetAttribute(attributeID);
