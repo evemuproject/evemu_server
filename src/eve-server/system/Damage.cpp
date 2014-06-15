@@ -85,23 +85,24 @@ Damage::Damage(
     InventoryItemRef _weapon,
     EVEEffectID _effect): source(_source), charge(), effect(_effect)
 {
-	if(_weapon->HasAttribute(AttrKineticDamage))
-		kinetic = _weapon->GetAttribute(AttrKineticDamage).get_float();
+    EvilNumber damage;
+	if(_weapon->HasAttribute(AttrKineticDamage, damage))
+		kinetic = damage.get_float();
 	else
 		kinetic = 0.0;
 
-	if(_weapon->HasAttribute(AttrThermalDamage))
-		thermal = _weapon->GetAttribute(AttrThermalDamage).get_float();
+	if(_weapon->HasAttribute(AttrThermalDamage, damage))
+		thermal = damage.get_float();
 	else
 		thermal = 0.0;
 
-	if(_weapon->HasAttribute(AttrEmDamage))
-		em = _weapon->GetAttribute(AttrEmDamage).get_float();
+	if(_weapon->HasAttribute(AttrEmDamage, damage))
+		em = damage.get_float();
 	else
 		em = 0.0;
 
-	if(_weapon->HasAttribute(AttrExplosiveDamage))
-		explosive = _weapon->GetAttribute(AttrExplosiveDamage).get_float();
+	if(_weapon->HasAttribute(AttrExplosiveDamage, damage))
+		explosive = damage.get_float();
 	else
 		explosive = 0.0;
 
@@ -114,23 +115,29 @@ Damage::Damage(
     InventoryItemRef _charge,
     EVEEffectID _effect): source(_source), charge(_charge), effect(_effect)
 {
-	if(_charge->HasAttribute(AttrKineticDamage))
-		kinetic = (_charge->GetAttribute(AttrKineticDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+    // pre-fetch the damage multiplyer so there is only 1 call for the attribute.
+    //even if there are multiple damage types for the charge.
+    EvilNumber damageMultiplier;
+    _charge->HasAttribute(AttrDamageMultiplier, damageMultiplier);
+
+    EvilNumber damage;
+	if(_charge->HasAttribute(AttrKineticDamage, damage))
+		kinetic = (damage * damageMultiplier).get_float();
 	else
 		kinetic = 0.0;
 
-	if(_charge->HasAttribute(AttrThermalDamage))
-		thermal = (_charge->GetAttribute(AttrThermalDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+	if(_charge->HasAttribute(AttrThermalDamage, damage))
+		thermal = (damage * damageMultiplier).get_float();
 	else
 		thermal = 0.0;
 
-	if(_charge->HasAttribute(AttrEmDamage))
-		em = (_charge->GetAttribute(AttrEmDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+	if(_charge->HasAttribute(AttrEmDamage, damage))
+		em = (damage * damageMultiplier).get_float();
 	else
 		em = 0.0;
 
-	if(_charge->HasAttribute(AttrExplosiveDamage))
-		explosive = (_charge->GetAttribute(AttrExplosiveDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+	if(_charge->HasAttribute(AttrExplosiveDamage, damage))
+		explosive = (damage * damageMultiplier).get_float();
 	else
 		explosive = 0.0;
 	
@@ -174,11 +181,11 @@ static const char *DamageMessageIDs_Other[6] = {
 void ItemSystemEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target) {
     //m_self->damageMultiplier()
 
+    EvilNumber damageMultiplier;
 	// Basic damage multiplier
-	if( target->Item()->HasAttribute(AttrDamageMultiplier) )
+	if( target->Item()->HasAttribute(AttrDamageMultiplier, damageMultiplier) )
 	{
-		double damageMultiplier = target->Item()->GetAttribute(AttrDamageMultiplier).get_float();
-		d.SumWithMultFactor(damageMultiplier);
+		d.SumWithMultFactor(damageMultiplier.get_float());
 	}
 
     //these are straight additives to the damage.

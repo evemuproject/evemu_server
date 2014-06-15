@@ -316,6 +316,10 @@ void ContainerEntity::MakeDamageState(DoDestinyDamageState &into) const
     into.timestamp = Win32TimeNow();
 //    armor damage isn't working...
     into.armor = 0.0;//1.0 - (m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float());
+    float attrHp = m_self->GetAttribute(AttrHp).get_float();
+    if(attrHp != 0) // prevent divide by zero
+      into.structure = 1.0 - (m_self->GetAttribute(AttrDamage).get_float() / attrHp);
+    else // no hp so nothing left return 0
+      into.structure = 0;
 }
 
