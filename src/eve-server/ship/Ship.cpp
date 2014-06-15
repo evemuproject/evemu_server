@@ -437,27 +437,27 @@ bool Ship::ValidateBoardShip(ShipRef ship, CharacterRef character)
     EvilNumber skillTypeID;
 
     if( ship->HasAttribute(AttrRequiredSkill1, skillTypeID) )
-        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill1Level).get_int()) )) )
+        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID.get_int()), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill1Level).get_int()) )) )
             return false;
 
     if( ship->HasAttribute(AttrRequiredSkill2, skillTypeID) )
-        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill2Level).get_int() ))) )
+        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID.get_int()), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill2Level).get_int() ))) )
             return false;
 
     if( ship->HasAttribute(AttrRequiredSkill3, skillTypeID) )
-        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill3Level).get_int() ))) )
+        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID.get_int()), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill3Level).get_int() ))) )
             return false;
 
     if( ship->HasAttribute(AttrRequiredSkill4, skillTypeID) )
-        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill4Level).get_int() ))) )
+        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID.get_int()), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill4Level).get_int() ))) )
             return false;
 
     if( ship->HasAttribute(AttrRequiredSkill5, skillTypeID) )
-        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill5Level).get_int() )) ))
+        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID.get_int()), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill5Level).get_int() )) ))
             return false;
 
     if( ship->HasAttribute(AttrRequiredSkill6, skillTypeID) )
-        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill6Level).get_int() )) ))
+        if( !(character->HasSkillTrainedToLevel( static_cast<uint32>(skillTypeID.get_int()), static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill6Level).get_int() )) ))
             return false;
 
     return true;
