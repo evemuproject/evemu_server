@@ -689,14 +689,15 @@ PyPackedRow* InventoryItem::GetItemStatusRow() const
 
 void InventoryItem::GetItemStatusRow( PyPackedRow* into ) const
 {
+    EvilNumber attrib;
     into->SetField( "instanceID",    new PyLong( itemID() ) );
-	into->SetField( "online",        new PyBool( (mAttributeMap.HasAttribute(AttrIsOnline) ? GetAttribute(AttrIsOnline).get_int() : 0) ) );
-    into->SetField( "damage",        new PyFloat( (mAttributeMap.HasAttribute(AttrDamage) ? GetAttribute(AttrDamage).get_float() : 0) ) );
-    into->SetField( "charge",        new PyFloat( (mAttributeMap.HasAttribute(AttrCharge) ? GetAttribute(AttrCharge).get_float() : 0) ) );
-    into->SetField( "skillPoints",   new PyInt( (mAttributeMap.HasAttribute(AttrSkillPoints) ? GetAttribute(AttrSkillPoints).get_int() : 0) ) );
-    into->SetField( "armorDamage",   new PyFloat( (mAttributeMap.HasAttribute(AttrArmorDamageAmount) ? GetAttribute(AttrArmorDamageAmount).get_float() : 0.0) ) );
-    into->SetField( "shieldCharge",  new PyFloat( (mAttributeMap.HasAttribute(AttrShieldCharge) ? GetAttribute(AttrShieldCharge).get_float() : 0.0) ) );
-    into->SetField( "incapacitated", new PyBool( (mAttributeMap.HasAttribute(AttrIsIncapacitated) ? GetAttribute(AttrIsIncapacitated).get_int() : 0) ) );
+    into->SetField( "online",        new PyBool( (mAttributeMap.HasAttribute(AttrIsOnline, attrib) ? attrib.get_int() : 0) ) );
+    into->SetField( "damage",        new PyFloat( (mAttributeMap.HasAttribute(AttrDamage, attrib) ? attrib.get_float() : 0) ) );
+    into->SetField( "charge",        new PyFloat( (mAttributeMap.HasAttribute(AttrCharge, attrib) ? attrib.get_float() : 0) ) );
+    into->SetField( "skillPoints",   new PyInt( (mAttributeMap.HasAttribute(AttrSkillPoints, attrib) ? attrib.get_int() : 0) ) );
+    into->SetField( "armorDamage",   new PyFloat( (mAttributeMap.HasAttribute(AttrArmorDamageAmount, attrib) ? attrib.get_float() : 0.0) ) );
+    into->SetField( "shieldCharge",  new PyFloat( (mAttributeMap.HasAttribute(AttrShieldCharge, attrib) ? attrib.get_float() : 0.0) ) );
+    into->SetField( "incapacitated", new PyBool( (mAttributeMap.HasAttribute(AttrIsIncapacitated, attrib) ? attrib.get_int() : 0) ) );
 }
 
 PyPackedRow* InventoryItem::GetItemRow() const
@@ -1208,19 +1209,9 @@ bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num, bool notify /*
 	return status;
 }
 
-EvilNumber InventoryItem::GetAttribute( uint32 attributeID )
-{
-    return mAttributeMap.GetAttribute(attributeID);
-}
-
 EvilNumber InventoryItem::GetAttribute( const uint32 attributeID ) const
 {
      return mAttributeMap.GetAttribute(attributeID);
-}
-
-EvilNumber InventoryItem::GetDefaultAttribute( uint32 attributeID )
-{
-    return mDefaultAttributeMap.GetAttribute(attributeID);
 }
 
 EvilNumber InventoryItem::GetDefaultAttribute( const uint32 attributeID ) const
@@ -1228,9 +1219,14 @@ EvilNumber InventoryItem::GetDefaultAttribute( const uint32 attributeID ) const
      return mDefaultAttributeMap.GetAttribute(attributeID);
 }
 
-bool InventoryItem::HasAttribute(uint32 attributeID)
+bool InventoryItem::HasAttribute(const uint32 attributeID) const
 {
     return mAttributeMap.HasAttribute(attributeID);
+}
+
+bool InventoryItem::HasAttribute(const uint32 attributeID, EvilNumber &value) const
+{
+    return mAttributeMap.HasAttribute(attributeID, value);
 }
 
 bool InventoryItem::SaveAttributes()
