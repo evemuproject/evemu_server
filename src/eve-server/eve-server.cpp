@@ -138,6 +138,11 @@ dgmtypeattributemgr * _sDgmTypeAttrMgr;
 
 int main( int argc, char* argv[] )
 {
+    // unbuffer the stdout so that custom terminal or gui type
+    // programs can properly capture the output of the server.
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdin, NULL, _IONBF, 0);
+    
 #if defined( HAVE_CRTDBG_H ) && !defined( NDEBUG )
     // Under Visual Studio setup memory leak detection
     _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG ) );

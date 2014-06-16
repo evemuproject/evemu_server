@@ -28,9 +28,9 @@
 #include "EntityList.h"
 #include "system/SystemBubble.h"
 #include "system/Damage.h"
-#include "ship/modules/weapon_modules/EnergyTurret.h"
+#include "ship/modules/weapon_modules/ProjectileTurret.h"
 
-EnergyTurret::EnergyTurret(InventoryItemRef item, ShipRef ship)
+ProjectileTurret::ProjectileTurret(InventoryItemRef item, ShipRef ship)
 {
     m_Item = item;
     m_Ship = ship;
@@ -42,47 +42,47 @@ EnergyTurret::EnergyTurret(InventoryItemRef item, ShipRef ship)
     m_chargeLoaded = false;
 }
 
-EnergyTurret::~EnergyTurret()
+ProjectileTurret::~ProjectileTurret()
 {
 
 }
 
-void EnergyTurret::Process()
+void ProjectileTurret::Process()
 {
     m_ActiveModuleProc->Process();
 }
 
-void EnergyTurret::Load(InventoryItemRef charge)
+void ProjectileTurret::Load(InventoryItemRef charge)
 {
     ActiveModule::Load(charge);
 }
 
-void EnergyTurret::Unload()
+void ProjectileTurret::Unload()
 {
     ActiveModule::Unload();
 }
 
-void EnergyTurret::Repair()
+void ProjectileTurret::Repair()
 {
 
 }
 
-void EnergyTurret::Overload()
+void ProjectileTurret::Overload()
 {
 
 }
 
-void EnergyTurret::DeOverload()
+void ProjectileTurret::DeOverload()
 {
 
 }
 
-void EnergyTurret::DestroyRig()
+void ProjectileTurret::DestroyRig()
 {
 
 }
 
-void EnergyTurret::Activate(SystemEntity * targetEntity)
+void ProjectileTurret::Activate(SystemEntity * targetEntity)
 {
     if (m_chargeRef.get() != NULL)
     {
@@ -144,12 +144,12 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
     }
     else
     {
-        sLog.Error("EnergyTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!");
+        sLog.Error("ProjectileTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!");
         throw PyException(MakeCustomError("ERROR!  Cannot find charge that is supposed to be loaded into this module!"));
     }
 }
 
-void EnergyTurret::Deactivate()
+void ProjectileTurret::Deactivate()
 {
     Notify_OnGodmaShipEffect shipEff;
     shipEff.itemID = m_Item->itemID();
@@ -187,7 +187,7 @@ void EnergyTurret::Deactivate()
     m_ActiveModuleProc->DeactivateCycle();
 }
 
-void EnergyTurret::DoCycle()
+void ProjectileTurret::DoCycle()
 {
     if (m_ActiveModuleProc->ShouldProcessActiveCycle())
     {
@@ -263,23 +263,19 @@ void EnergyTurret::DoCycle()
 
         m_targetEntity->ApplyDamage(damageDealt);
 
-        // check if the crystal takes damage.
-        if (m_chargeRef->GetAttribute(AttrCrystalsGetDamaged, 0) == 1)
+        // expend round.
+        if (m_chargeRef->quantity() <= 1)
         {
-            double random_chance = MakeRandomFloat(0, 100) / 100;
-            // check if random chance damages the crystal
-            if (random_chance < m_chargeRef->GetAttribute(AttrCrystalVolatilityChance).get_float())
+            // last rounds used.
+            if(m_Ship.get() != NULL)
             {
-                double newDamage = m_chargeRef->GetAttribute(AttrDamage).get_float() - m_chargeRef->GetAttribute(AttrCrystalVolatilityDamage).get_float();
-                m_chargeRef->SetAttribute(AttrDamage, newDamage, true, false);
-                if (newDamage <= 0)
-                {
-                    Deactivate();
-                    m_chargeRef->Delete();
-                    Unload();
-                    // to-do: auto-reload
-                }
+                Deactivate();
+                m_chargeRef->Delete();
+                Unload();
+                // to-do: auto-reload
             }
         }
+        else
+          m_chargeRef->AlterQuantity(-1, true);
     }
 }

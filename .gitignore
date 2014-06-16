@@ -128,6 +128,7 @@ release/
 /src/eve-tool/eve-tool
 /src/eve-test/eve-test
 /src/eve-xmlpktgen/eve-xmlpktgen
+/src/eve-server/eve-server
 
 # evemu output
 /evemu_client_stack_trace.txt
