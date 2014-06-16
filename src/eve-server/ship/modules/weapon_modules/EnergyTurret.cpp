@@ -91,56 +91,6 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 
         // Activate active processing component timer:
         m_ActiveModuleProc->ActivateCycle();
-        
-        // create the enviromental effect
-        Notify_OnGodmaShipEffect shipEff;
-        shipEff.itemID = m_Item->itemID();
-        shipEff.effectID = effectTargetAttack; // From EVEEffectID::
-        shipEff.when = Win32TimeNow();
-        shipEff.start = 1;
-        shipEff.active = 1;
-
-        PyList* env = new PyList;
-        env->AddItem(new PyInt(shipEff.itemID));
-        env->AddItem(new PyInt(m_Ship->ownerID()));
-        env->AddItem(new PyInt(m_Ship->itemID()));
-        env->AddItem(new PyInt(m_targetEntity->GetID()));
-        env->AddItem(new PyNone);
-        env->AddItem(new PyNone);
-        env->AddItem(new PyInt(10));
-
-        shipEff.environment = env;
-        shipEff.startTime = shipEff.when;
-        shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
-        shipEff.repeat = new PyInt(1000);
-        shipEff.randomSeed = new PyNone;
-        shipEff.error = new PyNone;
-
-        PyList* events = new PyList;
-        events->AddItem(shipEff.Encode());
-
-        Notify_OnMultiEvent multi;
-        multi.events = events;
-
-        PyTuple* tmp = multi.Encode();
-
-        m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
-        // Create Special Effect:
-        m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-                (
-                 m_Ship,
-                 m_Item->itemID(),
-                 m_Item->typeID(),
-                 m_targetID,
-                 m_chargeRef->itemID(),
-                 "effects.Laser",
-                 1,
-                 1,
-                 m_Item->GetAttribute(AttrSpeed).get_float(),
-                 1
-                 );
-
     }
     else
     {
@@ -216,13 +166,56 @@ void EnergyTurret::DoCycle()
         dmgMsg.target = m_targetEntity->GetID();
         dmgMsg.damage = (m_Item->GetAttribute(AttrDamageMultiplier).get_float() * 48.0);
 
+        Notify_OnGodmaShipEffect shipEff;
+        shipEff.itemID = m_Item->itemID();
+        shipEff.effectID = effectTargetAttack; // From EVEEffectID::
+        shipEff.when = Win32TimeNow();
+        shipEff.start = 1;
+        shipEff.active = 1;
+
+        PyList* env = new PyList;
+        env->AddItem(new PyInt(shipEff.itemID));
+        env->AddItem(new PyInt(m_Ship->ownerID()));
+        env->AddItem(new PyInt(m_Ship->itemID()));
+        env->AddItem(new PyInt(m_targetEntity->GetID()));
+        env->AddItem(new PyNone);
+        env->AddItem(new PyNone);
+        env->AddItem(new PyInt(10));
+
+        shipEff.environment = env;
+        shipEff.startTime = shipEff.when;
+        shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
+        shipEff.repeat = new PyInt(1000);
+        shipEff.randomSeed = new PyNone;
+        shipEff.error = new PyNone;
+
+        PyTuple* tmp = new PyTuple(3);
+        tmp->SetItem(1, dmgMsg.Encode());
+        tmp->SetItem(2, shipEff.Encode());
+
         std::vector<PyTuple*> events;
         events.push_back(dmgMsg.Encode());
+        events.push_back(shipEff.Encode());
 
         std::vector<PyTuple*> updates;
         updates.push_back(dmgChange.Encode());
 
         m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
+
+        // Create Special Effect:
+        m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
+                (
+                 m_Ship,
+                 m_Item->itemID(),
+                 m_Item->typeID(),
+                 m_targetID,
+                 m_chargeRef->itemID(),
+                 "effects.Laser",
+                 1,
+                 1,
+                 m_Item->GetAttribute(AttrSpeed).get_float(),
+                 1
+                 );
 
         // Create Damage action:
         //Damage( SystemEntity *_source,
