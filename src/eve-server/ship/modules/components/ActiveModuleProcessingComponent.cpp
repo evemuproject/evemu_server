@@ -54,7 +54,7 @@ ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
 void ActiveModuleProcessingComponent::Process()
 {
     //check if the timer expired & subtract time.  will always fail if disabled. (stopped))
-    if(m_timer.Check())
+    if(!m_timer.Check())
     {
         // nope still waiting.
         return;
@@ -69,14 +69,14 @@ void ActiveModuleProcessingComponent::Process()
     {
         // yep stop the cycle
         m_timer.Disable();
-        m_Item->SetActive(false, 1253, 0, false);
+        m_Item->SetActive(false, effectTargetAttack, 0, false);
     }
 
 }
 
 void ActiveModuleProcessingComponent::ActivateCycle()
 {
-  	if(m_Ship->GetAttribute(AttrCharge) > m_Mod->GetAttribute(AttrCapacitorNeed))
+  	if(m_Ship->GetAttribute(AttrCharge) < m_Mod->GetAttribute(AttrCapacitorNeed))
     {
         m_Mod->Deactivate();
         return;

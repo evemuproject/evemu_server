@@ -101,39 +101,37 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 
 void EnergyTurret::Deactivate()
 {
-    Notify_OnGodmaShipEffect shipEff;
-    shipEff.itemID = m_Item->itemID();
-    shipEff.effectID = effectTargetAttack;
-    shipEff.when = Win32TimeNow();
-    shipEff.start = 0;
-    shipEff.active = 0;
-
-    PyList* env = new PyList;
-    env->AddItem(new PyInt(shipEff.itemID));
-    env->AddItem(new PyInt(m_Ship->ownerID()));
-    env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt(m_targetEntity->GetID()));
-    env->AddItem(new PyNone);
-    env->AddItem(new PyNone);
-    env->AddItem(new PyInt(10));
-
-    shipEff.environment = env;
-    shipEff.startTime = shipEff.when;
-    shipEff.duration = m_ActiveModuleProc->GetRemainingCycleTimeMS(); // At least, I'm assuming this is the remaining time left in the cycle
-    shipEff.repeat = new PyInt(0);
-    shipEff.randomSeed = new PyNone;
-    shipEff.error = new PyNone;
-
-    PyList* events = new PyList;
-    events->AddItem(shipEff.Encode());
-
-    Notify_OnMultiEvent multi;
-    multi.events = events;
-
-    PyTuple* tmp = multi.Encode();
-
-    m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
+//    Notify_OnGodmaShipEffect shipEff;
+//    shipEff.itemID = m_Item->itemID();
+//    shipEff.effectID = effectTargetAttack;
+//    shipEff.when = Win32TimeNow();
+//    shipEff.start = 0;
+//    shipEff.active = 0;
+//
+//    PyList* env = new PyList;
+//    env->AddItem(new PyInt(shipEff.itemID));
+//    env->AddItem(new PyInt(m_Ship->ownerID()));
+//    env->AddItem(new PyInt(m_Ship->itemID()));
+//    env->AddItem(new PyInt(m_targetEntity->GetID()));
+//    env->AddItem(new PyNone);
+//    env->AddItem(new PyNone);
+//    env->AddItem(new PyInt(10));
+//
+//    shipEff.environment = env;
+//    shipEff.startTime = shipEff.when;
+//    shipEff.duration = m_ActiveModuleProc->GetRemainingCycleTimeMS(); // At least, I'm assuming this is the remaining time left in the cycle
+//    shipEff.repeat = new PyInt(0);
+//    shipEff.randomSeed = new PyNone;
+//    shipEff.error = new PyNone;
+//
+//    Notify_OnMultiEvent multi;
+//    multi.events = new PyList;
+//    multi.events->AddItem(shipEff.Encode());
+//
+//    PyTuple* tmp = multi.Encode();
+//
+//    m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
+//
     m_ActiveModuleProc->DeactivateCycle();
 }
 
@@ -248,7 +246,11 @@ void EnergyTurret::StartCycle()
              effectTargetAttack // from EVEEffectID::
              );
 
-    m_targetEntity->ApplyDamage(damageDealt);
+    if(m_targetEntity->ApplyDamage(damageDealt))
+    {
+        // target died.
+        m_ActiveModuleProc->DeactivateCycle();
+    }
 
     // check if the crystal takes damage.
     if (m_chargeRef->GetAttribute(AttrCrystalsGetDamaged, 0) == 1)
