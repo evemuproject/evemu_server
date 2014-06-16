@@ -37,24 +37,21 @@ public:
     ~ActiveModule();
 
 	virtual void Process()						{/*do nothing*/}
-    void Offline();
-    void Online();
-	void Activate(SystemEntity * targetEntity);
-    void Deactivate();
-    void Load(InventoryItemRef charge);
-    void Unload();
+    virtual void Offline();
+    virtual void Online();
+	virtual void Activate(SystemEntity * targetEntity);
+    virtual void Deactivate();
+    virtual void Load(InventoryItemRef charge);
+    virtual void Unload();
 
     //access functions
     ModulePowerLevel GetModulePowerLevel()                    { return isHighPower() ? MODULE_BANK_HIGH_POWER : ( isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER); }
 
 	InventoryItemRef GetLoadedChargeRef()					{ return m_chargeRef; }
 
-	bool isLoaded()											{ return m_chargeLoaded; }
-    bool isHighPower()                                        { return m_Effects->isHighSlot(); }
-    bool isMediumPower()                                    { return m_Effects->isMediumSlot(); }
-    bool isLowPower()                                        { return m_Effects->isLowSlot(); }
-    bool isRig()                                            { return false; }
-    bool isSubSystem()                                        { return false; }
+	virtual bool isLoaded()											{ return m_chargeLoaded; }
+    virtual bool isRig()                                            { return false; }
+    virtual bool isSubSystem()                                        { return false; }
     bool requiresTarget()
     {
         if( m_Effects->HasDefaultEffect() )
@@ -64,7 +61,18 @@ public:
     }
 
 	// Calls Reserved for components usage only!
-	virtual void DoCycle()									{ /* Do nothing here */ }
+    /**
+     * Called when the cycle starts.
+     * This is where special effects should be started.
+     * This is where weapons should do there damage or launch missiles
+     */
+	virtual void StartCycle()									{ /* Do nothing here */ }
+    /**
+     * Called when the cycle completes.
+     * This is where repair/mining modules should do there actions.
+     * @note mining modules should also gather there minerals when deactivated and then not again when the cycle ends.
+     */
+	virtual void EndCycle()									{ /* Do nothing here */ }
 
 protected:
     ModifyShipAttributesComponent * m_ShipAttrComp;

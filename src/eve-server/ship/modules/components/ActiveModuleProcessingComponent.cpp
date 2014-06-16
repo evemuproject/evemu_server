@@ -53,55 +53,45 @@ ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
 
 void ActiveModuleProcessingComponent::Process()
 {
-	//check if we have signal to stop the cycle
-	if(!m_Stop)
-	{
-		//check if the timer expired & subtract time
-		if(m_timer.Check())
-		{
-			if(ShouldProcessActiveCycle())
-			{
-				//time passed and we can drain cap and make/maintain changes to the attributes
-				sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
-				ProcessActiveCycle();
-			}
-			else
-			{
-				m_Item->SetActive(false, 1253, 0, false);
-				m_Stop = true;
-			}
-		}
-	}
-	else
-	{
-		if(m_timer.Check())
-		{
-			//wait for time to run out and send deactivate to client
-			m_timer.Disable();
-			m_Item->SetActive(false, 1253, 0, false);
-		}
-	}
-		
+    //check if the timer expired & subtract time.  will always fail if disabled. (stopped))
+    if(m_timer.Check())
+    {
+        // nope still waiting.
+        return;
+    }
+
+    //time passed and we can drain cap and make/maintain changes to the attributes
+    sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
+    ProcessActiveCycle();
+
+    //check if we have a signal to stop the cycle
+    if(m_Stop)
+    {
+        // yep stop the cycle
+        m_timer.Disable();
+        m_Item->SetActive(false, 1253, 0, false);
+    }
+
 }
 
 void ActiveModuleProcessingComponent::ActivateCycle()
 {
+  	if(m_Ship->GetAttribute(AttrCharge) > m_Mod->GetAttribute(AttrCapacitorNeed))
+    {
+        m_Mod->Deactivate();
+        return;
+    }
 	m_Stop = false;
-	if( m_Mod->HasAttribute(AttrDuration) )
+
+    EvilNumber time;
+    // we can do this because HasAttribute will not modify time if the attibute does not exist.
+	if( m_Mod->HasAttribute(AttrDuration, time) || m_Mod->HasAttribute(AttrSpeed, time))
 	{
-		m_timer.Start(m_Mod->GetAttribute(AttrDuration).get_int());
-		m_Mod->DoCycle();	// Do initial cycle immediately while we start timer
+		m_timer.Start(time.get_int());
+		m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
 	}
 	else
-	{
-		if( m_Mod->HasAttribute(AttrSpeed) )
-		{
-			m_timer.Start(m_Mod->GetAttribute(AttrSpeed).get_int());
-			m_Mod->DoCycle();	// Do initial cycle immediately while we start timer
-		}
-		else
-			sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
-	}
+        sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
 }
 
 void ActiveModuleProcessingComponent::DeactivateCycle()
@@ -109,28 +99,10 @@ void ActiveModuleProcessingComponent::DeactivateCycle()
     m_Stop = true;
 }
 
-//timing and verification function
-bool ActiveModuleProcessingComponent::ShouldProcessActiveCycle()
-{
-    //first, check if we have been told to deactivate
-	if(m_Stop)
-		return false;
-
-	//check that we have enough capacitor avaiable
-	if(m_Ship->GetAttribute(AttrCharge) > m_Mod->GetAttribute(AttrCapacitorNeed))
-	{
-		//having enough capacitor to activate the module
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
 void ActiveModuleProcessingComponent::ProcessActiveCycle()
 {
-	//TO-DO: Check to see if capacitor is drained at activation or after the cycle
+    // cycle ended perform end of cycle actions.
+    m_Mod->EndCycle();
 
     //check for stop signal
     if(m_Stop)
@@ -141,24 +113,23 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
 	EvilNumber capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
 	capCapacity -= capNeed;
 
+    // check for sufficient capacitor.
+    if(capCapacity < 0)
+    {
+        // insufficient capacitor, deactivate.
+        m_Mod->Deactivate();
+        return;
+    }
+
+    // sufficient capacitor begin new cycle.
 	m_Ship->SetAttribute(AttrCharge, capCapacity);
+    // start new cycle.
+    m_Mod->StartCycle();
 
     //then check if we are targeting another ship or not and apply attribute changes
 	//maybe we can have a check for modules that repeat the same attributes so we
 	//send the changes just once at activation and at deactivation
 
-	//--pseudocode--
-	//if(target != self)
-	//	m_ShipAttrComp->ModifyTargetShipAttribute();
-	//else
-	//	m_ShipAttrComp->ModifyShipAttribute();
-	m_Mod->DoCycle();
-}
-
-void ActiveModuleProcessingComponent::ProcessDeactivateCycle()
-{
-	//check to see who is the target
-	
 	//--pseudocode--
 	//if(target != self)
 	//	m_ShipAttrComp->ModifyTargetShipAttribute();

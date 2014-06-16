@@ -37,16 +37,32 @@ public:
     ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship, ModifyShipAttributesComponent * shipAttrMod);
     ~ActiveModuleProcessingComponent();
 
+    /**
+     * Check the timer and see if a cycle has been completed.
+     * Start a new cycle if the module has not been stopped.
+     */
 	void Process();
 
+    /**
+     * Activates a module cycle timer and triggers StartCycle()
+     */
 	void ActivateCycle();
+    /**
+     * Flags the cycle to stop at completion of current cycle.
+     */
     void DeactivateCycle();
 
-    bool ShouldProcessActiveCycle();
-
+private:
+    /**
+     * A cycle has completed and a new cycle might start.
+     */
     void ProcessActiveCycle();
-	void ProcessDeactivateCycle();
 
+public:
+    /**
+     * Gets the cycle time remaining.
+     * @return the remaining cycle time in ms.
+     */
 	double GetRemainingCycleTimeMS();
 
 private:

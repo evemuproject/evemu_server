@@ -137,138 +137,131 @@ void ProjectileTurret::Deactivate()
     m_ActiveModuleProc->DeactivateCycle();
 }
 
-void ProjectileTurret::DoCycle()
+void ProjectileTurret::StartCycle()
 {
-    if (m_ActiveModuleProc->ShouldProcessActiveCycle())
+    // Check to see if our target is still in this bubble or has left or been destroyed:
+    if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
     {
-        // Check to see if our target is still in this bubble or has left or been destroyed:
-        if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
-        {
-            // Target has left our bubble or been destroyed, deactivate this module:
-            Deactivate();
-            return;
-        }
-
-        // Create Destiny Updates:
-        DoDestiny_OnDamageStateChange dmgChange;
-        dmgChange.entityID = m_targetEntity->GetID();
-
-        PyList *states = new PyList;
-        states->AddItem(new PyFloat(0));
-        states->AddItem(new PyFloat(0));
-        states->AddItem(new PyFloat(0.99));
-        dmgChange.state = states;
-
-        Notify_OnDamageMessage dmgMsg;
-        dmgMsg.messageID = ""; // Can be left blank as Damage.cpp fills this in.  This can be one in this set {"AttackHit1", "AttackHit2", "AttackHit3", "AttackHit4", "AttackHit5", "AttackHit6"}
-        dmgMsg.weapon = m_Item->itemID();
-        dmgMsg.splash = "";
-        dmgMsg.target = m_targetEntity->GetID();
-        dmgMsg.damage = (m_Item->GetAttribute(AttrDamageMultiplier).get_float() * 48.0);
-
-        Notify_OnGodmaShipEffect shipEff;
-        shipEff.itemID = m_Item->itemID();
-        shipEff.effectID = effectTargetAttack; // From EVEEffectID::
-        shipEff.when = Win32TimeNow();
-        shipEff.start = 1;
-        shipEff.active = 1;
-
-        PyList* env = new PyList;
-        env->AddItem(new PyInt(shipEff.itemID));
-        env->AddItem(new PyInt(m_Ship->ownerID()));
-        env->AddItem(new PyInt(m_Ship->itemID()));
-        env->AddItem(new PyInt(m_targetEntity->GetID()));
-        env->AddItem(new PyNone);
-        env->AddItem(new PyNone);
-        env->AddItem(new PyInt(10));
-
-        shipEff.environment = env;
-        shipEff.startTime = shipEff.when;
-        shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
-        shipEff.repeat = new PyInt(1000);
-        shipEff.randomSeed = new PyNone;
-        shipEff.error = new PyNone;
-
-        PyTuple* tmp = new PyTuple(3);
-        tmp->SetItem(1, dmgMsg.Encode());
-        tmp->SetItem(2, shipEff.Encode());
-
-        std::vector<PyTuple*> events;
-        events.push_back(dmgMsg.Encode());
-        events.push_back(shipEff.Encode());
-
-        std::vector<PyTuple*> updates;
-        updates.push_back(dmgChange.Encode());
-
-        m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
-
-        // Create Special Effect:
-        m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-                (
-                 m_Ship,
-                 m_Item->itemID(),
-                 m_Item->typeID(),
-                 m_targetID,
-                 m_chargeRef->itemID(),
-                 "effects.Laser",
-                 1,
-                 1,
-                 m_Item->GetAttribute(AttrSpeed).get_float(),
-                 1
-                 );
-
-        // Create Damage action:
-        //Damage( SystemEntity *_source,
-        //    InventoryItemRef _weapon,
-        //    double _kinetic,
-        //    double _thermal,
-        //    double _em,
-        //    double _explosive,
-        //    EVEEffectID _effect );
-        double kinetic_damage = 0.0;
-        double thermal_damage = 0.0;
-        double em_damage = 0.0;
-        double explosive_damage = 0.0;
-        double damageMultiplier = m_Item->GetAttribute(AttrDamageMultiplier).get_float();
-        EvilNumber damage;
-
-        // This still somehow needs skill, ship, module, and implant bonuses to be applied:
-        // This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-        if (m_chargeRef->HasAttribute(AttrKineticDamage, damage))
-            kinetic_damage = damageMultiplier * damage.get_float();
-        if (m_chargeRef->HasAttribute(AttrThermalDamage, damage))
-            thermal_damage = damageMultiplier * damage.get_float();
-        if (m_chargeRef->HasAttribute(AttrEmDamage, damage))
-            em_damage = damageMultiplier * damage.get_float();
-        if (m_chargeRef->HasAttribute(AttrExplosiveDamage, damage))
-            explosive_damage = damageMultiplier * damage.get_float();
-
-        Damage damageDealt
-                (
-                 m_Ship->GetOperator()->GetSystemEntity(),
-                 m_Item,
-                 kinetic_damage, // kinetic damage
-                 thermal_damage, // thermal damage
-                 em_damage, // em damage
-                 explosive_damage, // explosive damage
-                 effectTargetAttack // from EVEEffectID::
-                 );
-
-        m_targetEntity->ApplyDamage(damageDealt);
-
-        // expend round.
-        if (m_chargeRef->quantity() <= 1)
-        {
-            // last rounds used.
-            if(m_Ship.get() != NULL)
-            {
-                Deactivate();
-                m_chargeRef->Delete();
-                Unload();
-                // to-do: auto-reload
-            }
-        }
-        else
-          m_chargeRef->AlterQuantity(-1, true);
+        // Target has left our bubble or been destroyed, deactivate this module:
+        Deactivate();
+        return;
     }
+
+    // Create Destiny Updates:
+    DoDestiny_OnDamageStateChange dmgChange;
+    dmgChange.entityID = m_targetEntity->GetID();
+
+    PyList *states = new PyList;
+    states->AddItem(new PyFloat(0));
+    states->AddItem(new PyFloat(0));
+    states->AddItem(new PyFloat(0.99));
+    dmgChange.state = states;
+
+    Notify_OnDamageMessage dmgMsg;
+    dmgMsg.messageID = ""; // Can be left blank as Damage.cpp fills this in.  This can be one in this set {"AttackHit1", "AttackHit2", "AttackHit3", "AttackHit4", "AttackHit5", "AttackHit6"}
+    dmgMsg.weapon = m_Item->itemID();
+    dmgMsg.splash = "";
+    dmgMsg.target = m_targetEntity->GetID();
+    dmgMsg.damage = (m_Item->GetAttribute(AttrDamageMultiplier).get_float() * 48.0);
+
+    Notify_OnGodmaShipEffect shipEff;
+    shipEff.itemID = m_Item->itemID();
+    shipEff.effectID = effectTargetAttack; // From EVEEffectID::
+    shipEff.when = Win32TimeNow();
+    shipEff.start = 1;
+    shipEff.active = 1;
+
+    PyList* env = new PyList;
+    env->AddItem(new PyInt(shipEff.itemID));
+    env->AddItem(new PyInt(m_Ship->ownerID()));
+    env->AddItem(new PyInt(m_Ship->itemID()));
+    env->AddItem(new PyInt(m_targetEntity->GetID()));
+    env->AddItem(new PyNone);
+    env->AddItem(new PyNone);
+    env->AddItem(new PyInt(10));
+
+    shipEff.environment = env;
+    shipEff.startTime = shipEff.when;
+    shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
+    shipEff.repeat = new PyInt(1000);
+    shipEff.randomSeed = new PyNone;
+    shipEff.error = new PyNone;
+
+    std::vector<PyTuple*> events;
+    events.push_back(dmgMsg.Encode());
+    events.push_back(shipEff.Encode());
+
+    std::vector<PyTuple*> updates;
+    updates.push_back(dmgChange.Encode());
+
+    m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
+
+    // Create Special Effect:
+    m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
+            (
+             m_Ship,
+             m_Item->itemID(),
+             m_Item->typeID(),
+             m_targetID,
+             m_chargeRef->itemID(),
+             "effects.Laser",
+             1,
+             1,
+             m_Item->GetAttribute(AttrSpeed).get_float(),
+             1
+             );
+
+    // Create Damage action:
+    //Damage( SystemEntity *_source,
+    //    InventoryItemRef _weapon,
+    //    double _kinetic,
+    //    double _thermal,
+    //    double _em,
+    //    double _explosive,
+    //    EVEEffectID _effect );
+    double kinetic_damage = 0.0;
+    double thermal_damage = 0.0;
+    double em_damage = 0.0;
+    double explosive_damage = 0.0;
+    double damageMultiplier = m_Item->GetAttribute(AttrDamageMultiplier).get_float();
+    EvilNumber damage;
+
+    // This still somehow needs skill, ship, module, and implant bonuses to be applied:
+    // This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
+    if (m_chargeRef->HasAttribute(AttrKineticDamage, damage))
+        kinetic_damage = damageMultiplier * damage.get_float();
+    if (m_chargeRef->HasAttribute(AttrThermalDamage, damage))
+        thermal_damage = damageMultiplier * damage.get_float();
+    if (m_chargeRef->HasAttribute(AttrEmDamage, damage))
+        em_damage = damageMultiplier * damage.get_float();
+    if (m_chargeRef->HasAttribute(AttrExplosiveDamage, damage))
+        explosive_damage = damageMultiplier * damage.get_float();
+
+    Damage damageDealt
+            (
+             m_Ship->GetOperator()->GetSystemEntity(),
+             m_Item,
+             kinetic_damage, // kinetic damage
+             thermal_damage, // thermal damage
+             em_damage, // em damage
+             explosive_damage, // explosive damage
+             effectTargetAttack // from EVEEffectID::
+             );
+
+    m_targetEntity->ApplyDamage(damageDealt);
+
+    // expend round.
+    if (m_chargeRef->quantity() <= 1)
+    {
+        // last rounds used.
+        if(m_Ship.get() != NULL)
+        {
+            Deactivate();
+            m_chargeRef->Delete();
+            Unload();
+            // to-do: auto-reload
+        }
+    }
+    else
+      m_chargeRef->AlterQuantity(-1, true);
 }

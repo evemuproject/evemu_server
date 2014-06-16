@@ -71,9 +71,11 @@ public:
     virtual void Repair()                                        { m_Item->ResetAttribute(AttrHp, true); }
     virtual void Repair(EvilNumber amount)                        { m_Item->SetAttribute(AttrHp, m_Item->GetAttribute(AttrHp) + amount); }
 
-    virtual void SetAttribute(uint32 attrID, EvilNumber val)    { m_Item->SetAttribute(attrID, val); }
-    virtual EvilNumber GetAttribute(uint32 attrID)                { return m_Item->GetAttribute(attrID); }
-	virtual bool HasAttribute(uint32 attrID)					{ return m_Item->HasAttribute(attrID); }
+    virtual void SetAttribute(uint32 attrID, EvilNumber val)        { m_Item->SetAttribute(attrID, val); }
+    virtual EvilNumber GetAttribute(uint32 attrID)                  { return m_Item->GetAttribute(attrID); }
+    virtual EvilNumber GetAttribute(uint32 attrID, EvilNumber &val) { return m_Item->GetAttribute(attrID, val); }
+	virtual bool HasAttribute(uint32 attrID)                        { return m_Item->HasAttribute(attrID); }
+	virtual bool HasAttribute(uint32 attrID, EvilNumber &val)		{ return m_Item->HasAttribute(attrID, val); }
 
     //access functions
     InventoryItemRef getItem()                                  { return m_Item; }
