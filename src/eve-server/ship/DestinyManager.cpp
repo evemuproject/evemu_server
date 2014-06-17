@@ -89,25 +89,48 @@ void DestinyManager::Process() {
     ProcessTic();
 }
 
+void DestinyManager::SendDestinyUpdate(PyTuple **up) const {
+    m_self->QueueDestinyUpdate( up );
+    PySafeDecRef( *up ); //they are not required to consume it.
+}
+
+void DestinyManager::SendDestinyEvent(PyTuple **up) const {
+    m_self->QueueDestinyEvent( up );
+    PySafeDecRef( *up ); //they are not required to consume it.
+}
+
 void DestinyManager::SendSingleDestinyUpdate(PyTuple **up, bool self_only) const {
-    std::vector<PyTuple *> updates(1, *up);
-    *up = NULL;
-    std::vector<PyTuple *> events;
-    //consumes updates and events
-    SendDestinyUpdate(updates, events, self_only);
+    if( self_only )
+    {
+        m_self->QueueDestinyUpdate( up );
+        PySafeDecRef( *up ); //they are not required to consume it.
+    }
+    else
+    {
+        _log( DESTINY__TRACE, "[%u] Broadcasting destiny update.", GetStamp());
+
+        m_self->Bubble()->BubblecastDestinyUpdate( up, "destiny" );
+    }
+}
+
+void DestinyManager::SendSingleDestinyEvent(PyTuple **up, bool self_only) const {
+    if( self_only )
+    {
+        m_self->QueueDestinyEvent( up );
+        PySafeDecRef( *up ); //they are not required to consume it.
+    }
+    else
+    {
+        _log( DESTINY__TRACE, "[%u] Broadcasting destiny update.", GetStamp());
+
+        m_self->Bubble()->BubblecastDestinyEvent( up, "destiny" );
+    }
 }
 
 void DestinyManager::SendDestinyUpdate(std::vector<PyTuple *> &updates, bool self_only) const {
-    std::vector<PyTuple *> events;
-    //consumes updates and events
-    SendDestinyUpdate(updates, events, self_only);
-}
-
-void DestinyManager::SendDestinyUpdate( std::vector<PyTuple*>& updates, std::vector<PyTuple*>& events, bool self_only ) const
-{
     if( self_only )
     {
-        _log( DESTINY__TRACE, "[%u] Sending destiny update (%lu, %lu) to self (%u).", GetStamp(), updates.size(), events.size(), m_self->GetID() );
+        _log( DESTINY__TRACE, "[%u] Sending destiny update (%lu) to self (%u).", GetStamp(), updates.size(), m_self->GetID() );
 
         std::vector<PyTuple*>::iterator cur, end;
         cur = updates.begin();
@@ -115,30 +138,62 @@ void DestinyManager::SendDestinyUpdate( std::vector<PyTuple*>& updates, std::vec
         for(; cur != end; cur++)
         {
             PyTuple* t = *cur;
-            m_self->QueueDestinyUpdate( &t );
-            PySafeDecRef( t ); //they are not required to consume it.
+            SendSingleDestinyUpdate( &t );
         }
         updates.clear();
+    }
+    else if( NULL != m_self->Bubble() )
+    {
+        _log( DESTINY__TRACE, "[%u] Broadcasting destiny update (%lu)", GetStamp(), updates.size() );
+
+        m_self->Bubble()->BubblecastDestinyUpdate( updates, "destiny" );
+    }
+    else
+    {
+        _log( DESTINY__ERROR, "[%u] Cannot broadcast destiny update (%lu); entity (%u) is not in any bubble.", GetStamp(), updates.size(), m_self->GetID() );
+    }
+}
+
+void DestinyManager::SendDestinyEvent( std::vector<PyTuple*>& events, bool self_only ) const
+{
+    if( self_only )
+    {
+        _log( DESTINY__TRACE, "[%u] Sending destiny event (%lu) to self (%u).", GetStamp(), events.size(), m_self->GetID() );
+
+        std::vector<PyTuple*>::iterator cur, end;
 
         cur = events.begin();
         end = events.end();
         for(; cur != end; cur++)
         {
             PyTuple* t = *cur;
-            m_self->QueueDestinyEvent( &t );
-            PySafeDecRef( t ); //they are not required to consume it.
+            SendSingleDestinyEvent( &t );
         }
         events.clear();
     }
     else if( NULL != m_self->Bubble() )
     {
-        _log( DESTINY__TRACE, "[%u] Broadcasting destiny update (%lu, %lu)", GetStamp(), updates.size(), events.size() );
+        _log( DESTINY__TRACE, "[%u] Broadcasting destiny event (%lu)", GetStamp(), events.size() );
 
-        m_self->Bubble()->BubblecastDestiny( updates, events, "destiny" );
+        m_self->Bubble()->BubblecastDestinyEvent( events, "destiny" );
     }
     else
     {
-        _log( DESTINY__ERROR, "[%u] Cannot broadcast destiny update (%lu, %lu); entity (%u) is not in any bubble.", GetStamp(), updates.size(), events.size(), m_self->GetID() );
+        _log( DESTINY__ERROR, "[%u] Cannot broadcast destiny update (%lu); entity (%u) is not in any bubble.", GetStamp(), events.size(), m_self->GetID() );
+    }
+}
+
+void DestinyManager::SendDestinyUpdate( std::vector<PyTuple*>& updates, std::vector<PyTuple*>& events, bool self_only ) const
+{
+    if( self_only )
+    {
+        SendDestinyUpdate(updates, self_only);
+        SendDestinyEvent(events, self_only);
+    }
+    else
+    {
+        _log( DESTINY__TRACE, "[%u] Broadcasting destiny event (%lu, %lu)", GetStamp(), updates.size(), events.size() );
+        m_self->Bubble()->BubblecastDestiny( updates, events, "destiny" );
     }
 }
 
@@ -1751,7 +1806,8 @@ void DestinyManager::SendSpecialEffect(const ShipRef shipRef, uint32 moduleID, u
     effect.active = (isActive) ? 1 : 0;
     effect.duration_ms = duration;
     effect.repeat = (repeat ? 50000 : 0);
-    effect.startTime = Win32TimeNow() + ((duration * Win32Time_Second) / 1000);
+    //effect.startTime = Win32TimeNow() + ((duration * Win32Time_Second) / 1000);
+    effect.startTime = Win32TimeNow();
     updates.push_back(effect.Encode());
 
     SendDestinyUpdate(updates, false);

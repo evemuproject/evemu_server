@@ -72,8 +72,41 @@ public:
 
     void Process();
 
+    /**
+     * Send a single destiny update to self.
+     * @param up The update to send.
+     */
+    void SendDestinyUpdate(PyTuple **up) const;
+    /**
+     * Send a single destiny event to self.
+     * @param up The event to send.
+     */
+    void SendDestinyEvent(PyTuple **up) const;
+    /**
+     * Send a single destiny update to self or bubble.
+     * @param up The update to send.
+     */
     void SendSingleDestinyUpdate(PyTuple **up, bool self_only=false) const;
+    /**
+     * Send a single destiny event to self or bubble.
+     * @param up The event to send.
+     */
+    void SendSingleDestinyEvent(PyTuple **up, bool self_only=false) const;
+    /**
+     * Send a list of destiny updates to self or bubble.
+     * @param updates The updates to send.
+     */
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, bool self_only) const;
+    /**
+     * Send a list of destiny events to self or bubble.
+     * @param events The events to send.
+     */
+    void SendDestinyEvent(std::vector<PyTuple *> &events, bool self_only) const;
+    /**
+     * Send a list of destiny updates and events to self or bubble.
+     * @param updates The updates to send.
+     * @param events The events to send.
+     */
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, std::vector<PyTuple *> &events, bool self_only) const;
 
 	// Information query functions:
