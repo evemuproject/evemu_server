@@ -396,7 +396,7 @@ void NPCAIMgr::_SendWeaponEffect( const char*effect, SystemEntity *target )
     sfx.startTime = Win32TimeNow();
 
     PyTuple* up = sfx.Encode();
-    m_npc->Destiny()->SendSingleDestinyUpdate( &up );    //consumed
+    m_npc->Destiny()->SendDestinyUpdate( &up );    //consumed
     PySafeDecRef( up );
 }
 

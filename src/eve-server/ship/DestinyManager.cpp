@@ -89,21 +89,20 @@ void DestinyManager::Process() {
     ProcessTic();
 }
 
-void DestinyManager::SendDestinyUpdate(PyTuple **up) const {
+void DestinyManager::SendSelfDestinyUpdate(PyTuple **up) const {
     m_self->QueueDestinyUpdate( up );
     PySafeDecRef( *up ); //they are not required to consume it.
 }
 
-void DestinyManager::SendDestinyEvent(PyTuple **up) const {
+void DestinyManager::SendSelfDestinyEvent(PyTuple **up) const {
     m_self->QueueDestinyEvent( up );
     PySafeDecRef( *up ); //they are not required to consume it.
 }
 
-void DestinyManager::SendSingleDestinyUpdate(PyTuple **up, bool self_only) const {
+void DestinyManager::SendDestinyUpdate(PyTuple **up, bool self_only) const {
     if( self_only )
     {
-        m_self->QueueDestinyUpdate( up );
-        PySafeDecRef( *up ); //they are not required to consume it.
+        SendSelfDestinyUpdate( up );
     }
     else
     {
@@ -113,11 +112,10 @@ void DestinyManager::SendSingleDestinyUpdate(PyTuple **up, bool self_only) const
     }
 }
 
-void DestinyManager::SendSingleDestinyEvent(PyTuple **up, bool self_only) const {
+void DestinyManager::SendDestinyEvent(PyTuple **up, bool self_only) const {
     if( self_only )
     {
-        m_self->QueueDestinyEvent( up );
-        PySafeDecRef( *up ); //they are not required to consume it.
+        SendSelfDestinyEvent( up );
     }
     else
     {
@@ -138,7 +136,7 @@ void DestinyManager::SendDestinyUpdate(std::vector<PyTuple *> &updates, bool sel
         for(; cur != end; cur++)
         {
             PyTuple* t = *cur;
-            SendSingleDestinyUpdate( &t );
+            SendSelfDestinyUpdate( &t );
         }
         updates.clear();
     }
@@ -167,7 +165,7 @@ void DestinyManager::SendDestinyEvent( std::vector<PyTuple*>& events, bool self_
         for(; cur != end; cur++)
         {
             PyTuple* t = *cur;
-            SendSingleDestinyEvent( &t );
+            SendSelfDestinyEvent( &t );
         }
         events.clear();
     }
@@ -931,7 +929,7 @@ void DestinyManager::Stop(bool update) {
             du.entityID = m_self->GetID();
 
             PyTuple *tmp = du.Encode();
-            SendSingleDestinyUpdate(&tmp);    //consumed
+            SendDestinyUpdate(&tmp);    //consumed
         }
     }
 }
@@ -1003,7 +1001,7 @@ void DestinyManager::Follow(SystemEntity *who, double distance, bool update) {
         du.unknown = uint32(distance);
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
 
     sLog.Debug( "DestinyManager::GotoDirection()", "SystemEntity '%s' following SystemEntity '%s' at velocity %f",
@@ -1037,7 +1035,7 @@ void DestinyManager::Orbit(SystemEntity *who, double distance, bool update) {
         du.distance = uint32(distance);
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
 }
 
@@ -1071,7 +1069,7 @@ void DestinyManager::OrbitingCruise(SystemEntity *who, double distance, bool upd
         du.distance = uint32(distance);
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
 }
 
@@ -1125,7 +1123,7 @@ void DestinyManager::SetPosition(const GPoint &pt, bool update, bool isWarping, 
         du.z = pt.z;
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
     m_system->bubbles.UpdateBubble(m_self, update, isWarping, isPostWarp);
 }
@@ -1141,7 +1139,7 @@ void DestinyManager::SetSpeedFraction(double fraction, bool update) {
         du.fraction = fraction;
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
 }
 
@@ -1176,7 +1174,7 @@ void DestinyManager::AlignTo(const GPoint &direction, bool update) {
         du.z = direction.z;
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
 
     sLog.Debug( "DestinyManager::GotoDirection()", "SystemEntity '%s' vectoring to (%f,%f,%f) at velocity %f",
@@ -1211,7 +1209,7 @@ void DestinyManager::GotoDirection(const GPoint &direction, bool update) {
         du.z = direction.z;
 
         PyTuple *tmp = du.Encode();
-        SendSingleDestinyUpdate(&tmp);    //consumed
+        SendDestinyUpdate(&tmp);    //consumed
     }
 }
 
@@ -1601,7 +1599,7 @@ void DestinyManager::SendGateActivity() const {
     du.active = 0;
 
     PyTuple *tmp = du.Encode();
-    SendSingleDestinyUpdate(&tmp);    //consumed
+    SendDestinyUpdate(&tmp);    //consumed
 }
 
 void DestinyManager::SendSetState(const SystemBubble *b) const {
@@ -1612,7 +1610,7 @@ void DestinyManager::SendSetState(const SystemBubble *b) const {
     m_system->MakeSetState(b, ss);
 
     PyTuple *tmp = ss.Encode();
-    SendSingleDestinyUpdate(&tmp, true);    //consumed
+    SendDestinyUpdate(&tmp, true);    //consumed
 }
 
 void DestinyManager::SendBallInfoOnUndock(bool update) const {

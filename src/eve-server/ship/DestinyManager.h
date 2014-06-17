@@ -76,22 +76,22 @@ public:
      * Send a single destiny update to self.
      * @param up The update to send.
      */
-    void SendDestinyUpdate(PyTuple **up) const;
+    void SendSelfDestinyUpdate(PyTuple **up) const;
     /**
      * Send a single destiny event to self.
      * @param up The event to send.
      */
-    void SendDestinyEvent(PyTuple **up) const;
+    void SendSelfDestinyEvent(PyTuple **up) const;
     /**
      * Send a single destiny update to self or bubble.
      * @param up The update to send.
      */
-    void SendSingleDestinyUpdate(PyTuple **up, bool self_only=false) const;
+    void SendDestinyUpdate(PyTuple **up, bool self_only=false) const;
     /**
      * Send a single destiny event to self or bubble.
      * @param up The event to send.
      */
-    void SendSingleDestinyEvent(PyTuple **up, bool self_only=false) const;
+    void SendDestinyEvent(PyTuple **up, bool self_only=false) const;
     /**
      * Send a list of destiny updates to self or bubble.
      * @param updates The updates to send.
