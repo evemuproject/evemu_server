@@ -105,6 +105,9 @@ PySubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyDict **dic
 
     std::string bind_str = cb->GetBindStr();
     //not sure what this really is...
+    //TO-DO: This may refer to the client dropping the reference after the specified time.
+    //       It may then request a new bound object assuming the server dropped this item.
+    //       This may lead to memory leaks and should be investigated.
     uint64 expiration = Win32TimeNow() + Win32Time_Hour;
 
     PyTuple *objt;
