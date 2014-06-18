@@ -61,7 +61,7 @@ DocProject/Help/*.hhc
 DocProject/Help/*.hhk
 DocProject/Help/*.hhp
 DocProject/Help/Html2
-DocProject/Help/html
+#DocProject/Help/html
 
 # Click-Once directory
 publish
@@ -107,6 +107,10 @@ Makefile
 nbproject/
 build/
 release/
+
+# eclipse proget files
+.settings
+.project
 
 # auto-generated documentation.
 /doc/Doxyfile
