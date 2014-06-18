@@ -281,7 +281,7 @@ protected:
             return RefPtr<_Ty>();
 
         // dynamic load
-        if( !i->_Load() )
+         if( !i->_Load() )
             return RefPtr<_Ty>();
 
         return i;

@@ -1804,8 +1804,7 @@ void DestinyManager::SendSpecialEffect(const ShipRef shipRef, uint32 moduleID, u
     effect.active = (isActive) ? 1 : 0;
     effect.duration_ms = duration;
     effect.repeat = (repeat ? 50000 : 0);
-    //effect.startTime = Win32TimeNow() + ((duration * Win32Time_Second) / 1000);
-    effect.startTime = Win32TimeNow();
+    effect.startTime = Win32TimeNow() + ((duration * Win32Time_Second) / 1000);
     updates.push_back(effect.Encode());
 
     SendDestinyUpdate(updates, false);

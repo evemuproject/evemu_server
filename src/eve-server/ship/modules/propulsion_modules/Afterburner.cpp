@@ -33,6 +33,8 @@ Afterburner::Afterburner( InventoryItemRef item, ShipRef ship )
     m_Ship = ship;
     m_Effects = new ModuleEffects(m_Item->typeID());
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
+    // to-do: find the effect id and pass the correct value.
+    EVEEffectID effectID = EVEEffectID::effectSpeedBoost;
 	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship ,m_ShipAttrComp);
 }
 
@@ -78,7 +80,7 @@ void Afterburner::DestroyRig()
 
 void Afterburner::Activate(SystemEntity * targetEntity)
 {
-	m_ActiveModuleProc->ActivateCycle();
+	m_ActiveModuleProc->ActivateCycle(effectSpeedBoost, 0 );
 
 	m_Ship->SetAttribute(AttrCharge, 134.999996046585);
 	m_Ship->SetAttribute(AttrMaxVelocity, 387);

@@ -45,8 +45,10 @@ public:
 
     /**
      * Activates a module cycle timer and triggers StartCycle()
+     * @param buttonEffect the effect id for the ships module button.
+     * @param chargeID the itemID of the charge currently loaded into the module.
      */
-	void ActivateCycle();
+	void ActivateCycle(EVEEffectID buttonEffect, uint32 chargeID);
     /**
      * Flags the cycle to stop at completion of current cycle.
      */
@@ -57,6 +59,9 @@ private:
      * A cycle has completed and a new cycle might start.
      */
     void ProcessActiveCycle();
+    
+    void StartButton();
+    void EndButton();
 
 public:
     /**
@@ -64,12 +69,21 @@ public:
      * @return the remaining cycle time in ms.
      */
 	double GetRemainingCycleTimeMS();
+    /**
+     * Get the stopped state flag.
+     * @return true if the module is stopped.
+     */
+    bool IsStopped() { return m_Stop; };
 
 private:
     //internal storage and record keeping
     bool m_Stop;
 	Timer m_timer;
-
+    
+    bool m_ButtonCycle;
+    EvilNumber m_CycleTime;
+    EVEEffectID m_EffectID;
+	uint32 m_chargeID;		// we do not own this
 
     //internal access to owner
 	InventoryItemRef m_Item;

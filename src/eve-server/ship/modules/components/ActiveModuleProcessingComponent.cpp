@@ -29,11 +29,13 @@
 #include "ship/Ship.h"
 #include "ship/modules/ActiveModules.h"
 #include "ship/modules/components/ActiveModuleProcessingComponent.h"
+#include "system/SystemBubble.h"
 
 ActiveModuleProcessingComponent::ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship, ModifyShipAttributesComponent * shipAttrMod)
 : m_Item( item ), m_Mod( mod ), m_Ship( ship ), m_ShipAttrModComp( shipAttrMod ), m_timer(0)
 {
 	m_Stop = false;
+    m_ButtonCycle = false;
 }
 
 ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
@@ -55,10 +57,7 @@ void ActiveModuleProcessingComponent::Process()
 {
     //check if the timer expired & subtract time.  will always fail if disabled. (stopped))
     if(!m_timer.Check())
-    {
-        // nope still waiting.
-        return;
-    }
+        return;  // nope still waiting.
 
     //time passed and we can drain cap and make/maintain changes to the attributes
     sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
@@ -69,29 +68,42 @@ void ActiveModuleProcessingComponent::Process()
     {
         // yep stop the cycle
         m_timer.Disable();
-        m_Item->SetActive(false, effectTargetAttack, 0, false);
+        m_Item->SetActive(false, 1253, 0, false);
+        EndButton();
     }
 
 }
 
-void ActiveModuleProcessingComponent::ActivateCycle()
+void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID buttonEffect, uint32 chargeID)
 {
-  	if(m_Ship->GetAttribute(AttrCharge) < m_Mod->GetAttribute(AttrCapacitorNeed))
+    // cannot activate module if it's still cycling from last activation.
+    // cannot activate module if there is insufficient capacitor.
+  	if(m_ButtonCycle == true || m_Ship->GetAttribute(AttrCharge) < m_Mod->GetAttribute(AttrCapacitorNeed))
     {
-        m_Mod->Deactivate();
         return;
     }
-	m_Stop = false;
+    EvilNumber zero(0);
+    if(m_Mod->GetAttribute(AttrDisallowRepeatingActivation, zero) != 0)
+    	m_Stop = true;
+    else
+        m_Stop = false;
+    m_EffectID = buttonEffect;
+    m_chargeID = chargeID;
 
-    EvilNumber time;
-    // we can do this because HasAttribute will not modify time if the attibute does not exist.
-	if( m_Mod->HasAttribute(AttrDuration, time) || m_Mod->HasAttribute(AttrSpeed, time))
-	{
-		m_timer.Start(time.get_int());
-		m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
-	}
-	else
-        sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
+    // to-do: move this to module so that the module can factor in skill effects on time.
+    // function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
+	if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
+    {
+        if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
+        {
+            sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
+            return;
+        }
+    }
+
+    m_timer.Start(m_CycleTime.get_int());
+    StartButton();
+    m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
 }
 
 void ActiveModuleProcessingComponent::DeactivateCycle()
@@ -105,10 +117,24 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
     m_Mod->EndCycle();
 
     //check for stop signal
-    if(m_Stop)
-        return;
+    if(m_Stop) {
+        // end the button cycle.
+        //EndButton();
+        return; // cycle stopped.
+    }
 
-    //else consume capacitor
+    // cycle not stopped start next cycle.
+
+    // Check to see if our target is still in this bubble or has left or been destroyed:
+    uint32 m_targetID = m_Mod->GetTargetID();
+    if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
+    {
+        // Target has left our bubble or been destroyed, deactivate this module:
+        m_Mod->Deactivate();
+        return;
+    }
+
+    // consume capacitor
 	EvilNumber capCapacity = m_Ship->GetAttribute(AttrCharge);
 	EvilNumber capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
 	capCapacity -= capNeed;
@@ -123,21 +149,121 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
 
     // sufficient capacitor begin new cycle.
 	m_Ship->SetAttribute(AttrCharge, capCapacity);
+
+    // start the new button cycle.
+    StartButton();
     // start new cycle.
     m_Mod->StartCycle();
-
-    //then check if we are targeting another ship or not and apply attribute changes
-	//maybe we can have a check for modules that repeat the same attributes so we
-	//send the changes just once at activation and at deactivation
-
-	//--pseudocode--
-	//if(target != self)
-	//	m_ShipAttrComp->ModifyTargetShipAttribute();
-	//else
-	//	m_ShipAttrComp->ModifyShipAttribute();
 }
 
 double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
 {
 	return (double)(m_timer.GetRemainingTime());
 }
+
+void ActiveModuleProcessingComponent::StartButton()
+{
+    m_ButtonCycle = true;
+
+    // create ship button effect
+    Notify_OnGodmaShipEffect shipEff;
+    shipEff.itemID = m_Item->itemID();
+    shipEff.effectID = m_EffectID; // From EVEEffectID::
+    shipEff.when = Win32TimeNow();
+    shipEff.start = 1;
+    shipEff.active = 1;
+
+    PyList* env = new PyList;
+    env->AddItem(new PyInt(shipEff.itemID));
+    env->AddItem(new PyInt(m_Ship->ownerID()));
+    env->AddItem(new PyInt(m_Ship->itemID()));
+    env->AddItem(new PyInt((m_Mod->GetTargetEntity())->GetID()));
+    env->AddItem(new PyNone);
+    env->AddItem(new PyNone);
+    env->AddItem(new PyInt(10));
+
+    EvilNumber time(0);
+	if(!m_Mod->HasAttribute(AttrDuration, time))
+        m_Mod->HasAttribute(AttrSpeed, time);
+
+    shipEff.environment = env;
+    shipEff.startTime = shipEff.when;
+    shipEff.duration = time.get_float();
+    shipEff.repeat = new PyInt(1000);
+    shipEff.randomSeed = new PyNone;
+    shipEff.error = new PyNone;
+
+    PyTuple *event = shipEff.Encode();
+    m_Ship->GetOperator()->GetDestiny()->SendSelfDestinyEvent(&event);
+
+        // Create Special Effect:
+// shipRef, moduleID, moduleTypeID,
+// targetID, chargeID, effectString,
+// isOffensive, isActive, duration, repeat
+    m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
+            (
+             m_Ship,
+             m_Item->itemID(),
+             m_Item->typeID(),
+             m_Mod->GetTargetID(),
+             m_chargeID,
+             "effects.Laser",
+             1,
+             1,
+             m_CycleTime.get_float(),
+             1
+             );
+
+}
+
+void ActiveModuleProcessingComponent::EndButton()
+{
+    m_ButtonCycle = false;
+//    EndGraphic();
+
+    Notify_OnGodmaShipEffect shipEff;
+    shipEff.itemID = m_Item->itemID();
+    shipEff.effectID = m_EffectID;
+    shipEff.when = Win32TimeNow();
+    shipEff.start = 0;
+    shipEff.active = 0;
+
+    PyList* env = new PyList;
+    env->AddItem(new PyInt(shipEff.itemID));
+    env->AddItem(new PyInt(m_Ship->ownerID()));
+    env->AddItem(new PyInt(m_Ship->itemID()));
+    env->AddItem(new PyInt((m_Mod->GetTargetEntity())->GetID()));
+    env->AddItem(new PyNone);
+    env->AddItem(new PyNone);
+    env->AddItem(new PyInt(10));
+
+    shipEff.environment = env;
+    shipEff.startTime = shipEff.when;
+    shipEff.duration = 0;
+    shipEff.repeat = new PyInt(0);
+    shipEff.randomSeed = new PyNone;
+    shipEff.error = new PyNone;
+
+    Notify_OnMultiEvent multi;
+    multi.events = new PyList;
+    multi.events->AddItem(shipEff.Encode());
+
+    PyTuple* tmp = multi.Encode();
+
+    m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
+    
+    // Cancel Special Effect:
+    m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect(
+             m_Ship,
+             m_Item->itemID(),
+             m_Item->typeID(),
+             m_Mod->GetTargetID(),
+             m_chargeID,
+             "effects.Laser",
+             1,
+             0,
+             m_Item->GetAttribute(AttrSpeed).get_float(),
+             0
+             );
+}
+

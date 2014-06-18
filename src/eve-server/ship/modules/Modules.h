@@ -126,6 +126,8 @@ public:
 
 	void SetLog(Basic_Log * pLog) { m_pMM_Log = pLog; }
 	Basic_Log * GetLog() { return m_pMM_Log; }
+    
+    ShipRef GetShip() { return m_Ship; };
 
 protected:
     InventoryItemRef m_Item;

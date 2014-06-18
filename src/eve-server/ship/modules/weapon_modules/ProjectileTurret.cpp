@@ -84,13 +84,13 @@ void ProjectileTurret::DestroyRig()
 
 void ProjectileTurret::Activate(SystemEntity * targetEntity)
 {
-    if (m_chargeRef.get() != NULL)
+    if (m_chargeRef.get() != NULL && targetEntity != NULL)
     {
         m_targetEntity = targetEntity;
         m_targetID = targetEntity->Item()->itemID();
 
         // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle();
+        m_ActiveModuleProc->ActivateCycle(effectTargetAttack, m_chargeRef->itemID());
     }
     else
     {
@@ -101,51 +101,13 @@ void ProjectileTurret::Activate(SystemEntity * targetEntity)
 
 void ProjectileTurret::Deactivate()
 {
-    Notify_OnGodmaShipEffect shipEff;
-    shipEff.itemID = m_Item->itemID();
-    shipEff.effectID = effectTargetAttack;
-    shipEff.when = Win32TimeNow();
-    shipEff.start = 0;
-    shipEff.active = 0;
-
-    PyList* env = new PyList;
-    env->AddItem(new PyInt(shipEff.itemID));
-    env->AddItem(new PyInt(m_Ship->ownerID()));
-    env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt(m_targetEntity->GetID()));
-    env->AddItem(new PyNone);
-    env->AddItem(new PyNone);
-    env->AddItem(new PyInt(10));
-
-    shipEff.environment = env;
-    shipEff.startTime = shipEff.when;
-    shipEff.duration = m_ActiveModuleProc->GetRemainingCycleTimeMS(); // At least, I'm assuming this is the remaining time left in the cycle
-    shipEff.repeat = new PyInt(0);
-    shipEff.randomSeed = new PyNone;
-    shipEff.error = new PyNone;
-
-    PyList* events = new PyList;
-    events->AddItem(shipEff.Encode());
-
-    Notify_OnMultiEvent multi;
-    multi.events = events;
-
-    PyTuple* tmp = multi.Encode();
-
-    m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
     m_ActiveModuleProc->DeactivateCycle();
 }
 
 void ProjectileTurret::StartCycle()
 {
-    // Check to see if our target is still in this bubble or has left or been destroyed:
-    if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
-    {
-        // Target has left our bubble or been destroyed, deactivate this module:
-        Deactivate();
+    if (m_ActiveModuleProc->IsStopped() == true)
         return;
-    }
 
     // Create Destiny Updates:
     DoDestiny_OnDamageStateChange dmgChange;
@@ -164,52 +126,13 @@ void ProjectileTurret::StartCycle()
     dmgMsg.target = m_targetEntity->GetID();
     dmgMsg.damage = (m_Item->GetAttribute(AttrDamageMultiplier).get_float() * 48.0);
 
-    Notify_OnGodmaShipEffect shipEff;
-    shipEff.itemID = m_Item->itemID();
-    shipEff.effectID = effectTargetAttack; // From EVEEffectID::
-    shipEff.when = Win32TimeNow();
-    shipEff.start = 1;
-    shipEff.active = 1;
-
-    PyList* env = new PyList;
-    env->AddItem(new PyInt(shipEff.itemID));
-    env->AddItem(new PyInt(m_Ship->ownerID()));
-    env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt(m_targetEntity->GetID()));
-    env->AddItem(new PyNone);
-    env->AddItem(new PyNone);
-    env->AddItem(new PyInt(10));
-
-    shipEff.environment = env;
-    shipEff.startTime = shipEff.when;
-    shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
-    shipEff.repeat = new PyInt(1000);
-    shipEff.randomSeed = new PyNone;
-    shipEff.error = new PyNone;
-
     std::vector<PyTuple*> events;
     events.push_back(dmgMsg.Encode());
-    events.push_back(shipEff.Encode());
 
     std::vector<PyTuple*> updates;
     updates.push_back(dmgChange.Encode());
 
     m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
-
-    // Create Special Effect:
-    m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-            (
-             m_Ship,
-             m_Item->itemID(),
-             m_Item->typeID(),
-             m_targetID,
-             m_chargeRef->itemID(),
-             "effects.Laser",
-             1,
-             1,
-             m_Item->GetAttribute(AttrSpeed).get_float(),
-             1
-             );
 
     // Create Damage action:
     //Damage( SystemEntity *_source,

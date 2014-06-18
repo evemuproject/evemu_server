@@ -74,6 +74,17 @@ public:
      */
 	virtual void EndCycle()									{ /* Do nothing here */ }
 
+    /**
+     * Get the targetID of this modules target.
+     * @return The targets targetID.
+     */
+    uint32 GetTargetID() { return m_targetID; };
+    /**
+     * Get the targetEntity of this modules target.
+     * @return The targets targetEntity.
+     */
+    SystemEntity *GetTargetEntity() { return m_targetEntity; };
+
 protected:
     ModifyShipAttributesComponent * m_ShipAttrComp;
 	ActiveModuleProcessingComponent * m_ActiveModuleProc;
