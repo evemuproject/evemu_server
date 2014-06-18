@@ -54,6 +54,18 @@ void EnergyTurret::Process()
 
 void EnergyTurret::Load(InventoryItemRef charge)
 {
+    // to-do: find out if it's possible to return the object
+    // only one crystal per turret.
+    //if(charge->quantity() != 1)
+    //    return;
+
+    // check if the crystal takes damage.
+    if (m_chargeRef->GetAttribute(AttrCrystalsGetDamaged, 0) == 1)
+    {
+        // make charge a singleton as it can be damaged and can no longer be stacked.
+        m_chargeRef->ChangeSingleton(true, true);
+    }
+
     ActiveModule::Load(charge);
 }
 
@@ -184,7 +196,7 @@ void EnergyTurret::StartCycle()
     }
 
     // check if the crystal takes damage.
-    if (m_chargeRef->GetAttribute(AttrCrystalsGetDamaged, 0) == 1)
+    if (m_chargeRef->singleton())
     {
         double random_chance = MakeRandomFloat(0, 100) / 100;
         // check if random chance damages the crystal
