@@ -59,6 +59,8 @@ void EnergyTurret::Load(InventoryItemRef charge)
     //if(charge->quantity() != 1)
     //    return;
 
+    ActiveModule::Load(charge);
+    
     // check if the crystal takes damage.
     if (m_chargeRef->GetAttribute(AttrCrystalsGetDamaged, 0) == 1)
     {
@@ -66,7 +68,6 @@ void EnergyTurret::Load(InventoryItemRef charge)
         m_chargeRef->ChangeSingleton(true, true);
     }
 
-    ActiveModule::Load(charge);
 }
 
 void EnergyTurret::Unload()
