@@ -36,7 +36,7 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
 
 	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
+//    m_chargeLoaded = false;
 }
 
 ActiveModule::~ActiveModule()
@@ -72,12 +72,22 @@ void ActiveModule::Deactivate()
 
 void ActiveModule::Load(InventoryItemRef charge)
 {
+    // check if the crystal takes damage.
+    if (charge->GetAttribute(AttrCrystalsGetDamaged, 0) == 1 && charge->quantity() == 1)
+    {
+        // make charge a singleton as it can be damaged and can no longer be stacked.
+        charge->ChangeSingleton(true, true);
+    }
+    
+    m_Charge_State = ChargeStates::MOD_LOADING;
 	m_chargeRef = charge;
-	m_chargeLoaded = true;
+//    m_ActiveModuleProc->ActivateCycle( 0, m_chargeRef->itemID());
+
 }
 
 void ActiveModule::Unload()
 {
+    m_Charge_State = ChargeStates::MOD_LOADING;
 	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
+//    m_ActiveModuleProc->ActivateCycle( 0, m_chargeRef->itemID());
 }

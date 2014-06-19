@@ -30,7 +30,6 @@
 #ifndef EVE_ENTITY_LIST_H
 #define EVE_ENTITY_LIST_H
 
-#include "threading/Mutex.h"
 #include "utils/Singleton.h"
 
 class Client;
@@ -93,8 +92,6 @@ protected:
     client_list m_clients;
     typedef std::map<uint32, SystemManager *> system_list;
     system_list m_systems;
-
-    Mutex mMutex;
 
     PyServiceMgr *m_services;    //we do not own this, only used for booting systems.
 };

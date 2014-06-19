@@ -49,7 +49,7 @@ public:
 
 	InventoryItemRef GetLoadedChargeRef()					{ return m_chargeRef; }
 
-	virtual bool isLoaded()											{ return m_chargeLoaded; }
+	virtual bool isLoaded()											{ return m_chargeRef.get() != NULL; }
     virtual bool isRig()                                            { return false; }
     virtual bool isSubSystem()                                        { return false; }
     bool requiresTarget()
@@ -84,6 +84,10 @@ public:
      * @return The targets targetEntity.
      */
     SystemEntity *GetTargetEntity() { return m_targetEntity; };
+    
+    bool isBusy() {
+      return m_Charge_State != ChargeStates::MOD_LOADED || this->m_Module_State == ModuleStates::MOD_ACTIVATED;
+    }
 
 protected:
     ModifyShipAttributesComponent * m_ShipAttrComp;
@@ -92,7 +96,6 @@ protected:
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_chargeRef;		// we do not own this
-	bool m_chargeLoaded;
 
 	//inheritance crap
     ActiveModule() {}

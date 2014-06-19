@@ -39,7 +39,6 @@ EnergyTurret::EnergyTurret(InventoryItemRef item, ShipRef ship)
     m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
 
     m_chargeRef = InventoryItemRef(); // Ensure ref is NULL
-    m_chargeLoaded = false;
 }
 
 EnergyTurret::~EnergyTurret()
@@ -60,13 +59,6 @@ void EnergyTurret::Load(InventoryItemRef charge)
     //    return;
 
     ActiveModule::Load(charge);
-    
-    // check if the crystal takes damage.
-    if (m_chargeRef->GetAttribute(AttrCrystalsGetDamaged, 0) == 1)
-    {
-        // make charge a singleton as it can be damaged and can no longer be stacked.
-        m_chargeRef->ChangeSingleton(true, true);
-    }
 
 }
 

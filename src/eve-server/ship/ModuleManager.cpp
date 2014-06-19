@@ -1225,102 +1225,87 @@ void ModuleManager::RepairModule(uint32 itemID)
 void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 {
     ActiveModule * mod = (ActiveModule *)(m_Modules->GetModule(flag));			// Should not be dangrous to assume ALL modules where charges are loaded are ACTIVE modules
-    if( mod != NULL )
+    if( mod == NULL )
     {
-		// Scenarios to handle:
-		// + no charge loaded: check capacity >= volume of charge to add, if true, LOAD
-		//     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that will EQUAL capacity, SPLIT remainder off, then LOAD!
-		// + some charge loaded: check capacity >= volume of charge to add, if true, MERGE new charge to existing
-		//     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that added to existing charge qty will EQUAL capacity, SPLIT remainder off, then LOAD!
-
-		// Key facts to get:
-		// * existing charge ref -> qty and volume/unit
-		// * module ref -> capacity of module
-		// * charge to add ref -> qty and volume/unit
-
-		EvilNumber modCapacity = mod->getItem()->GetAttribute(AttrCapacity);
-		EvilNumber chargeToLoadVolume = chargeRef->GetAttribute(AttrVolume);
-		EvilNumber chargeToLoadQty = EvilNumber(chargeRef->quantity());
-
-		/////////////////////////////////////////
-		// chargeRef->Split();
-		// chargeRef->Merge();
-		// mod->Load(chargeRef);
-		// chargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
-		/////////////////////////////////////////
-
-		//m_Ship->GetOperator()->Client()->MoveItem(chargeRef->itemID(), m_Ship->itemID(), flag);
-
-		if( mod->isLoaded() )
-		{
-			// Module is loaded, let's check available capacity:
-			InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
-			EvilNumber loadedChargeVolume = loadedChargeRef->GetAttribute(AttrVolume);
-			EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
-			modCapacity -= (loadedChargeVolume * loadedChargeQty);		// Calculate remaining capacity
-			if( modCapacity > chargeToLoadVolume )
-			{
-				// Great!  We can load at least one, let's top off the loaded charges:
-				uint32 quantityWeCanLoad = floor((modCapacity / chargeToLoadVolume).get_float());
-				if( quantityWeCanLoad > 0 )
-				{
-					if( quantityWeCanLoad < chargeToLoadQty.get_int() )
-					{
-						// Split chargeRef to qty 'quantityWeCanLoad'
-						// Merge new smaller qty 'quantityWeCanLoad' with loadedChargeRef
-						// Load this merged charge Ref into module
-						InventoryItemRef loadableChargeQtyRef = chargeRef->Split( quantityWeCanLoad );
-						loadableChargeQtyRef->ChangeOwner( chargeRef->ownerID() );
-						loadedChargeRef->Merge( loadableChargeQtyRef );
-						mod->Load( loadedChargeRef );
-						loadedChargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
-					}
-					else
-					{
-						// Merge chargeRef with loadedChargeRef
-						// Load this merged charge Ref into module
-						loadedChargeRef->Merge( chargeRef );
-						mod->Load( loadedChargeRef );
-						loadedChargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
-					}
-				}
-				else
-		            throw PyException( MakeCustomError( "Cannot load even one unit of this charge!" ) );
-
-			}
-			else
-		        throw PyException( MakeCustomError( "Charge is full!" ) );
-		}
-		else
-		{
-			// Module is not loaded at all, let's check total volume of charge to load against available capacity:
-			if( modCapacity >= (chargeToLoadVolume * chargeToLoadQty) )
-			{
-				// We can insert entire stack of chargeRef into module
-				// Load chargeRef as-is into module
-				mod->Load( chargeRef );
-				chargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
-			}
-			else
-			{
-				// We need to split off only as many charge units as can fit into this module
-				// Split chargeRef
-				uint32 quantityWeCanLoad = floor((modCapacity / chargeToLoadVolume).get_float());
-				if( quantityWeCanLoad > 0 )
-				{
-					// Split chargeRef to qty 'quantityWeCanLoad'
-					// Merge new smaller qty 'quantityWeCanLoad' with loadedChargeRef
-					// Load this merged charge Ref into module
-					InventoryItemRef loadableChargeQtyRef = chargeRef->Split( quantityWeCanLoad );
-					loadableChargeQtyRef->ChangeOwner( chargeRef->ownerID() );
-					mod->Load( loadableChargeQtyRef );
-					loadableChargeQtyRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
-				}
-				else
-		            throw PyException( MakeCustomError( "Cannot load even one unit of this charge!" ) );
-			}
-		}
+        return;
     }
+    
+    // Scenarios to handle:
+    // + no charge loaded: check capacity >= volume of charge to add, if true, LOAD
+    //     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that will EQUAL capacity, SPLIT remainder off, then LOAD!
+    // + some charge loaded: check capacity >= volume of charge to add, if true, MERGE new charge to existing
+    //     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that added to existing charge qty will EQUAL capacity, SPLIT remainder off, then LOAD!
+
+    // Key facts to get:
+    // * existing charge ref -> qty and volume/unit
+    // * module ref -> capacity of module
+    // * charge to add ref -> qty and volume/unit
+
+    EvilNumber modCapacity = mod->getItem()->GetAttribute(AttrCapacity);
+    EvilNumber chargeVolume = chargeRef->GetAttribute(AttrVolume);
+    uint32 quantityWeCanLoad = floor((modCapacity / chargeVolume).get_float());
+
+    /////////////////////////////////////////
+    // chargeRef->Split();
+    // chargeRef->Merge();
+    // mod->Load(chargeRef);
+    // chargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
+    /////////////////////////////////////////
+
+    InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
+    // Does the module already have charges loaded?
+    if(loadedChargeRef.get() != NULL)
+    {
+        // yep, make sure there compatible.
+        if(loadedChargeRef->typeID() != chargeRef->typeID())
+        {
+            // to-do: replace old charge?
+            // will have to check storage capacity of new charges (or ships hold) old location.
+            throw PyException( MakeCustomError( "Cannot load different types of charge!" ) );
+        }
+
+        // let's check available capacity:
+        EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
+        // Calculate remaining capacity
+        modCapacity -= (chargeVolume * loadedChargeQty);
+        quantityWeCanLoad = floor((modCapacity / chargeVolume).get_float());
+    }
+    // can we load more charges?
+    if( quantityWeCanLoad <= 0 )
+        throw PyException( MakeCustomError( "Cannot load even one unit of this charge!" ) );
+    // Great!  We can load at least one, let's top off the loaded charges:
+    if( quantityWeCanLoad > chargeRef->quantity() )
+    {
+        // we can only load as manyy as are available.
+        quantityWeCanLoad = chargeRef->quantity();
+    }
+    if(loadedChargeRef.get() == NULL)
+    {
+        if(chargeRef->quantity() > quantityWeCanLoad)
+        {
+            // Split chargeRef to qty 'quantityWeCanLoad'
+            InventoryItemRef splitChargeRef = chargeRef->Split( quantityWeCanLoad );
+            splitChargeRef->ChangeOwner( chargeRef->ownerID() );
+            // and then load the split charge.
+            chargeRef = splitChargeRef;
+        }
+    }
+    else
+    {
+        // there are already some charges so just move them.
+        if(chargeRef->quantity() == quantityWeCanLoad)
+            // there all used so just delete the old stack.
+            chargeRef->Delete();
+        else if(!chargeRef->AlterQuantity(-quantityWeCanLoad))
+          throw PyException( MakeCustomError( "Cannot load this charge!" ) );
+        chargeRef = loadedChargeRef;
+        // now add them to the old charge.
+        chargeRef->AlterQuantity(quantityWeCanLoad);
+        // and then load the merged charge.
+    }
+    // load the charge and move it onto the ship.
+    mod->Load( chargeRef );
+    chargeRef->Move(m_Ship->itemID(), flag);
 }
 
 void ModuleManager::UnloadCharge(EVEItemFlags flag)

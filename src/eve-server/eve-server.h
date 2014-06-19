@@ -42,8 +42,6 @@
 #include "network/StreamPacketizer.h"
 #include "network/TCPConnection.h"
 #include "network/TCPServer.h"
-// threading
-#include "threading/Mutex.h"
 // utils
 #include "utils/crc32.h"
 #include "utils/Deflate.h"

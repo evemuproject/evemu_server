@@ -39,7 +39,6 @@ ProjectileTurret::ProjectileTurret(InventoryItemRef item, ShipRef ship)
     m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
 
     m_chargeRef = InventoryItemRef(); // Ensure ref is NULL
-    m_chargeLoaded = false;
 }
 
 ProjectileTurret::~ProjectileTurret()
@@ -90,7 +89,7 @@ void ProjectileTurret::Activate(SystemEntity * targetEntity)
         m_targetID = targetEntity->Item()->itemID();
 
         // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(effectTargetAttack, m_chargeRef->itemID());
+        m_ActiveModuleProc->ActivateCycle(effectProjectileFired, m_chargeRef->itemID());
     }
     else
     {
