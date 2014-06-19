@@ -94,7 +94,7 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
         m_targetEntity = targetEntity;
 
         // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(effectTargetAttack, "effects.Laser", m_chargeRef->itemID());
+        m_ActiveModuleProc->ActivateCycle(-1, "", m_chargeRef->itemID());
     }
     else
     {

@@ -84,7 +84,7 @@ void ActiveModuleProcessingComponent::Process()
 
 }
 
-void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID effectID, std::string effectName, uint32 chargeID)
+void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, std::string effectName, uint32 chargeID)
 {
     // cannot activate module if it's still cycling from last activation.
     // cannot activate module if there is insufficient capacitor.
@@ -101,13 +101,29 @@ void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID effectID, std::s
     m_EffectID = effectID;
     m_EffectName = effectName;
     m_chargeID = chargeID;
+    // if the effectID given is -1 attempt to look up the default effect.
+    if(m_EffectID == -1)
+    {
+        MEffect *effect = m_Mod->m_Effects->GetDefaultEffect();
+        if(effect != NULL)
+        {
+            // found the default effect.
+            m_EffectID = effect->GetEffectID();
+            m_EffectName = effect->GetGuid();
+        }
+    }
 
-    // if loading set reload time to 10 seconds.
+    // are we reloading?
     if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADING || m_Mod->m_Charge_State == ChargeStates::MOD_RELOADING)
     {
+        // loading, set cycle time to reload cycle time.
         m_CycleTime = m_Mod->m_LoadCycleTime;
+        // instant load, do nothing more.
         if(m_CycleTime <= 0)
             m_Mod->EndLoading();
+        // set the effect to onlining.
+        m_EffectID = 16;
+        m_EffectName = "";
     }
     else
     {
@@ -208,10 +224,11 @@ void ActiveModuleProcessingComponent::StartButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt(m_Mod->GetTargetID()));
+    uint32 tID = m_Mod->GetTargetID();
+    env->AddItem(tID > 0 ? new PyInt(tID) : new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
-    env->AddItem(new PyInt(10));
+    env->AddItem(new PyInt(m_EffectID));
 
     EvilNumber time(0);
 	if(!m_Mod->HasAttribute(AttrDuration, time))
@@ -236,10 +253,10 @@ void ActiveModuleProcessingComponent::StartButton()
              m_Ship,
              m_Item->itemID(),
              m_Item->typeID(),
-             m_Mod->GetTargetID(),
-             m_chargeID,
+             tID,
+             tID > 0 ? m_chargeID : 0,
              m_EffectName,
-             1,
+             tID > 0 ? 1 : 0,
              1,
              m_CycleTime.get_float(),
              1
@@ -250,7 +267,6 @@ void ActiveModuleProcessingComponent::StartButton()
 void ActiveModuleProcessingComponent::EndButton()
 {
     m_ButtonCycle = false;
-//    EndGraphic();
 
     Notify_OnGodmaShipEffect shipEff;
     shipEff.itemID = m_Item->itemID();
@@ -263,10 +279,11 @@ void ActiveModuleProcessingComponent::EndButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt(m_Mod->GetTargetID()));
+    uint32 tID = m_Mod->GetTargetID();
+    env->AddItem(tID > 0 ? new PyInt(tID) : new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
-    env->AddItem(new PyInt(10));
+    env->AddItem(new PyInt(m_EffectID));
 
     shipEff.environment = env;
     shipEff.startTime = shipEff.when;
@@ -288,10 +305,10 @@ void ActiveModuleProcessingComponent::EndButton()
              m_Ship,
              m_Item->itemID(),
              m_Item->typeID(),
-             m_Mod->GetTargetID(),
-             m_chargeID,
+             tID,
+             tID > 0 ? m_chargeID : 0,
              m_EffectName,
-             1,
+             tID > 0 ? 1 : 0,
              0,
              m_Item->GetAttribute(AttrSpeed).get_float(),
              0

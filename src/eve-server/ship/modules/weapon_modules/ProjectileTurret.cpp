@@ -90,7 +90,7 @@ void ProjectileTurret::Activate(SystemEntity * targetEntity)
         m_targetEntity = targetEntity;
 
         // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(effectProjectileFired, "effects.ProjectileFired", m_chargeRef->itemID());
+        m_ActiveModuleProc->ActivateCycle(-1, "", m_chargeRef->itemID());
     }
     else
     {

@@ -43,6 +43,8 @@ public:
     static void GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res);
     static void GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res);
     static void GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res);
+    
+    static void GetDgmTypeEffects(uint32 typeID, DBQueryResult &res);
 };
 
 

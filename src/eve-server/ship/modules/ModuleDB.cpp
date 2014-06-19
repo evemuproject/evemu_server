@@ -181,3 +181,17 @@ void ModuleDB::GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res)
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
 }
+
+void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
+{
+    if( !sDatabase.RunQuery(res,
+        " SELECT "
+		" effectID, "
+        " isDefault "
+        " FROM dgmTypeEffects "
+        " WHERE typeID = '%u' ",
+        typeID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
+    }
+}
