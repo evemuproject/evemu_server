@@ -38,6 +38,8 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
 	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
     m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_UNLOADED;
+    // load cycle for most charges is zero.
+    m_LoadCycleTime = 0;
 }
 
 ActiveModule::~ActiveModule()

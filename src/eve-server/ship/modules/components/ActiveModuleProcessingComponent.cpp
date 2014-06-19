@@ -102,25 +102,34 @@ void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID effectID, std::s
     m_EffectName = effectName;
     m_chargeID = chargeID;
 
-    // to-do: move this to module so that the module can factor in skill effects on time.
-    // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
-	if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
+    // if loading set reload time to 10 seconds.
+    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADING || m_Mod->m_Charge_State == ChargeStates::MOD_RELOADING)
     {
-        if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
+        m_CycleTime = m_Mod->m_LoadCycleTime;
+        if(m_CycleTime <= 0)
+            m_Mod->EndLoading();
+    }
+    else
+    {
+        // to-do: move this to module so that the module can factor in skill effects on time.
+        // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
+        if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
         {
-            sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
-            return;
+            if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
+            {
+                sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
+                return;
+            }
         }
     }
 
-    // if loading set reload time to 10 seconds.
-    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADING || m_Mod->m_Charge_State == ChargeStates::MOD_RELOADING)
-        m_CycleTime = 10 * Win32Time_Second;
-
-    // start the timer.
-    m_timer.Start(m_CycleTime.get_int());
-    // start the button effects.
-    StartButton();
+    if(m_CycleTime > 0)
+    {
+        // start the timer.
+        m_timer.Start(m_CycleTime.get_int());
+        // start the button effects.
+        StartButton();
+    }
     if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
     {
         // if weapon is loaded perform weapon start action.

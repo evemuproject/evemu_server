@@ -908,6 +908,7 @@ InventoryItemRef InventoryItem::Split(int32 qty_to_take, bool notify) {
     if(!AlterQuantity(-qty_to_take, notify)) {
         _log(ITEM__ERROR, "%s (%u): Failed to remove quantity %d during split.", itemName().c_str(), itemID(), qty_to_take);
         return InventoryItemRef();
+
     }
 
     ItemData idata(

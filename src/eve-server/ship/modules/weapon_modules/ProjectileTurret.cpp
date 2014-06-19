@@ -39,6 +39,8 @@ ProjectileTurret::ProjectileTurret(InventoryItemRef item, ShipRef ship)
     m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
 
     m_chargeRef = InventoryItemRef(); // Ensure ref is NULL
+    // charge loading time is 10 seconds.
+    m_LoadCycleTime = 10000;
 }
 
 ProjectileTurret::~ProjectileTurret()

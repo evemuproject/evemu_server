@@ -104,6 +104,7 @@ protected:
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_chargeRef;		// we do not own this
+    uint32 m_LoadCycleTime;
 
 	//inheritance crap
     ActiveModule() {}
