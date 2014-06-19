@@ -1722,7 +1722,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
     PyCallable* dest;
     if( packet->dest.service.empty() )
     {
-        //bound object
+        //previously bound object
         uint32 nodeID, bindID;
         if( sscanf( req.remoteObjectStr.c_str(), "N=%u:%u", &nodeID, &bindID ) != 2 )
         {
@@ -1745,7 +1745,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
     }
     else
     {
-        //service
+        //retrieve a new service handler.
         dest = services().LookupService( packet->dest.service );
         if( dest == NULL )
         {

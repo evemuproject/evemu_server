@@ -36,7 +36,8 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
 
 	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-//    m_chargeLoaded = false;
+    m_targetEntity = NULL;
+    m_Charge_State = ChargeStates::MOD_UNLOADED;
 }
 
 ActiveModule::~ActiveModule()
@@ -78,16 +79,28 @@ void ActiveModule::Load(InventoryItemRef charge)
         // make charge a singleton as it can be damaged and can no longer be stacked.
         charge->ChangeSingleton(true, true);
     }
-    
+
+    m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_LOADING;
 	m_chargeRef = charge;
-//    m_ActiveModuleProc->ActivateCycle( 0, m_chargeRef->itemID());
-
+    // check to see if the client has been registered to this ship.
+    // if not then it's either not a player ship or the player hasn't finished loading.
+    if(!m_Ship->GetOperator()->IsClient())
+    {
+        // do instant load so no errors are generated.
+        m_Charge_State = ChargeStates::MOD_LOADED;
+        return;
+    }
+    m_ActiveModuleProc->ActivateCycle( EVEEffectID::effectHiPower, "", m_chargeRef->itemID());
 }
 
 void ActiveModule::Unload()
 {
-    m_Charge_State = ChargeStates::MOD_LOADING;
+    m_Charge_State = ChargeStates::MOD_UNLOADED;
 	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-//    m_ActiveModuleProc->ActivateCycle( 0, m_chargeRef->itemID());
+}
+
+void ActiveModule::EndLoading()
+{
+    m_Charge_State = ChargeStates::MOD_LOADED;
 }

@@ -36,6 +36,7 @@ ActiveModuleProcessingComponent::ActiveModuleProcessingComponent(InventoryItemRe
 {
 	m_Stop = false;
     m_ButtonCycle = false;
+    m_EffectName = "";
 }
 
 ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
@@ -59,9 +60,16 @@ void ActiveModuleProcessingComponent::Process()
     if(!m_timer.Check())
         return;  // nope still waiting.
 
-    //time passed and we can drain cap and make/maintain changes to the attributes
-    sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
-    ProcessActiveCycle();
+    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
+    {
+        //time passed and we can drain cap and make/maintain changes to the attributes
+        sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
+        ProcessActiveCycle();
+    }
+    else {
+        m_Stop = true;
+        m_Mod->EndLoading();
+    }
 
     //check if we have a signal to stop the cycle
     if(m_Stop)
@@ -74,7 +82,7 @@ void ActiveModuleProcessingComponent::Process()
 
 }
 
-void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID buttonEffect, uint32 chargeID)
+void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID effectID, std::string effectName, uint32 chargeID)
 {
     // cannot activate module if it's still cycling from last activation.
     // cannot activate module if there is insufficient capacitor.
@@ -87,11 +95,13 @@ void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID buttonEffect, ui
     	m_Stop = true;
     else
         m_Stop = false;
-    m_EffectID = buttonEffect;
+    // to-do: get the effect from the database dgmTypeEffects.  Should be category 2 with default flag.
+    m_EffectID = effectID;
+    m_EffectName = effectName;
     m_chargeID = chargeID;
 
     // to-do: move this to module so that the module can factor in skill effects on time.
-    // function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
+    // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
 	if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
     {
         if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
@@ -103,7 +113,10 @@ void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID buttonEffect, ui
 
     m_timer.Start(m_CycleTime.get_int());
     StartButton();
-    m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
+    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
+    {
+      m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
+    }
 }
 
 void ActiveModuleProcessingComponent::DeactivateCycle()
@@ -177,7 +190,10 @@ void ActiveModuleProcessingComponent::StartButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt((m_Mod->GetTargetEntity())->GetID()));
+    if(m_Mod->m_targetEntity != NULL)
+      env->AddItem(new PyInt(m_Mod->m_targetEntity->GetID()));
+    else
+      env->AddItem(new PyInt(0));
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyInt(10));
@@ -207,7 +223,7 @@ void ActiveModuleProcessingComponent::StartButton()
              m_Item->typeID(),
              m_Mod->GetTargetID(),
              m_chargeID,
-             "effects.Laser",
+             m_EffectName,
              1,
              1,
              m_CycleTime.get_float(),
@@ -232,7 +248,10 @@ void ActiveModuleProcessingComponent::EndButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    env->AddItem(new PyInt((m_Mod->GetTargetEntity())->GetID()));
+    if(m_Mod->m_targetEntity != NULL)
+      env->AddItem(new PyInt(m_Mod->m_targetEntity->GetID()));
+    else
+      env->AddItem(new PyInt(0));
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyInt(10));
@@ -259,7 +278,7 @@ void ActiveModuleProcessingComponent::EndButton()
              m_Item->typeID(),
              m_Mod->GetTargetID(),
              m_chargeID,
-             "effects.Laser",
+             m_EffectName,
              1,
              0,
              m_Item->GetAttribute(AttrSpeed).get_float(),

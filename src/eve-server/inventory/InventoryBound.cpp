@@ -176,16 +176,10 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call)
         else
             flag = call.byname.find("flag")->second->AsInt()->value();
 
-        uint32 quantity = 0;
-        if (call.byname.find("qty") == call.byname.end())
+        uint32 quantity = 1; // Auto quantity - force _ExecAdd() to compare actual quantity to this
+        if (call.byname.find("qty") != call.byname.end())
         {
-            quantity = 1; // Auto quantity - force _ExecAdd() to compare actual quantity to this
-        }
-        else
-        {
-            if (call.byname.find("qty")->second->IsNone())
-                quantity = 1;
-            else
+            if (!call.byname.find("qty")->second->IsNone())
                 quantity = call.byname.find("qty")->second->AsInt()->value();
         }
 

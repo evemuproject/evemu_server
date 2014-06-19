@@ -32,6 +32,7 @@
 
 class ActiveModule : public GenericModule
 {
+  friend ActiveModuleProcessingComponent;
 public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
     ~ActiveModule();
@@ -61,6 +62,7 @@ public:
     }
 
 	// Calls Reserved for components usage only!
+private:
     /**
      * Called when the cycle starts.
      * This is where special effects should be started.
@@ -75,9 +77,15 @@ public:
 	virtual void EndCycle()									{ /* Do nothing here */ }
 
     /**
+     * Called when charge loading cycle ends.
+     */
+    virtual void EndLoading();
+    /**
      * Get the targetID of this modules target.
      * @return The targets targetID.
      */
+
+public:
     uint32 GetTargetID() { return m_targetID; };
     /**
      * Get the targetEntity of this modules target.
@@ -86,7 +94,9 @@ public:
     SystemEntity *GetTargetEntity() { return m_targetEntity; };
     
     bool isBusy() {
-      return m_Charge_State != ChargeStates::MOD_LOADED || this->m_Module_State == ModuleStates::MOD_ACTIVATED;
+      return m_Charge_State != ChargeStates::MOD_LOADED ||
+             m_Module_State == ModuleStates::MOD_ACTIVATED ||
+             !m_ActiveModuleProc->IsStopped();
     }
 
 protected:

@@ -48,7 +48,7 @@ public:
      * @param buttonEffect the effect id for the ships module button.
      * @param chargeID the itemID of the charge currently loaded into the module.
      */
-	void ActivateCycle(EVEEffectID buttonEffect, uint32 chargeID);
+	void ActivateCycle(EVEEffectID effectID, std::string effectName, uint32 chargeID);
     /**
      * Flags the cycle to stop at completion of current cycle.
      */
@@ -83,6 +83,7 @@ private:
     bool m_ButtonCycle;
     EvilNumber m_CycleTime;
     EVEEffectID m_EffectID;
+    std::string m_EffectName;
 	uint32 m_chargeID;		// we do not own this
 
     //internal access to owner
