@@ -753,15 +753,16 @@ ModuleManager::ModuleManager(Ship *const ship)
     {
         for(flagIndex=rangeStart[rangeIndex]; flagIndex<=rangeEnd[rangeIndex]; flagIndex++)
         {
+            std::vector<InventoryItemRef> items;
+            m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
+            // if no items found go to next slot.
+            if( items.empty() )
+                continue;
             InventoryItemRef moduleRef;
             InventoryItemRef chargeRef;
             std::vector<InventoryItemRef>::iterator cur, end;
-            std::vector<InventoryItemRef> items;
-            m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
             cur = items.begin();
             end = items.end();
-            if( items.size() <= 0 )
-                continue;
             while( (cur != end) ) {
                 if( cur->get()->categoryID() == EVEDB::invCategories::Charge )
                     chargeRef = (*cur);
@@ -794,14 +795,15 @@ ModuleManager::ModuleManager(Ship *const ship)
     {
         for(flagIndex=rangeStart[rangeIndex]; flagIndex<=rangeEnd[rangeIndex]; flagIndex++)
         {
-            InventoryItemRef itemRef;
-            std::vector<InventoryItemRef>::iterator cur, end;
             std::vector<InventoryItemRef> items;
             m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
+            // if no items found go to next slot.
+            if( items.empty() )
+                continue;
+            InventoryItemRef itemRef;
+            std::vector<InventoryItemRef>::iterator cur, end;
             cur = items.begin();
             end = items.end();
-            if( items.size() > 0 )
-                continue;
             while( (cur->get()->categoryID() != EVEDB::invCategories::Module) && (cur != end) ) {
                 cur++;
             }
