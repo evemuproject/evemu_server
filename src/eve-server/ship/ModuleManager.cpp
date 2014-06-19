@@ -1264,25 +1264,27 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
             throw PyException( MakeCustomError( "Cannot load different types of charge!" ) );
         }
 
-        // let's check available capacity:
+        // let's get the remaining capacity
         EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
         // Calculate remaining capacity
-        modCapacity -= (chargeVolume * loadedChargeQty);
-        quantityWeCanLoad = floor((modCapacity / chargeVolume).get_float());
+        quantityWeCanLoad -= loadedChargeQty.get_int();
+    }
+    // Do we get enough charges to fully load the module?
+    if( quantityWeCanLoad > chargeRef->quantity() )
+    {
+        // No, we can only load as manyy as are available.
+        quantityWeCanLoad = chargeRef->quantity();
     }
     // can we load more charges?
     if( quantityWeCanLoad <= 0 )
         throw PyException( MakeCustomError( "Cannot load even one unit of this charge!" ) );
     // Great!  We can load at least one, let's top off the loaded charges:
-    if( quantityWeCanLoad > chargeRef->quantity() )
-    {
-        // we can only load as manyy as are available.
-        quantityWeCanLoad = chargeRef->quantity();
-    }
     if(loadedChargeRef.get() == NULL)
     {
+        // if there are more charges available than will fit?
         if(chargeRef->quantity() > quantityWeCanLoad)
         {
+            // We need to split the stack so we can load a partial stack.
             // Split chargeRef to qty 'quantityWeCanLoad'
             InventoryItemRef splitChargeRef = chargeRef->Split( quantityWeCanLoad );
             splitChargeRef->ChangeOwner( chargeRef->ownerID() );
@@ -1292,16 +1294,18 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
     }
     else
     {
-        // there are already some charges so just move them.
+        // there are already some charges so just move the numbers.
         if(chargeRef->quantity() == quantityWeCanLoad)
             // there all used so just delete the old stack.
             chargeRef->Delete();
+        // otherwise just adjust the quantity.
         else if(!chargeRef->AlterQuantity(-quantityWeCanLoad))
           throw PyException( MakeCustomError( "Cannot load this charge!" ) );
-        chargeRef = loadedChargeRef;
+        
         // now add them to the old charge.
-        chargeRef->AlterQuantity(quantityWeCanLoad);
+        loadedChargeRef->AlterQuantity(quantityWeCanLoad);
         // and then load the merged charge.
+        chargeRef = loadedChargeRef;
     }
     // load the charge and move it onto the ship.
     mod->Load( chargeRef );
