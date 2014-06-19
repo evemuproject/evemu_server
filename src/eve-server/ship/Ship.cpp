@@ -573,9 +573,11 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 	{
 		case EVEDB::invCategories::Charge:
 			{
-				m_ModuleManager->LoadCharge(item, flag);
+                std::vector<InventoryItemRef> chargeList;
+                chargeList.push_back(item);
+				m_ModuleManager->LoadCharge(chargeList, flag);
 				InventoryItemRef loadedChargeOnModule = m_ModuleManager->GetLoadedChargeOnModule(flag);
-				if( loadedChargeOnModule != NULL )
+				if( loadedChargeOnModule.get() != NULL )
 				{
 					return loadedChargeOnModule->itemID();
 				}
@@ -594,6 +596,15 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 	}
 
 	return 0;
+}
+
+uint32 Ship::LoadCharge( EVEItemFlags flag, std::vector<InventoryItemRef> chargeList)
+{
+    m_ModuleManager->LoadCharge(chargeList, flag);
+    InventoryItemRef loadedChargeOnModule = m_ModuleManager->GetLoadedChargeOnModule(flag);
+    if( loadedChargeOnModule.get() != NULL )
+        return loadedChargeOnModule->itemID();
+    return 0;
 }
 
 void Ship::RemoveItem(InventoryItemRef item, uint32 inventoryID, EVEItemFlags flag)

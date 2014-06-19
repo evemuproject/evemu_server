@@ -92,7 +92,6 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
     if (m_chargeRef.get() != NULL && targetEntity != NULL)
     {
         m_targetEntity = targetEntity;
-        m_targetID = targetEntity->Item()->itemID();
 
         // Activate active processing component timer:
         m_ActiveModuleProc->ActivateCycle(effectTargetAttack, "effects.Laser", m_chargeRef->itemID());
@@ -111,9 +110,6 @@ void EnergyTurret::Deactivate()
 
 void EnergyTurret::StartCycle()
 {
-    if (m_ActiveModuleProc->IsStopped() == true)
-        return;
-
     // Create Destiny Updates:
     DoDestiny_OnDamageStateChange dmgChange;
     dmgChange.entityID = m_targetEntity->GetID();

@@ -225,6 +225,7 @@ public:
     EvilNumber GetMaxTurrentHardpoints() { return GetAttribute(AttrTurretSlotsLeft); }
     EvilNumber GetMaxLauncherHardpoints() { return GetAttribute(AttrLauncherSlotsLeft); }
     uint32 AddItem( EVEItemFlags flag, InventoryItemRef item);
+    uint32 LoadCharge( EVEItemFlags flag, std::vector<InventoryItemRef> chargeList);
     void RemoveItem( InventoryItemRef item, uint32 inventoryID, EVEItemFlags flag );
     void UpdateModules();
     void UnloadModule(uint32 itemID);

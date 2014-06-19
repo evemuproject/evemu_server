@@ -86,7 +86,6 @@ void ProjectileTurret::Activate(SystemEntity * targetEntity)
     if (m_chargeRef.get() != NULL && targetEntity != NULL)
     {
         m_targetEntity = targetEntity;
-        m_targetID = targetEntity->Item()->itemID();
 
         // Activate active processing component timer:
         m_ActiveModuleProc->ActivateCycle(effectProjectileFired, "effects.ProjectileFired", m_chargeRef->itemID());
@@ -105,9 +104,6 @@ void ProjectileTurret::Deactivate()
 
 void ProjectileTurret::StartCycle()
 {
-    if (m_ActiveModuleProc->IsStopped() == true)
-        return;
-
     // Create Destiny Updates:
     DoDestiny_OnDamageStateChange dmgChange;
     dmgChange.entityID = m_targetEntity->GetID();

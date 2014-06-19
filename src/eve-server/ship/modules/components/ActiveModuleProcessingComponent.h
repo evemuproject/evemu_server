@@ -70,16 +70,16 @@ public:
      */
 	double GetRemainingCycleTimeMS();
     /**
-     * Get the stopped state flag.
-     * @return true if the module is stopped.
+     * Get if the module is busy.
+     * @return true if the module is busy.
      */
-    bool IsStopped() { return m_Stop; };
+    bool IsBusy() { return m_ButtonCycle; };
 
 private:
     //internal storage and record keeping
     bool m_Stop;
 	Timer m_timer;
-    
+
     bool m_ButtonCycle;
     EvilNumber m_CycleTime;
     EVEEffectID m_EffectID;

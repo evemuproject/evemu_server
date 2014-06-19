@@ -33,6 +33,7 @@
 class ActiveModule : public GenericModule
 {
   friend ActiveModuleProcessingComponent;
+  friend ModuleManager;
 public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
     ~ActiveModule();
@@ -86,7 +87,7 @@ private:
      */
 
 public:
-    uint32 GetTargetID() { return m_targetID; };
+    uint32 GetTargetID() { return m_targetEntity == NULL ? 0 : m_targetEntity->Item()->itemID(); };
     /**
      * Get the targetEntity of this modules target.
      * @return The targets targetEntity.
@@ -94,15 +95,12 @@ public:
     SystemEntity *GetTargetEntity() { return m_targetEntity; };
     
     bool isBusy() {
-      return m_Charge_State != ChargeStates::MOD_LOADED ||
-             m_Module_State == ModuleStates::MOD_ACTIVATED ||
-             !m_ActiveModuleProc->IsStopped();
+      return m_ActiveModuleProc->IsBusy();
     }
 
 protected:
     ModifyShipAttributesComponent * m_ShipAttrComp;
 	ActiveModuleProcessingComponent * m_ActiveModuleProc;
-    uint32 m_targetID;  //passed to us by activate
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_chargeRef;		// we do not own this

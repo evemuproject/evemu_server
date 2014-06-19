@@ -273,22 +273,32 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	EVEItemFlags moduleFlag = moduleRef->flag();
 	InventoryItemRef chargeRef;
 
-	if( !(args.chargeList.empty()) )
-		chargeRef = m_manager->item_factory.GetItem(args.chargeList.at(0));
+    // to-do: this no longer works as the first charge to load creates a loading cycle that prevents further loading.
+    //        need to implement a multi load function in module manager and pass in a list of charges.
 
-	// Move Charge into Ship's Inventory and change the Charge's flag to match flag of Module
-	uint32 loadedChargeID = shipRef->AddItem( moduleFlag, chargeRef );
-	//call.client->MoveItem(chargeRef->itemID(), call.client->GetShipID(), moduleFlag);
-
+    // loop through the list of charges.
+    uint32 loadedChargeID = 0;
+    std::vector<int32>::iterator itr = args.chargeList.begin();
+    std::vector<InventoryItemRef> chargeList;
+    while( itr != args.chargeList.end())
+    {
+		chargeRef = m_manager->item_factory.GetItem(*itr);
+        itr++;
+        if(chargeRef == NULL)
+            continue;
+        // add the reference to the list.
+        chargeList.push_back(chargeRef);
+    }
+    // Move Charge(s) into Ship's Inventory and change the Charge's flag to match flag of Module
+    loadedChargeID = shipRef->LoadCharge( moduleFlag, chargeList );
     //Create new item id return result
-	if( loadedChargeID )
-	{
-		Call_SingleIntegerArg result;
-		result.arg = loadedChargeID;	//chargeRef->itemID();
-		//Return new item result
-		return result.Encode();
-	}
-
+    if( loadedChargeID )
+    {
+        Call_SingleIntegerArg result;
+        result.arg = loadedChargeID;	//chargeRef->itemID();
+        //Return new item result
+        return result.Encode();
+    }
 	return NULL;
 }
 

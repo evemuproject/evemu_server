@@ -1222,94 +1222,190 @@ void ModuleManager::RepairModule(uint32 itemID)
     }
 }
 
-void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
+void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEItemFlags flag)
 {
     ActiveModule * mod = (ActiveModule *)(m_Modules->GetModule(flag));			// Should not be dangrous to assume ALL modules where charges are loaded are ACTIVE modules
     if( mod == NULL )
     {
         return;
     }
+    // if the module is busy we can't load a charge.
+    if(mod->isBusy())
+        throw PyException( MakeCustomError( "Module is busy, cannot load charge!" ) );
     
-    // Scenarios to handle:
-    // + no charge loaded: check capacity >= volume of charge to add, if true, LOAD
-    //     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that will EQUAL capacity, SPLIT remainder off, then LOAD!
-    // + some charge loaded: check capacity >= volume of charge to add, if true, MERGE new charge to existing
-    //     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that added to existing charge qty will EQUAL capacity, SPLIT remainder off, then LOAD!
-
-    // Key facts to get:
-    // * existing charge ref -> qty and volume/unit
-    // * module ref -> capacity of module
-    // * charge to add ref -> qty and volume/unit
+    EvilNumber zero(0);
+    EvilNumber launcherGroup[3] = {
+        mod->GetAttribute(AttrLauncherGroup, zero),
+        mod->GetAttribute(AttrLauncherGroup2, zero),
+        mod->GetAttribute(AttrLauncherGroup3, zero) };
+    EvilNumber chargeGroup[5] = {
+        mod->GetAttribute(AttrChargeGroup1, zero),
+        mod->GetAttribute(AttrChargeGroup2, zero),
+        mod->GetAttribute(AttrChargeGroup3, zero),
+        mod->GetAttribute(AttrChargeGroup4, zero),
+        mod->GetAttribute(AttrChargeGroup5, zero) };
 
     EvilNumber modCapacity = mod->getItem()->GetAttribute(AttrCapacity);
-    EvilNumber chargeVolume = chargeRef->GetAttribute(AttrVolume);
-    uint32 quantityWeCanLoad = floor((modCapacity / chargeVolume).get_float());
-
-    /////////////////////////////////////////
-    // chargeRef->Split();
-    // chargeRef->Merge();
-    // mod->Load(chargeRef);
-    // chargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
-    /////////////////////////////////////////
-
+    EvilNumber modSize = mod->GetAttribute(AttrChargeSize);
     InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
-    // Does the module already have charges loaded?
-    if(loadedChargeRef.get() != NULL)
+    bool TypeMismatch = false;
+    bool SizeMismatch = false;
+    bool InsufficientSpace = false;
+    std::vector<InventoryItemRef>::iterator itr = chargeList.begin();
+    // remove incompatible charges.
+    while(itr != chargeList.end())
     {
-        // yep, make sure there compatible.
-        if(loadedChargeRef->typeID() != chargeRef->typeID())
+        bool bad = false;
+        // save the iterator so we can remove it if necessary.
+        std::vector<InventoryItemRef>::iterator rmv = itr;
+        // get the charge reference.
+        InventoryItemRef charge = *itr;
+        // increment to next loo;
+        itr++;
+        // if it was a null reference remove it.
+        if(charge.get() == NULL)
         {
-            // to-do: replace old charge?
-            // will have to check storage capacity of new charges (or ships hold) old location.
+            chargeList.erase(rmv);
+            continue;
+        }
+        // Does the module already have charges loaded?
+        if(loadedChargeRef.get() != NULL)
+        {
+            // yep, make sure there compatible.
+            if(loadedChargeRef->typeID() != charge->typeID())
+            {
+//                if(chargeList.size() == 1)
+//                {
+                    // to-do: replace old charge?
+                    // will have to check storage capacity of new charges (or ships hold) old location.
+//                }
+//                else
+//                {
+                    // charge is not a compatible type.
+                    TypeMismatch = true;
+                    bad = true;
+//                }
+            }
+        }
+        EvilNumber group;
+        // if module has launcher group and charge is from launcher group
+        int l = 0;
+        for(;l < 3;l++)
+            if(launcherGroup[l] == charge->groupID())
+                break;
+        // if module has charge group and charge is from charge group
+        int c = 0;
+        for(;c < 5;c++)
+            if(chargeGroup[c] == charge->groupID())
+                break;
+        // if we didn't find at least one group it's bad.
+        if(c == 5 && l == 3)
+            bad = true;
+        // charges must be the same size.
+        EvilNumber chargeSize = charge->GetAttribute(AttrChargeSize);
+        if(chargeSize != modSize)
+        {
+            bad = true;
+            SizeMismatch = true;
+        }
+        if(bad)
+          // charge is not allowed.
+          chargeList.erase(rmv);
+    }
+    if(chargeList.empty())
+    {
+        // no charges were acceptable.
+        if(TypeMismatch)
+            // we haven't loaded any charges and were at the end of the list.
             throw PyException( MakeCustomError( "Cannot load different types of charge!" ) );
-        }
+        if(SizeMismatch)
+            // we haven't loaded any charges and were at the end of the list.
+            throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
+    }
+    // this will be the charge that's loaded.
+    InventoryItemRef chargeRef = InventoryItemRef();
+    bool Loaded = false;
+    // loop through the accepted charges.
+    itr = chargeList.begin();
+    while(itr != chargeList.end())
+    {
+        chargeRef = *itr;
+        itr++;
+        if(chargeRef.get() == NULL)
+            continue;
+        EvilNumber chargeVolume = chargeRef->GetAttribute(AttrVolume);
+        uint32 quantityWeCanLoad = floor((modCapacity / chargeVolume).get_float());
 
-        // let's get the remaining capacity
-        EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
-        // Calculate remaining capacity
-        quantityWeCanLoad -= loadedChargeQty.get_int();
-    }
-    // Do we get enough charges to fully load the module?
-    if( quantityWeCanLoad > chargeRef->quantity() )
-    {
-        // No, we can only load as manyy as are available.
-        quantityWeCanLoad = chargeRef->quantity();
-    }
-    // can we load more charges?
-    if( quantityWeCanLoad <= 0 )
-        throw PyException( MakeCustomError( "Cannot load even one unit of this charge!" ) );
-    // Great!  We can load at least one, let's top off the loaded charges:
-    if(loadedChargeRef.get() == NULL)
-    {
-        // if there are more charges available than will fit?
-        if(chargeRef->quantity() > quantityWeCanLoad)
+        // Does the module already have charges loaded?
+        if(loadedChargeRef.get() != NULL)
         {
-            // We need to split the stack so we can load a partial stack.
-            // Split chargeRef to qty 'quantityWeCanLoad'
-            InventoryItemRef splitChargeRef = chargeRef->Split( quantityWeCanLoad );
-            splitChargeRef->ChangeOwner( chargeRef->ownerID() );
-            // and then load the split charge.
-            chargeRef = splitChargeRef;
+            // let's get the remaining capacity
+            EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
+            // Calculate remaining capacity
+            quantityWeCanLoad -= loadedChargeQty.get_int();
         }
+        // Do we get enough charges to fully load the module?
+        if( quantityWeCanLoad > chargeRef->quantity() )
+        {
+            // No, we can only load as manyy as are available.
+            quantityWeCanLoad = chargeRef->quantity();
+        }
+        // can we load more charges?
+        if( quantityWeCanLoad <= 0 )
+        {
+            // flag that there was insufficient space to load a charge and stop looking.
+            InsufficientSpace = true;
+            break;
+        }
+        // Great!  We can load at least one, let's top off the loaded charges:
+        if(loadedChargeRef.get() == NULL)
+        {
+            // if there are more charges available than will fit?
+            if(chargeRef->quantity() > quantityWeCanLoad)
+            {
+                // We need to split the stack so we can load a partial stack.
+                // Split chargeRef to qty 'quantityWeCanLoad'
+                InventoryItemRef splitChargeRef = chargeRef->Split( quantityWeCanLoad );
+                splitChargeRef->ChangeOwner( chargeRef->ownerID() );
+                // and then load the split charge.
+                chargeRef = splitChargeRef;
+            }
+        }
+        else
+        {
+            // there are already some charges so just move the numbers.
+            if(chargeRef->quantity() == quantityWeCanLoad)
+                // there all used so just delete the old stack.
+                chargeRef->Delete();
+            // otherwise just adjust the quantity.
+            else if(!chargeRef->AlterQuantity(-quantityWeCanLoad) && !Loaded)
+                // if the change quantity failed and no other charges have been loaded.
+                throw PyException( MakeCustomError( "Cannot load this charge!" ) );
+
+            // now add them to the old charge.
+            loadedChargeRef->AlterQuantity(quantityWeCanLoad);
+            // and then load the merged charge.
+            chargeRef = loadedChargeRef;
+        }
+        // set this so it'll be valid for the next loop.  even if the charge isn't loaded yet.
+        loadedChargeRef = chargeRef;
+        // we've loaded at least one charge!
+        Loaded = true;
+    }
+    if(Loaded)
+    {
+        // load the charge and move it onto the ship.
+        mod->Load( chargeRef );
+        chargeRef->Move(m_Ship->itemID(), flag);
     }
     else
     {
-        // there are already some charges so just move the numbers.
-        if(chargeRef->quantity() == quantityWeCanLoad)
-            // there all used so just delete the old stack.
-            chargeRef->Delete();
-        // otherwise just adjust the quantity.
-        else if(!chargeRef->AlterQuantity(-quantityWeCanLoad))
-          throw PyException( MakeCustomError( "Cannot load this charge!" ) );
-        
-        // now add them to the old charge.
-        loadedChargeRef->AlterQuantity(quantityWeCanLoad);
-        // and then load the merged charge.
-        chargeRef = loadedChargeRef;
+        if(InsufficientSpace)
+            // we haven't loaded any charges and were at the end of the list.
+            throw PyException( MakeCustomError( "Cannot load even one unit of this charge!" ) );
+        // An unknown error...
+        throw PyException( MakeCustomError( "Failed to load charge!" ) );
     }
-    // load the charge and move it onto the ship.
-    mod->Load( chargeRef );
-    chargeRef->Move(m_Ship->itemID(), flag);
 }
 
 void ModuleManager::UnloadCharge(EVEItemFlags flag)

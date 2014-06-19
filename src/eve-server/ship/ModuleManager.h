@@ -361,7 +361,7 @@ public:
     void DeOverload(uint32 itemID);
     void DamageModule(uint32 itemID, EvilNumber val);
     void RepairModule(uint32 itemID);
-    void LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag);
+    void LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEItemFlags flag);
     void UnloadCharge(EVEItemFlags flag);
     void UnloadAllModules();
     void CharacterLeavingShip();

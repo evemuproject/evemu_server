@@ -60,13 +60,15 @@ void ActiveModuleProcessingComponent::Process()
     if(!m_timer.Check())
         return;  // nope still waiting.
 
+    //time passed and we can drain cap and make/maintain changes to the attributes
     if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
     {
-        //time passed and we can drain cap and make/maintain changes to the attributes
+        // weapon is loaded and ready to do it's work.
         sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
         ProcessActiveCycle();
     }
     else {
+        // end the loading cycle.
         m_Stop = true;
         m_Mod->EndLoading();
     }
@@ -111,11 +113,18 @@ void ActiveModuleProcessingComponent::ActivateCycle(EVEEffectID effectID, std::s
         }
     }
 
+    // if loading set reload time to 10 seconds.
+    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADING || m_Mod->m_Charge_State == ChargeStates::MOD_RELOADING)
+        m_CycleTime = 10 * Win32Time_Second;
+
+    // start the timer.
     m_timer.Start(m_CycleTime.get_int());
+    // start the button effects.
     StartButton();
     if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
     {
-      m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
+        // if weapon is loaded perform weapon start action.
+        m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
     }
 }
 
@@ -190,10 +199,7 @@ void ActiveModuleProcessingComponent::StartButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    if(m_Mod->m_targetEntity != NULL)
-      env->AddItem(new PyInt(m_Mod->m_targetEntity->GetID()));
-    else
-      env->AddItem(new PyInt(0));
+    env->AddItem(new PyInt(m_Mod->GetTargetID()));
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyInt(10));
@@ -248,10 +254,7 @@ void ActiveModuleProcessingComponent::EndButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    if(m_Mod->m_targetEntity != NULL)
-      env->AddItem(new PyInt(m_Mod->m_targetEntity->GetID()));
-    else
-      env->AddItem(new PyInt(0));
+    env->AddItem(new PyInt(m_Mod->GetTargetID()));
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyInt(10));
