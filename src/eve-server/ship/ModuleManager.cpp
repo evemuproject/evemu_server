@@ -744,174 +744,79 @@ ModuleManager::ModuleManager(Ship *const ship)
     // Load modules, rigs and subsystems from Ship's inventory into ModuleContainer:
 	m_pLog->Log("ModuleManager", "Loading modules...");
     uint32 flagIndex;
-    for(flagIndex=flagLowSlot0; flagIndex<=flagLowSlot7; flagIndex++)
+    int rangeIndex;
+    uint32 rangeStart[5] = {flagLowSlot0, flagMedSlot0, flagHiSlot0, flagRigSlot0, flagSubSystem0 };
+    uint32 rangeEnd[5] = {flagLowSlot7, flagMedSlot7, flagHiSlot7, flagRigSlot7, flagSubSystem7 };
+    std::string rangeName[5] = { "Low", "Med", "Hi", "Rig", "Sub" };
+    // load low, medium and hi slots.
+    for(int rangeIndex = 0; rangeIndex < 3; rangeIndex++)
     {
-        InventoryItemRef moduleRef;
-		InventoryItemRef chargeRef;
-		std::vector<InventoryItemRef>::iterator cur, end;
-        std::vector<InventoryItemRef> items;
-		m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
-		cur = items.begin();
-		end = items.end();
-		if( items.size() > 0 )
-		{
-			while( (cur != end) ) {
-				if( cur->get()->categoryID() == EVEDB::invCategories::Charge )
-					chargeRef = (*cur);
-				if( cur->get()->categoryID() == EVEDB::invCategories::Module )
-					moduleRef = (*cur);
-				cur++;
-			}
-			if( !(moduleRef.get() == NULL) )
-			{
-				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
-				{
-					_fitModule( moduleRef, (EVEItemFlags)flagIndex );
-					if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
-						Online(moduleRef->itemID());
-					else
-						Offline(moduleRef->itemID());
-					if( chargeRef.get() != NULL )
-						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
-				}
-				else
-				{
-					sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit Low Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
-					throw PyException( MakeCustomError( "ERROR! Cannot fit Low Slot module '%s'", moduleRef->itemName().c_str() ) );
-				}
-			}
-		}
+        for(flagIndex=rangeStart[rangeIndex]; flagIndex<=rangeEnd[rangeIndex]; flagIndex++)
+        {
+            InventoryItemRef moduleRef;
+            InventoryItemRef chargeRef;
+            std::vector<InventoryItemRef>::iterator cur, end;
+            std::vector<InventoryItemRef> items;
+            m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
+            cur = items.begin();
+            end = items.end();
+            if( items.size() <= 0 )
+                continue;
+            while( (cur != end) ) {
+                if( cur->get()->categoryID() == EVEDB::invCategories::Charge )
+                    chargeRef = (*cur);
+                if( cur->get()->categoryID() == EVEDB::invCategories::Module )
+                    moduleRef = (*cur);
+                cur++;
+            }
+            if( !(moduleRef.get() == NULL) )
+            {
+                if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
+                {
+                    if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
+                        Online(moduleRef->itemID());
+                    else
+                        Offline(moduleRef->itemID());
+                    if( chargeRef.get() != NULL )
+                        ((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->m_chargeRef = chargeRef;
+                }
+                else
+                {
+                    sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit %s Slot module '%s' (id %u)", rangeName[rangeIndex].c_str(), moduleRef->itemName().c_str(), moduleRef->itemID() );
+                    throw PyException( MakeCustomError( "ERROR! Cannot fit Low Slot module '%s'", moduleRef->itemName().c_str() ) );
+                }
+            }
+        }
     }
 
-    for(flagIndex=flagMedSlot0; flagIndex<=flagMedSlot7; flagIndex++)
+    // load rig and subsystem slots
+    for(int rangeIndex = 3; rangeIndex < 5; rangeIndex++)
     {
-        InventoryItemRef moduleRef;
-		InventoryItemRef chargeRef;
-		std::vector<InventoryItemRef>::iterator cur, end;
-        std::vector<InventoryItemRef> items;
-		m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
-		cur = items.begin();
-		end = items.end();
-		if( items.size() > 0 )
-		{
-			while( (cur != end) ) {
-				if( cur->get()->categoryID() == EVEDB::invCategories::Charge )
-					chargeRef = (*cur);
-				if( cur->get()->categoryID() == EVEDB::invCategories::Module )
-					moduleRef = (*cur);
-				cur++;
-			}
-			if( !(moduleRef.get() == NULL) )
-			{
-				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
-				{
-					_fitModule( moduleRef, (EVEItemFlags)flagIndex );
-					if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
-						Online(moduleRef->itemID());
-					else
-						Offline(moduleRef->itemID());
-					if( chargeRef.get() != NULL )
-						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
-				}
-				else
-				{
-					sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit Med Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
-					throw PyException( MakeCustomError( "ERROR! Cannot fit Med Slot module '%s'", moduleRef->itemName().c_str() ) );
-				}
-			}
-		}
-    }
-
-    for(flagIndex=flagHiSlot0; flagIndex<=flagHiSlot7; flagIndex++)
-    {
-        InventoryItemRef moduleRef;
-		InventoryItemRef chargeRef;
-		std::vector<InventoryItemRef>::iterator cur, end;
-        std::vector<InventoryItemRef> items;
-		m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
-		cur = items.begin();
-		end = items.end();
-		if( items.size() > 0 )
-		{
-			while( (cur != end) ) {
-				if( cur->get()->categoryID() == EVEDB::invCategories::Charge )
-					chargeRef = (*cur);
-				if( cur->get()->categoryID() == EVEDB::invCategories::Module )
-					moduleRef = (*cur);
-				cur++;
-			}
-			if( !(moduleRef.get() == NULL) )
-			{
-				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
-				{
-					if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
-						Online(moduleRef->itemID());
-					else
-						Offline(moduleRef->itemID());
-					if( chargeRef.get() != NULL )
-						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
-				}
-				else
-				{
-					sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit High Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
-					throw PyException( MakeCustomError( "ERROR! Cannot fit High Slot module '%s'", moduleRef->itemName().c_str() ) );
-				}
-			}
-		}
-    }
-
-    for(flagIndex=flagRigSlot0; flagIndex<=flagRigSlot7; flagIndex++)
-    {
-        InventoryItemRef itemRef;
-		std::vector<InventoryItemRef>::iterator cur, end;
-        std::vector<InventoryItemRef> items;
-		m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
-		cur = items.begin();
-		end = items.end();
-		if( items.size() > 0 )
-		{
-			while( (cur->get()->categoryID() != EVEDB::invCategories::Module) && (cur != end) ) {
-				cur++;
-			}
-			if( cur->get()->categoryID() == EVEDB::invCategories::Module )
-				itemRef = (*cur);
-			if( !(itemRef.get() == NULL) )
-			{
-				_fitModule( itemRef, (EVEItemFlags)flagIndex );
-				// We don't think Rigs need the Online attribute set, but keep this code here in case we do:
-				//if( itemRef->GetAttribute(AttrIsOnline).get_int() == 1 )
-				//	Online(itemRef->itemID());
-				//else
-				//	Offline(itemRef->itemID());
-			}
-		}
-    }
-
-    for(flagIndex=flagSubSystem0; flagIndex<=flagSubSystem7; flagIndex++)
-    {
-        InventoryItemRef itemRef;
-		std::vector<InventoryItemRef>::iterator cur, end;
-        std::vector<InventoryItemRef> items;
-		m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
-		cur = items.begin();
-		end = items.end();
-		if( items.size() > 0 )
-		{
-			while( (cur->get()->categoryID() != EVEDB::invCategories::Module) && (cur != end) ) {
-				cur++;
-			}
-			if( cur->get()->categoryID() == EVEDB::invCategories::Module )
-				itemRef = (*cur);
-			if( !(itemRef.get() == NULL) )
-			{
-				_fitModule( itemRef, (EVEItemFlags)flagIndex );
-				// We don't think Subsystems need the Online attribute set, but keep this code here in case we do:
-				//if( itemRef->GetAttribute(AttrIsOnline).get_int() == 1 )
-				//	Online(itemRef->itemID());
-				//else
-				//	Offline(itemRef->itemID());
-			}
-		}
+        for(flagIndex=rangeStart[rangeIndex]; flagIndex<=rangeEnd[rangeIndex]; flagIndex++)
+        {
+            InventoryItemRef itemRef;
+            std::vector<InventoryItemRef>::iterator cur, end;
+            std::vector<InventoryItemRef> items;
+            m_Ship->FindByFlag( (EVEItemFlags)flagIndex, items );        // Operator assumed to be Client *
+            cur = items.begin();
+            end = items.end();
+            if( items.size() > 0 )
+                continue;
+            while( (cur->get()->categoryID() != EVEDB::invCategories::Module) && (cur != end) ) {
+                cur++;
+            }
+            if( cur->get()->categoryID() == EVEDB::invCategories::Module )
+                itemRef = (*cur);
+            if( !(itemRef.get() == NULL) )
+            {
+                _fitModule( itemRef, (EVEItemFlags)flagIndex );
+                // We don't think Rigs or subsystems need the Online attribute set, but keep this code here in case we do:
+                //if( itemRef->GetAttribute(AttrIsOnline).get_int() == 1 )
+                //	Online(itemRef->itemID());
+                //else
+                //	Offline(itemRef->itemID());
+            }
+        }
     }
 
 	m_pLog->Log("ModuleManager", "Module loading complete!");
