@@ -800,7 +800,7 @@ void ModuleEffects::_populate(uint32 typeID)
 {
     //first get list of all of the effects associated with the typeID
     DBQueryResult *res = new DBQueryResult();
-    //ModuleDB::GetDgmTypeEffectsInformation(typeID, *res);
+    ModuleDB::GetDgmTypeEffects(typeID, *res);
 
     //counter
     MEffect * mEffectPtr;
