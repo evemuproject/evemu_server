@@ -779,7 +779,11 @@ ModuleManager::ModuleManager(Ship *const ship)
                     else
                         Offline(moduleRef->itemID());
                     if( chargeRef.get() != NULL )
-                        ((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->m_chargeRef = chargeRef;
+                    {
+                        ActiveModule *mod = (ActiveModule *)GetModule((EVEItemFlags)flagIndex);
+                        mod->m_chargeRef = chargeRef;
+                        mod->m_Charge_State = ChargeStates::MOD_LOADED;
+                    }
                 }
                 else
                 {

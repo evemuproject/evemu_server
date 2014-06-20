@@ -168,7 +168,8 @@ void ProjectileTurret::StartCycle()
              effectTargetAttack // from EVEEffectID::
              );
 
-    m_targetEntity->ApplyDamage(damageDealt);
+    if(m_targetEntity->ApplyDamage(damageDealt))
+        Deactivate();
 
     // expend round.
     if (m_chargeRef->quantity() <= 1)

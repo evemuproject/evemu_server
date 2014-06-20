@@ -122,7 +122,7 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, std::string
         if(m_CycleTime <= 0)
             m_Mod->EndLoading();
         // set the effect to onlining.
-        m_EffectID = 16;
+        m_EffectID = 0;//16;
         m_EffectName = "";
     }
     else
@@ -139,17 +139,17 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, std::string
         }
     }
 
+    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
+    {
+        // if weapon is loaded perform weapon start action.
+        m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
+    }
     if(m_CycleTime > 0)
     {
         // start the timer.
         m_timer.Start(m_CycleTime.get_int());
         // start the button effects.
         StartButton();
-    }
-    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
-    {
-        // if weapon is loaded perform weapon start action.
-        m_Mod->StartCycle();	// Do initial cycle immediately while we start timer
     }
 }
 
@@ -163,20 +163,30 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
     // cycle ended perform end of cycle actions.
     m_Mod->EndCycle();
 
+    // to-do: check to make sure target still valid.
+    // stop if it's disapeared.  or errors may occure.
+    
     //check for stop signal
-    if(m_Stop) {
-        // end the button cycle.
-        //EndButton();
+    if(m_Stop)
+    {
         return; // cycle stopped.
     }
 
     // cycle not stopped start next cycle.
 
-    // Check to see if our target is still in this bubble or has left or been destroyed:
-    uint32 m_targetID = m_Mod->GetTargetID();
-    if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
-    {
-        // Target has left our bubble or been destroyed, deactivate this module:
+    try{
+        // Check to see if our target is still in this bubble or has left or been destroyed:
+        uint32 m_targetID = m_Mod->GetTargetID();
+        if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
+        {
+            // Target has left our bubble or been destroyed, deactivate this module:
+            m_Mod->Deactivate();
+            return;
+        }
+    }
+    catch (...){
+        // something has gone wrong with our target.  Shutdown!
+        // may happen as a result of kill all npcs
         m_Mod->Deactivate();
         return;
     }
@@ -197,10 +207,10 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
     // sufficient capacitor begin new cycle.
 	m_Ship->SetAttribute(AttrCharge, capCapacity);
 
-    // start the new button cycle.
-    StartButton();
     // start new cycle.
     m_Mod->StartCycle();
+    // start the new button cycle.
+    StartButton();
 }
 
 double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
@@ -211,6 +221,7 @@ double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
 void ActiveModuleProcessingComponent::StartButton()
 {
     m_ButtonCycle = true;
+    uint32 tID = m_Mod->GetTargetID();
 
     // create ship button effect
     Notify_OnGodmaShipEffect shipEff;
@@ -224,25 +235,26 @@ void ActiveModuleProcessingComponent::StartButton()
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    uint32 tID = m_Mod->GetTargetID();
-    env->AddItem(tID > 0 ? new PyInt(tID) : new PyNone);
+    if(tID > 0)
+      env->AddItem(new PyInt(tID));
+    else
+      env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyInt(m_EffectID));
 
-    EvilNumber time(0);
-	if(!m_Mod->HasAttribute(AttrDuration, time))
-        m_Mod->HasAttribute(AttrSpeed, time);
-
     shipEff.environment = env;
     shipEff.startTime = shipEff.when;
-    shipEff.duration = time.get_float();
+    shipEff.duration = m_CycleTime.get_float();
     shipEff.repeat = new PyInt(1000);
     shipEff.randomSeed = new PyNone;
     shipEff.error = new PyNone;
 
     PyTuple *event = shipEff.Encode();
     m_Ship->GetOperator()->GetDestiny()->SendSelfDestinyEvent(&event);
+
+    if(tID == 0)
+        tID = m_Ship->itemID();
 
         // Create Special Effect:
 // shipRef, moduleID, moduleTypeID,
@@ -256,10 +268,10 @@ void ActiveModuleProcessingComponent::StartButton()
              tID,
              tID > 0 ? m_chargeID : 0,
              m_EffectName,
-             tID > 0 ? 1 : 0,
+             1,
              1,
              m_CycleTime.get_float(),
-             1
+             m_Stop ? 1 : 0
              );
 
 }
@@ -267,6 +279,7 @@ void ActiveModuleProcessingComponent::StartButton()
 void ActiveModuleProcessingComponent::EndButton()
 {
     m_ButtonCycle = false;
+    uint32 tID = m_Mod->GetTargetID();
 
     Notify_OnGodmaShipEffect shipEff;
     shipEff.itemID = m_Item->itemID();
@@ -274,13 +287,20 @@ void ActiveModuleProcessingComponent::EndButton()
     shipEff.when = Win32TimeNow();
     shipEff.start = 0;
     shipEff.active = 0;
+    if(m_Mod->m_Charge_State != ChargeStates::MOD_LOADED)
+    {
+        //shipEff.start = m_Mod->isOnline() ? 1 : 0;
+        //shipEff.active = m_Mod->isOnline() ? 1 : 0;
+    }
 
     PyList* env = new PyList;
     env->AddItem(new PyInt(shipEff.itemID));
     env->AddItem(new PyInt(m_Ship->ownerID()));
     env->AddItem(new PyInt(m_Ship->itemID()));
-    uint32 tID = m_Mod->GetTargetID();
-    env->AddItem(tID > 0 ? new PyInt(tID) : new PyNone);
+    if(tID > 0)
+      env->AddItem(new PyInt(tID));
+    else
+      env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyNone);
     env->AddItem(new PyInt(m_EffectID));
@@ -288,7 +308,7 @@ void ActiveModuleProcessingComponent::EndButton()
     shipEff.environment = env;
     shipEff.startTime = shipEff.when;
     shipEff.duration = 0;
-    shipEff.repeat = new PyInt(0);
+    shipEff.repeat = new PyInt(1000);
     shipEff.randomSeed = new PyNone;
     shipEff.error = new PyNone;
 
@@ -300,6 +320,9 @@ void ActiveModuleProcessingComponent::EndButton()
 
     m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
     
+    if(tID == 0)
+        tID = m_Ship->itemID();
+
     // Cancel Special Effect:
     m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect(
              m_Ship,
@@ -308,7 +331,7 @@ void ActiveModuleProcessingComponent::EndButton()
              tID,
              tID > 0 ? m_chargeID : 0,
              m_EffectName,
-             tID > 0 ? 1 : 0,
+             1,
              0,
              m_Item->GetAttribute(AttrSpeed).get_float(),
              0
