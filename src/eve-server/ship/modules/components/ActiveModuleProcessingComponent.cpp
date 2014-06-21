@@ -80,6 +80,9 @@ void ActiveModuleProcessingComponent::Process()
         //m_Item->SetActive(false, 1253, 0, false);
         return;
     }
+    // if were not stopping try to start another cycle.
+    if(!m_Stop)
+        BeginCycle();
     //check if we have a signal to stop the cycle
     if(m_Stop)
     {
@@ -87,10 +90,6 @@ void ActiveModuleProcessingComponent::Process()
         m_timer.Disable();
         //m_Item->SetActive(false, 1253, 0, false);
         EndButton();
-    }
-    else
-    {
-        BeginCycle();
     }
 
 }
