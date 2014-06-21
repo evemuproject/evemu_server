@@ -63,7 +63,7 @@ private:
     /**
      * Begin a new cycle.
      */
-    void BeginCycle();
+    bool BeginCycle();
     /**
      * A cycle has completed and a new cycle might start.
      */

@@ -128,18 +128,15 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
     // if the effectID given is -1 attempt to look up the default effect.
     if(effectID == -1)
         m_Effect = m_Mod->m_Effects->GetDefaultEffect();
-    EvilNumber capNeed;
     bool autoRepeat;
     if(m_Effect != NULL)
     {
-        capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID());
         m_CycleTime = m_Mod->GetAttribute(m_Effect->GetDurationAttributeID());
         autoRepeat = m_Effect->GetDisallowAutoRepeat();
     }
     else
     {
         EvilNumber zero(0);
-        capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
         autoRepeat = m_Mod->GetAttribute(AttrDisallowRepeatingActivation, zero) == 0;
         // to-do: move this to module so that the module can factor in skill effects on time.
         // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
@@ -152,19 +149,16 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
             }
         }
     }
-    // cannot activate module if there is insufficient capacitor.
-  	if(m_Ship->GetAttribute(AttrCharge) < capNeed)
-        return;
-
+    
     m_Stop = false;
     if(!autoRepeat)
     	m_Stop = true;
-    // to-do: get the effect from the database dgmTypeEffects.  Should be category 2 with default flag.
     m_Charge = charge;
 
     if(m_CycleTime > 0)
     {
-        BeginCycle();
+        if(!BeginCycle())
+            return;
         // start the timer.
         m_timer.Start(m_CycleTime.get_int());
     }
@@ -175,8 +169,28 @@ void ActiveModuleProcessingComponent::DeactivateCycle()
     m_Stop = true;
 }
 
-void ActiveModuleProcessingComponent::BeginCycle()
+bool ActiveModuleProcessingComponent::BeginCycle()
 {
+    // consume capacitor
+    EvilNumber capNeed;
+    if(m_Effect != NULL)
+        capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID());
+    else
+        capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
+	EvilNumber capCapacity = m_Ship->GetAttribute(AttrCharge);
+	capCapacity -= capNeed;
+
+    // check for sufficient capacitor.
+    if(capCapacity < 0)
+    {
+        // insufficient capacitor, deactivate.
+        m_Mod->Deactivate();
+        return false;
+    }
+
+    // sufficient capacitor begin new cycle.
+	m_Ship->SetAttribute(AttrCharge, capCapacity);
+
    // check for overloading.
     if(m_Mod->_isOverload)
     {
@@ -203,6 +217,8 @@ void ActiveModuleProcessingComponent::BeginCycle()
     m_Mod->StartCycle();
     // start the new button cycle.
     StartButton();
+    
+    return true;
  }
 
 void ActiveModuleProcessingComponent::ProcessActiveCycle()
@@ -242,22 +258,6 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
         m_Mod->Deactivate();
         return;
     }
-
-    // consume capacitor
-	EvilNumber capCapacity = m_Ship->GetAttribute(AttrCharge);
-	EvilNumber capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
-	capCapacity -= capNeed;
-
-    // check for sufficient capacitor.
-    if(capCapacity < 0)
-    {
-        // insufficient capacitor, deactivate.
-        m_Mod->Deactivate();
-        return;
-    }
-
-    // sufficient capacitor begin new cycle.
-	m_Ship->SetAttribute(AttrCharge, capCapacity);
 
 }
 
