@@ -503,36 +503,22 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 
 bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
 {
-    //this isn't particularly efficient, but until I write a better solution, this will do
-    DBQueryResult res;
+    DgmTypeAttributeSet *attrset = sDgmTypeAttrMgr.GetDmgTypeAttributeSet(mItem.typeID());
 
-    if(!sDatabase.RunQuery(res, "SELECT * FROM dgmTypeAttributes WHERE typeID='%u'", mItem.typeID())) {
-        sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
-        return false;
-    }
+    // if not found return true because there can be items without attributes I guess
+    if (attrset == NULL)
+        return true;
 
-    DBResultRow row;
-    EvilNumber attrVal;
-    uint32 attributeID;
-
-    int amount = res.GetRowCount();
-    for (int i = 0; i < amount; i++)
-    {
-        res.GetRow(row);
-        attributeID = row.GetUInt(1);
-        if( attributeID == attrID )
+    DgmTypeAttributeSet::AttrSetItr itr = attrset->begin();
+    for (; itr != attrset->end(); itr++) {
+        if((*itr)->attributeID == attrID)
         {
-            if(!row.IsNull(2))
-                attrVal = row.GetUInt64(2);
-            else
-                attrVal = row.GetDouble(3);
-
-            SetAttribute(attributeID, attrVal, notify);
+            SetAttribute(attrID, (*itr)->number, notify);
+            return true;
         }
     }
 
     return true;
-
 }
 
 bool AttributeMap::Load()
