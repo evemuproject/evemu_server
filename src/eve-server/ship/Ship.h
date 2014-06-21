@@ -243,7 +243,13 @@ public:
     void DeactivateAllModules();
     void OnlineAll();
     ShipOperatorInterface * GetOperator() { return m_pOperator; }
-    std::vector<GenericModule *> GetStackedItems(uint32 typeID, ModulePowerLevel level);
+    /**
+     * Get a list of all module in the same group.
+     * @param groupID The groupID of the modules to get.
+     * @param level The power level of the modules to get.
+     * @return The list of modules.
+     */
+    std::vector<GenericModule *> GetStackedItems(uint32 groupID, ModulePowerLevel level);
 
     // External Methods For use by hostile entities directing effects to this entity:
     int32 ApplyRemoteEffect() { assert(true); }     // DO NOT CALL THIS YET!!!  This function needs to call down to ModuleManager::RemoveRemoteEffect with the proper argument list.

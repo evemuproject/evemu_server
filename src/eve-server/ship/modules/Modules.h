@@ -82,6 +82,7 @@ public:
     virtual uint32 itemID()                                        { return m_Item->itemID(); }
     virtual EVEItemFlags flag()                                    { return m_Item->flag(); }
     virtual uint32 typeID()                                        { return m_Item->typeID(); }
+    virtual uint32 groupID()                                        { return m_Item->groupID(); }
     virtual bool isOnline()                                        { return (m_Item->GetAttribute(AttrIsOnline) == 1); }
     virtual bool isHighPower()                                    { return m_Effects->isHighSlot(); }
     virtual bool isMediumPower()                                { return m_Effects->isMediumSlot(); }

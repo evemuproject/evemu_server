@@ -370,7 +370,13 @@ public:
     void ShipJumping();
     void Process();
     void ProcessExternalEffect(Effect * e);
-    std::vector<GenericModule *> GetStackedItems(uint32 typeID, ModulePowerLevel level);  //should only be used by components
+    /**
+     * Get a list of all module in the same group.
+     * @param groupID The groupID of the modules to get.
+     * @param level The power level of the modules to get.
+     * @return The list of modules.
+     */
+    std::vector<GenericModule *> GetStackedItems(uint32 groupID, ModulePowerLevel level);  //should only be used by components
 
     GenericModule * GetModule(EVEItemFlags flag)    { return m_Modules->GetModule(flag); }
     GenericModule * GetModule(uint32 itemID)        { return m_Modules->GetModule(itemID); }

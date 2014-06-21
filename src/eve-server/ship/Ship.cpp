@@ -715,9 +715,9 @@ void Ship::DeactivateAllModules()
     m_ModuleManager->DeactivateAllModules();
 }
 
-std::vector<GenericModule *> Ship::GetStackedItems(uint32 typeID, ModulePowerLevel level)
+std::vector<GenericModule *> Ship::GetStackedItems(uint32 groupID, ModulePowerLevel level)
 {
-    return m_ModuleManager->GetStackedItems(typeID, level);
+    return m_ModuleManager->GetStackedItems(groupID, level);
 }
 
 /* End new Module Manager Interface */

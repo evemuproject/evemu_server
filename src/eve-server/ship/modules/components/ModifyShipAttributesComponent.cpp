@@ -76,7 +76,7 @@ void ModifyShipAttributesComponent::_modifyShipAttributes(ShipRef ship, uint32 t
     ship->ResetAttribute(targetAttrID, false);
 
     //recalculate the attribute for the ship with the new modifier
-    ship->SetAttribute(targetAttrID, _calculateNewValue(targetAttrID, sourceAttrID, type, m_Ship->GetStackedItems(m_Mod->typeID(), m_Mod->GetModulePowerLevel())));
+    ship->SetAttribute(targetAttrID, _calculateNewValue(targetAttrID, sourceAttrID, type, m_Ship->GetStackedItems(m_Mod->groupID(), m_Mod->GetModulePowerLevel())));
 }
 
 EvilNumber ModifyShipAttributesComponent::_calculateNewValue(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type, std::vector<GenericModule *> mods)
