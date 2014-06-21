@@ -80,7 +80,7 @@ void Afterburner::DestroyRig()
 
 void Afterburner::Activate(SystemEntity * targetEntity)
 {
-	m_ActiveModuleProc->ActivateCycle(effectSpeedBoost, "", 0 );
+	m_ActiveModuleProc->ActivateCycle(effectSpeedBoost );
 
 	m_Ship->SetAttribute(AttrCharge, 134.999996046585);
 	m_Ship->SetAttribute(AttrMaxVelocity, 387);

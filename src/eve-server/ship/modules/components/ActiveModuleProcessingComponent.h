@@ -46,9 +46,14 @@ public:
     /**
      * Activates a module cycle timer and triggers StartCycle()
      * @param buttonEffect the effect id for the ships module button.
-     * @param chargeID the itemID of the charge currently loaded into the module.
      */
-	void ActivateCycle(uint32 effectID, std::string effectName, uint32 chargeID);
+	void ActivateCycle(uint32 effectID) { ActivateCycle(effectID, InventoryItemRef()); };
+    /**
+     * Activates a module cycle timer and triggers StartCycle()
+     * @param buttonEffect the effect id for the ships module button.
+     * @param charge the charge currently loaded into the module.
+     */
+	void ActivateCycle(uint32 effectID, InventoryItemRef charge);
     /**
      * Flags the cycle to stop at completion of current cycle.
      */
@@ -82,9 +87,8 @@ private:
 
     bool m_ButtonCycle;
     EvilNumber m_CycleTime;
-    uint32 m_EffectID;
-    std::string m_EffectName;
-	uint32 m_chargeID;		// we do not own this
+    MEffect *m_Effect;
+	InventoryItemRef m_Charge;
 
     //internal access to owner
 	InventoryItemRef m_Item;

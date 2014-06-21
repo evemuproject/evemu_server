@@ -38,7 +38,7 @@ ProjectileTurret::ProjectileTurret(InventoryItemRef item, ShipRef ship)
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
     m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
 
-    m_chargeRef = InventoryItemRef(); // Ensure ref is NULL
+    m_ChargeRef = InventoryItemRef(); // Ensure ref is NULL
     // charge loading time is 10 seconds.
     m_LoadCycleTime = 10000;
 }
@@ -85,12 +85,12 @@ void ProjectileTurret::DestroyRig()
 
 void ProjectileTurret::Activate(SystemEntity * targetEntity)
 {
-    if (m_chargeRef.get() != NULL && targetEntity != NULL)
+    if (m_ChargeRef.get() != NULL && targetEntity != NULL)
     {
         m_targetEntity = targetEntity;
 
         // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(-1, "", m_chargeRef->itemID());
+        m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);
     }
     else
     {
@@ -148,13 +148,13 @@ void ProjectileTurret::StartCycle()
 
     // This still somehow needs skill, ship, module, and implant bonuses to be applied:
     // This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-    if (m_chargeRef->HasAttribute(AttrKineticDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrKineticDamage, damage))
         kinetic_damage = damageMultiplier * damage.get_float();
-    if (m_chargeRef->HasAttribute(AttrThermalDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrThermalDamage, damage))
         thermal_damage = damageMultiplier * damage.get_float();
-    if (m_chargeRef->HasAttribute(AttrEmDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrEmDamage, damage))
         em_damage = damageMultiplier * damage.get_float();
-    if (m_chargeRef->HasAttribute(AttrExplosiveDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrExplosiveDamage, damage))
         explosive_damage = damageMultiplier * damage.get_float();
 
     Damage damageDealt
@@ -172,17 +172,17 @@ void ProjectileTurret::StartCycle()
         Deactivate();
 
     // expend round.
-    if (m_chargeRef->quantity() <= 1)
+    if (m_ChargeRef->quantity() <= 1)
     {
         // last rounds used.
         if(m_Ship.get() != NULL)
         {
             Deactivate();
-            m_chargeRef->Delete();
+            m_ChargeRef->Delete();
             Unload();
             // to-do: auto-reload
         }
     }
     else
-      m_chargeRef->AlterQuantity(-1, true);
+      m_ChargeRef->AlterQuantity(-1, true);
 }

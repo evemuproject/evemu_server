@@ -35,7 +35,7 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
     m_Effects = new ModuleEffects(m_Item->typeID());
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
 
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
+	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
     m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_UNLOADED;
     // load cycle for most charges is zero.
@@ -84,25 +84,20 @@ void ActiveModule::Load(InventoryItemRef charge)
 
     m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_LOADING;
-	m_chargeRef = charge;
-    // check to see if the client has been registered to this ship.
-    // if not then it's either not a player ship or the player hasn't finished loading.
-    if(!m_Ship->GetOperator()->IsClient())
-    {
-        // do instant load so no errors are generated.
-        m_Charge_State = ChargeStates::MOD_LOADED;
-        return;
-    }
-    m_ActiveModuleProc->ActivateCycle( EVEEffectID::effectHiPower, "", m_chargeRef->itemID());
+    m_ActiveModuleProc->ActivateCycle( -1, m_ChargeRef);
+	m_ChargeRef = InventoryItemRef();
 }
 
 void ActiveModule::Unload()
 {
     m_Charge_State = ChargeStates::MOD_UNLOADED;
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
+	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
 }
 
-void ActiveModule::EndLoading()
+void ActiveModule::EndLoading(InventoryItemRef charge)
 {
+	m_ChargeRef = charge;
     m_Charge_State = ChargeStates::MOD_LOADED;
+    if(m_ChargeRef.get() != NULL)
+        m_ChargeRef->Move(m_Ship->itemID(), flag());
 }

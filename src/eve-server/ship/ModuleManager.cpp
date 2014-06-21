@@ -781,7 +781,7 @@ ModuleManager::ModuleManager(Ship *const ship)
                     if( chargeRef.get() != NULL )
                     {
                         ActiveModule *mod = (ActiveModule *)GetModule((EVEItemFlags)flagIndex);
-                        mod->m_chargeRef = chargeRef;
+                        mod->m_ChargeRef = chargeRef;
                         mod->m_Charge_State = ChargeStates::MOD_LOADED;
                     }
                 }
@@ -1307,7 +1307,6 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
     {
         // load the charge and move it onto the ship.
         mod->Load( chargeRef );
-        chargeRef->Move(m_Ship->itemID(), flag);
     }
     else
     {

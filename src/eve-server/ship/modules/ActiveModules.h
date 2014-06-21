@@ -49,9 +49,9 @@ public:
     //access functions
     ModulePowerLevel GetModulePowerLevel()                    { return isHighPower() ? MODULE_BANK_HIGH_POWER : ( isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER); }
 
-	InventoryItemRef GetLoadedChargeRef()					{ return m_chargeRef; }
+	InventoryItemRef GetLoadedChargeRef()					{ return m_ChargeRef; }
 
-	virtual bool isLoaded()											{ return m_chargeRef.get() != NULL; }
+	virtual bool isLoaded()											{ return m_ChargeRef.get() != NULL; }
     virtual bool isRig()                                            { return false; }
     virtual bool isSubSystem()                                        { return false; }
     bool requiresTarget()
@@ -80,7 +80,7 @@ private:
     /**
      * Called when charge loading cycle ends.
      */
-    virtual void EndLoading();
+    virtual void EndLoading(InventoryItemRef charge);
     /**
      * Get the targetID of this modules target.
      * @return The targets targetID.
@@ -103,7 +103,7 @@ protected:
 	ActiveModuleProcessingComponent * m_ActiveModuleProc;
 	SystemEntity * m_targetEntity;	// we do not own this
 
-	InventoryItemRef m_chargeRef;		// we do not own this
+	InventoryItemRef m_ChargeRef;		// we do not own this
     uint32 m_LoadCycleTime;
 
 	//inheritance crap

@@ -38,7 +38,7 @@ EnergyTurret::EnergyTurret(InventoryItemRef item, ShipRef ship)
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
     m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
 
-    m_chargeRef = InventoryItemRef(); // Ensure ref is NULL
+    m_ChargeRef = InventoryItemRef(); // Ensure ref is NULL
 }
 
 EnergyTurret::~EnergyTurret()
@@ -89,12 +89,12 @@ void EnergyTurret::DestroyRig()
 
 void EnergyTurret::Activate(SystemEntity * targetEntity)
 {
-    if (m_chargeRef.get() != NULL && targetEntity != NULL)
+    if (m_ChargeRef.get() != NULL && targetEntity != NULL)
     {
         m_targetEntity = targetEntity;
 
         // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(-1, "", m_chargeRef->itemID());
+        m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);
     }
     else
     {
@@ -157,13 +157,13 @@ void EnergyTurret::StartCycle()
 
     // This still somehow needs skill, ship, module, and implant bonuses to be applied:
     // This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-    if (m_chargeRef->HasAttribute(AttrKineticDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrKineticDamage, damage))
         kinetic_damage = damageMultiplier * damage.get_float();
-    if (m_chargeRef->HasAttribute(AttrThermalDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrThermalDamage, damage))
         thermal_damage = damageMultiplier * damage.get_float();
-    if (m_chargeRef->HasAttribute(AttrEmDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrEmDamage, damage))
         em_damage = damageMultiplier * damage.get_float();
-    if (m_chargeRef->HasAttribute(AttrExplosiveDamage, damage))
+    if (m_ChargeRef->HasAttribute(AttrExplosiveDamage, damage))
         explosive_damage = damageMultiplier * damage.get_float();
 
     Damage damageDealt
@@ -185,18 +185,18 @@ void EnergyTurret::StartCycle()
     }
 
     // check if the crystal takes damage.
-    if (m_chargeRef->singleton())
+    if (m_ChargeRef->singleton())
     {
         double random_chance = MakeRandomFloat(0, 100) / 100;
         // check if random chance damages the crystal
-        if (random_chance < m_chargeRef->GetAttribute(AttrCrystalVolatilityChance).get_float())
+        if (random_chance < m_ChargeRef->GetAttribute(AttrCrystalVolatilityChance).get_float())
         {
-            double newDamage = m_chargeRef->GetAttribute(AttrDamage).get_float() - m_chargeRef->GetAttribute(AttrCrystalVolatilityDamage).get_float();
-            m_chargeRef->SetAttribute(AttrDamage, newDamage, true, false);
+            double newDamage = m_ChargeRef->GetAttribute(AttrDamage).get_float() - m_ChargeRef->GetAttribute(AttrCrystalVolatilityDamage).get_float();
+            m_ChargeRef->SetAttribute(AttrDamage, newDamage, true, false);
             if (newDamage <= 0)
             {
                 Deactivate();
-                m_chargeRef->Delete();
+                m_ChargeRef->Delete();
                 Unload();
                 // to-do: auto-reload
             }
