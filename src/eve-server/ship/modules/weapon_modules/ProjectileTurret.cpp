@@ -31,77 +31,10 @@
 #include "ship/modules/weapon_modules/ProjectileTurret.h"
 
 ProjectileTurret::ProjectileTurret(InventoryItemRef item, ShipRef ship)
+: WeaponModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-    m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-    m_ChargeRef = InventoryItemRef(); // Ensure ref is NULL
     // charge loading time is 10 seconds.
     m_LoadCycleTime = 10000;
-}
-
-ProjectileTurret::~ProjectileTurret()
-{
-
-}
-
-void ProjectileTurret::Process()
-{
-    m_ActiveModuleProc->Process();
-}
-
-void ProjectileTurret::Load(InventoryItemRef charge)
-{
-    ActiveModule::Load(charge);
-}
-
-void ProjectileTurret::Unload()
-{
-    ActiveModule::Unload();
-}
-
-void ProjectileTurret::Repair()
-{
-
-}
-
-void ProjectileTurret::Overload()
-{
-
-}
-
-void ProjectileTurret::DeOverload()
-{
-
-}
-
-void ProjectileTurret::DestroyRig()
-{
-
-}
-
-void ProjectileTurret::Activate(SystemEntity * targetEntity)
-{
-    if (m_ChargeRef.get() != NULL && targetEntity != NULL)
-    {
-        m_targetEntity = targetEntity;
-
-        // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);
-    }
-    else
-    {
-        sLog.Error("ProjectileTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!");
-        throw PyException(MakeCustomError("ERROR!  Cannot find charge that is supposed to be loaded into this module!"));
-    }
-}
-
-void ProjectileTurret::Deactivate()
-{
-    m_ActiveModuleProc->DeactivateCycle();
 }
 
 void ProjectileTurret::StartCycle()
@@ -169,7 +102,10 @@ void ProjectileTurret::StartCycle()
              );
 
     if(m_targetEntity->ApplyDamage(damageDealt))
+    {
+        m_targetEntity = NULL;
         Deactivate();
+    }
 
     // expend round.
     if (m_ChargeRef->quantity() <= 1)

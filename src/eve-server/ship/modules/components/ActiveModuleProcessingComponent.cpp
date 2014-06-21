@@ -26,6 +26,8 @@
 
 #include "eve-server.h"
 
+#include "Client.h"
+#include "EntityList.h"
 #include "ship/Ship.h"
 #include "ship/modules/ActiveModules.h"
 #include "ship/modules/components/ActiveModuleProcessingComponent.h"
@@ -61,9 +63,9 @@ void ActiveModuleProcessingComponent::Process()
         return;  // nope still waiting.
 
     //time passed and we can drain cap and make/maintain changes to the attributes
-    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADED)
+    if(m_Mod->m_Charge_State == MOD_LOADED || (m_Mod->m_RequiresCharge == false && m_Mod->m_Charge_State == MOD_UNLOADED) )
     {
-        // weapon is loaded and ready to do it's work.
+        // module is ready to do it's work.
         sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
         ProcessActiveCycle();
     }
@@ -92,6 +94,7 @@ void ActiveModuleProcessingComponent::Process()
 
 void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryItemRef charge)
 {
+    // cannot activate module if it's still cycling from last activation.
   	if(m_ButtonCycle == true)
         return;
     // are we reloading?
@@ -108,39 +111,53 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
             m_Mod->EndLoading(m_Charge);
             return;
         }
-        m_Item->PutOnline();
+        if(m_Mod->isOnline())
+        {
+            m_Item->PutOffline();
+            m_Item->PutOnline();
+        }
         m_ButtonCycle = true;
         // start the timer.
         m_timer.Start(m_CycleTime.get_int());
         return;
     }
-    // cannot activate module if it's still cycling from last activation.
-    // cannot activate module if there is insufficient capacitor.
-  	if(m_Ship->GetAttribute(AttrCharge) < m_Mod->GetAttribute(AttrCapacitorNeed))
-        return;
-
-    EvilNumber zero(0);
-    if(m_Mod->GetAttribute(AttrDisallowRepeatingActivation, zero) != 0)
-    	m_Stop = true;
-    else
-        m_Stop = false;
-    // to-do: get the effect from the database dgmTypeEffects.  Should be category 2 with default flag.
-    m_Charge = charge;
     m_Effect = NULL;
     // if the effectID given is -1 attempt to look up the default effect.
     if(effectID == -1)
         m_Effect = m_Mod->m_Effects->GetDefaultEffect();
-
-    // to-do: move this to module so that the module can factor in skill effects on time.
-    // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
-    if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
+    EvilNumber capNeed;
+    bool autoRepeat;
+    if(m_Effect != NULL)
     {
-        if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
+        capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID());
+        m_CycleTime = m_Mod->GetAttribute(m_Effect->GetDurationAttributeID());
+        autoRepeat = m_Effect->GetDisallowAutoRepeat();
+    }
+    else
+    {
+        EvilNumber zero(0);
+        capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
+        autoRepeat = m_Mod->GetAttribute(AttrDisallowRepeatingActivation, zero) == 0;
+        // to-do: move this to module so that the module can factor in skill effects on time.
+        // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
+        if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
         {
-            sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
-            return;
+            if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
+            {
+                sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
+                return;
+            }
         }
     }
+    // cannot activate module if there is insufficient capacitor.
+  	if(m_Ship->GetAttribute(AttrCharge) < capNeed)
+        return;
+
+    m_Stop = false;
+    if(!autoRepeat)
+    	m_Stop = true;
+    // to-do: get the effect from the database dgmTypeEffects.  Should be category 2 with default flag.
+    m_Charge = charge;
 
     if(m_CycleTime > 0)
     {
@@ -223,15 +240,19 @@ double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
 	return (double)(m_timer.GetRemainingTime());
 }
 
-void DoButton(ShipRef Ship, InventoryItemRef Item, MEffect *Effect, float CycleTime, uint32 targetID, bool start, bool active, uint32 chargeID, bool Offensive)
+void DoButton(ShipRef Ship, InventoryItemRef Item, MEffect *Effect, float CycleTime, uint32 targetID, bool start, bool active, uint32 chargeID)
 {
     // if we have no ship or module to affect do nothing.
-    if(Item.get() == NULL || Ship.get() == NULL || Effect)
+    if(Item.get() == NULL || Ship.get() == NULL || Effect == NULL)
         return;
-    
+
+    Client *c = sEntityList.FindCharacter(Ship->ownerID());
+    if(c == NULL)
+        return;
+
     uint32 effectID = Effect->GetEffectID();
     std::string effectName = Effect->GetGuid();
-    
+
     uint32 itemID = Item->itemID();
     // create ship button effect
     Notify_OnGodmaShipEffect shipEff;
@@ -272,8 +293,9 @@ void DoButton(ShipRef Ship, InventoryItemRef Item, MEffect *Effect, float CycleT
 // shipRef, moduleID, moduleTypeID,
 // targetID, chargeID, effectString,
 // isOffensive, isActive, duration, repeat
-    if(!Effect->GetGuid().empty())
-      Ship->GetOperator()->GetDestiny()->SendSpecialEffect
+    if( !Effect->GetGuid().empty() && (Effect->GetIsOffensive() == (targetID > 0 ) ) )
+    {
+        Ship->GetOperator()->GetDestiny()->SendSpecialEffect
             (
              Ship,
              itemID,
@@ -281,13 +303,13 @@ void DoButton(ShipRef Ship, InventoryItemRef Item, MEffect *Effect, float CycleT
              targetID,
              targetID > 0 ? chargeID : 0,
              effectName.c_str(),
-             Offensive ? 1 : 0,
+             Effect->GetIsOffensive() ? 1 : 0,
              active ? 1 : 0,
              CycleTime,
              start ? 1 : 0
              );
+    }
 }
-
 
 void ActiveModuleProcessingComponent::StartButton()
 {
@@ -296,8 +318,17 @@ void ActiveModuleProcessingComponent::StartButton()
     uint32 chargeID = 0;
     if(m_Charge.get() != NULL)
         chargeID = m_Charge->itemID();
+    else
+    {
+        // no charge loaded, check to see if this is a civilian module.
+        EvilNumber civilianCharge;
+        if(m_Mod->HasAttribute(AttrAmmoLoaded, civilianCharge))
+        {
+            chargeID = civilianCharge.get_int();
+        }
+    }
 
-    DoButton(m_Ship, m_Item, m_Effect, m_CycleTime.get_float(), tID, true, true, chargeID, true);
+    DoButton(m_Ship, m_Item, m_Effect, m_CycleTime.get_float(), tID, true, true, chargeID);
 }
 
 void ActiveModuleProcessingComponent::EndButton()
@@ -308,6 +339,6 @@ void ActiveModuleProcessingComponent::EndButton()
     if(m_Charge.get() != NULL)
         chargeID = m_Charge->itemID();
 
-    DoButton(m_Ship, m_Item, m_Effect, m_CycleTime.get_float(), tID, false, false, chargeID, true);    
+    DoButton(m_Ship, m_Item, m_Effect, m_CycleTime.get_float(), tID, false, false, chargeID);    
 }
 

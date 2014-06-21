@@ -21,23 +21,39 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:        Reve
-*/
+ */
 
-#ifndef __ENERGYTURRET_H__
-#define __ENERGYTURRET_H__
+#include "eve-server.h"
 
+#include "EntityList.h"
+#include "system/SystemBubble.h"
+#include "system/Damage.h"
 #include "ship/modules/weapon_modules/WeaponModule.h"
 
-class EnergyTurret: public WeaponModule
+WeaponModule::WeaponModule(InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-public:
-    EnergyTurret( InventoryItemRef item, ShipRef ship );
+    m_RequiresCharge = true;
+}
 
-    // Module Action Methods:
-    virtual void Load(InventoryItemRef charge);
-
-	// Calls Reserved for components usage only!
-	virtual void StartCycle();
-};
-
-#endif
+void WeaponModule::Activate(SystemEntity * targetEntity)
+{
+    // if the weapon is already busy do nothing.
+    if(m_ActiveModuleProc->IsBusy())
+        return;
+    // make sure its a valid target and charge.
+    if (m_ChargeRef.get() != NULL && targetEntity != NULL)
+    {
+        // check for civilian version with infinite ammo.
+        if(!HasAttribute(AttrAmmoLoaded))
+        {
+            sLog.Error("WeaponModule::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!");
+            throw PyException(MakeCustomError("ERROR!  Cannot find charge that is supposed to be loaded into this module!"));
+        }
+    }
+    
+    // store the target entity.
+    m_targetEntity = targetEntity;
+    // Activate active processing component timer:
+    m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);
+}

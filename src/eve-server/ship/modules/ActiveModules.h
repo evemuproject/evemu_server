@@ -38,7 +38,7 @@ public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
     ~ActiveModule();
 
-	virtual void Process()						{/*do nothing*/}
+	virtual void Process();
     virtual void Offline();
     virtual void Online();
 	virtual void Activate(SystemEntity * targetEntity);
@@ -104,6 +104,7 @@ protected:
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_ChargeRef;		// we do not own this
+    bool m_RequiresCharge;
     uint32 m_LoadCycleTime;
 
 	//inheritance crap

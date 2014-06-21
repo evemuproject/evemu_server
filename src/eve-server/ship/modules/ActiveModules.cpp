@@ -34,10 +34,12 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
     m_Ship = ship;
     m_Effects = new ModuleEffects(m_Item->typeID());
     m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
+    m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
 
 	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
     m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_UNLOADED;
+    m_RequiresCharge = false;
     // load cycle for most charges is zero.
     m_LoadCycleTime = 0;
 }
@@ -47,14 +49,22 @@ ActiveModule::~ActiveModule()
     //delete members
     delete m_Effects;
     delete m_ShipAttrComp;
+    delete m_ActiveModuleProc;
 
     //null ptrs
     m_Effects = NULL;
     m_ShipAttrComp = NULL;
+    m_ActiveModuleProc = NULL;
+}
+
+void ActiveModule::Process()
+{
+    m_ActiveModuleProc->Process();
 }
 
 void ActiveModule::Offline()
 {
+    Deactivate();
     m_Item->PutOffline();
 }
 
@@ -65,12 +75,14 @@ void ActiveModule::Online()
 
 void ActiveModule::Activate(SystemEntity * targetEntity)
 {
-	//This will be handled by the Module class itself (eg. Afterburner.cpp)
+	// This may be handled by the Module class itself (eg. Afterburner.cpp)
+    // but many modules may just need to run.
+    m_ActiveModuleProc->ActivateCycle(-1);
 }
 
 void ActiveModule::Deactivate()
 {
-	//This will be handled by the Module class itself (eg. Afterburner.cpp)
+    m_ActiveModuleProc->DeactivateCycle();
 }
 
 void ActiveModule::Load(InventoryItemRef charge)
@@ -84,7 +96,7 @@ void ActiveModule::Load(InventoryItemRef charge)
 
     m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_LOADING;
-    m_ActiveModuleProc->ActivateCycle( -1, m_ChargeRef);
+    m_ActiveModuleProc->ActivateCycle( -1, charge);
 	m_ChargeRef = InventoryItemRef();
 }
 

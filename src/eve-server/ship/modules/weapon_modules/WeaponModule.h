@@ -20,24 +20,24 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Reve
+    Author:        avianrr
 */
 
-#ifndef __ENERGYTURRET_H__
-#define __ENERGYTURRET_H__
+#ifndef WEAPONMODULE_H
+#define	WEAPONMODULE_H
 
-#include "ship/modules/weapon_modules/WeaponModule.h"
+#include "ship/modules/ActiveModules.h"
 
-class EnergyTurret: public WeaponModule
-{
+class WeaponModule : public ActiveModule{
 public:
-    EnergyTurret( InventoryItemRef item, ShipRef ship );
-
+    WeaponModule(InventoryItemRef item, ShipRef ship);
+  
     // Module Action Methods:
-    virtual void Load(InventoryItemRef charge);
+    virtual void Activate(SystemEntity * targetEntity);
 
-	// Calls Reserved for components usage only!
-	virtual void StartCycle();
+private:
+
 };
 
-#endif
+#endif	/* WEAPONMODULE_H */
+

@@ -26,25 +26,12 @@
 #ifndef __PROJECTILETURRET_H__
 #define __PROJECTILETURRET_H__
 
-#include "ship/modules/ActiveModules.h"
+#include "ship/modules/weapon_modules/WeaponModule.h"
 
-class ProjectileTurret: public ActiveModule
+class ProjectileTurret: public WeaponModule
 {
 public:
     ProjectileTurret( InventoryItemRef item, ShipRef ship );
-    ~ProjectileTurret();
-
-	virtual void Process();
-
-    // Module Action Methods:
-    virtual void Load(InventoryItemRef charge);
-    virtual void Unload();
-    virtual void Repair();
-    virtual void Overload();
-    virtual void DeOverload();
-    virtual void DestroyRig();
-	virtual void Activate(SystemEntity * targetEntity);
-	virtual void Deactivate();
 
 	// Calls Reserved for components usage only!
 	virtual void StartCycle();

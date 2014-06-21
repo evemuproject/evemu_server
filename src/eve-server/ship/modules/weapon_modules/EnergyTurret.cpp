@@ -31,81 +31,16 @@
 #include "ship/modules/weapon_modules/EnergyTurret.h"
 
 EnergyTurret::EnergyTurret(InventoryItemRef item, ShipRef ship)
+: WeaponModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-    m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-    m_ChargeRef = InventoryItemRef(); // Ensure ref is NULL
-}
-
-EnergyTurret::~EnergyTurret()
-{
-
-}
-
-void EnergyTurret::Process()
-{
-    m_ActiveModuleProc->Process();
 }
 
 void EnergyTurret::Load(InventoryItemRef charge)
 {
-    // to-do: find out if it's possible to return the object
-    // only one crystal per turret.
-    //if(charge->quantity() != 1)
-    //    return;
-
+    if(charge->quantity() > 1)
+        throw new PyException( MakeCustomError( "Can only load one crystal per turret.") );
     ActiveModule::Load(charge);
 
-}
-
-void EnergyTurret::Unload()
-{
-    ActiveModule::Unload();
-}
-
-void EnergyTurret::Repair()
-{
-
-}
-
-void EnergyTurret::Overload()
-{
-
-}
-
-void EnergyTurret::DeOverload()
-{
-
-}
-
-void EnergyTurret::DestroyRig()
-{
-
-}
-
-void EnergyTurret::Activate(SystemEntity * targetEntity)
-{
-    if (m_ChargeRef.get() != NULL && targetEntity != NULL)
-    {
-        m_targetEntity = targetEntity;
-
-        // Activate active processing component timer:
-        m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);
-    }
-    else
-    {
-        sLog.Error("EnergyTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!");
-        throw PyException(MakeCustomError("ERROR!  Cannot find charge that is supposed to be loaded into this module!"));
-    }
-}
-
-void EnergyTurret::Deactivate()
-{
-    m_ActiveModuleProc->DeactivateCycle();
 }
 
 void EnergyTurret::StartCycle()
@@ -177,11 +112,10 @@ void EnergyTurret::StartCycle()
              effectTargetAttack // from EVEEffectID::
              );
 
-    bool dead = false;
     if (m_targetEntity->ApplyDamage(damageDealt))
     {
         // target died.
-        dead = true;
+        m_ActiveModuleProc->DeactivateCycle();
     }
 
     // check if the crystal takes damage.

@@ -1188,7 +1188,7 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
 //                if(chargeList.size() == 1)
 //                {
                     // to-do: replace old charge?
-                    // will have to check storage capacity of new charges (or ships hold) old location.
+                    // will have to check storage capacity of new charges (and ships hold (old charges)).
 //                }
 //                else
 //                {
