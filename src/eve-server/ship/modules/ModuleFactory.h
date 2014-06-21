@@ -34,6 +34,7 @@
 #include "ship/modules/propulsion_modules/Afterburner.h"
 #include "ship/modules/weapon_modules/EnergyTurret.h"
 #include "ship/modules/weapon_modules/ProjectileTurret.h"
+#include "ship/modules/logistics_modules/RepairModule.h"
 
 //how you should access the modules
 static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
@@ -50,8 +51,8 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
         {
             // Armor Modules Subgroup:
             case EVEDB::invGroups::Damage_Control:                          return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Armor_Repair_Unit:                       return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Hull_Repair_Unit:                        return (new ActiveModule(item, ship)); break;    // Active
+            case EVEDB::invGroups::Armor_Repair_Unit:                       return (new RepairModule(item, ship)); break;    // Active
+            case EVEDB::invGroups::Hull_Repair_Unit:                        return (new RepairModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Reinforced_Bulkheads:                    return (new PassiveModule(item, ship)); break;
             case EVEDB::invGroups::Armor_Coating:                           return (new PassiveModule(item, ship)); break;
             case EVEDB::invGroups::Armor_Repair_Projector:                  return (new ActiveModule(item, ship)); break;    // Active
@@ -134,7 +135,7 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             // Shield Modules Subgroup:
             case EVEDB::invGroups::Shield_Extender:                         return (new PassiveModule(item, ship)); break;
             case EVEDB::invGroups::Shield_Recharger:                        return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Shield_Booster:                          return (new ActiveModule(item, ship)); break;    // Active
+            case EVEDB::invGroups::Shield_Booster:                          return (new RepairModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Shield_Transporter:                      return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Shield_Power_Relay:                      return (new PassiveModule(item, ship)); break;
             case EVEDB::invGroups::Shield_Hardener:                         return (new ActiveModule(item, ship)); break;    // Active

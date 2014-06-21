@@ -45,6 +45,7 @@ public:
     {
         m_Module_State = MOD_UNFITTED;
         m_Charge_State = MOD_UNLOADED;
+        _isOverload = false;
     }
     virtual ~GenericModule()
     {
@@ -63,8 +64,8 @@ public:
     virtual void Deactivate()										{ /* Do nothing here */ }
     virtual void Load(InventoryItemRef charge)						{ /* Do nothing here */ }
     virtual void Unload()											{ /* Do nothing here */ }
-    virtual void Overload()											{ /* Do nothing here */ }
-    virtual void DeOverload()										{ /* Do nothing here */ }
+    virtual void Overload()											{ _isOverload = true; }
+    virtual void DeOverload()										{ _isOverload = false; }
     virtual void DestroyRig()										{ /* Do nothing here */ }
 
 
@@ -134,6 +135,7 @@ protected:
     InventoryItemRef m_Item;
     ShipRef m_Ship;
     ModuleEffects * m_Effects;
+    bool _isOverload;
 
     ModuleStates m_Module_State;
     ChargeStates m_Charge_State;

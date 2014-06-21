@@ -61,6 +61,10 @@ public:
 
 private:
     /**
+     * Begin a new cycle.
+     */
+    void BeginCycle();
+    /**
      * A cycle has completed and a new cycle might start.
      */
     void ProcessActiveCycle();

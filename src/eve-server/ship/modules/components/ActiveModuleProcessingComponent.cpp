@@ -80,7 +80,6 @@ void ActiveModuleProcessingComponent::Process()
         //m_Item->SetActive(false, 1253, 0, false);
         return;
     }
-
     //check if we have a signal to stop the cycle
     if(m_Stop)
     {
@@ -88,6 +87,10 @@ void ActiveModuleProcessingComponent::Process()
         m_timer.Disable();
         //m_Item->SetActive(false, 1253, 0, false);
         EndButton();
+    }
+    else
+    {
+        BeginCycle();
     }
 
 }
@@ -161,12 +164,9 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
 
     if(m_CycleTime > 0)
     {
-        // Do initial cycle immediately while we start timer.
-        m_Mod->StartCycle();
+        BeginCycle();
         // start the timer.
         m_timer.Start(m_CycleTime.get_int());
-        // start the button effects.
-        StartButton();
     }
 }
 
@@ -174,6 +174,36 @@ void ActiveModuleProcessingComponent::DeactivateCycle()
 {
     m_Stop = true;
 }
+
+void ActiveModuleProcessingComponent::BeginCycle()
+{
+   // check for overloading.
+    if(m_Mod->_isOverload)
+    {
+        // check for time modifier.
+        EvilNumber time;
+        if(m_Mod->HasAttribute(::EveAttrEnum::AttrOverloadSelfDurationBonus, time))
+        {
+            double mult = 1 - (time.get_float() / 100.0);
+            m_CycleTime *= mult;
+        }
+//        EvilNumber heat;
+//        if(m_Mod->HasAttribute(AttrHeatDamage, heat))
+//        {
+//            // to-do: this needs work.
+//            EvilNumber hp = m_Mod->GetAttribute(AttrHp);
+//            hp -= heat;
+//            m_Mod->SetAttribute(AttrHp, hp);
+//            if(hp.get_float() <= 0)
+//                DeactivateCycle();
+//        }
+    }
+
+    // start new cycle.
+    m_Mod->StartCycle();
+    // start the new button cycle.
+    StartButton();
+ }
 
 void ActiveModuleProcessingComponent::ProcessActiveCycle()
 {
@@ -229,10 +259,6 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
     // sufficient capacitor begin new cycle.
 	m_Ship->SetAttribute(AttrCharge, capCapacity);
 
-    // start new cycle.
-    m_Mod->StartCycle();
-    // start the new button cycle.
-    StartButton();
 }
 
 double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
