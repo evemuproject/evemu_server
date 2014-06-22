@@ -131,7 +131,7 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
     if(m_Effect != NULL)
     {
         m_CycleTime = m_Mod->GetAttribute(m_Effect->GetDurationAttributeID());
-        autoRepeat = m_Effect->GetDisallowAutoRepeat();
+        autoRepeat = !m_Effect->GetDisallowAutoRepeat();
     }
     else
     {
@@ -171,12 +171,12 @@ void ActiveModuleProcessingComponent::DeactivateCycle()
 bool ActiveModuleProcessingComponent::BeginCycle()
 {
     // consume capacitor
-    EvilNumber capNeed;
+    double capNeed;
     if(m_Effect != NULL)
-        capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID());
+        capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID()).get_float();
     else
-        capNeed = m_Mod->GetAttribute(AttrCapacitorNeed);
-	EvilNumber capCapacity = m_Ship->GetAttribute(AttrCharge);
+        capNeed = m_Mod->GetAttribute(AttrCapacitorNeed).get_float();
+	double capCapacity = m_Ship->GetAttribute(AttrCharge).get_float();
 	capCapacity -= capNeed;
 
     // check for sufficient capacitor.
