@@ -394,14 +394,6 @@ protected:
     PyServiceMgr &m_services;    //we do not own this
     ShipRef _shipRef;   // We don't own this
 
-    /* Used to calculate the damages on NPCs
-     * I don't know why, npc->Set_shieldCharge does not work
-     * calling npc->shieldCharge() return the complete shield
-     * So we get the values on creation and use then instead.
-    */
-    double m_shieldCharge;
-    double m_armorDamage;
-    double m_hullDamage;
 };
 
 #endif /* !__SHIP__H__INCL__ */
