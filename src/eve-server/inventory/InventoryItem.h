@@ -217,6 +217,15 @@ public:
      */
     EvilNumber GetAttribute(const uint32 attributeID, const EvilNumber &defaultValue) const;
 
+    /**
+     * GetDefaultAttribute
+     * Retrieves the default attribute of the entity.
+     * @param attributeID the attribute to check for.
+     * @returns the attribute value or zero.
+     * @note does not generate an error message if the value is not found.
+     *
+     * @note this function should be used very infrequently and only for specific reasons
+     */
     EvilNumber GetDefaultAttribute(const uint32 attributeID) const;
 
     /**
@@ -258,6 +267,16 @@ public:
     /************************************************************************/
     /* end experimental new attribute system                                */
     /************************************************************************/
+    
+    /**
+     * CalculateRechargeRate
+     * Calculate the recharge rate of capacitor or shields.
+     * @param Capacity The maximum capacity of the item.
+     * @param RechargeTimeMS The time in ms that it takes to fully recharge the item.
+     * @param Current The current charge of the item.
+     * @return The rate of charge for the item.
+     */
+    static double CalculateRechargeRate(double Capacity, double RechargeTimeMS, double Current);
 
 protected:
     InventoryItem(

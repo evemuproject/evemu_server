@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>EVEmu Developer documentation</title>
+    <title>EVEmu Developer documentation - Main Loop</title>
 
     <!-- jQuery & QUnit -->
     <script type="text/javascript" src="js/jquery-1.4.2.js"></script>
@@ -25,16 +25,56 @@
   </head>
   <body>
     <h3>This is a headding</h3>
-    This is an explanation.<br>
-    Here is come code.
+&nbsp;&nbsp;This is where the "magic" happens.  Here the server plods through the tedium of doing it's job.<br>
+&nbsp;&nbsp;The first thing that's done is to set up the signal catcher to catch the interupt, abort and terminate signals.  The signals are simply redirected to a function that sets the variable RunLoops to false.
     <pre class="brush: cpp">
-// this is a comment.
-void Sample(int value)
-{
-  // this is a function
-  return value / 2;
-}
+    /* program events system */
+    SetupSignals();
+
+    uint32 start;
+    uint32 etime;
+    uint32 last_time = GetTickCount();
+
+    EVETCPConnection* tcpc;
     </pre>
-    Simply copy and past the contents of this file into a new file and fill in your own content.
+&nbsp;&nbsp;Next we start looping.  As long as RunLoops is true the server will continue to process connections.
+    <pre class="brush: cpp">
+    while( RunLoops == true )
+    {
+    </pre>
+&nbsp;&nbsp;Set up the timer, calling this once an simply using the time throughout the server saves time and keeps everyone in sync.
+    <pre class="brush: cpp">
+        Timer::SetCurrentTime();
+        start = GetTickCount();
+    </pre>
+&nbsp;&nbsp;Check for new connections, if there are any create a new client and add them to the entity list to track the player.
+    <pre class="brush: cpp">
+        while( ( tcpc = tcps.PopConnection() ) )
+        {
+            Client* c = new Client( services, &tcpc );
+
+            sEntityList.Add( &c );
+        }
+    </pre>
+&nbsp;&nbsp;Process each entity, retrieveing and acting on network packets.  curently there is noting being done in services.Process();
+    <pre class="brush: cpp">
+        sEntityList.Process();
+        services.Process();
+    </pre>
+&nbsp;&nbsp;Get the amount of time elapsed and delay 
+    <pre class="brush: cpp">
+        /* UPDATE */
+        last_time = GetTickCount();
+        etime = last_time - start;
+
+        // do the stuff for thread sleeping
+        if( MAIN_LOOP_DELAY > etime )
+            Sleep( MAIN_LOOP_DELAY - etime );
+    }
+    </pre>
+&nbsp;&nbsp;That's the main loop.  When RunLoops becomes false, we exit and cleanup and close the server.
+    <pre class="brush: cpp">
+    sLog.Log("server shutdown", "Main loop stopped" );
+    </pre>
   </body>
 </html>

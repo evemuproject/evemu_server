@@ -39,7 +39,7 @@ void RepairModule::EndCycle()
     EvilNumber boost;
     if(HasAttribute(AttrShieldBonus, boost))
     {
-        EvilNumber newShield = m_Ship->GetAttribute(AttrShieldCharge);
+        double Shield = m_Ship->GetAttribute(AttrShieldCharge).get_float();
         if(_isOverload)
         {
             EvilNumber bonus;
@@ -48,36 +48,46 @@ void RepairModule::EndCycle()
                 boost *= bonus / 100.0;
             }
         }
-        newShield += boost;
-        EvilNumber capacity = m_Ship->GetAttribute(AttrShieldCapacity);
+        double newShield = Shield + boost.get_float();
+        double capacity = m_Ship->GetAttribute(AttrShieldCapacity).get_float();
         if(newShield > capacity)
             newShield = capacity;
-        m_Ship->SetAttribute(AttrShieldCharge, newShield);
+        if(newShield != Shield)
+          m_Ship->SetAttribute(AttrShieldCharge, newShield);
     }
     // check for armor repair.
     if(HasAttribute(AttrArmorDamageAmount, boost))
     {
-        EvilNumber newArmor = m_Ship->GetAttribute(AttrArmorDamage);
-        if(_isOverload)
+        double Armor = m_Ship->GetAttribute(AttrArmorDamage).get_float();
+        // if were already at full health no need to continue.
+        if(Armor > 0)
         {
-            EvilNumber bonus;
-            if(HasAttribute(AttrOverloadArmorDamageAmount, bonus))
+            if(_isOverload)
             {
-                boost *= bonus / 100.0;
+                EvilNumber bonus;
+                if(HasAttribute(AttrOverloadArmorDamageAmount, bonus))
+                {
+                    boost *= bonus / 100.0;
+                }
             }
+            double newArmor = Armor - boost.get_float();
+            if(newArmor < 0)
+                newArmor = 0;
+            if(newArmor != Armor)
+                m_Ship->SetAttribute(AttrArmorDamage, newArmor);
         }
-        newArmor -= boost;
-        if(newArmor.get_float() < 0)
-            newArmor = 0;
-        m_Ship->SetAttribute(AttrArmorDamage, newArmor);
     }
-    // check for armor repair.
-    if(HasAttribute(AttrArmorDamageAmount, boost))
+    // check for structure repair.
+    if(HasAttribute(AttrStructureDamageAmount, boost))
     {
-        EvilNumber newHull = m_Ship->GetAttribute(AttrDamage);
-        newHull -= boost;
-        if(newHull.get_float() < 0)
-            newHull = 0;
-        m_Ship->SetAttribute(AttrDamage, newHull);
+        double Hull = m_Ship->GetAttribute(AttrDamage).get_float();
+        if(Hull > 0)
+        {
+            double newHull = Hull - boost.get_float();
+            if(newHull < 0)
+                newHull = 0;
+            if(newHull != Hull)
+                m_Ship->SetAttribute(AttrDamage, newHull);
+        }
     }
 }

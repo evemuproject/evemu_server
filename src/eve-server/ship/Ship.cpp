@@ -88,11 +88,13 @@ Ship::Ship(
     // InventoryItem stuff:
     const ShipType &_shipType,
     const ItemData &_data)
-: InventoryItem(_factory, _shipID, _shipType, _data)
+: InventoryItem(_factory, _shipID, _shipType, _data),
+    m_UpdateTimer(0, true)
 {
     m_ModuleManager = NULL;
     m_pOperator = new ShipOperatorInterface();
 
+    m_UpdateTimer.Start(100);
     // Activate Save Info Timer with somewhat randomized timer value:
     //SetSaveTimerExpiry( MakeRandomInt( (10 * 60), (15 * 60) ) );        // Randomize save timer expiry to between 10 and 15 minutes
     //DisableSaveTimer();
@@ -698,6 +700,41 @@ void Ship::RemoveRig( InventoryItemRef item, uint32 inventoryID )
 void Ship::Process()
 {
     m_ModuleManager->Process();
+    // Check to see if there is at least one update interval.
+    if(!m_UpdateTimer.Check(true))
+        return;
+    // Yep, perform updates.
+    // Get capacitor and shield information.
+    double cap = GetAttribute(AttrCharge).get_float();
+    double capRate = GetAttribute(AttrRechargeRate).get_float();
+    double capMax = GetAttribute(AttrCapacitorCapacity).get_float();
+    double shield = GetAttribute(AttrShieldCharge).get_float();
+    double shieldRate = GetAttribute(AttrShieldRechargeRate).get_float();
+    double shieldMax = GetAttribute(AttrShieldCapacity).get_float();
+    // Get the elapsed interval.
+    double interval = m_UpdateTimer.GetTimerTime() / 1000.0;
+    double capChange = 0;
+    double shieldChange = 0;
+    // We had an update interval so we need to run this loop at least once.
+    do
+    {
+        // update one interval of time.
+        double capDelta = InventoryItem::CalculateRechargeRate( capMax, capRate, cap + capChange );
+        double shieldDelta = InventoryItem::CalculateRechargeRate( shieldMax, shieldRate, shield + shieldChange );
+        capChange += capDelta * interval;
+        shieldChange += shieldDelta * interval;
+    }
+    while(m_UpdateTimer.Check(true));
+    // check the limits, allow final 0.05 charge to instantly finish to prevent lots of small increments.
+    if(cap + capChange > capMax - 0.05)
+        capChange = capMax - cap;
+    if(shield + shieldChange > shieldMax - 0.05)
+        shieldChange = shieldMax - shield;
+    // Save the updated values.
+    if(capChange > 0)
+      SetAttribute(AttrCharge, cap + capChange);
+    if(shieldChange > 0)
+      SetAttribute(AttrShieldCharge, shield + shieldChange);
 }
 
 void Ship::OnlineAll()

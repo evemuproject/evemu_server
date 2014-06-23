@@ -1222,7 +1222,7 @@ EvilNumber InventoryItem::GetAttribute( const uint32 attributeID , const EvilNum
 
 EvilNumber InventoryItem::GetDefaultAttribute( const uint32 attributeID ) const
 {
-     return mDefaultAttributeMap.GetAttribute(attributeID);
+     return mDefaultAttributeMap.GetAttribute(attributeID, 0);
 }
 
 bool InventoryItem::HasAttribute(const uint32 attributeID) const
@@ -1243,4 +1243,23 @@ bool InventoryItem::SaveAttributes()
 bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
 {
     return mAttributeMap.ResetAttribute(attrID, notify);
+}
+
+double InventoryItem::CalculateRechargeRate(double Capacity, double RechargeTimeMS, double Current)
+{
+    // prevent divide by zero.
+    RechargeTimeMS = RechargeTimeMS < 1 ? 1 : RechargeTimeMS;
+    Current = Current < 1 ? 1 : Current;
+    double Cmax = Capacity < 1 ? 1 : Capacity;
+    // tau = "cap recharge time" / 5.0
+    double tau = RechargeTimeMS / 5000.0;
+    // (2*Cmax) / tau
+    double Cmax2_tau = (Cmax * 2) / tau;
+    double C = Current;
+    // C / Cmax
+    double C_Cmax = C / Cmax;
+    // sqrt( C / Cmax )
+    double sC_Cmax = sqrt(C_Cmax);
+    // charge rate in Gj / sec
+    return Cmax2_tau * (sC_Cmax - C_Cmax);
 }

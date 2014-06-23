@@ -503,21 +503,9 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 
 bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
 {
-    DgmTypeAttributeSet *attrset = sDgmTypeAttrMgr.GetDmgTypeAttributeSet(mItem.typeID());
-
-    // if not found return true because there can be items without attributes I guess
-    if (attrset == NULL)
-        return true;
-
-    DgmTypeAttributeSet::AttrSetItr itr = attrset->begin();
-    for (; itr != attrset->end(); itr++) {
-        if((*itr)->attributeID == attrID)
-        {
-            SetAttribute(attrID, (*itr)->number, notify);
-            return true;
-        }
-    }
-
+    EvilNumber value = mItem.GetDefaultAttribute(attrID);
+    // to-do modify value by attribute modifiers applied by modules and enemy's
+    SetAttribute(attrID, value, notify);
     return true;
 }
 

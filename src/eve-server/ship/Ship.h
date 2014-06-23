@@ -315,6 +315,7 @@ private:
 
     //the ship's module manager.  We own this
     ModuleManager * m_ModuleManager;
+    Timer m_UpdateTimer;
 };
 
 /**
