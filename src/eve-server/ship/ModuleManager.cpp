@@ -1145,60 +1145,43 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
         throw PyException( MakeCustomError( "Module is busy, cannot load charge!" ) );
     
     EvilNumber zero(0);
-    EvilNumber launcherGroup[3] = {
-        mod->GetAttribute(AttrLauncherGroup, zero),
-        mod->GetAttribute(AttrLauncherGroup2, zero),
-        mod->GetAttribute(AttrLauncherGroup3, zero) };
-    EvilNumber chargeGroup[5] = {
-        mod->GetAttribute(AttrChargeGroup1, zero),
-        mod->GetAttribute(AttrChargeGroup2, zero),
-        mod->GetAttribute(AttrChargeGroup3, zero),
-        mod->GetAttribute(AttrChargeGroup4, zero),
-        mod->GetAttribute(AttrChargeGroup5, zero) };
+    int64 launcherGroup[3] = {
+        mod->GetAttribute(AttrLauncherGroup, zero).get_int(),
+        mod->GetAttribute(AttrLauncherGroup2, zero).get_int(),
+        mod->GetAttribute(AttrLauncherGroup3, zero).get_int() };
+    int64 chargeGroup[5] = {
+        mod->GetAttribute(AttrChargeGroup1, zero).get_int(),
+        mod->GetAttribute(AttrChargeGroup2, zero).get_int(),
+        mod->GetAttribute(AttrChargeGroup3, zero).get_int(),
+        mod->GetAttribute(AttrChargeGroup4, zero).get_int(),
+        mod->GetAttribute(AttrChargeGroup5, zero).get_int() };
 
-    EvilNumber modCapacity = mod->getItem()->GetAttribute(AttrCapacity);
-    EvilNumber modSize = mod->GetAttribute(AttrChargeSize);
+    double modSize = mod->GetAttribute(AttrChargeSize).get_float();
     InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
     bool TypeMismatch = false;
     bool SizeMismatch = false;
+    bool TypeFound = false;
     bool InsufficientSpace = false;
     std::vector<InventoryItemRef>::iterator itr = chargeList.begin();
     // remove incompatible charges.
     while(itr != chargeList.end())
     {
-        bool bad = false;
-        // save the iterator so we can remove it if necessary.
-        std::vector<InventoryItemRef>::iterator rmv = itr;
         // get the charge reference.
         InventoryItemRef charge = *itr;
-        // increment to next loo;
-        itr++;
         // if it was a null reference remove it.
         if(charge.get() == NULL)
         {
-            chargeList.erase(rmv);
+            itr = chargeList.erase(itr);
             continue;
         }
-        // Does the module already have charges loaded?
-        if(loadedChargeRef.get() != NULL)
+        // charges must be the same size.
+        double chargeSize = charge->GetAttribute(AttrChargeSize).get_float();
+        if(chargeSize != modSize)
         {
-            // yep, make sure there compatible.
-            if(loadedChargeRef->typeID() != charge->typeID())
-            {
-//                if(chargeList.size() == 1)
-//                {
-                    // to-do: replace old charge?
-                    // will have to check storage capacity of new charges (and ships hold (old charges)).
-//                }
-//                else
-//                {
-                    // charge is not a compatible type.
-                    TypeMismatch = true;
-                    bad = true;
-//                }
-            }
+            SizeMismatch = true;
+            itr = chargeList.erase(itr);
+            continue;
         }
-        EvilNumber group;
         // if module has launcher group and charge is from launcher group
         int l = 0;
         for(;l < 3;l++)
@@ -1211,18 +1194,67 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
                 break;
         // if we didn't find at least one group it's bad.
         if(c == 5 && l == 3)
-            bad = true;
-        // charges must be the same size.
-        EvilNumber chargeSize = charge->GetAttribute(AttrChargeSize);
-        if(chargeSize != modSize)
         {
-            bad = true;
-            SizeMismatch = true;
+            TypeMismatch = true;
+            itr = chargeList.erase(itr);
+            continue;
         }
-        if(bad)
-          // charge is not allowed.
-          chargeList.erase(rmv);
+        // Does the module already have charges loaded?
+        if(loadedChargeRef.get() != NULL)
+        {
+            // yep, make sure there compatible.
+            if(loadedChargeRef->typeID() != charge->typeID())
+                // charge is not the same type.
+                TypeMismatch = true;
+            else
+                // charge is the same type
+                TypeFound = true;
+        }
+        itr++;
     }
+    if(TypeFound == false)
+    {
+        // if there are valid charges but none of the loaded type...
+        if(!chargeList.empty())
+        {
+            // if a charge of the loaded type was not found load the first type in the list.
+            loadedChargeRef = *chargeList.begin();
+            TypeFound = true;
+            TypeMismatch = true;
+            InventoryItemRef oldCharge = mod->GetLoadedChargeRef();
+            if(oldCharge.get() != NULL)
+            {
+                // if a charge of the type loaded was not found but another type was assume loading a different charge.
+                //InventoryItemRef oldLoc = oldCharge->GetItemFactory()->GetItem( loadedChargeRef->locationID() );
+                //if(oldLoc != NULL)
+                //{
+                    //double spaceNeed = oldCharge->quantity() * oldCharge->type()->volume();
+                    // to-do: check for suffecient space before move.
+                    oldCharge->Move(loadedChargeRef->locationID(), loadedChargeRef->flag(), true);
+                    mod->Unload();
+                //}
+            }
+        }
+    }
+    // a load type has been found and there may be different types in the list, remove them.
+    if(TypeFound == true && TypeMismatch == true)
+    {
+        TypeMismatch = false;
+        itr = chargeList.begin();
+        // remove incompatible charges.
+        while(itr != chargeList.end())
+        {
+            // yep, make sure there compatible.
+            if(loadedChargeRef->typeID() != (*itr)->typeID())
+            {
+                itr = chargeList.erase(itr);
+                TypeMismatch = true;
+                continue;
+            }
+            itr++;
+        }
+    }
+    // if the charge list is empty, there is noting to load check for an error.
     if(chargeList.empty())
     {
         // no charges were acceptable.
@@ -1232,33 +1264,36 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
         if(SizeMismatch)
             // we haven't loaded any charges and were at the end of the list.
             throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
+        throw PyException( MakeCustomError( "No valid charges for loading." ) );
     }
-    // this will be the charge that's loaded.
+    double chargeVolume = loadedChargeRef->GetAttribute(AttrVolume).get_float();
+    loadedChargeRef = mod->GetLoadedChargeRef();
     InventoryItemRef chargeRef = InventoryItemRef();
+    double modCapacity = mod->getItem()->GetAttribute(AttrCapacity).get_float();
     bool Loaded = false;
     // loop through the accepted charges.
     itr = chargeList.begin();
     while(itr != chargeList.end())
     {
+        // this will be the charge that's loaded.
         chargeRef = *itr;
         itr++;
         if(chargeRef.get() == NULL)
             continue;
-        EvilNumber chargeVolume = chargeRef->GetAttribute(AttrVolume);
-        uint32 quantityWeCanLoad = floor((modCapacity / chargeVolume).get_float());
+        int32 quantityWeCanLoad = floor((modCapacity / chargeVolume));
 
         // Does the module already have charges loaded?
         if(loadedChargeRef.get() != NULL)
         {
             // let's get the remaining capacity
-            EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
+            int32 loadedChargeQty = loadedChargeRef->quantity();
             // Calculate remaining capacity
-            quantityWeCanLoad -= loadedChargeQty.get_int();
+            quantityWeCanLoad -= loadedChargeQty;
         }
         // Do we get enough charges to fully load the module?
         if( quantityWeCanLoad > chargeRef->quantity() )
         {
-            // No, we can only load as manyy as are available.
+            // No, we can only load as many as are available.
             quantityWeCanLoad = chargeRef->quantity();
         }
         // can we load more charges?
