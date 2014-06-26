@@ -34,7 +34,7 @@ ProjectileTurret::ProjectileTurret(InventoryItemRef item, ShipRef ship)
 : WeaponModule(item, ship)
 {
     // charge loading time is 10 seconds.
-    m_LoadCycleTime = 10000;
+//    m_LoadCycleTime = 10000;
 }
 
 void ProjectileTurret::StartCycle()
