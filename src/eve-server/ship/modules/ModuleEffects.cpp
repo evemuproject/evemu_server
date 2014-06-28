@@ -848,6 +848,9 @@ void ModuleEffects::_populate(uint32 typeID)
                 case EFFECT_OVERLOAD:
                     m_OverloadEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
                     break;
+                case EFFECT_PASSIVE:
+                    m_PassiveEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+                    break;
                 default:
                     sLog.Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", mEffectPtr->GetModuleStateWhenEffectApplied());
                     break;

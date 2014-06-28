@@ -33,8 +33,8 @@
 #include "ship/modules/components/ActiveModuleProcessingComponent.h"
 #include "system/SystemBubble.h"
 
-ActiveModuleProcessingComponent::ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship, ModifyShipAttributesComponent * shipAttrMod)
-: m_Item( item ), m_Mod( mod ), m_Ship( ship ), m_ShipAttrModComp( shipAttrMod ), m_timer(0)
+ActiveModuleProcessingComponent::ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship)
+: m_Item( item ), m_Mod( mod ), m_Ship( ship ), m_timer(0)
 {
 	m_Stop = false;
     m_ButtonCycle = false;

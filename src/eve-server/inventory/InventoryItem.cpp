@@ -34,6 +34,7 @@
 #include "station/Station.h"
 #include "system/Celestial.h"
 #include "system/Container.h"
+#include "AttributeModifier.h"
 
 //const uint32 SKILL_BASE_POINTS = 250;
 const EvilNumber EVIL_SKILL_BASE_POINTS(250);
@@ -1242,7 +1243,48 @@ bool InventoryItem::SaveAttributes()
 
 bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
 {
-    return mAttributeMap.ResetAttribute(attrID, notify);
+    bool success = mAttributeMap.ResetAttribute(attrID, false);
+    EvilNumber nVal = mAttributeMap.GetAttribute(attrID, EvilNumber(0));
+    // modify the value by attribute modifiers applied by modules and enemy's.
+    double amount = 0;
+    AttributeModifierSource::FactorList factors;
+    AttributeModifierSource::FactorList stackedfactors;
+    std::vector<AttributeModifierSource *>::iterator itr = m_attributeModifiers.begin();
+    for(;itr != m_attributeModifiers.end(); itr++)
+    {
+        AttributeModifierSource *src = *itr;
+        if(src == NULL)
+            continue;
+        src->GetModification(attrID, amount, factors, stackedfactors);
+    }
+    double value = AttributeModifierSource::FinalizeModification(nVal.get_float(), amount, factors, stackedfactors);
+    if(nVal.get_type() == EVIL_NUMBER_TYPE::evil_number_int)
+        nVal = EvilNumber((int64)value);
+    else
+        nVal = EvilNumber(value);
+    return mAttributeMap.SetAttribute(attrID, nVal, notify);
+}
+
+void InventoryItem::AddAttributeModifier(AttributeModifierSource *modifier)
+{
+    if(modifier == NULL)
+        return;
+    if(std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier) == m_attributeModifiers.end())
+    {
+        m_attributeModifiers.push_back(modifier);
+        modifier->UpdateModifiers(this, true);
+    }
+}
+
+void InventoryItem::RemoveAttributeModifier(AttributeModifierSource *modifier)
+{
+    std::vector<AttributeModifierSource *>::iterator itr = std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier);
+    if(itr != m_attributeModifiers.end())
+    {
+        AttributeModifierSource *src = *itr;
+        m_attributeModifiers.erase(itr);
+        src->UpdateModifiers(this, true);
+    }
 }
 
 double InventoryItem::CalculateRechargeRate(double Capacity, double RechargeTimeMS, double Current)

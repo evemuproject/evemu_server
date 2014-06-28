@@ -367,10 +367,11 @@ public:
     bool SaveIntAttribute(uint32 attributeID, int64 value);
     bool SaveFloatAttribute(uint32 attributeID, double value);
 
-    /*
+    /**
      * ResetAttribute
-     *
-     *@note this function will force reload the default value for the specified attribute
+     * Reload the attribute from the default attribute map
+     * @param attrID the attribute to reset.
+     * @param notify whether or not to notify the client.
      */
     bool ResetAttribute(uint32 attrID, bool notify);
 

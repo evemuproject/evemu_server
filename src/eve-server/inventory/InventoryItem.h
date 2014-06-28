@@ -28,6 +28,7 @@
 #include "inventory/EVEAttributeMgr.h"
 #include "inventory/ItemFactory.h"
 #include "inventory/ItemType.h"
+#include "inventory/AttributeModifier.h"
 
 class PyRep;
 class PyDict;
@@ -258,12 +259,17 @@ public:
      */
     bool SaveAttributes();
 
-    /*
+    /**
      * ResetAttribute
-     *
-     *@note this function will force reload the default value for the specified attribute
+     * Reset the attribute to the value in the default attribute map and adjust according to applied effects.
+     * @param attrID The attribute to reset.
+     * @param notify Whether or not to notify the client.
+     * @return True on success.
      */
     bool ResetAttribute(uint32 attrID, bool notify);
+    void AddAttributeModifier(AttributeModifierSource *modifier);
+    void RemoveAttributeModifier(AttributeModifierSource *modifier);
+
     /************************************************************************/
     /* end experimental new attribute system                                */
     /************************************************************************/
@@ -369,6 +375,8 @@ protected:
     int32               m_quantity;
     GPoint              m_position;
     std::string         m_customInfo;
+    
+    std::vector<AttributeModifierSource *> m_attributeModifiers;
 };
 
 #endif

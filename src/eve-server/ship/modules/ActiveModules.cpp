@@ -29,12 +29,9 @@
 #include "ship/modules/ActiveModules.h"
 
 ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
+: GenericModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-    m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
+    m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship);
 
 	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
     m_targetEntity = NULL;
@@ -47,13 +44,9 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
 ActiveModule::~ActiveModule()
 {
     //delete members
-    delete m_Effects;
-    delete m_ShipAttrComp;
     delete m_ActiveModuleProc;
 
     //null ptrs
-    m_Effects = NULL;
-    m_ShipAttrComp = NULL;
     m_ActiveModuleProc = NULL;
 }
 
@@ -65,12 +58,7 @@ void ActiveModule::Process()
 void ActiveModule::Offline()
 {
     Deactivate();
-    m_Item->PutOffline();
-}
-
-void ActiveModule::Online()
-{
-    m_Item->PutOnline();
+    GenericModule::Offline();
 }
 
 void ActiveModule::Activate(SystemEntity * targetEntity)

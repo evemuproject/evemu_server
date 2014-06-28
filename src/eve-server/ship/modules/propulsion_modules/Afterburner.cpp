@@ -28,14 +28,11 @@
 #include "ship/modules/propulsion_modules/Afterburner.h"
 
 Afterburner::Afterburner( InventoryItemRef item, ShipRef ship )
+:ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
     // to-do: find the effect id and pass the correct value.
     EVEEffectID effectID = EVEEffectID::effectSpeedBoost;
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship ,m_ShipAttrComp);
+	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship);
 }
 
 Afterburner::~Afterburner()

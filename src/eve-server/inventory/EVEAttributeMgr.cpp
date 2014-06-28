@@ -504,9 +504,7 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
 {
     EvilNumber value = mItem.GetDefaultAttribute(attrID);
-    // to-do modify value by attribute modifiers applied by modules and enemy's
-    SetAttribute(attrID, value, notify);
-    return true;
+    return SetAttribute(attrID, value, notify);
 }
 
 bool AttributeMap::Load()

@@ -26,10 +26,10 @@
 #ifndef SUB_SYSTEM_MODULE_H
 #define SUB_SYSTEM_MODULE_H
 
-#include "ship/modules/PassiveModules.h"
+#include "ship/modules/Modules.h"
 
 class SubSystemModule
-: public PassiveModule
+: public GenericModule
 {
 public:
     SubSystemModule(InventoryItemRef item, ShipRef ship);

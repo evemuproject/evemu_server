@@ -28,7 +28,6 @@
 #define __MODULEFACTORY_H__
 
 #include "ActiveModules.h"
-#include "PassiveModules.h"
 #include "RigModule.h"
 #include "SubSystemModules.h"
 #include "ship/modules/propulsion_modules/Afterburner.h"
@@ -53,14 +52,14 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Damage_Control:                          return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Armor_Repair_Unit:                       return (new RepairModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Hull_Repair_Unit:                        return (new RepairModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Reinforced_Bulkheads:                    return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Armor_Coating:                           return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Reinforced_Bulkheads:                    return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Armor_Coating:                           return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Armor_Repair_Projector:                  return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Armor_Plating_Energized:                 return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Armor_Plating_Energized:                 return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Armor_Hardener:                          return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Armor_Reinforcer:                        return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Armor_Reinforcer:                        return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Remote_Hull_Repairer:                    return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Expanded_Cargohold:                      return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Expanded_Cargohold:                      return (new GenericModule(item, ship)); break;
 
             // Electronics Modules Subgroup:
             case EVEDB::invGroups::Cargo_Scanner:                           return (new ActiveModule(item, ship)); break;    // Active
@@ -68,25 +67,25 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Survey_Scanner:                          return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Cloaking_Device:                         return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Target_Painter:                          return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Drone_Control_Unit:                      return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Drone_Control_Unit:                      return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::System_Scanner:                          return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Scan_Probe_Launcher:                     return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Drone_Navigation_Computer:               return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Drone_Tracking_Modules:                  return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Drone_Control_Range_Module:              return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Drone_Navigation_Computer:               return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Drone_Tracking_Modules:                  return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Drone_Control_Range_Module:              return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Tractor_Beam:                            return (new ActiveModule(item, ship)); break;    // Active
 
             // Engineering Modules Subgroup:
-            case EVEDB::invGroups::Capacitor_Recharger:                     return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Capacitor_Battery:                       return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Capacitor_Recharger:                     return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Capacitor_Battery:                       return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Energy_Transfer_Array:                   return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Capacitor_Booster:                       return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Auxiliary_Power_Core:                    return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Power_Diagnostic_System:                 return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Capacitor_Power_Relay:                   return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Capacitor_Flux_Coil:                     return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Reactor_Control_Unit:                    return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Shield_Flux_Coil:                        return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Auxiliary_Power_Core:                    return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Power_Diagnostic_System:                 return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Capacitor_Power_Relay:                   return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Capacitor_Flux_Coil:                     return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Reactor_Control_Unit:                    return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Shield_Flux_Coil:                        return (new GenericModule(item, ship)); break;
 
             // EWAR Modules Subgroup:
             case EVEDB::invGroups::Warp_Scrambler:                          return (new ActiveModule(item, ship)); break;    // Active
@@ -96,18 +95,18 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Automated_Targeting_System:              return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::ECM:                                     return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::ECCM:                                    return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Sensor_Backup_Array:                     return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Sensor_Backup_Array:                     return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Remote_Sensor_Damper:                    return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Tracking_Link:                           return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Signal_Amplifier:                        return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Tracking_Enhancer:                       return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Signal_Amplifier:                        return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Tracking_Enhancer:                       return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Sensor_Booster:                          return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Tracking_Computer:                       return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::CPU_Enhancer:                            return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::CPU_Enhancer:                            return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Projected_ECCM:                          return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Remote_Sensor_Booster:                   return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Tracking_Disruptor:                      return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::ECM_Stabilizer:                          return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::ECM_Stabilizer:                          return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Remote_ECM_Burst:                        return (new ActiveModule(item, ship)); break;    // Active
 
             // Gang Assist Modules Subgroup:
@@ -116,44 +115,44 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Data_Miners:                             return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Jump_Portal_Generator:                   return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Cynosural_Field:                         return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Clone_Vat_Bay:                           return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Clone_Vat_Bay:                           return (new GenericModule(item, ship)); break;
 
             // Mining Modules Subgroup:
             case EVEDB::invGroups::Mining_Laser:                            return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Strip_Miner:                             return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Frequency_Mining_Laser:                  return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Mining_Upgrade:                          return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Mining_Upgrade:                          return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Gas_Cloud_Harvester:                     return (new ActiveModule(item, ship)); break;    // Active
 
             // Propulsion Modules Subgroup:
             case EVEDB::invGroups::Afterburner:                             return (new Afterburner(item, ship)); break;
-            case EVEDB::invGroups::Warp_Core_Stabilizer:                    return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Inertial_Stabilizer:                     return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Nanofiber_Internal_Structure:            return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Overdrive_Injector_System:               return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Warp_Core_Stabilizer:                    return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Inertial_Stabilizer:                     return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Nanofiber_Internal_Structure:            return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Overdrive_Injector_System:               return (new GenericModule(item, ship)); break;
 
             // Shield Modules Subgroup:
-            case EVEDB::invGroups::Shield_Extender:                         return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Shield_Recharger:                        return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Shield_Extender:                         return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Shield_Recharger:                        return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Shield_Booster:                          return (new RepairModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Shield_Transporter:                      return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Shield_Power_Relay:                      return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Shield_Power_Relay:                      return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Shield_Hardener:                         return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Shield_Amplifier:                        return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Shield_Boost_Amplifier:                  return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Shield_Amplifier:                        return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Shield_Boost_Amplifier:                  return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Shield_Disruptor:                        return (new ActiveModule(item, ship)); break;    // Active
 
             // Weapon Modules Subgroup:
             case EVEDB::invGroups::Energy_Weapon:                           return (new EnergyTurret(item, ship)); break;    // Active
             case EVEDB::invGroups::Projectile_Weapon:                       return (new ProjectileTurret(item, ship)); break;    // Active
-            case EVEDB::invGroups::Gyrostabilizer:                          return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Gyrostabilizer:                          return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Energy_Vampire:                          return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Energy_Destabilizer:                     return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Smart_Bomb:                              return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Hybrid_Weapon:                           return (new ProjectileTurret(item, ship)); break;   // Active
-            case EVEDB::invGroups::Heat_Sink:                               return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Magnetic_Field_Stabilizer:               return (new PassiveModule(item, ship)); break;
-            case EVEDB::invGroups::Ballistic_Control_system:                return (new PassiveModule(item, ship)); break;
+            case EVEDB::invGroups::Heat_Sink:                               return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Magnetic_Field_Stabilizer:               return (new GenericModule(item, ship)); break;
+            case EVEDB::invGroups::Ballistic_Control_system:                return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Missile_Launcher_Snowball:               return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Missile_Launcher_Cruise:                 return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Missile_Launcher_Rocket:                 return (new ActiveModule(item, ship)); break;    // Active

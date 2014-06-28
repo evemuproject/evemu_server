@@ -40,7 +40,6 @@ public:
 
 	virtual void Process();
     virtual void Offline();
-    virtual void Online();
 	virtual void Activate(SystemEntity * targetEntity);
     virtual void Deactivate();
     virtual void Load(InventoryItemRef charge);
@@ -99,7 +98,6 @@ public:
     }
 
 protected:
-    ModifyShipAttributesComponent * m_ShipAttrComp;
 	ActiveModuleProcessingComponent * m_ActiveModuleProc;
 	SystemEntity * m_targetEntity;	// we do not own this
 
@@ -107,8 +105,6 @@ protected:
     bool m_RequiresCharge;
     uint32 m_LoadCycleTime;
 
-	//inheritance crap
-    ActiveModule() {}
 };
 
 

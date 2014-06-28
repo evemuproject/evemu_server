@@ -34,7 +34,7 @@ class ActiveModuleProcessingComponent
 {
 public:
 
-    ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship, ModifyShipAttributesComponent * shipAttrMod);
+    ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship);
     ~ActiveModuleProcessingComponent();
 
     /**
@@ -98,7 +98,6 @@ private:
 	InventoryItemRef m_Item;
     ActiveModule *m_Mod;
     ShipRef m_Ship;
-    ModifyShipAttributesComponent * m_ShipAttrModComp;
 
 };
 

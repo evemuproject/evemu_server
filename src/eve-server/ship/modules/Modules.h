@@ -41,25 +41,12 @@
 class GenericModule
 {
 public:
-    GenericModule()
-    {
-        m_Module_State = MOD_UNFITTED;
-        m_Charge_State = MOD_UNLOADED;
-        _isOverload = false;
-    }
-    virtual ~GenericModule()
-    {
-    // ALL DERIVED CLASSES SHOULD OVERRIDE THIS
-    //    //warn user - yes be obnoxious
-    //    sLog.Error("GenericModule","MEMORY LEAK!");
-
-    //    //force the users to override the inherited destructor
-    //    assert(false); //crash if they don't
-    }
+    GenericModule(InventoryItemRef item, ShipRef ship);
+    virtual ~GenericModule();
 
     virtual void Process()											{ /* Do nothing here */ }
-    virtual void Offline()											{ /* Do nothing here */ }
-    virtual void Online()											{ /* Do nothing here */ }
+    virtual void Offline();
+    virtual void Online();
 	virtual void Activate(SystemEntity * targetEntity)				{ /* Do nothing here */ }
     virtual void Deactivate()										{ /* Do nothing here */ }
     virtual void Load(InventoryItemRef charge)						{ /* Do nothing here */ }
@@ -141,6 +128,15 @@ protected:
     ChargeStates m_Charge_State;
 
 	Basic_Log * m_pMM_Log;		// We do not own this
+
+    AttributeModifierSource m_ShipModifiers;
+    // references to resistance modifiers so that active modules can turn them off.
+    AttributeModifier *_EM_Modifier;
+    AttributeModifier *_Explosive_Modifier;
+    AttributeModifier *_Kinetic_Modifier;
+    AttributeModifier *_Thermal_Modifier;
+    
+    void GenerateModifiers();
 };
 
 #endif /* __MODULES_H__ */

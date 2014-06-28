@@ -336,10 +336,12 @@ public:
     MEffect * GetDefaultEffect() { return m_defaultEffect; }
     MEffect * GetEffect(uint32 effectID);
 
-    std::map<uint32, MEffect *>::const_iterator GetPersistentEffectsConstIterator() { return m_PersistentEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetOnlineEffectsConstIterator() { return m_OnlineEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetActiveEffectsConstIterator() { return m_ActiveEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetOverloadEffectsConstIterator() { return m_OverloadEffects.begin(); }
+    typedef std::map<uint32, MEffect *> EffectMap;
+    const EffectMap& GetPersistentEffects() { return m_PersistentEffects; }
+    const EffectMap& GetOnlineEffects() { return m_OnlineEffects; }
+    const EffectMap& GetActiveEffects() { return m_ActiveEffects; }
+    const EffectMap& GetOverloadEffects() { return m_OverloadEffects; }
+    const EffectMap& GetPassiveEffects() { return m_PassiveEffects; }
 
 private:
 
@@ -350,6 +352,7 @@ private:
     std::map<uint32, MEffect *> m_OnlineEffects;
     std::map<uint32, MEffect *> m_ActiveEffects;
     std::map<uint32, MEffect *> m_OverloadEffects;
+    std::map<uint32, MEffect *> m_PassiveEffects;
     MEffect * m_defaultEffect;
 
     uint32 m_typeID;
