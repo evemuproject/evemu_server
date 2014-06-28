@@ -933,6 +933,16 @@ bool ModuleManager::FitModule(InventoryItemRef item, EVEItemFlags flag)
 {
     if(item->categoryID() == EVEDB::invCategories::Module)
     {
+        double Power = m_Ship->GetAttribute(AttrPowerOutput).get_float();
+        double PowerLoad = m_Ship->GetAttribute(AttrPowerLoad).get_float();
+        // check to see if there is sufficient power capacity available.
+        if(Power - PowerLoad < item->GetAttribute(AttrPower).get_float())
+            return false;
+        double CPU = m_Ship->GetAttribute(AttrCpuOutput).get_float();
+        double CPUload = m_Ship->GetAttribute(AttrCpuLoad).get_float();
+        // check to see if there is sufficient CPU capacity available.
+        if(CPU - CPUload < item->GetAttribute(AttrCpu).get_float())
+            return false;
         // Attempt to fit the module
         if( _fitModule(item, flag) )
         {
