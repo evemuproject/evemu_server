@@ -193,13 +193,7 @@ bool ActiveModuleProcessingComponent::BeginCycle()
    // check for overloading.
     if(m_Mod->_isOverload)
     {
-        // check for time modifier.
-        EvilNumber time;
-        if(m_Mod->HasAttribute(::EveAttrEnum::AttrOverloadSelfDurationBonus, time))
-        {
-            double mult = 1 - (time.get_float() / 100.0);
-            m_CycleTime *= mult;
-        }
+        // to-do: implement heat damage
 //        EvilNumber heat;
 //        if(m_Mod->HasAttribute(AttrHeatDamage, heat))
 //        {
@@ -216,7 +210,7 @@ bool ActiveModuleProcessingComponent::BeginCycle()
     m_Mod->StartCycle();
     // start the new button cycle.
     StartButton();
-    
+
     return true;
  }
 

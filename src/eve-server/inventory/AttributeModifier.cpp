@@ -52,6 +52,8 @@ double AttributeModifier::GetAmount()
     EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
     if(m_Type == CALC_ADDITION)
         return m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float();
+    if(m_Type == CALC_SUBTRACTION)
+        return -(m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float());
     return 0;
 }
 

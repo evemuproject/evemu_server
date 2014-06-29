@@ -71,13 +71,6 @@ void ActiveModule::Activate(SystemEntity * targetEntity)
 void ActiveModule::Deactivate()
 {
     m_ActiveModuleProc->DeactivateCycle();
-//    if(!m_ActiveModuleProc->IsBusy())
-//    {
-//        m_ShipActiveModifiers->SetActive(false);
-//        m_ShipPassiveModifiers->SetActive(true);
-//        m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
-//        m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
-//    }
 }
 
 void ActiveModule::Load(InventoryItemRef charge)
