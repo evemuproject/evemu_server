@@ -129,10 +129,10 @@ protected:
 
 	Basic_Log * m_pMM_Log;		// We do not own this
 
-    AttributeModifierSource m_ShipModifiers;
-    AttributeModifierSource m_ShipPassiveModifiers;
-    AttributeModifierSource m_ShipActiveModifiers;
-    AttributeModifierSource m_OverloadModifiers;
+    AttributeModifierSourceRef m_ShipModifiers;
+    AttributeModifierSourceRef m_ShipPassiveModifiers;
+    AttributeModifierSourceRef m_ShipActiveModifiers;
+    AttributeModifierSourceRef m_OverloadModifiers;
     
     void GenerateModifiers();
 };

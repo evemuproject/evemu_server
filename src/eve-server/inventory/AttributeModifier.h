@@ -26,6 +26,7 @@
 #ifndef ATTRIBUTEMODIFIER_H
 #define	ATTRIBUTEMODIFIER_H
 
+#include "ship/modules/ModuleEffects.h"
 #include "ship/modules/ModuleDefs.h"
 #include "inventory/ItemRef.h"
 #include <vector>
@@ -34,18 +35,17 @@
 /**
  * A class that holds the modifier information for a specific attribute.
  */
-class AttributeModifier {
+class AttributeModifier
+: public RefObject
+{
 public:
     /**
      * Create a new attribute modifier.
      * @param item The source item
-     * @param source The source attribute.
-     * @param target The target attribute.
-     * @param calc The calculation type.
-     * @param stack Are stacking penaltys applied?
+     * @param effect The effect for this modifier.
      * @param active Is the modifier active?
      */
-    AttributeModifier(InventoryItemRef item, uint32 source,  uint32 target, EVECalculationType calc, bool stack, bool active);
+    AttributeModifier(InventoryItemRef item, MEffect *effect, int effect_index, bool active);
     ~AttributeModifier() { m_Item = InventoryItemRef(); };
 
     /**
@@ -53,12 +53,12 @@ public:
      * @param attribute The attribute to check.
      * @return true if the modifier affects the attribute.
      */
-    bool Modifies(uint32 attribute) { return attribute == m_TargetAttribute; };
+    bool Modifies(uint32 attribute) { return attribute == GetTargetAttribute(); };
     /**
      * Checks for stacking penalty.
      * @return true if there is a stacking penalty.
      */
-    bool StackPenalty() { return m_Stack; };
+    bool StackPenalty() { return m_Effect == NULL ? false : m_Effect->GetStackingPenaltyApplied(m_EffectIndex) != 0; };
     /**
      * Get whether the modifier is active;
      * @return Ture if the modifier should be applied.
@@ -68,7 +68,7 @@ public:
      * Get the attribute modified by this modifier.
      * @return The modified attribute.
      */
-    uint32 GetTargetAttribute() { return m_TargetAttribute; };
+    uint32 GetTargetAttribute() { return m_Effect == NULL ? 0 : m_Effect->GetTargetAttributeID(m_EffectIndex); };
     /**
      * Sets the modifiers active state.
      * @param state The new modifier state.
@@ -91,21 +91,13 @@ private:
      */
     InventoryItemRef m_Item;
     /**
-     * The source attribute.
-     */
-    uint32 m_SourceAttribute;
-    /**
-     * The target attribute.
-     */
-    uint32 m_TargetAttribute;
-    /**
      * The calculation Type.
      */
-    EVECalculationType m_Type;
+    MEffect *m_Effect;
     /**
-     * Indicate if there is a stacking penalty.
+     * The index of the effect info.
      */
-    bool m_Stack;
+    int m_EffectIndex;
     /**
      * Indicate if the effect is currently active.
      */
@@ -115,15 +107,17 @@ private:
 /**
  * A class to define the source of attributes.
  */
-class AttributeModifierSource {
+class AttributeModifierSource
+: public RefObject
+{
 public:
     AttributeModifierSource(InventoryItemRef sourceItem);
     ~AttributeModifierSource();
 
     typedef std::vector<double> FactorList;
 
-    void AddModifier(AttributeModifier *modifier);
-    void RemoveModifier(AttributeModifier *modifier);
+    void AddModifier(AttributeModifierRef modifier);
+    void RemoveModifier(AttributeModifierRef modifier);
     void GetModification(uint32 attrib, double &amount, FactorList &nonStackingFactors, FactorList &stackingFactors);
     static double FinalizeModification(double value, double amount, FactorList &nonStackingFactors, FactorList &stackingFactors);
     /**
@@ -135,7 +129,7 @@ public:
 
 private:
     InventoryItemRef m_Source;
-    std::vector<AttributeModifier *> m_Modifiers;
+    std::vector<AttributeModifierRef> m_Modifiers;
     /**
      * Indicate if the source is currently active.
      */

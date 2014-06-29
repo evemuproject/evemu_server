@@ -267,8 +267,8 @@ public:
      * @return True on success.
      */
     bool ResetAttribute(uint32 attrID, bool notify);
-    void AddAttributeModifier(AttributeModifierSource *modifier);
-    void RemoveAttributeModifier(AttributeModifierSource *modifier);
+    void AddAttributeModifier(AttributeModifierSourceRef modifier);
+    void RemoveAttributeModifier(AttributeModifierSourceRef modifier);
 
     /************************************************************************/
     /* end experimental new attribute system                                */
@@ -375,8 +375,8 @@ protected:
     int32               m_quantity;
     GPoint              m_position;
     std::string         m_customInfo;
-    
-    std::vector<AttributeModifierSource *> m_attributeModifiers;
+
+    std::vector<AttributeModifierSourceRef> m_attributeModifiers;
 };
 
 #endif

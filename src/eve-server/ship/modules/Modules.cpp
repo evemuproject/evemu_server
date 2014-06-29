@@ -28,8 +28,11 @@
 #include "ship/modules/Modules.h"
 
 GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
-: m_ShipModifiers(item), m_ShipActiveModifiers(item), m_ShipPassiveModifiers(item), m_OverloadModifiers(item)
 {
+    m_ShipModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_ShipActiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_ShipPassiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_OverloadModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
     m_Module_State = MOD_UNFITTED;
     m_Charge_State = MOD_UNLOADED;
     _isOverload = false;
@@ -40,31 +43,27 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
 
     GenerateModifiers();
     // attach overload modifiers.
-    m_Item->AddAttributeModifier(&m_OverloadModifiers);
-    m_OverloadModifiers.SetActive(false);
+    m_Item->AddAttributeModifier(m_OverloadModifiers);
+    m_OverloadModifiers->SetActive(false);
     // attach ship modifiers.
-    m_Ship->AddAttributeModifier(&m_ShipModifiers);
-    m_Ship->AddAttributeModifier(&m_ShipPassiveModifiers);
-    m_Ship->AddAttributeModifier(&m_ShipActiveModifiers);
+    m_Ship->AddAttributeModifier(m_ShipModifiers);
+    m_Ship->AddAttributeModifier(m_ShipPassiveModifiers);
+    m_Ship->AddAttributeModifier(m_ShipActiveModifiers);
     // update attributes.
-    m_ShipActiveModifiers.SetActive(false);
-    m_ShipModifiers.UpdateModifiers(m_Ship.get(), true);
-    m_ShipPassiveModifiers.UpdateModifiers(m_Ship.get(), true);
-    m_ShipActiveModifiers.UpdateModifiers(m_Ship.get(), true);
+    m_ShipActiveModifiers->SetActive(false);
+    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
 GenericModule::~GenericModule()
 {
     // remove overload modifiers.
-    m_Item->RemoveAttributeModifier(&m_OverloadModifiers);
-    m_OverloadModifiers.UpdateModifiers(m_Item.get(), true);
+    m_Item->RemoveAttributeModifier(m_OverloadModifiers);
     // remove ship modifiers.
-    m_Ship->RemoveAttributeModifier(&m_ShipModifiers);
-    m_Ship->RemoveAttributeModifier(&m_ShipPassiveModifiers);
-    m_Ship->RemoveAttributeModifier(&m_ShipActiveModifiers);
-    m_ShipModifiers.UpdateModifiers(m_Ship.get(), true);
-    m_ShipActiveModifiers.UpdateModifiers(m_Ship.get(), true);
-    m_ShipPassiveModifiers.UpdateModifiers(m_Ship.get(), true);
+    m_Ship->RemoveAttributeModifier(m_ShipModifiers);
+    m_Ship->RemoveAttributeModifier(m_ShipPassiveModifiers);
+    m_Ship->RemoveAttributeModifier(m_ShipActiveModifiers);
 
     //delete members
     delete m_Effects;
@@ -78,8 +77,8 @@ void GenericModule::Offline()
     //change item state
     m_Item->PutOffline();
     m_Module_State = MOD_OFFLINE;
-    m_ShipModifiers.SetActive(false);
-    m_ShipModifiers.UpdateModifiers(m_Ship.get(), true);
+    m_ShipModifiers->SetActive(false);
+    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
 void GenericModule::Online()
@@ -87,17 +86,17 @@ void GenericModule::Online()
     //change item state
     m_Item->PutOnline();
     m_Module_State = MOD_ONLINE;
-    m_ShipModifiers.SetActive(true);
-    m_ShipPassiveModifiers.SetActive(true);
-    m_ShipModifiers.UpdateModifiers(m_Ship.get(), true);
+    m_ShipModifiers->SetActive(true);
+    m_ShipPassiveModifiers->SetActive(true);
+    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
 void GenericModule::GenerateModifiers()
 {
     // load and setup ONLINE effects
-    ModuleEffects::EffectMap online = m_Effects->GetOnlineEffects();
-    ModuleEffects::EffectMap::iterator itr = online.begin();
-    for (; itr != online.end(); itr++)
+    ModuleEffects::EffectMap effects = m_Effects->GetEffects();
+    ModuleEffects::EffectMap::iterator itr = effects.begin();
+    for (; itr != effects.end(); itr++)
     {
         MEffect *effect = itr->second;
         if (effect == NULL)
@@ -110,114 +109,36 @@ void GenericModule::GenerateModifiers()
             bool Stack = false;
             if (effect->GetStackingPenaltyApplied(i) != 0)
                 Stack = true;
-            typeTargetGroupIDlist *types = effect->GetTargetGroupIDlist(i);
-            typeTargetGroupIDlist::iterator tItr = types->begin();
-            for (; tItr != types->end(); tItr++)
+            AttributeModifierRef mod = AttributeModifierRef(new AttributeModifier(m_Item, effect, i, true));
+            // get the module type that causes the effect.
+            uint32 affecting = effect->GetAffectingID(i);
+            uint32 state = effect->GetModuleStateWhenEffectApplied(i);
+            if(affecting == 0 || affecting == m_Item->groupID())
             {
-                uint32 affecting = effect->GetAffectingID(i);
-                if (*tItr == 6 && (affecting == 0 || affecting == m_Item->groupID()))
+                typeTargetGroupIDlist *types = effect->GetTargetGroupIDlist(i);
+                typeTargetGroupIDlist::iterator tItr = types->begin();
+                for (; tItr != types->end(); tItr++)
                 {
-                    AttributeModifier *mod =
-                            new AttributeModifier(
-                                                  m_Item,
-                                                  effect->GetSourceAttributeID(i),
-                                                  effect->GetTargetAttributeID(i),
-                                                  effect->GetCalculationType(i),
-                                                  Stack, true
-                                                  );
-                    m_ShipModifiers.AddModifier(mod);
+                    if (*tItr == 6)
+                    {
+                        if(state == EFFECT_ONLINE)
+                            m_ShipModifiers->AddModifier(mod);
+                        if(state == EFFECT_ACTIVE)
+                            m_ShipActiveModifiers->AddModifier(mod);
+                        if(state == EFFECT_PASSIVE)
+                            m_ShipPassiveModifiers->AddModifier(mod);
+                    }
+                    else if(*tItr == 0)
+                    {
+                        if(state == EFFECT_OVERLOAD)
+                            m_OverloadModifiers->AddModifier(mod);
+                    }
+                    else
+                    {
+                        // to-do: add module modifiers.
+                    }
                 }
             }
-        }
-    }
-    // get and set up ACTIVE effects
-    ModuleEffects::EffectMap active = m_Effects->GetActiveEffects();
-    itr = active.begin();
-    for (; itr != active.end(); itr++)
-    {
-        MEffect *effect = itr->second;
-        if (effect == NULL)
-            continue;
-        int nEffects = effect->GetSizeOfAttributeList();
-        if (nEffects == 0)
-            continue;
-        for (int i = 0; i < nEffects; i++)
-        {
-            bool Stack = false;
-            if (effect->GetStackingPenaltyApplied(i) != 0)
-                Stack = true;
-            typeTargetGroupIDlist *types = effect->GetTargetGroupIDlist(i);
-            typeTargetGroupIDlist::iterator tItr = types->begin();
-            for (; tItr != types->end(); tItr++)
-            {
-                uint32 affecting = effect->GetAffectingID(i);
-                if (*tItr == 6 && (affecting == 0 || affecting == m_Item->groupID()))
-                {
-                    AttributeModifier *mod =
-                            new AttributeModifier(
-                                                  m_Item,
-                                                  effect->GetSourceAttributeID(i),
-                                                  effect->GetTargetAttributeID(i),
-                                                  effect->GetCalculationType(i),
-                                                  Stack, true
-                                                  );
-                    m_ShipActiveModifiers.AddModifier(mod);
-                }
-            }
-        }
-    }
-    // get and set up PASSIVE effects
-    ModuleEffects::EffectMap passive = m_Effects->GetPassiveEffects();
-    itr = passive.begin();
-    for (; itr != passive.end(); itr++)
-    {
-        MEffect *effect = itr->second;
-        if (effect == NULL)
-            continue;
-        int nEffects = effect->GetSizeOfAttributeList();
-        if (nEffects == 0)
-            continue;
-        for (int i = 0; i < nEffects; i++)
-        {
-            bool Stack = false;
-            if (effect->GetStackingPenaltyApplied(i) != 0)
-                Stack = true;
-            AttributeModifier *mod =
-                    new AttributeModifier(
-                                          m_Item,
-                                          effect->GetSourceAttributeID(i),
-                                          effect->GetTargetAttributeID(i),
-                                          effect->GetCalculationType(i),
-                                          Stack, true
-                                          );
-            m_ShipPassiveModifiers.AddModifier(mod);
-        }
-    }
-    // get and set up Overload effects
-    ModuleEffects::EffectMap overload = m_Effects->GetOverloadEffects();
-    itr = overload.begin();
-    for (; itr != overload.end(); itr++)
-    {
-        MEffect *effect = itr->second;
-        if (effect == NULL)
-            continue;
-        int nEffects = effect->GetSizeOfAttributeList();
-        if (nEffects == 0)
-            continue;
-        for (int i = 0; i < nEffects; i++)
-        {
-            bool Stack = false;
-            if (effect->GetStackingPenaltyApplied(i) != 0)
-                Stack = true;
-            AttributeModifier *mod =
-                    new AttributeModifier(
-                                          m_Item,
-                                          effect->GetSourceAttributeID(i),
-                                          effect->GetTargetAttributeID(i),
-                                          effect->GetCalculationType(i),
-                                          Stack, true
-                                          );
-            m_OverloadModifiers.AddModifier(mod);
         }
     }
 }

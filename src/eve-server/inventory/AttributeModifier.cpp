@@ -28,13 +28,12 @@
 #include "inventory/InventoryItem.h"
 #include "inventory/AttributeModifier.h"
 
-AttributeModifier::AttributeModifier(InventoryItemRef item, uint32 source,  uint32 target, EVECalculationType calc, bool stack, bool active)
+AttributeModifier::AttributeModifier(InventoryItemRef item, MEffect *effect, int effect_index, bool active)
+: RefObject( 0 )
 {
     m_Item = item;
-    m_SourceAttribute = source;
-    m_TargetAttribute = target;
-    m_Type = calc;
-    m_Stack = stack;
+    m_Effect = effect;
+    m_EffectIndex = effect_index;
     m_Active = active;
 }
 
@@ -48,14 +47,20 @@ void AttributeModifier::SetActive(bool state)
 
 double AttributeModifier::GetAmount()
 {
+    if(m_Effect == NULL)
+        return 0;
+    EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
     if(m_Type == CALC_ADDITION)
-        return m_Item->GetAttribute(m_SourceAttribute).get_float();
+        return m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float();
     return 0;
 }
 
 double AttributeModifier::GetFactor()
 {
-    double source = m_Item->GetAttribute(m_SourceAttribute).get_float();
+    if(m_Effect == NULL)
+        return 0;
+    double source = m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float();
+    EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
     if(m_Type == CALC_PERCENTAGE)
     {
         if(source < 2 && source > -2)
@@ -69,6 +74,7 @@ double AttributeModifier::GetFactor()
 }
 
 AttributeModifierSource::AttributeModifierSource(InventoryItemRef sourceItem)
+: RefObject( 0 )
 {
     m_Source = sourceItem;
     m_Active = true;
@@ -76,25 +82,20 @@ AttributeModifierSource::AttributeModifierSource(InventoryItemRef sourceItem)
 
 AttributeModifierSource::~AttributeModifierSource()
 {
-    std::vector<AttributeModifier *>::iterator itr = m_Modifiers.begin();
-    for (;itr == m_Modifiers.end();itr++)
-    {
-        AttributeModifier *modifier = *itr;
-        delete modifier;
-    }
+    m_Modifiers.clear();
     m_Source = InventoryItemRef();
 }
 
-void AttributeModifierSource::AddModifier(AttributeModifier *modifier)
+void AttributeModifierSource::AddModifier(AttributeModifierRef modifier)
 {
-    std::vector<AttributeModifier *>::iterator itr = std::find(m_Modifiers.begin(), m_Modifiers.end(), modifier);
+    std::vector<AttributeModifierRef>::iterator itr = std::find(m_Modifiers.begin(), m_Modifiers.end(), modifier);
     if (itr == m_Modifiers.end())
         m_Modifiers.push_back(modifier);
 }
 
-void AttributeModifierSource::RemoveModifier(AttributeModifier *modifier)
+void AttributeModifierSource::RemoveModifier(AttributeModifierRef modifier)
 {
-    std::vector<AttributeModifier *>::iterator itr = std::find(m_Modifiers.begin(), m_Modifiers.end(), modifier);
+    std::vector<AttributeModifierRef>::iterator itr = std::find(m_Modifiers.begin(), m_Modifiers.end(), modifier);
     if (itr != m_Modifiers.end())
         m_Modifiers.erase(itr);
 }
@@ -103,10 +104,10 @@ void AttributeModifierSource::GetModification(uint32 attrib, double &amount, Fac
 {
     if(m_Active == false)
         return;
-    std::vector<AttributeModifier *>::iterator itr = m_Modifiers.begin();
+    std::vector<AttributeModifierRef>::iterator itr = m_Modifiers.begin();
     for (;itr != m_Modifiers.end(); itr++)
     {
-        AttributeModifier *modifier = *itr;
+        AttributeModifierRef modifier = *itr;
         if (modifier->Modifies(attrib) && modifier->IsActive() == true)
         {
             // add fixed change amount.
@@ -174,10 +175,10 @@ void AttributeModifierSource::UpdateModifiers(InventoryItem *item, bool notify)
 {
     if(item == NULL)
         return;
-    std::vector<AttributeModifier *>::iterator itr = m_Modifiers.begin();
+    std::vector<AttributeModifierRef>::iterator itr = m_Modifiers.begin();
     for (;itr != m_Modifiers.end(); itr++)
     {
-        AttributeModifier *modifier = *itr;
+        AttributeModifierRef modifier = *itr;
         item->ResetAttribute(modifier->GetTargetAttribute(), notify);
     }
 }

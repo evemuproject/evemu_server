@@ -337,22 +337,14 @@ public:
     MEffect * GetEffect(uint32 effectID);
 
     typedef std::map<uint32, MEffect *> EffectMap;
-    const EffectMap& GetPersistentEffects() { return m_PersistentEffects; }
-    const EffectMap& GetOnlineEffects() { return m_OnlineEffects; }
-    const EffectMap& GetActiveEffects() { return m_ActiveEffects; }
-    const EffectMap& GetOverloadEffects() { return m_OverloadEffects; }
-    const EffectMap& GetPassiveEffects() { return m_PassiveEffects; }
+    const EffectMap& GetEffects() { return m_Effects; }
 
 private:
 
     void _populate(uint32 typeID);
 
     //data members
-    std::map<uint32, MEffect *> m_PersistentEffects;
-    std::map<uint32, MEffect *> m_OnlineEffects;
-    std::map<uint32, MEffect *> m_ActiveEffects;
-    std::map<uint32, MEffect *> m_OverloadEffects;
-    std::map<uint32, MEffect *> m_PassiveEffects;
+    EffectMap m_Effects;
     MEffect * m_defaultEffect;
 
     uint32 m_typeID;

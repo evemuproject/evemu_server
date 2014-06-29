@@ -42,6 +42,9 @@ class Character;
 class SolarSystem;
 class Station;
 
+class AttributeModifier;
+class AttributeModifierSource;
+
 /*
  * Typedefs for all item classes we have:
  */
@@ -71,6 +74,11 @@ typedef RefPtr<SolarSystem>              SolarSystemRef;
 typedef RefPtr<const SolarSystem>        SolarSystemConstRef;
 typedef RefPtr<Station>                  StationRef;
 typedef RefPtr<const Station>            StationConstRef;
+
+typedef RefPtr<AttributeModifier>              AttributeModifierRef;
+typedef RefPtr<const AttributeModifier>        AttributeModifierConstRef;
+typedef RefPtr<AttributeModifierSource>        AttributeModifierSourceRef;
+typedef RefPtr<const AttributeModifierSource>  AttributeModifierSourceConstRef;
 
 #endif /* !__ITEM_REF__H__INCL__ */
 

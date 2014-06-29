@@ -1249,10 +1249,10 @@ bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
     double amount = 0;
     AttributeModifierSource::FactorList factors;
     AttributeModifierSource::FactorList stackedfactors;
-    std::vector<AttributeModifierSource *>::iterator itr = m_attributeModifiers.begin();
+    std::vector<AttributeModifierSourceRef>::iterator itr = m_attributeModifiers.begin();
     for(;itr != m_attributeModifiers.end(); itr++)
     {
-        AttributeModifierSource *src = *itr;
+        AttributeModifierSourceRef src = *itr;
         if(src == NULL)
             continue;
         src->GetModification(attrID, amount, factors, stackedfactors);
@@ -1265,7 +1265,7 @@ bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
     return mAttributeMap.SetAttribute(attrID, nVal, notify);
 }
 
-void InventoryItem::AddAttributeModifier(AttributeModifierSource *modifier)
+void InventoryItem::AddAttributeModifier(AttributeModifierSourceRef modifier)
 {
     if(modifier == NULL)
         return;
@@ -1276,12 +1276,12 @@ void InventoryItem::AddAttributeModifier(AttributeModifierSource *modifier)
     }
 }
 
-void InventoryItem::RemoveAttributeModifier(AttributeModifierSource *modifier)
+void InventoryItem::RemoveAttributeModifier(AttributeModifierSourceRef modifier)
 {
-    std::vector<AttributeModifierSource *>::iterator itr = std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier);
+    std::vector<AttributeModifierSourceRef>::iterator itr = std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier);
     if(itr != m_attributeModifiers.end())
     {
-        AttributeModifierSource *src = *itr;
+        AttributeModifierSourceRef src = *itr;
         m_attributeModifiers.erase(itr);
         src->UpdateModifiers(this, true);
     }
