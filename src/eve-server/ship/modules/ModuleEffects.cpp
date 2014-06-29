@@ -837,7 +837,8 @@ void ModuleEffects::_populate(uint32 typeID)
         // that are modified by this effect for which module state during which the effect is active:
         if( mEffectPtr != NULL )
         {
-            switch( mEffectPtr->GetModuleStateWhenEffectApplied() )
+            int i = 0;
+            switch( mEffectPtr->GetModuleStateWhenEffectApplied(i) )
             {
                 case EFFECT_ONLINE:
                     m_OnlineEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
@@ -852,7 +853,7 @@ void ModuleEffects::_populate(uint32 typeID)
                     m_PassiveEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
                     break;
                 default:
-                    sLog.Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", mEffectPtr->GetModuleStateWhenEffectApplied());
+                    sLog.Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", mEffectPtr->GetModuleStateWhenEffectApplied(i));
                     break;
             }
         }

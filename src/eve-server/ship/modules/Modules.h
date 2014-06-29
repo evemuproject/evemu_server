@@ -130,11 +130,9 @@ protected:
 	Basic_Log * m_pMM_Log;		// We do not own this
 
     AttributeModifierSource m_ShipModifiers;
-    // references to resistance modifiers so that active modules can turn them off.
-    AttributeModifier *_EM_Modifier;
-    AttributeModifier *_Explosive_Modifier;
-    AttributeModifier *_Kinetic_Modifier;
-    AttributeModifier *_Thermal_Modifier;
+    AttributeModifierSource m_ShipPassiveModifiers;
+    AttributeModifierSource m_ShipActiveModifiers;
+    AttributeModifierSource m_OverloadModifiers;
     
     void GenerateModifiers();
 };

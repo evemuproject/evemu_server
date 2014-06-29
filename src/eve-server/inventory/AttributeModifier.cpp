@@ -56,10 +56,15 @@ double AttributeModifier::GetAmount()
 double AttributeModifier::GetFactor()
 {
     double source = m_Item->GetAttribute(m_SourceAttribute).get_float();
+    if(m_Type == CALC_PERCENTAGE)
+    {
+        if(source < 2 && source > -2)
+            return (1.0 - source) * 100;
+        else
+            return (100.0 - source);
+    }
     if(m_Type == CALC_DIFFERENCE)
         return source;
-    if(m_Type == CALC_PERCENTAGE)
-        return (1.0 - source) * 100;
     return 0;
 }
 

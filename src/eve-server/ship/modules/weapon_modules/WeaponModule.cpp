@@ -42,8 +42,9 @@ void WeaponModule::Activate(SystemEntity * targetEntity)
     if(m_ActiveModuleProc->IsBusy())
         return;
     // make sure its a valid target and charge.
-    if (m_ChargeRef.get() != NULL && targetEntity != NULL)
+    if (m_ChargeRef.get() == NULL)
     {
+        // to-do: add the civilian charge to the weapon.
         // check for civilian version with infinite ammo.
         if(!HasAttribute(AttrAmmoLoaded))
         {
@@ -54,7 +55,7 @@ void WeaponModule::Activate(SystemEntity * targetEntity)
     
     // store the target entity.
     m_targetEntity = targetEntity;
-    if(targetEntity == NULL)
+    if(m_targetEntity == NULL || m_ChargeRef.get() == NULL)
         return;
     // Activate active processing component timer:
     m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);

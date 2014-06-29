@@ -71,6 +71,13 @@ void ActiveModule::Activate(SystemEntity * targetEntity)
 void ActiveModule::Deactivate()
 {
     m_ActiveModuleProc->DeactivateCycle();
+    if(m_ActiveModuleProc->IsBusy())
+    {
+        m_ShipActiveModifiers.SetActive(false);
+        m_ShipPassiveModifiers.SetActive(true);
+        m_ShipActiveModifiers.UpdateModifiers(m_Ship.get(), true);
+        m_ShipPassiveModifiers.UpdateModifiers(m_Ship.get(), true);
+    }
 }
 
 void ActiveModule::Load(InventoryItemRef charge)
@@ -84,8 +91,8 @@ void ActiveModule::Load(InventoryItemRef charge)
 
     m_targetEntity = NULL;
     m_Charge_State = ChargeStates::MOD_LOADING;
-    m_ActiveModuleProc->ActivateCycle( -1, charge);
 	m_ChargeRef = InventoryItemRef();
+    m_ActiveModuleProc->ActivateCycle( -1, charge);
 }
 
 void ActiveModule::Unload()
@@ -100,4 +107,20 @@ void ActiveModule::EndLoading(InventoryItemRef charge)
     m_Charge_State = ChargeStates::MOD_LOADED;
     if(m_ChargeRef.get() != NULL)
         m_ChargeRef->Move(m_Ship->itemID(), flag());
+}
+
+void ActiveModule::StartCycle()
+{
+    m_ShipActiveModifiers.SetActive(true);
+    m_ShipPassiveModifiers.SetActive(false);
+    m_ShipActiveModifiers.UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers.UpdateModifiers(m_Ship.get(), true);
+}
+
+void ActiveModule::EndCycle()
+{
+    m_ShipActiveModifiers.SetActive(false);
+    m_ShipPassiveModifiers.SetActive(true);
+    m_ShipActiveModifiers.UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers.UpdateModifiers(m_Ship.get(), true);
 }

@@ -77,8 +77,8 @@ public:
 	EVECalculationType GetReverseCalculationType(uint32 index)    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? (EVECalculationType)0 : (EVECalculationType)m_ReverseCalculationTypeIDs[index];}
     typeTargetGroupIDlist * GetTargetGroupIDlist(uint32 index)    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_TargetGroupIDlists.find(index)->second; }
     uint32 GetStackingPenaltyApplied(uint32 index)              { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_StackingPenaltyAppliedIDs[index]; }
-    uint32 GetModuleStateWhenEffectApplied()                    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_EffectAppliedInStateIDs[0]; }
-    uint32 GetAffectingID()										{ return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectingIDs[0]; }
+    uint32 GetModuleStateWhenEffectApplied(uint32 index)                    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_EffectAppliedInStateIDs[index]; }
+    uint32 GetAffectingID(uint32 index)										{ return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectingIDs[index]; }
 	uint32 GetTargetTypeToWhichEffectApplied(uint32 index)        { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectedTypes[index]; }
     uint32 GetEffectApplicationType(uint32 index)               { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectingTypes[index]; }
 

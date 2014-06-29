@@ -68,13 +68,13 @@ private:
      * This is where special effects should be started.
      * This is where weapons should do there damage or launch missiles
      */
-	virtual void StartCycle()									{ /* Do nothing here */ }
+	virtual void StartCycle();
     /**
      * Called when the cycle completes.
      * This is where repair/mining modules should do there actions.
      * @note mining modules should also gather there minerals when deactivated and then not again when the cycle ends.
      */
-	virtual void EndCycle()									{ /* Do nothing here */ }
+	virtual void EndCycle();
 
     /**
      * Called when charge loading cycle ends.
