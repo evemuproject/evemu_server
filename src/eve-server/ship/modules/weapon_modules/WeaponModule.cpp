@@ -54,6 +54,8 @@ void WeaponModule::Activate(SystemEntity * targetEntity)
     
     // store the target entity.
     m_targetEntity = targetEntity;
+    if(targetEntity == NULL)
+        return;
     // Activate active processing component timer:
     m_ActiveModuleProc->ActivateCycle(-1, m_ChargeRef);
 }
