@@ -30,7 +30,6 @@
 #include "ActiveModules.h"
 #include "RigModule.h"
 #include "SubSystemModules.h"
-#include "ship/modules/propulsion_modules/Afterburner.h"
 #include "ship/modules/weapon_modules/EnergyTurret.h"
 #include "ship/modules/weapon_modules/ProjectileTurret.h"
 #include "ship/modules/logistics_modules/RepairModule.h"
@@ -125,7 +124,7 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Gas_Cloud_Harvester:                     return (new ActiveModule(item, ship)); break;    // Active
 
             // Propulsion Modules Subgroup:
-            case EVEDB::invGroups::Afterburner:                             return (new Afterburner(item, ship)); break;
+            case EVEDB::invGroups::Afterburner:                             return (new ActiveModule(item, ship)); break;
             case EVEDB::invGroups::Warp_Core_Stabilizer:                    return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Inertial_Stabilizer:                     return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Nanofiber_Internal_Structure:            return (new GenericModule(item, ship)); break;
