@@ -1253,7 +1253,7 @@ bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
     for(;itr != m_attributeModifiers.end(); itr++)
     {
         AttributeModifierSourceRef src = *itr;
-        if(src == NULL)
+        if(src.get() == NULL)
             continue;
         src->GetModification(attrID, amount, factors, stackedfactors);
     }
@@ -1267,7 +1267,7 @@ bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
 
 void InventoryItem::AddAttributeModifier(AttributeModifierSourceRef modifier)
 {
-    if(modifier == NULL)
+    if(modifier.get() == NULL)
         return;
     if(std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier) == m_attributeModifiers.end())
     {
