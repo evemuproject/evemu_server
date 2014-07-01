@@ -33,7 +33,7 @@ class ScenarioService
 : public PyService
 {
 public:
-    ScenarioService(PyServiceMgr *mgr);
+    ScenarioService();
     virtual ~ScenarioService();
 
 protected:

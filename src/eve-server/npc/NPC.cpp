@@ -36,7 +36,6 @@ using namespace Destiny;
 
 NPC::NPC(
     SystemManager *system,
-    PyServiceMgr &services,
     InventoryItemRef self,
     uint32 corporationID,
     uint32 allianceID,
@@ -44,7 +43,6 @@ NPC::NPC(
     SpawnEntry *spawner)
 : DynamicSystemEntity(new DestinyManager(this, system), self),
   m_system(system),
-  m_services(services),
   m_spawner(spawner),
 //  m_itemID(self->itemID()),
 //  m_typeID(self->typeID()),

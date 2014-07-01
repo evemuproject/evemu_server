@@ -31,7 +31,7 @@
 
 class AuthService : public PyService {
 public:
-    AuthService(PyServiceMgr *mgr);
+    AuthService();
     virtual ~AuthService();
 
 protected:

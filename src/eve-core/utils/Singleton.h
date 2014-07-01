@@ -51,14 +51,18 @@ public:
      */
     Singleton()
     {
+        // assert that an object has not already been created or kill the program.
         assert( NULL == mInstance.get() );
+        // If we haven't killed the program with the assert,
+        // set the pointer to the object that was just created.
+        mInstance.reset( (X *) this );
     }
 
     /** @return Reference to the singleton instance. */
     static X& get()
     {
         if( NULL == mInstance.get() )
-            mInstance.reset( new X );
+            new X;
 
         return *mInstance;
     }

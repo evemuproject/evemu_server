@@ -32,7 +32,7 @@ class UserService
 : public PyService
 {
 public:
-    UserService(PyServiceMgr *mgr);
+    UserService();
     ~UserService();
 
 protected:

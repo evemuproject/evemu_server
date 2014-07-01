@@ -31,7 +31,7 @@
 class DevToolsProviderService : public PyService
 {
 public:
-    DevToolsProviderService(PyServiceMgr* mgr);
+    DevToolsProviderService();
     virtual ~DevToolsProviderService();
 
 protected:

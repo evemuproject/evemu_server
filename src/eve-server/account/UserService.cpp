@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(UserService)
 
-UserService::UserService(PyServiceMgr *mgr)
-: PyService(mgr, "userSvc"),
+UserService::UserService()
+: PyService("userSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

@@ -160,7 +160,7 @@ bool LSCChannel::JoinChannel(Client * c) {
             mct.characters.insert( cur->first );
 
         PyTuple *answer = join.Encode();
-        m_service->entityList().Multicast( "OnLSC", GetTypeString(), &answer, mct );
+        sEntityList.Multicast( "OnLSC", GetTypeString(), &answer, mct );
     //}
 
 
@@ -189,7 +189,7 @@ void LSCChannel::LeaveChannel(uint32 charID, OnLSC_SenderInfo * si) {
         mct.characters.insert( cur->first );
 
     PyTuple *answer = leave.Encode();
-    m_service->entityList().Multicast("OnLSC", GetTypeString(), &answer, mct);
+    sEntityList.Multicast("OnLSC", GetTypeString(), &answer, mct);
 }
 
 void LSCChannel::LeaveChannel(Client *c, bool self) {
@@ -214,7 +214,7 @@ void LSCChannel::LeaveChannel(Client *c, bool self) {
         mct.characters.insert( cur->first );
 
     PyTuple *answer = leave.Encode();
-    m_service->entityList().Multicast("OnLSC", GetTypeString(), &answer, mct);
+    sEntityList.Multicast("OnLSC", GetTypeString(), &answer, mct);
 
     m_chars.erase(charID);
     c->ChannelLeft(this);
@@ -236,7 +236,7 @@ void LSCChannel::Evacuate(Client * c) {
         mct.characters.insert(cur->first);
 
     PyTuple *answer = dc.Encode();
-    m_service->entityList().Multicast("OnLSC", GetTypeString(), &answer, mct);
+    sEntityList.Multicast("OnLSC", GetTypeString(), &answer, mct);
 }
 
 void LSCChannel::SendMessage(Client * c, const char * message, bool self) {
@@ -269,7 +269,7 @@ void LSCChannel::SendMessage(Client * c, const char * message, bool self) {
     sm.member_count = m_chars.size();
 
     PyTuple *answer = sm.Encode();
-    m_service->entityList().Multicast("OnLSC", GetTypeString(), &answer, mct);
+    sEntityList.Multicast("OnLSC", GetTypeString(), &answer, mct);
 */
 
     // NEW KENNY TRANSLATOR VERSION:
@@ -305,7 +305,7 @@ void LSCChannel::SendMessage(Client * c, const char * message, bool self) {
             end = m_chars.end();
             for(; cur != end; cur++)
             {
-                if( (m_service->entityList().FindCharacter(cur->first)->IsKennyTranslatorEnabled()) )
+                if( (sEntityList.FindCharacter(cur->first)->IsKennyTranslatorEnabled()) )
                 {
                     mct_Kennyfied.characters.insert( cur->first );
                     kennyfiedCharListSize++;
@@ -346,7 +346,7 @@ void LSCChannel::SendMessage(Client * c, const char * message, bool self) {
             sm_NotKennyfied.message = kennyfied_message;
         }
         answerNotKennyfied = sm_NotKennyfied.Encode();
-        m_service->entityList().Multicast("OnLSC", GetTypeString(), &answerNotKennyfied, mct_NotKennyfied);
+        sEntityList.Multicast("OnLSC", GetTypeString(), &answerNotKennyfied, mct_NotKennyfied);
     }
 
     sm_Kennyfied.channelID = EncodeID();
@@ -354,7 +354,7 @@ void LSCChannel::SendMessage(Client * c, const char * message, bool self) {
     sm_Kennyfied.member_count = kennyfiedCharListSize;
 
     PyTuple *answerKennyfied = sm_Kennyfied.Encode();
-    m_service->entityList().Multicast("OnLSC", GetTypeString(), &answerKennyfied, mct_Kennyfied);
+    sEntityList.Multicast("OnLSC", GetTypeString(), &answerKennyfied, mct_Kennyfied);
 }
 
 bool LSCChannel::IsJoined(uint32 charID) {

@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(CorpBookmarkMgrService)
 
-CorpBookmarkMgrService::CorpBookmarkMgrService(PyServiceMgr* mgr)
-: PyService(mgr, "corpBookmarkMgr"),
+CorpBookmarkMgrService::CorpBookmarkMgrService()
+: PyService("corpBookmarkMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -49,7 +49,7 @@ CorpBookmarkMgrService::~CorpBookmarkMgrService()
 PyResult CorpBookmarkMgrService::Handle_GetBookmarks(PyCallArgs& call)
 {
     ObjectCachedMethodID method_id(GetName(), "GetBookmarks");
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if(!sManager.cache_service->IsCacheLoaded(method_id)) {
         PyDict *res = m_db.GetBookmarks(call.client->GetCorporationID());
         if(res == NULL)
             return NULL;
@@ -61,8 +61,8 @@ PyResult CorpBookmarkMgrService::Handle_GetBookmarks(PyCallArgs& call)
         tuple->items[1] = new PyDict();
 
         result = tuple;
-        m_manager->cache_service->GiveCache(method_id, &result);
+        sManager.cache_service->GiveCache(method_id, &result);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    return(sManager.cache_service->MakeObjectCachedMethodCallResult(method_id));
 }

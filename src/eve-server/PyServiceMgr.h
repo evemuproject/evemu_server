@@ -27,7 +27,9 @@
 #ifndef __PYSERVICEMGR_H_INCL__
 #define __PYSERVICEMGR_H_INCL__
 
+#include "utils/Singleton.h"
 #include "inventory/ItemFactory.h"
+#include "EntityList.h"
 
 class PyService;
 class PyCallable;
@@ -45,9 +47,10 @@ class ItemFactory;
 class LSCService;
 
 class PyServiceMgr
+: public Singleton<PyServiceMgr>
 {
 public:
-    PyServiceMgr( uint32 nodeID, EntityList& elist, ItemFactory& ifactory );
+    PyServiceMgr( uint32 nodeID );
     ~PyServiceMgr();
 
     void Process();
@@ -65,9 +68,6 @@ public:
 
     //this is a hack and needs to die:
     ServiceDB &serviceDB() { return(m_svcDB); }
-
-    ItemFactory &item_factory;    //here for anybody to use. we do not own this.
-    EntityList &entity_list;    //here for anybody to use. we do not own this.
 
     //Area to access services by name. This isn't ideal, but it avoids casting.
     //these may be NULL during service init, but should never be after that.
@@ -94,5 +94,9 @@ protected:
     uint32 m_nodeID;
     ServiceDB m_svcDB;    //this is crap, get rid of this
 };
+
+extern PyServiceMgr &_sManager;
+// define as a define so the text highlighter will color the variable.
+#define sManager _sManager
 
 #endif

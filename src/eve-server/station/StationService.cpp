@@ -31,8 +31,8 @@
 
 PyCallable_Make_InnerDispatcher(StationService)
 
-StationService::StationService(PyServiceMgr *mgr)
-: PyService(mgr, "station"),
+StationService::StationService()
+: PyService("station"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -63,7 +63,7 @@ PyResult StationService::Handle_GetGuests(PyCallArgs &call) {
     PyList *res = new PyList();
 
     std::vector<Client *> clients;
-    m_manager->entity_list.FindByStationID(call.client->GetStationID(), clients);
+    sEntityList.FindByStationID(call.client->GetStationID(), clients);
     std::vector<Client *>::iterator cur, end;
     cur = clients.begin();
     end = clients.end();

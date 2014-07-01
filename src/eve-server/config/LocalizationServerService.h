@@ -31,7 +31,7 @@
 class LocalizationServerService : public PyService
 {
 public:
-    LocalizationServerService(PyServiceMgr *mgr);
+    LocalizationServerService();
     virtual ~LocalizationServerService();
 
 protected:

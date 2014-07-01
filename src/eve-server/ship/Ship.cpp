@@ -63,13 +63,13 @@ ShipTypeData::ShipTypeData( uint32 weaponTypeID, uint32 miningTypeID, uint32 ski
         assert(_skillType->id() == stData.mSkillTypeID);
 }
 
-ShipType *ShipType::Load(ItemFactory &factory, uint32 shipTypeID)
+ShipType *ShipType::Load(uint32 shipTypeID)
 {
-    return ItemType::Load<ShipType>( factory, shipTypeID );
+    return ItemType::Load<ShipType>( shipTypeID );
 }
 
 template<class _Ty>
-_Ty *ShipType::_LoadShipType(ItemFactory &factory, uint32 shipTypeID,
+_Ty *ShipType::_LoadShipType(uint32 shipTypeID,
     // ItemType stuff:
     const ItemGroup &group, const TypeData &data,
     // ShipType stuff:
@@ -83,12 +83,11 @@ _Ty *ShipType::_LoadShipType(ItemFactory &factory, uint32 shipTypeID,
  * Ship
  */
 Ship::Ship(
-    ItemFactory &_factory,
     uint32 _shipID,
     // InventoryItem stuff:
     const ShipType &_shipType,
     const ItemData &_data)
-: InventoryItem(_factory, _shipID, _shipType, _data),
+: InventoryItem(_shipID, _shipType, _data),
     m_UpdateTimer(0, true)
 {
     m_ModuleManager = NULL;
@@ -100,26 +99,26 @@ Ship::Ship(
     //DisableSaveTimer();
 }
 
-ShipRef Ship::Load(ItemFactory &factory, uint32 shipID)
+ShipRef Ship::Load(uint32 shipID)
 {
-    return InventoryItem::Load<Ship>( factory, shipID );
+    return InventoryItem::Load<Ship>( shipID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Ship::_LoadShip(ItemFactory &factory, uint32 shipID,
+RefPtr<_Ty> Ship::_LoadShip(uint32 shipID,
     // InventoryItem stuff:
     const ShipType &shipType, const ItemData &data)
 {
     // we don't need any additional stuff
-    return ShipRef( new Ship(factory, shipID, shipType, data ) );
+    return ShipRef( new Ship(shipID, shipType, data ) );
 }
 
-ShipRef Ship::Spawn(ItemFactory &factory, ItemData &data) {
-    uint32 shipID = Ship::_Spawn( factory, data );
+ShipRef Ship::Spawn(ItemData &data) {
+    uint32 shipID = Ship::_Spawn( data );
     if( shipID == 0 )
         return ShipRef();
 
-    ShipRef sShipRef = Ship::Load( factory, shipID );
+    ShipRef sShipRef = Ship::Load( shipID );
 
     // Create default dynamic attributes in the AttributeMap:
     sShipRef->SetAttribute(AttrIsOnline,            1, true);												// Is Online
@@ -211,14 +210,14 @@ ShipRef Ship::Spawn(ItemFactory &factory, ItemData &data) {
     return sShipRef;
 }
 
-uint32 Ship::_Spawn(ItemFactory &factory, ItemData &data) {
+uint32 Ship::_Spawn(ItemData &data) {
     // make sure it's a ship
-    const ShipType *st = factory.GetShipType(data.typeID);
+    const ShipType *st = sItemFactory.GetShipType(data.typeID);
     if(st == NULL)
         return 0;
 
     // store item data
-    uint32 shipID = InventoryItem::_Spawn(factory, data);
+    uint32 shipID = InventoryItem::_Spawn(data);
     if(shipID == 0)
         return 0;
 
@@ -230,7 +229,7 @@ uint32 Ship::_Spawn(ItemFactory &factory, ItemData &data) {
 bool Ship::_Load()
 {
     // load contents
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents( ) )
         return false;
 
     bool loadSuccess = InventoryItem::_Load();      // Attributes are loaded here!
@@ -250,7 +249,7 @@ bool Ship::_Load()
 void Ship::Delete()
 {
     // delete contents first
-    DeleteContents( m_factory );
+    DeleteContents( );
 
     InventoryItem::Delete();
 }
@@ -355,7 +354,7 @@ void Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
 
 PyDict *Ship::ShipGetInfo()
 {
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
     {
         codelog( ITEM__ERROR, "%s (%u): Failed to load contents for ShipGetInfo", itemName().c_str(), itemID() );
         return NULL;
@@ -397,7 +396,7 @@ PyDict *Ship::ShipGetInfo()
 
 PyDict *Ship::ShipGetState()
 {
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
     {
         codelog( ITEM__ERROR, "%s (%u): Failed to load contents for ShipGetInfo", itemName().c_str(), itemID() );
         return NULL;
@@ -767,11 +766,9 @@ using namespace Destiny;
 ShipEntity::ShipEntity(
     ShipRef ship,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), ship),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _shipRef = ship;
     m_destiny->SetPosition(position, false);

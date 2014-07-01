@@ -31,8 +31,8 @@
 
 PyCallable_Make_InnerDispatcher(AuthService)
 
-AuthService::AuthService(PyServiceMgr *mgr)
-: PyService(mgr, "authentication"),
+AuthService::AuthService()
+: PyService("authentication"),
 m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

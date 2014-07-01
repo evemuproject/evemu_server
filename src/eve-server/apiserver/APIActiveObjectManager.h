@@ -44,7 +44,7 @@ class APIActiveObjectManager
 : public APIServiceManager
 {
 public:
-    APIActiveObjectManager(const PyServiceMgr &services);
+    APIActiveObjectManager();
 
     // Common call shared to all derived classes called via polymorphism
     std::tr1::shared_ptr<std::string> ProcessCall(const APICommandCall * pAPICommandCall);

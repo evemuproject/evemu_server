@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(InfoGatheringMgr)
 
-InfoGatheringMgr::InfoGatheringMgr(PyServiceMgr *mgr)
-: PyService(mgr, "infoGatheringMgr"),
+InfoGatheringMgr::InfoGatheringMgr()
+: PyService("infoGatheringMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

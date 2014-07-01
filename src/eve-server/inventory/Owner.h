@@ -43,7 +43,7 @@ public:
      * @param[in] ownerID ID of owner to load.
      * @return Ref to loaded Owner object.
      */
-    static OwnerRef Load(ItemFactory &factory, uint32 ownerID);
+    static OwnerRef Load(uint32 ownerID);
     /**
      * Spawns new Owner.
      *
@@ -51,11 +51,10 @@ public:
      * @param[in] data ItemData of new Owner.
      * @return Ref to spawned Owner object.
      */
-    static OwnerRef Spawn(ItemFactory &factory, ItemData &data);
+    static OwnerRef Spawn(ItemData &data);
 
 protected:
     Owner(
-        ItemFactory &_factory,
         uint32 _ownerID,
         // InventoryItem stuff:
         const ItemType &_type,
@@ -68,7 +67,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 ownerID,
+    static RefPtr<_Ty> _LoadItem(uint32 ownerID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -81,20 +80,20 @@ protected:
 
         // no additional stuff
 
-        return _Ty::template _LoadOwner<_Ty>( factory, ownerID, type, data );
+        return _Ty::template _LoadOwner<_Ty>( ownerID, type, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
     static RefPtr<_Ty> _LoadOwner(
-        ItemFactory &factory,
+        
         uint32 ownerID,
         // InventoryItem stuff:
         const ItemType &type,
         const ItemData &data
     );
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );

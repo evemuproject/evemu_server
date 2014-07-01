@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(LPService)
 
-LPService::LPService(PyServiceMgr *mgr)
-: PyService(mgr, "LPSvc"),
+LPService::LPService()
+: PyService("LPSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

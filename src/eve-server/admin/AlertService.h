@@ -36,7 +36,7 @@ class PyTraceLog;
 
 class AlertService : public PyService {
 public:
-    AlertService(PyServiceMgr *mgr);
+    AlertService();
     virtual ~AlertService();
 
 protected:

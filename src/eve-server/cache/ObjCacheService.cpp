@@ -135,8 +135,8 @@ const uint32 ObjCacheService::CharCreateNewExtraCachableObjectCount = sizeof(Obj
 
 PyCallable_Make_InnerDispatcher(ObjCacheService)
 
-ObjCacheService::ObjCacheService(PyServiceMgr *mgr, const char *cacheDir)
-: PyService(mgr, "objectCaching"),
+ObjCacheService::ObjCacheService(const char *cacheDir)
+: PyService("objectCaching"),
   m_dispatch(new Dispatcher(this)),
   m_cacheDir(cacheDir)
 {

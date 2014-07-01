@@ -31,7 +31,7 @@
 
 class OnlineStatusService : public PyService {
 public:
-    OnlineStatusService(PyServiceMgr *mgr);
+    OnlineStatusService();
     virtual ~OnlineStatusService();
 
 protected:

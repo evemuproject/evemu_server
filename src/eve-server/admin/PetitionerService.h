@@ -30,7 +30,7 @@
 class PetitionerService
 : public PyService {
 public:
-    PetitionerService(PyServiceMgr *mgr);
+    PetitionerService();
     virtual ~PetitionerService();
 
 protected:

@@ -35,7 +35,7 @@ public:
 
     PyCallable_Make_Dispatcher(DungeonBound)
 
-    DungeonBound(PyServiceMgr *mgr, DungeonDB *db)
+    DungeonBound(DungeonDB *db)
     : PyBoundObject(mgr, "DungeonBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -62,8 +62,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(DungeonService)
 
-DungeonService::DungeonService(PyServiceMgr *mgr)
-: PyService(mgr, "dungeon"),
+DungeonService::DungeonService()
+: PyService("dungeon"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -83,7 +83,7 @@ PyBoundObject *DungeonService::_CreateBoundObject(Client *c, const PyRep *bind_a
     _log(CLIENT__MESSAGE, "DungeonService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new DungeonBound(m_manager, &m_db));
+    return(new DungeonBound(&m_db));
 }*/
 
 

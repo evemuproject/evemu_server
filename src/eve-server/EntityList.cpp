@@ -30,7 +30,7 @@
 #include "ship/DestinyManager.h"
 #include "system/SystemManager.h"
 
-EntityList::EntityList() : m_services( NULL ) {}
+EntityList::EntityList() {}
 EntityList::~EntityList() {
     {
         client_list::iterator cur, end;
@@ -390,7 +390,7 @@ SystemManager *EntityList::FindOrBootSystem(uint32 systemID) {
         1
     );
 */
-    SystemManager *mgr = new SystemManager(systemID, *m_services);//, idata);
+    SystemManager *mgr = new SystemManager(systemID);//, idata);
     if(!mgr->BootSystem()) {
         delete mgr;
         return NULL;

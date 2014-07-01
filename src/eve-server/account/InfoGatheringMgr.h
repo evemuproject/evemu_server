@@ -32,7 +32,7 @@
 class InfoGatheringMgr : public PyService
 {
 public:
-    InfoGatheringMgr(PyServiceMgr *mgr);
+    InfoGatheringMgr();
     virtual ~InfoGatheringMgr();
 
 protected:

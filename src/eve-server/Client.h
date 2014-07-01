@@ -87,13 +87,11 @@ class Client
   protected EVEPacketDispatcher
 {
 public:
-    Client(PyServiceMgr &services, EVETCPConnection** con);
+    Client(EVETCPConnection** con);
     virtual ~Client();
 
     bool            ProcessNet();
     virtual void    Process();
-
-    PyServiceMgr& services() const { return m_services; }
 
     /********************************************************************/
     /* Session values                                                   */
@@ -250,7 +248,6 @@ protected:
     void _SendPingRequest();
     void _SendPingResponse( const PyAddress& source, uint64 callID );
 
-    PyServiceMgr& m_services;
     Timer m_pingTimer;
     ClientSession mSession;
 

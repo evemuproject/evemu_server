@@ -35,8 +35,8 @@ class KeeperBound
 public:
     PyCallable_Make_Dispatcher(KeeperBound)
 
-    KeeperBound(PyServiceMgr *mgr, SystemDB *db)
-    : PyBoundObject(mgr),
+    KeeperBound(SystemDB *db)
+    : PyBoundObject(),
       m_db(db),
       m_dispatch(new Dispatcher(this))
     {
@@ -65,8 +65,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(KeeperService)
 
-KeeperService::KeeperService(PyServiceMgr *mgr)
-: PyService(mgr, "keeper"),
+KeeperService::KeeperService()
+: PyService("keeper"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -82,15 +82,15 @@ PyBoundObject *KeeperService::_CreateBoundObject(Client *c, const PyRep *bind_ar
     _log(CLIENT__MESSAGE, "KeeperService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new KeeperBound(m_manager, &m_db));
+    return(new KeeperBound(&m_db));
 }
 
 
 PyResult KeeperService::Handle_GetLevelEditor(PyCallArgs &call) {
     PyRep *result = NULL;
 
-    KeeperBound *ib = new KeeperBound(m_manager, &m_db);
-    result = m_manager->BindObject(call.client, ib);
+    KeeperBound *ib = new KeeperBound(&m_db);
+    result = sManager.BindObject(call.client, ib);
 
     return result;
 }

@@ -31,8 +31,8 @@
 // crap
 PyCallable_Make_InnerDispatcher(BrowserLockdownService)
 
-BrowserLockdownService::BrowserLockdownService( PyServiceMgr *mgr )
-: PyService(mgr, "browserLockdownSvc"),
+BrowserLockdownService::BrowserLockdownService(  )
+: PyService("browserLockdownSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

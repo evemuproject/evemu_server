@@ -29,8 +29,8 @@
 
 std::string APIAccountManager::m_hexCharMap("0123456789ABCDEF");
 
-APIAccountManager::APIAccountManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIAccountManager::APIAccountManager()
+: APIServiceManager()
 {
 }
 

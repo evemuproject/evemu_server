@@ -35,7 +35,7 @@ public:
 
     PyCallable_Make_Dispatcher(LanguageBound)
 
-    LanguageBound(PyServiceMgr *mgr, LanguageDB *db)
+    LanguageBound(LanguageDB *db)
     : PyBoundObject(mgr, "LanguageBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -62,8 +62,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(LanguageService)
 
-LanguageService::LanguageService(PyServiceMgr *mgr)
-: PyService(mgr, "languageSvc"),
+LanguageService::LanguageService()
+: PyService("languageSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -82,7 +82,7 @@ PyBoundObject *LanguageService::_CreateBoundObject(Client *c, PyTuple *bind_args
     _log(CLIENT__MESSAGE, "LanguageService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new LanguageBound(m_manager, &m_db));
+    return(new LanguageBound(&m_db));
 }*/
 
 

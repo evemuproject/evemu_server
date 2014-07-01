@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(PaperDollService)
 
-PaperDollService::PaperDollService(PyServiceMgr* mgr)
-: PyService(mgr, "paperDollServer"),
+PaperDollService::PaperDollService()
+: PyService("paperDollServer"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

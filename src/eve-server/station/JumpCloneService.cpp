@@ -35,8 +35,8 @@ class JumpCloneBound
 public:
     PyCallable_Make_Dispatcher(JumpCloneBound)
 
-    JumpCloneBound(PyServiceMgr *mgr, StationDB *db)
-    : PyBoundObject(mgr),
+    JumpCloneBound(StationDB *db)
+    : PyBoundObject(),
       m_db(db),
       m_dispatch(new Dispatcher(this))
     {
@@ -63,8 +63,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(JumpCloneService)
 
-JumpCloneService::JumpCloneService(PyServiceMgr *mgr)
-: PyService(mgr, "jumpCloneSvc"),
+JumpCloneService::JumpCloneService()
+: PyService("jumpCloneSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -81,7 +81,7 @@ PyBoundObject* JumpCloneService::_CreateBoundObject( Client* c, const PyRep* bin
     _log( CLIENT__MESSAGE, "JumpCloneService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new JumpCloneBound( m_manager, &m_db );
+    return new JumpCloneBound( &m_db );
 }
 
 PyResult JumpCloneBound::Handle_InstallCloneInStation( PyCallArgs& call )

@@ -33,7 +33,7 @@
 class ConfigService : public PyService
 {
 public:
-    ConfigService(PyServiceMgr *mgr);
+    ConfigService();
     virtual ~ConfigService();
 
 protected:

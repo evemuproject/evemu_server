@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(RepairService)
 
-RepairService::RepairService(PyServiceMgr *mgr)
-: PyService(mgr, "repairSvc"),
+RepairService::RepairService()
+: PyService("repairSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

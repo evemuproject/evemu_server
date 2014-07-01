@@ -29,8 +29,8 @@
 
 //std::string APIActiveObjectManager::m_hexCharMap("0123456789ABCDEF");
 
-APIActiveObjectManager::APIActiveObjectManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIActiveObjectManager::APIActiveObjectManager()
+: APIServiceManager()
 {
 }
 

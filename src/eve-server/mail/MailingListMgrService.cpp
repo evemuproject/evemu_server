@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(MailingListMgrService)
 
-MailingListMgrService::MailingListMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "mailingListsMgr"),
+MailingListMgrService::MailingListMgrService()
+: PyService("mailingListsMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

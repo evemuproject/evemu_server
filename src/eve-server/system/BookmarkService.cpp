@@ -34,8 +34,8 @@ const uint32 BookmarkService::MAX_BM_FOLDER_ID = 0xFFFFFFFF;
 
 PyCallable_Make_InnerDispatcher(BookmarkService)
 
-BookmarkService::BookmarkService(PyServiceMgr *mgr)
-: PyService(mgr, "bookmark"),
+BookmarkService::BookmarkService()
+: PyService("bookmark"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

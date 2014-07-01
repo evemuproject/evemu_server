@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(ConfigService)
 
-ConfigService::ConfigService(PyServiceMgr *mgr)
-: PyService(mgr, "config"),
+ConfigService::ConfigService()
+: PyService("config"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

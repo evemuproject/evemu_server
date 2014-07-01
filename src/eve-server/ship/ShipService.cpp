@@ -40,8 +40,8 @@ class ShipBound
 public:
     PyCallable_Make_Dispatcher(ShipBound)
 
-    ShipBound(PyServiceMgr *mgr, ShipDB& db)
-    : PyBoundObject(mgr),
+    ShipBound(ShipDB& db)
+    : PyBoundObject(),
       m_db(db),
       m_dispatch(new Dispatcher(this))
     {
@@ -85,8 +85,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(ShipService)
 
-ShipService::ShipService(PyServiceMgr *mgr)
-: PyService(mgr, "ship"),
+ShipService::ShipService()
+: PyService("ship"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -102,7 +102,7 @@ PyBoundObject *ShipService::_CreateBoundObject(Client *c, const PyRep *bind_args
     _log(CLIENT__MESSAGE, "ShipService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new ShipBound(m_manager, m_db));
+    return(new ShipBound(m_db));
 }
 
 PyResult ShipBound::Handle_Board(PyCallArgs &call) {
@@ -125,7 +125,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
     }
 
     // Get ShipRef of the ship we want to board:
-    ShipRef boardShipRef = m_manager->item_factory.GetShip( args.arg1 );                 // This is too inefficient, use line below
+    ShipRef boardShipRef = sItemFactory.GetShip( args.arg1 );                 // This is too inefficient, use line below
     //ShipRef boardShipRef = call.client->System()->GetShipFromInventory( args.arg1 );
     ShipEntity * pShipEntity = (ShipEntity *)(call.client->System()->get( args.arg1 ));
 
@@ -192,7 +192,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
                         oldShipRef->Relocate( shipPosition );
 
                         // Create new ShipEntity for old ship and add it to the SystemManager:
-                        ShipEntity * oldShipObj = new ShipEntity( oldShipRef, call.client->System(), *(call.client->System()->GetServiceMgr()), shipPosition );
+                        ShipEntity * oldShipObj = new ShipEntity( oldShipRef, call.client->System(), shipPosition );
                         call.client->System()->AddEntity( oldShipObj );
 
                         // Add ball to bubble manager for this client's character's system for the old pilot-less ship:
@@ -237,7 +237,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
             // Update bubble manager for this client's character's ship:
             //call.client->MoveToLocation( call.client->GetLocationID(), GPoint(0.0,0.0,0.0) );
             call.client->GetShip()->Move( call.client->GetLocationID(), (EVEItemFlags)flagHangar, true );
-            ////call.client->services().item_factory.GetShip( call.client->GetShipID() )->Relocate( GPoint(0.0,0.0,0.0) );
+            ////sItemFactory.GetShip( call.client->GetShipID() )->Relocate( GPoint(0.0,0.0,0.0) );
             ////call.client->Destiny()->SetPosition( GPoint(0.0,0.0,0.0), true );
             call.client->System()->bubbles.UpdateBubble( call.client, true );
 
@@ -386,7 +386,7 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
         itemID = args.items.front();
     }
 
-    ShipRef ship = m_manager->item_factory.GetShip( itemID );
+    ShipRef ship = sItemFactory.GetShip( itemID );
 
     if( !ship )
     {
@@ -410,7 +410,7 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
         InventoryItemRef subSystemItem;
         for(uint32 index=0; index<subSystemList.size(); index++)
         {
-            subSystemItem = m_manager->item_factory.GetItem( subSystemList.at( index ) );
+            subSystemItem = sItemFactory.GetItem( subSystemList.at( index ) );
             subSystemItem->MoveInto( *ship, (EVEItemFlags)(subSystemItem->GetAttribute(AttrSubSystemSlot, 0).get_int()), true );
         }
     }
@@ -482,7 +482,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
         itemID = (uint32)(PyToDropList->items.at(i)->AsTuple()->items.at(0)->AsInt()->value());
         itemQuantity = (uint32)(PyToDropList->items.at(i)->AsTuple()->items.at(1)->AsInt()->value());
 
-        cargoItem = m_manager->item_factory.GetItem( itemID );
+        cargoItem = sItemFactory.GetItem( itemID );
         if( !cargoItem )
         {
             sLog.Error("ShipBound::Handle_Drop()", "%s: Unable to find item %u to drop.", call.client->GetName(), itemID);
@@ -501,15 +501,15 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
             cargoItem->ChangeOwner( ownerID, true );
 
         // Get groupID and categoryID for item 'itemID' to determine if it is a kind of cargo container, structure, or deployable item
-        groupID = m_manager->item_factory.GetItem( itemID )->groupID();
-        categoryID = m_manager->item_factory.GetItem( itemID )->categoryID();
+        groupID = sItemFactory.GetItem( itemID )->groupID();
+        categoryID = sItemFactory.GetItem( itemID )->categoryID();
 
         if( (groupID == EVEDB::invGroups::Audit_Log_Secure_Container)
             || (groupID == EVEDB::invGroups::Secure_Cargo_Container)
             || (groupID == EVEDB::invGroups::Freight_Container) )
         {
             // This item IS a cargo container, so move it from the ship's cargo into space:
-            cargoContainerItem = m_manager->item_factory.GetCargoContainer( itemID );
+            cargoContainerItem = sItemFactory.GetCargoContainer( itemID );
             Client * who = call.client;
             GPoint location( who->GetPosition() );
             radius = 1500.0;
@@ -524,7 +524,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
 
             // Properly add the container to the system manager
             SystemManager* sys = who->System();
-            ContainerEntity* containerObj = new ContainerEntity( cargoContainerItem, sys, *m_manager, location );
+            ContainerEntity* containerObj = new ContainerEntity( cargoContainerItem, sys, location );
             sys->AddEntity( containerObj );
 
             // Move item from cargo bay to space:
@@ -540,7 +540,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
         {
             // This item is a POS structure of some kind, so move it from the ship's cargo into space
             // whilst keeping ownership of it to the character not using the corporation the character belongs to:
-            structureItem = m_manager->item_factory.GetStructure( itemID );
+            structureItem = sItemFactory.GetStructure( itemID );
             Client * who = call.client;
             GPoint location( who->GetPosition() );
             radius = 1500.0;
@@ -555,7 +555,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
 
             // Properly add the structure item to the system manager
             SystemManager* sys = who->System();
-            StructureEntity* structureObj = new StructureEntity( structureItem, sys, *m_manager, location );
+            StructureEntity* structureObj = new StructureEntity( structureItem, sys, location );
             sys->AddEntity( structureObj );
 
             // Move item from cargo bay to space:
@@ -580,13 +580,13 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
             location.y += radius * sin(theta) * sin(phi);
             location.z += radius * cos(theta);
 
-            //cargoItem = m_manager->item_factory.GetItem( itemID );
+            //cargoItem = sItemFactory.GetItem( itemID );
             if( !cargoItem )
                 throw PyException( MakeCustomError( "Unable to spawn Deployable item of type %u.", cargoItem->typeID() ) );
 
             // Properly add the deployable to the system manager
             SystemManager* sys = who->System();
-            DeployableEntity* deployableObj = new DeployableEntity( cargoItem, sys, *m_manager, location );
+            DeployableEntity* deployableObj = new DeployableEntity( cargoItem, sys, location );
             sys->AddEntity( deployableObj );
 
             // Move item from cargo bay to space:
@@ -646,7 +646,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
     }
 
     for(; cur != end; cur++) {
-        InventoryItemRef item = m_manager->item_factory.GetItem( *cur );
+        InventoryItemRef item = sItemFactory.GetItem( *cur );
         if( !item ) {
             _log(SERVICE__ERROR, "%s: Unable to find item %u to drop.", call.client->GetName(), *cur);
             continue;
@@ -836,8 +836,8 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
     for(; cur != end; cur++)
     {
         // Get groupID and categoryID for item '*cur' to determine if it is a kind of cargo container, structure, or deployable item
-        groupID = m_manager->item_factory.GetItem( *cur )->groupID();
-        categoryID = m_manager->item_factory.GetItem( *cur )->categoryID();
+        groupID = sItemFactory.GetItem( *cur )->groupID();
+        categoryID = sItemFactory.GetItem( *cur )->categoryID();
 
         if( (groupID == EVEDB::invGroups::Audit_Log_Secure_Container)
             || (groupID == EVEDB::invGroups::Secure_Cargo_Container)
@@ -853,13 +853,13 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
             location.y += radius * sin(theta) * sin(phi);
             location.z += radius * cos(theta);
 
-            cargoContainerItem = m_manager->item_factory.GetCargoContainer( *cur );
+            cargoContainerItem = sItemFactory.GetCargoContainer( *cur );
             if( !cargoContainerItem )
                 throw PyException( MakeCustomError( "Unable to spawn item of type %u.", cargoContainerItem->typeID() ) );
 
             // Properly add the container to the system manager
             SystemManager* sys = who->System();
-            ContainerEntity* containerObj = new ContainerEntity( cargoContainerItem, sys, *m_manager, location );
+            ContainerEntity* containerObj = new ContainerEntity( cargoContainerItem, sys, location );
             sys->AddEntity( containerObj );
 
             // Move item from cargo bay to space:
@@ -882,13 +882,13 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
             location.y += radius * sin(theta) * sin(phi);
             location.z += radius * cos(theta);
 
-            structureItem = m_manager->item_factory.GetStructure( *cur );
+            structureItem = sItemFactory.GetStructure( *cur );
             if( !structureItem )
                 throw PyException( MakeCustomError( "Unable to spawn Structure item of type %u.", structureItem->typeID() ) );
 
             // Properly add the structure item to the system manager
             SystemManager* sys = who->System();
-            StructureEntity* structureObj = new StructureEntity( structureItem, sys, *m_manager, location );
+            StructureEntity* structureObj = new StructureEntity( structureItem, sys, location );
             sys->AddEntity( structureObj );
 
             // Move item from cargo bay to space:
@@ -911,13 +911,13 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
             location.y += radius * sin(theta) * sin(phi);
             location.z += radius * cos(theta);
 
-            cargoItem = m_manager->item_factory.GetItem( *cur );
+            cargoItem = sItemFactory.GetItem( *cur );
             if( !cargoItem )
                 throw PyException( MakeCustomError( "Unable to spawn Deployable item of type %u.", cargoItem->typeID() ) );
 
             // Properly add the deployable to the system manager
             SystemManager* sys = who->System();
-            DeployableEntity* deployableObj = new DeployableEntity( cargoItem, sys, *m_manager, location );
+            DeployableEntity* deployableObj = new DeployableEntity( cargoItem, sys, location );
             sys->AddEntity( deployableObj );
 
             // Move item from cargo bay to space:
@@ -955,12 +955,12 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
                     location
                 );
 
-                newJettisonCargoContainerItem = m_manager->item_factory.SpawnCargoContainer( *p_idata );
+                newJettisonCargoContainerItem = sItemFactory.SpawnCargoContainer( *p_idata );
                 if( !newJettisonCargoContainerItem )
                     throw PyException( MakeCustomError( "Unable to spawn item of type %u.", 23 ) );
 
                 SystemManager* sys = who->System();
-                ContainerEntity* containerObj = new ContainerEntity( newJettisonCargoContainerItem, sys, *m_manager, location );
+                ContainerEntity* containerObj = new ContainerEntity( newJettisonCargoContainerItem, sys, location );
                 sys->AddEntity( containerObj );
 
                 // Send notification SFX effects.jettison for the new cargo container:
@@ -1017,14 +1017,14 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     );
 
     // Spawn a new capsule ship inventory item:
-    ShipRef capsuleRef = call.client->services().item_factory.SpawnShip( idata );
+    ShipRef capsuleRef = sItemFactory.SpawnShip( idata );
     if( !capsuleRef )
         throw PyException( MakeCustomError ( "Unable to generate escape pod" ) );
 
     // Change location of capsule from old ship to SystemManager inventory:
     capsuleRef->Move(call.client->GetLocationID(), (EVEItemFlags)flagCapsule, true);
 
-    ShipRef updatedCapsuleRef = call.client->services().item_factory.GetShip( capsuleRef->itemID() );
+    ShipRef updatedCapsuleRef = sItemFactory.GetShip( capsuleRef->itemID() );
 
     // Remove ball from bubble manager for this client's character's system for the old ship and then
     // board the capsule:
@@ -1036,7 +1036,7 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     call.client->Destiny()->SetPosition( capsulePosition, true );
 
     // Get old ship ItemRef
-    ShipRef oldShipRef = call.client->services().item_factory.GetShip( oldShipItemID );
+    ShipRef oldShipRef = sItemFactory.GetShip( oldShipItemID );
 
     // Set ownership of old ship to EVE system:
     oldShipRef->ChangeOwner( 1 );
@@ -1048,7 +1048,7 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     oldShipRef->Relocate( shipPosition );
 
     // Create new ShipEntity for old ship and add it to the SystemManager:
-    ShipEntity * oldShipObj = new ShipEntity( oldShipRef, call.client->System(), *(call.client->System()->GetServiceMgr()), shipPosition );
+    ShipEntity * oldShipObj = new ShipEntity( oldShipRef, call.client->System(), shipPosition );
     call.client->System()->AddEntity( oldShipObj );
 
     // Add ball to bubble manager for this client's character's system for the old pilot-less ship:
@@ -1094,7 +1094,7 @@ PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
     );
 
     //build the capsule
-    ShipRef capsuleRef = call.client->services().item_factory.SpawnShip( idata );
+    ShipRef capsuleRef = sItemFactory.SpawnShip( idata );
 
     if( !capsuleRef )
         throw PyException( MakeCustomError ( "Unable to generate escape pod" ) );
@@ -1105,7 +1105,7 @@ PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
     //send session change for shipID change
     call.client->BoardShip( capsuleRef );
 
-    ShipRef updatedCapsuleRef = call.client->services().item_factory.GetShip( capsuleRef->itemID() );
+    ShipRef updatedCapsuleRef = sItemFactory.GetShip( capsuleRef->itemID() );
 
     // Remove ball from bubble manager for this client's character's system for the old ship and then
     // board the capsule:
@@ -1138,7 +1138,7 @@ PyResult ShipBound::Handle_ActivateShip(PyCallArgs &call)
     newShip = args.arg1;
 
 	ShipRef oldShipRef = call.client->GetShip();
-    ShipRef newShipRef = call.client->services().item_factory.GetShip(newShip);
+    ShipRef newShipRef = sItemFactory.GetShip(newShip);
 
 	if(call.client->IsInSpace())
 		call.client->System()->bubbles.Remove(call.client, true );

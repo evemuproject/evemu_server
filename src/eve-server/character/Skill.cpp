@@ -33,35 +33,34 @@
  * Skill
  */
 Skill::Skill(
-    ItemFactory &_factory,
     uint32 _skillID,
     // InventoryItem stuff:
     const ItemType &_type,
     const ItemData &_data )
-: InventoryItem(_factory, _skillID, _type, _data)
+: InventoryItem(_skillID, _type, _data)
 {
 }
 
-SkillRef Skill::Load(ItemFactory &factory, uint32 skillID)
+SkillRef Skill::Load(uint32 skillID)
 {
-    return InventoryItem::Load<Skill>( factory, skillID );
+    return InventoryItem::Load<Skill>( skillID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Skill::_LoadSkill(ItemFactory &factory, uint32 skillID,
+RefPtr<_Ty> Skill::_LoadSkill(uint32 skillID,
     // InventoryItem stuff:
     const ItemType &type, const ItemData &data)
 {
-    return SkillRef( new Skill( factory, skillID, type, data ) );
+    return SkillRef( new Skill( skillID, type, data ) );
 }
 
-SkillRef Skill::Spawn(ItemFactory &factory, ItemData &data)
+SkillRef Skill::Spawn(ItemData &data)
 {
-    uint32 skillID = _Spawn( factory, data );
+    uint32 skillID = _Spawn( data );
     if( skillID == 0 )
         return SkillRef();
 
-    SkillRef skillRef = Skill::Load( factory, skillID );
+    SkillRef skillRef = Skill::Load( skillID );
 
     skillRef->SetAttribute(AttrIsOnline, 1);      // Is Online
 	skillRef->SaveItem();
@@ -69,10 +68,10 @@ SkillRef Skill::Spawn(ItemFactory &factory, ItemData &data)
     return skillRef;
 }
 
-uint32 Skill::_Spawn(ItemFactory &factory, ItemData &data)
+uint32 Skill::_Spawn(ItemData &data)
 {
     // check it's a skill
-    const ItemType *type = factory.GetType( data.typeID );
+    const ItemType *type = sItemFactory.GetType( data.typeID );
     if( type == NULL )
         return 0;
 
@@ -83,7 +82,7 @@ uint32 Skill::_Spawn(ItemFactory &factory, ItemData &data)
     }
 
     // spawn item, nothing else
-    return InventoryItem::_Spawn( factory, data );
+    return InventoryItem::_Spawn( data );
 }
 
 //uint32 Skill::GetSPForLevel(uint8 level)

@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(InventoryBound)
 
-InventoryBound::InventoryBound(PyServiceMgr *mgr, Inventory &inventory, EVEItemFlags flag)
-: PyBoundObject(mgr),
+InventoryBound::InventoryBound(Inventory &inventory, EVEItemFlags flag)
+: PyBoundObject(),
 m_dispatch(new Dispatcher(this)),
 mInventory(inventory),
 mFlag(flag)
@@ -322,14 +322,14 @@ PyResult InventoryBound::Handle_MultiMerge(PyCallArgs &call)
             continue;
         }
 
-        InventoryItemRef stationaryItem = m_manager->item_factory.GetItem(element.stationaryItemID);
+        InventoryItemRef stationaryItem = sItemFactory.GetItem(element.stationaryItemID);
         if (!stationaryItem)
         {
             _log(SERVICE__ERROR, "Failed to load stationary item %u. Skipping.", element.stationaryItemID);
             continue;
         }
 
-        InventoryItemRef draggedItem = m_manager->item_factory.GetItem(element.draggedItemID);
+        InventoryItemRef draggedItem = sItemFactory.GetItem(element.draggedItemID);
         if (!draggedItem)
         {
             _log(SERVICE__ERROR, "Failed to load dragged item %u. Skipping.", element.draggedItemID);
@@ -383,7 +383,7 @@ PyResult InventoryBound::Handle_DestroyFitting(PyCallArgs &call)
     }
 
     //get the actual item
-    InventoryItemRef item = m_manager->item_factory.GetItem(args.arg);
+    InventoryItemRef item = sItemFactory.GetItem(args.arg);
 
     //remove the rig effects from the ship
     call.client->GetShip()->RemoveRig(item, mInventory.inventoryID());
@@ -450,7 +450,7 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
     end = items.end();
     for (; cur != end; cur++)
     {
-        InventoryItemRef sourceItem = m_manager->item_factory.GetItem(*cur);
+        InventoryItemRef sourceItem = sItemFactory.GetItem(*cur);
         if (!sourceItem)
         {
             sLog.Error("_ExecAdd", "Failed to load item %u. Skipping.", *cur);

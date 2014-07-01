@@ -144,7 +144,7 @@ public:
      * @param[in] save Should attribute changes be immediately saved into DB?
      * @param[in] notify Should attribute changes be sent to owner?
      */
-    ItemAttributeMgr(ItemFactory &factory, const InventoryItem &item, bool save=true, bool notify=true);
+    ItemAttributeMgr(const InventoryItem &item, bool save=true, bool notify=true);
 
     /**
      * @return InventoryItem which attributes are managed.
@@ -239,7 +239,6 @@ protected:
     void _SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *newValue);
 
     // Member variables:
-    ItemFactory &m_factory;
 
     const InventoryItem &m_item;
 

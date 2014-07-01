@@ -101,13 +101,13 @@ CharacterType::CharacterType(
     assert(_charData.shipTypeID == _shipType.id());
 }
 
-CharacterType *CharacterType::Load(ItemFactory &factory, uint32 characterTypeID)
+CharacterType *CharacterType::Load(uint32 characterTypeID)
 {
-    return ItemType::Load<CharacterType>( factory, characterTypeID );
+    return ItemType::Load<CharacterType>( characterTypeID );
 }
 
 template<class _Ty>
-_Ty *CharacterType::_LoadCharacterType(ItemFactory &factory, uint32 typeID, uint8 bloodlineID,
+_Ty *CharacterType::_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
     // ItemType stuff:
     const ItemGroup &group, const TypeData &data,
     // CharacterType stuff:
@@ -300,7 +300,6 @@ CorpMemberInfo::CorpMemberInfo(
  * Character
  */
 Character::Character(
-    ItemFactory &_factory,
     uint32 _characterID,
     // InventoryItem stuff:
     const CharacterType &_charType,
@@ -308,7 +307,7 @@ Character::Character(
     // Character stuff:
     const CharacterData &_charData,
     const CorpMemberInfo &_corpData)
-: Owner(_factory, _characterID, _charType, _data),
+: Owner(_characterID, _charType, _data),
   m_accountID(_charData.accountID),
   m_title(_charData.title),
   m_description(_charData.description),
@@ -350,33 +349,33 @@ Character::Character(
     //EnableSaveTimer();
 }
 
-CharacterRef Character::Load(ItemFactory &factory, uint32 characterID)
+CharacterRef Character::Load(uint32 characterID)
 {
-    return InventoryItem::Load<Character>( factory, characterID );
+    return InventoryItem::Load<Character>( characterID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Character::_LoadCharacter(ItemFactory &factory, uint32 characterID,
+RefPtr<_Ty> Character::_LoadCharacter(uint32 characterID,
     // InventoryItem stuff:
     const CharacterType &charType, const ItemData &data,
     // Character stuff:
     const CharacterData &charData, const CorpMemberInfo &corpData)
 {
     // construct the item
-    return CharacterRef( new Character( factory, characterID, charType, data, charData, corpData ) );
+    return CharacterRef( new Character( characterID, charType, data, charData, corpData ) );
 }
 
-CharacterRef Character::Spawn(ItemFactory &factory,
+CharacterRef Character::Spawn(
     // InventoryItem stuff:
     ItemData &data,
     // Character stuff:
     CharacterData &charData, CorpMemberInfo &corpData) 
 {
-    uint32 characterID = Character::_Spawn( factory, data, charData, corpData );
+    uint32 characterID = Character::_Spawn( data, charData, corpData );
     if( characterID == 0 )
         return CharacterRef();
 
-    CharacterRef charRef = Character::Load( factory, characterID );
+    CharacterRef charRef = Character::Load( characterID );
 
     // Create default dynamic attributes in the AttributeMap:
     charRef.get()->SetAttribute(AttrIsOnline, 1);     // Is Online
@@ -384,14 +383,14 @@ CharacterRef Character::Spawn(ItemFactory &factory,
     return charRef;
 }
 
-uint32 Character::_Spawn(ItemFactory &factory,
+uint32 Character::_Spawn(
     // InventoryItem stuff:
     ItemData &data,
     // Character stuff:
     CharacterData &charData, CorpMemberInfo &corpData) 
 {
     // make sure it's a character
-    const CharacterType *ct = factory.GetCharacterType(data.typeID);
+    const CharacterType *ct = sItemFactory.GetCharacterType(data.typeID);
     if(ct == NULL)
         return 0;
 
@@ -402,14 +401,14 @@ uint32 Character::_Spawn(ItemFactory &factory,
     }
 
     // first the item
-    uint32 characterID = Owner::_Spawn(factory, data);
+    uint32 characterID = Owner::_Spawn(data);
     if(characterID == 0)
         return 0;
 
     // then character
-    if(!factory.db().NewCharacter(characterID, charData, corpData)) {
+    if(!sItemFactory.db().NewCharacter(characterID, charData, corpData)) {
         // delete the item
-        factory.db().DeleteItem(characterID);
+        sItemFactory.db().DeleteItem(characterID);
 
         return 0;
     }
@@ -421,10 +420,10 @@ bool Character::_Load()
 {
 	bool bLoadSuccessful = false;
 
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
         return false;
 
-    if( !m_factory.db().LoadSkillQueue( itemID(), m_skillQueue ) )
+    if( !sItemFactory.db().LoadSkillQueue( itemID(), m_skillQueue ) )
         return false;
 
     bLoadSuccessful = Owner::_Load();
@@ -435,7 +434,7 @@ bool Character::_Load()
     // OLD //// Calculate total SP trained and store in internal variable:
     // OLD //_CalculateTotalSPTrained();
 
-    if( !m_factory.db().LoadCertificates( itemID(), m_certificates ) )
+    if( !sItemFactory.db().LoadCertificates( itemID(), m_certificates ) )
         return false;
 
 	return bLoadSuccessful;
@@ -443,10 +442,10 @@ bool Character::_Load()
 
 void Character::Delete() {
     // delete contents
-    DeleteContents( m_factory );
+    DeleteContents();
 
     // delete character record
-    m_factory.db().DeleteCharacter(itemID());
+    sItemFactory.db().DeleteCharacter(itemID());
 
     // let the parent care about the rest
     Owner::Delete();
@@ -609,7 +608,7 @@ EvilNumber Character::GetEndOfTraining() const
 
 bool Character::InjectSkillIntoBrain(SkillRef skill)
 {
-    Client *c = m_factory.entity_list.FindCharacter( itemID() );
+    Client *c = sEntityList.FindCharacter( itemID() );
 
     SkillRef oldSkill = GetSkill( skill->typeID() );
     if( oldSkill )
@@ -657,7 +656,7 @@ bool Character::InjectSkillIntoBrain(SkillRef skill)
 
 bool Character::InjectSkillIntoBrain(SkillRef skill, uint8 level)
 {
-    Client *c = m_factory.entity_list.FindCharacter( itemID() );
+    Client *c = sEntityList.FindCharacter( itemID() );
 
 
     SkillRef oldSkill = GetSkill( skill->typeID() );
@@ -750,7 +749,7 @@ void Character::ClearSkillQueue()
 
 void Character::UpdateSkillQueue()
 {
-    Client *c = m_factory.entity_list.FindCharacter( itemID() );
+    Client *c = sEntityList.FindCharacter( itemID() );
 
     SkillRef currentTraining = GetSkillInTraining();
     if( currentTraining )
@@ -942,7 +941,7 @@ void Character::UpdateSkillQueueEndTime(const SkillQueue &queue)
 PyDict *Character::CharGetInfo() {
     //TODO: verify that we are a char?
 
-    if( !LoadContents( m_factory ) ) {
+    if( !LoadContents() ) {
         codelog(ITEM__ERROR, "%s (%u): Failed to load contents for CharGetInfo", m_itemName.c_str(), m_itemID);
         return NULL;
     }
@@ -1054,7 +1053,7 @@ void Character::SaveCharacter()
 
     sLog.Debug( "Character::SaveCharacter()", "Saving all basic character info and attribute info to DB for character %s...", itemName().c_str() );
     // character data
-    m_factory.db().SaveCharacter(
+    sItemFactory.db().SaveCharacter(
         itemID(),
         CharacterData(
             accountID(),
@@ -1086,7 +1085,7 @@ void Character::SaveCharacter()
     );
 
     // corporation data
-    m_factory.db().SaveCorpMemberInfo(
+    sItemFactory.db().SaveCorpMemberInfo(
         itemID(),
         CorpMemberInfo(
             corporationHQ(),
@@ -1140,7 +1139,7 @@ void Character::SaveSkillQueue() const {
     _log( ITEM__TRACE, "Saving skill queue of character %u.", itemID() );
 
     // skill queue
-    m_factory.db().SaveSkillQueue(
+    sItemFactory.db().SaveSkillQueue(
         itemID(),
         m_skillQueue
     );
@@ -1150,7 +1149,7 @@ void Character::SaveCertificates() const
 {
     _log( ITEM__TRACE, "Saving Implants of character %u", itemID() );
 
-    m_factory.db().SaveCertificates(
+    sItemFactory.db().SaveCertificates(
         itemID(),
         m_certificates
         );

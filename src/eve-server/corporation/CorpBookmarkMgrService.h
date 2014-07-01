@@ -32,7 +32,7 @@
 class CorpBookmarkMgrService : public PyService
 {
 public:
-    CorpBookmarkMgrService(PyServiceMgr* mgr);
+    CorpBookmarkMgrService();
     virtual ~CorpBookmarkMgrService();
 
 protected:

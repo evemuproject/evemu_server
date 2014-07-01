@@ -38,8 +38,8 @@ class TradeBound
 public:
     PyCallable_Make_Dispatcher(TradeBound)
 
-    TradeBound(PyServiceMgr *mgr)
-    : PyBoundObject(mgr),
+    TradeBound()
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -66,8 +66,8 @@ protected:
 };
 
 
-TradeService::TradeService(PyServiceMgr *mgr)
-: PyService(mgr, "trademgr"),
+TradeService::TradeService()
+: PyService("trademgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -90,7 +90,7 @@ PyBoundObject *TradeService::_CreateBoundObject(Client *c, const PyRep *bind_arg
     _log(CLIENT__MESSAGE, "Trade bind request for:");
     args.Dump(CLIENT__MESSAGE, "    ");
 
-    return(new TradeBound(m_manager));
+    return(new TradeBound);
 }
 
 PyResult TradeService::Handle_InitiateTrade(PyCallArgs &call){
@@ -102,11 +102,11 @@ PyResult TradeService::Handle_InitiateTrade(PyCallArgs &call){
         return NULL;
     }
 
-    Client *target = call.client->services().entity_list.FindCharacter( args.arg );
+    Client *target = sEntityList.FindCharacter( args.arg );
 
     InitiateTradeRsp rsp;
 
-    rsp.nodeID = call.client->services().GetNodeID();
+    rsp.nodeID = sManager.GetNodeID();
     rsp.stationID = target->GetStationID();
     rsp.ownerID = call.client->GetCharacterID();
     rsp.targetID = target->GetCharacterID();

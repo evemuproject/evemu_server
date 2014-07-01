@@ -32,7 +32,7 @@ class LPService
 : public PyService
 {
 public:
-    LPService(PyServiceMgr *mgr);
+    LPService();
     ~LPService();
 
 protected:

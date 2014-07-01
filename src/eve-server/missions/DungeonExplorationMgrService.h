@@ -31,7 +31,7 @@
 class DungeonExplorationMgrService: public PyService {
 
 public:
-    DungeonExplorationMgrService(PyServiceMgr *mgr);
+    DungeonExplorationMgrService();
     virtual ~DungeonExplorationMgrService();
 
 protected:

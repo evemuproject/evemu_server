@@ -37,8 +37,8 @@ class AggressionMgrBound
 public:
     PyCallable_Make_Dispatcher(AggressionMgrBound)
 
-    AggressionMgrBound(PyServiceMgr* mgr)
-    : PyBoundObject(mgr), m_dispatch(new Dispatcher(this))
+    AggressionMgrBound()
+    : PyBoundObject(), m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
 
@@ -93,8 +93,8 @@ PyResult AggressionMgrBound::Handle_CheckLootRightExceptions(PyCallArgs &call)
     return new PyBool(true);
 }
 
-AggressionMgrService::AggressionMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "aggressionMgr"), m_dispatch(new Dispatcher(this))
+AggressionMgrService::AggressionMgrService()
+: PyService("aggressionMgr"), m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
 }
@@ -109,5 +109,5 @@ PyBoundObject *AggressionMgrService::_CreateBoundObject(Client *c, const PyRep *
     _log(CLIENT__MESSAGE, "AggressionMgrService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new AggressionMgrBound(m_manager));
+    return(new AggressionMgrBound);
 }

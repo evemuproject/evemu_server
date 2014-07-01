@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(CorporationService)
 
-CorporationService::CorporationService(PyServiceMgr *mgr)
-: PyService(mgr, "corporationSvc"),
+CorporationService::CorporationService()
+: PyService("corporationSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -98,7 +98,7 @@ PyResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
 
     PySubStream *ss = new PySubStream();
 
-    if(!call.client->services().GetCache()->LoadCachedFile(abs_fname.c_str(), "GetFactionInfo", ss)) {
+    if(!sManager.GetCache()->LoadCachedFile(abs_fname.c_str(), "GetFactionInfo", ss)) {
         _log(CLIENT__ERROR, "GetFactionInfo Failed to load cache file '%s'", abs_fname.c_str());
         ss->decoded = new PyNone();
         return(ss);

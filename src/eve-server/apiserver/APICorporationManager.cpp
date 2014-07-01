@@ -27,8 +27,8 @@
 
 #include "apiserver/APICorporationManager.h"
 
-APICorporationManager::APICorporationManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APICorporationManager::APICorporationManager()
+: APIServiceManager()
 {
 }
 

@@ -29,9 +29,8 @@
 #include "PyBoundObject.h"
 #include "PyService.h"
 
-PyService::PyService(PyServiceMgr *mgr, const char *serviceName)
-: m_manager(mgr),
-  m_name(serviceName)
+PyService::PyService(const char *serviceName)
+:  m_name(serviceName)
 {
 }
 
@@ -68,8 +67,8 @@ PyResult PyService::Handle_MachoResolveObject(PyCallArgs &call) {
     }
 */
     //returns nodeID
-    _log(CLIENT__MESSAGE, "%s Service: MachoResolveObject requested, returning %u", GetName(), m_manager->GetNodeID());
-    return(new PyInt(m_manager->GetNodeID()));
+    _log(CLIENT__MESSAGE, "%s Service: MachoResolveObject requested, returning %u", GetName(), sManager.GetNodeID());
+    return(new PyInt(sManager.GetNodeID()));
 }
 
 
@@ -97,7 +96,7 @@ PyResult PyService::Handle_MachoBindObject( PyCallArgs& call )
 
     PyTuple* robjs = new PyTuple( 2 );
     //now we register
-    robjs->SetItem( 0, m_manager->BindObject( call.client, our_obj ) );
+    robjs->SetItem( 0, sManager.BindObject( call.client, our_obj ) );
 
     if( args.call->IsNone() )
         //no call was specified...

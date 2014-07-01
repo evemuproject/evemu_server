@@ -27,8 +27,7 @@
 
 #include "apiserver/APIServiceManager.h"
 
-APIServiceManager::APIServiceManager(const PyServiceMgr &services)
-: m_services(services)
+APIServiceManager::APIServiceManager()
 {
     _pXmlDocOuterTag = NULL;
     _pXmlElementStack = NULL;
@@ -143,7 +142,7 @@ bool APIServiceManager::_AuthenticateUserNamePassword(std::string username, std:
 {
     // Query account info
     AccountInfo account_info;
-    if( !services().serviceDB().GetAccountInformation(
+    if( !sManager.serviceDB().GetAccountInformation(
             username.c_str(), account_info ) )
         return false;
 

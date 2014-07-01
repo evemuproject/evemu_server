@@ -129,8 +129,8 @@ bool TypeAttributeMgr::Load(InventoryDB &db) {
 /*
  * ItemAttributeMgr
  */
-ItemAttributeMgr::ItemAttributeMgr( ItemFactory &factory, const InventoryItem &item, bool save, bool notify) :
-    m_factory(factory), m_item(item), m_save(save), m_notify(notify) {}
+ItemAttributeMgr::ItemAttributeMgr( const InventoryItem &item, bool save, bool notify) :
+    m_item(item), m_save(save), m_notify(notify) {}
 
 ItemAttributeMgr::real_t ItemAttributeMgr::GetReal(Attr attr) const {
     real_t v;
@@ -154,7 +154,7 @@ void ItemAttributeMgr::SetIntEx(Attr attr, const int_t &v, bool persist) {
     // check if we shall save to DB
     if(GetSave() == true && (persist || IsPersistent(attr))) {
         // save to DB
-        m_factory.db().UpdateAttribute_int(m_item.itemID(), attr, v);
+        sItemFactory.db().UpdateAttribute_int(m_item.itemID(), attr, v);
     }
     if(GetNotify() == true) {
         std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
@@ -191,7 +191,7 @@ void ItemAttributeMgr::SetRealEx(Attr attr, const real_t &v, bool persist) {
         // check if we shall save to DB
         if(GetSave() == true && (persist || IsPersistent(attr))) {
             // save to DB
-            m_factory.db().UpdateAttribute_double(m_item.itemID(), attr, v);
+            sItemFactory.db().UpdateAttribute_double(m_item.itemID(), attr, v);
         }
         if(GetNotify() == true) {
             std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
@@ -222,7 +222,7 @@ void ItemAttributeMgr::Clear(Attr attr) {
     EVEAdvancedAttributeMgr::Clear(attr);
     // delete the attribute from DB (no matter if it really is there)
     if(GetSave() == true) {
-        m_factory.db().EraseAttribute(m_item.itemID(), attr);
+        sItemFactory.db().EraseAttribute(m_item.itemID(), attr);
     }
     if(GetNotify() == true) {
         std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
@@ -267,7 +267,7 @@ bool ItemAttributeMgr::Load(bool notify) {
     // delete old contents
     EVEAdvancedAttributeMgr::Delete();
     // load the new contents
-    bool res = m_factory.db().LoadItemAttributes(item().itemID(), *this);
+    bool res = sItemFactory.db().LoadItemAttributes(item().itemID(), *this);
 
     // restore save state
     SetSave(old_save);
@@ -294,9 +294,9 @@ void ItemAttributeMgr::Save() const {
         for(; cur != end; cur++) {
             real_t v = GetReal(cur->first);
             if(_IsInt(v))
-                m_factory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
+                sItemFactory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
             else
-                m_factory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
+                sItemFactory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
         }
     }
     // then reals
@@ -307,9 +307,9 @@ void ItemAttributeMgr::Save() const {
         for(; cur != end; cur++) {
             real_t v = GetReal(cur->first);
             if(_IsInt(v))
-                m_factory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
+                sItemFactory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
             else
-                m_factory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
+                sItemFactory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
         }
     }
 }
@@ -325,7 +325,7 @@ void ItemAttributeMgr::_SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *n
     if(GetNotify() == false)
         return;
 
-    Client *c = m_factory.entity_list.FindCharacter( item().ownerID() );
+    Client *c = sEntityList.FindCharacter( item().ownerID() );
     if(c != NULL)
     {
         Notify_OnModuleAttributeChange omac;

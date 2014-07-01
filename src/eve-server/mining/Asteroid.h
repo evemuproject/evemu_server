@@ -96,7 +96,6 @@ public:
     AsteroidEntity(
         InventoryItemRef asteroid,
         SystemManager *system,
-        PyServiceMgr &services,
         const GPoint &position);
 
     /*
@@ -157,7 +156,6 @@ protected:
      * Member fields:
      */
     SystemManager *const m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
     InventoryItemRef _asteroidRef;   // We don't own this
 };
 

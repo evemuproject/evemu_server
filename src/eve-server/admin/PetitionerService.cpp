@@ -35,7 +35,7 @@ public:
 
     PyCallable_Make_Dispatcher(PetitionerBound)
 
-    PetitionerBound(PyServiceMgr *mgr, PetitionerDB *db)
+    PetitionerBound(PetitionerDB *db)
     : PyBoundObject(mgr, "PetitionerBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -62,8 +62,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(PetitionerService)
 
-PetitionerService::PetitionerService(PyServiceMgr *mgr)
-: PyService(mgr, "petitioner"),
+PetitionerService::PetitionerService()
+: PyService("petitioner"),
   m_dispatch(new Dispatcher(this))
 //m_db(db)
 {
@@ -84,7 +84,7 @@ PyBoundObject* PetitionerService::_CreateBoundObject( Client* c, const PyRep* bi
     _log( CLIENT__MESSAGE, "PetitionerService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new PetitionerBound( m_manager, &m_db );
+    return new PetitionerBound( &m_db );
 }*/
 
 

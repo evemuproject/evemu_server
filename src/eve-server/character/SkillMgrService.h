@@ -32,7 +32,7 @@
 
 class SkillMgrService : public PyService {
 public:
-    SkillMgrService(PyServiceMgr *mgr);
+    SkillMgrService();
     virtual ~SkillMgrService();
 
 protected:
@@ -49,7 +49,7 @@ class SkillMgrBound
 : public PyBoundObject
 {
 public:
-    SkillMgrBound(PyServiceMgr *mgr, CharacterDB &db);
+    SkillMgrBound(CharacterDB &db);
     virtual ~SkillMgrBound();
 
     virtual void Release();

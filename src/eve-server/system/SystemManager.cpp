@@ -43,21 +43,20 @@
 
 using namespace Destiny;
 
-SystemManager::SystemManager(uint32 systemID, PyServiceMgr &svc)//, ItemData idata)
+SystemManager::SystemManager(uint32 systemID)//, ItemData idata)
 : m_systemID(systemID),
   m_systemName(""),
-  m_services(svc),
-  m_spawnManager(new SpawnManager(*this, m_services)),
+  m_spawnManager(new SpawnManager(*this)),
   m_entityChanged(false)//,
-//  InventoryItem( svc.item_factory, systemID, *(svc.item_factory.GetType( 5 )), idata )
+//  InventoryItem( systemID, *(sItemFactory.GetType( 5 )), idata )
 {
     m_db.GetSystemInfo(GetID(), NULL, NULL, &m_systemName, &m_systemSecurity);
 
-    m_solarSystemRef = svc.item_factory.GetSolarSystem( systemID );
+    m_solarSystemRef = sItemFactory.GetSolarSystem( systemID );
     uint32 inventoryID = m_solarSystemRef->itemID();
 
     //create our chat channel
-    m_services.lsc_service->CreateSystemChannel(m_systemID);
+    sManager.lsc_service->CreateSystemChannel(m_systemID);
 }
 
 SystemManager::~SystemManager() {
@@ -109,12 +108,12 @@ bool SystemManager::_LoadSystemCelestials() {
     cur = entities.begin();
     end = entities.end();
     for(; cur != end; ++cur) {
-        if( itemFactory().GetItem( cur->itemID ) )
+        if( sItemFactory.GetItem( cur->itemID ) )
         {
-            if( itemFactory().GetItem( cur->itemID )->categoryID() == EVEDB::invCategories::Station )
+            if( sItemFactory.GetItem( cur->itemID )->categoryID() == EVEDB::invCategories::Station )
             {
-                StationRef station = Station::Load( itemFactory(), cur->itemID );
-                StationEntity *stationEntity = new StationEntity( station, this, *(GetServiceMgr()), cur->position );
+                StationRef station = Station::Load( cur->itemID );
+                StationEntity *stationEntity = new StationEntity( station, this, cur->position );
                 if(stationEntity == NULL) {
                     codelog(SERVICE__ERROR, "Failed to create entity for item %u (type %u)", cur->itemID, cur->typeID);
                     continue;
@@ -136,8 +135,8 @@ bool SystemManager::_LoadSystemCelestials() {
                 bubbles.Add(stationEntity, true);
                 m_entityChanged = true;
             }
-            else if(( itemFactory().GetItem( cur->itemID )->groupID() == EVEDB::invGroups::Stargate ) ||
-               ( itemFactory().GetItem( cur->itemID )->groupID() == EVEDB::invGroups::Asteroid_Belt ))
+            else if(( sItemFactory.GetItem( cur->itemID )->groupID() == EVEDB::invGroups::Stargate ) ||
+               ( sItemFactory.GetItem( cur->itemID )->groupID() == EVEDB::invGroups::Asteroid_Belt ))
             {
                 SimpleSystemEntity *se = SimpleSystemEntity::MakeEntity(this, *cur);
                 if(se == NULL) {
@@ -177,7 +176,7 @@ bool SystemManager::_LoadSystemCelestials() {
 
 class DynamicEntityFactory {
 public:
-    static SystemEntity *BuildEntity(SystemManager &system, ItemFactory &factory, const DBSystemDynamicEntity &entity) {
+    static SystemEntity *BuildEntity(SystemManager &system, const DBSystemDynamicEntity &entity) {
         GPoint location;
 
         switch(entity.categoryID) {
@@ -196,7 +195,7 @@ public:
                     location
                 );
 
-                InventoryItemRef asteroid = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
+                InventoryItemRef asteroid = sItemFactory.GetItem( entity.itemID );
                 if( !asteroid )
                     throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
@@ -207,7 +206,7 @@ public:
                 // each asteroid, amongst other attributes for asteroids.  Attribute manager should have already done this.
                 //asteroid->SetAttribute(AttrRadius, EvilNumber(600));
 
-                AsteroidEntity * asteroidObj = new AsteroidEntity( asteroid, &system, *(system.GetServiceMgr()), location );
+                AsteroidEntity * asteroidObj = new AsteroidEntity( asteroid, &system, location );
                 return asteroidObj;
             } break;
             case EVEDB::invCategories::Ship: {
@@ -227,14 +226,14 @@ public:
                         location
                     );
 
-                    ShipRef ship = system.GetServiceMgr()->item_factory.GetShip( entity.itemID );
+                    ShipRef ship = sItemFactory.GetShip( entity.itemID );
                     if( !ship )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( ship );
 
-                    ShipEntity * shipObj = new ShipEntity( ship, &system, *(system.GetServiceMgr()), location );
+                    ShipEntity * shipObj = new ShipEntity( ship, &system, location );
                     return shipObj;
                 }
                 else
@@ -254,7 +253,7 @@ public:
                     location
                 );
 
-                InventoryItemRef deployable = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
+                InventoryItemRef deployable = sItemFactory.GetItem( entity.itemID );
                 if( !deployable )
                     throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
@@ -265,7 +264,7 @@ public:
                 // Add the ItemRef to SystemManagers' Inventory:
                 system.AddItemToInventory( deployable );
 
-                DeployableEntity * deployableObj = new DeployableEntity( deployable, &system, *(system.GetServiceMgr()), location );
+                DeployableEntity * deployableObj = new DeployableEntity( deployable, &system, location );
                 return deployableObj;
             } break;
             case EVEDB::invCategories::Structure: {         // Structures of all kinds!  POS towers, modules, and equipment
@@ -282,15 +281,15 @@ public:
                     location
                 );
 
-                //InventoryItemRef structure = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
-                StructureRef structure = system.GetServiceMgr()->item_factory.GetStructure( entity.itemID );
+                //InventoryItemRef structure = sItemFactory.GetItem( entity.itemID );
+                StructureRef structure = sItemFactory.GetStructure( entity.itemID );
                 if( !structure )
                     throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                 // Add the ItemRef to SystemManagers' Inventory:
                 system.AddItemToInventory( structure );
 
-                StructureEntity * structureObj = new StructureEntity( structure, &system, *(system.GetServiceMgr()), location );
+                StructureEntity * structureObj = new StructureEntity( structure, &system, location );
 
                 return structureObj;
             } break;
@@ -328,15 +327,15 @@ public:
                         location
                     );
 
-                    //InventoryItemRef container = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
-                    CargoContainerRef container = system.GetServiceMgr()->item_factory.GetCargoContainer( entity.itemID );
+                    //InventoryItemRef container = sItemFactory.GetItem( entity.itemID );
+                    CargoContainerRef container = sItemFactory.GetCargoContainer( entity.itemID );
                     if( !container )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( container );
 
-                    ContainerEntity* containerObj = new ContainerEntity( container, &system, *(system.GetServiceMgr()), location );
+                    ContainerEntity* containerObj = new ContainerEntity( container, &system, location );
                     system.AddEntity( containerObj );
                     return containerObj;
                 }
@@ -369,7 +368,7 @@ public:
                         location
                     );
 
-                    CelestialObjectRef celestial = system.GetServiceMgr()->item_factory.GetCelestialObject( entity.itemID );
+                    CelestialObjectRef celestial = sItemFactory.GetCelestialObject( entity.itemID );
                     if( !celestial )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
@@ -381,7 +380,7 @@ public:
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( celestial );
 
-                    CelestialEntity* celestialObj = new CelestialEntity( celestial, &system, *(system.GetServiceMgr()), location );
+                    CelestialEntity* celestialObj = new CelestialEntity( celestial, &system, location );
                     system.AddEntity( celestialObj );
                     return celestialObj;
                 }
@@ -403,15 +402,15 @@ public:
                         location
                     );
 
-                    //InventoryItemRef container = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
-                    CargoContainerRef container = system.GetServiceMgr()->item_factory.GetCargoContainer( entity.itemID );
+                    //InventoryItemRef container = sItemFactory.GetItem( entity.itemID );
+                    CargoContainerRef container = sItemFactory.GetCargoContainer( entity.itemID );
                     if( !container )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( container );
 
-                    ContainerEntity* containerObj = new ContainerEntity( container, &system, *(system.GetServiceMgr()), location );
+                    ContainerEntity* containerObj = new ContainerEntity( container, &system, location );
                     system.AddEntity( containerObj );
                     return containerObj;
                 }
@@ -482,14 +481,14 @@ public:
                         location
                     );
 					
-                    InventoryItemRef npcRef = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
+                    InventoryItemRef npcRef = sItemFactory.GetItem( entity.itemID );
                     if( !npcRef )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( npcRef );
 
-                    NPC* npcObj = new NPC( &system, *(system.GetServiceMgr()),npcRef, entity.corporationID, entity.allianceID, location );
+                    NPC* npcObj = new NPC( &system, npcRef, entity.corporationID, entity.allianceID, location );
                     system.AddEntity( npcObj );
                     return npcObj;
 				}
@@ -508,14 +507,14 @@ public:
                         location
                     );
 
-                    CelestialObjectRef celestial = system.GetServiceMgr()->item_factory.GetCelestialObject( entity.itemID );
+                    CelestialObjectRef celestial = sItemFactory.GetCelestialObject( entity.itemID );
                     if( !celestial )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( celestial );
 
-                    CelestialEntity* celestialObj = new CelestialEntity( celestial, &system, *(system.GetServiceMgr()), location );
+                    CelestialEntity* celestialObj = new CelestialEntity( celestial, &system, location );
                     system.AddEntity( celestialObj );
                     return celestialObj;
                 }
@@ -534,14 +533,14 @@ public:
                     location
                 );
 
-                InventoryItemRef drone = system.GetServiceMgr()->item_factory.GetItem( entity.itemID );
+                InventoryItemRef drone = sItemFactory.GetItem( entity.itemID );
                 if( !drone )
                     throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                 // Add the ItemRef to SystemManagers' Inventory:
                 system.AddItemToInventory( drone );
 
-                DroneEntity * droneObj = new DroneEntity( drone, &system, *(system.GetServiceMgr()), location );
+                DroneEntity * droneObj = new DroneEntity( drone, &system, location );
                 return droneObj;
             } break;
             case EVEDB::invCategories::Station: {             // Dynamic Stations ONLY !!
@@ -558,14 +557,14 @@ public:
                     location
                 );
 
-                StationRef station = system.GetServiceMgr()->item_factory.GetStation( entity.itemID );
+                StationRef station = sItemFactory.GetStation( entity.itemID );
                 if( !station )
                     throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                 // Add the ItemRef to SystemManagers' Inventory:
                 system.AddItemToInventory( station );
 
-                StationEntity * stationObj = new StationEntity( station, &system, *(system.GetServiceMgr()), location );
+                StationEntity * stationObj = new StationEntity( station, &system, location );
                 return stationObj;
             } break;
             default: {
@@ -589,7 +588,7 @@ bool SystemManager::_LoadSystemDynamics() {
     cur = entities.begin();
     end = entities.end();
     for(; cur != end; cur++) {
-        SystemEntity *se = DynamicEntityFactory::BuildEntity(*this, m_services.item_factory, *cur);
+        SystemEntity *se = DynamicEntityFactory::BuildEntity(*this, *cur);
         if(se == NULL) {
             codelog(SERVICE__ERROR, "Failed to create entity for item %u (type %u)", cur->itemID, cur->typeID);
             continue;
@@ -689,7 +688,7 @@ void SystemManager::ProcessDestiny() {
 
 bool SystemManager::BuildDynamicEntity(Client *who, const DBSystemDynamicEntity &entity)
 {
-    SystemEntity *se = DynamicEntityFactory::BuildEntity(*this, m_services.item_factory, entity );
+    SystemEntity *se = DynamicEntityFactory::BuildEntity(*this, entity );
     if( se == NULL )
     {
         sLog.Error( "SystemManager::BuildDynamicEntity()", "Failed to create entity for item %u (type %u)", entity.itemID, entity.typeID );
@@ -731,7 +730,7 @@ void SystemManager::AddNPC(NPC *who) {
     AddEntity(who);
 
     // Add NPC's Item Ref to Solar System Dynamic Inventory:
-    //AddItemToInventory( this->itemFactory().GetItem( who->GetID() ) );
+    //AddItemToInventory( sItemFactory.GetItem( who->GetID() ) );
 }
 
 void SystemManager::RemoveNPC(NPC *who) {
@@ -739,7 +738,7 @@ void SystemManager::RemoveNPC(NPC *who) {
     RemoveEntity(who);
 
     // Remove NPC's Item Ref from Solar System Dynamic Inventory:
-    //RemoveItemFromInventory( this->itemFactory().GetItem( who->GetID() ) );
+    //RemoveItemFromInventory( sItemFactory.GetItem( who->GetID() ) );
 }
 
 void SystemManager::AddEntity(SystemEntity *who) {
@@ -748,7 +747,7 @@ void SystemManager::AddEntity(SystemEntity *who) {
     bubbles.Add(who, false);
 
     // Add Entity's Item Ref to Solar System Dynamic Inventory:
-    AddItemToInventory( this->itemFactory().GetItem( who->GetID() ) );
+    AddItemToInventory( sItemFactory.GetItem( who->GetID() ) );
 }
 
 void SystemManager::RemoveEntity(SystemEntity *who) {
@@ -762,7 +761,7 @@ void SystemManager::RemoveEntity(SystemEntity *who) {
     bubbles.Remove(who, false);
 
     // Remove Entity's Item Ref from Solar System Dynamic Inventory:
-    RemoveItemFromInventory( this->itemFactory().GetItem( who->GetID() ) );
+    RemoveItemFromInventory( sItemFactory.GetItem( who->GetID() ) );
 }
 
 void SystemManager::DoSpawnForBubble(SystemBubble &thisBubble)
@@ -886,11 +885,6 @@ void SystemManager::MakeSetState(const SystemBubble *bubble, DoDestiny_SetState 
     _log( DESTINY__TRACE, "    Decoded:" );
     Destiny::DumpUpdate( DESTINY__TRACE, &( ss.destiny_state->content() )[0],
                                          ss.destiny_state->content().size() );
-}
-
-ItemFactory& SystemManager::itemFactory() const
-{
-    return m_services.item_factory;
 }
 
 void SystemManager::AddItemToInventory(InventoryItemRef item)

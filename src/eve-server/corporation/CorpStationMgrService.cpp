@@ -36,8 +36,8 @@ class CorpStationMgrIMBound
 public:
     PyCallable_Make_Dispatcher(CorpStationMgrIMBound)
 
-    CorpStationMgrIMBound(PyServiceMgr *mgr, CorporationDB& db, uint32 station_id)
-    : PyBoundObject(mgr),
+    CorpStationMgrIMBound(CorporationDB& db, uint32 station_id)
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this)),
       m_db(db),
       m_stationID(station_id)
@@ -87,8 +87,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(CorpStationMgrService)
 
-CorpStationMgrService::CorpStationMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "corpStationMgr"),
+CorpStationMgrService::CorpStationMgrService()
+: PyService("corpStationMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -106,7 +106,7 @@ PyBoundObject *CorpStationMgrService::_CreateBoundObject(Client *c, const PyRep 
         codelog(SERVICE__ERROR, "%s Service: invalid bind argument type %s", GetName(), bind_args->TypeString());
         return NULL;
     }
-    return new CorpStationMgrIMBound( m_manager, m_db, bind_args->AsInt()->value() );
+    return new CorpStationMgrIMBound( m_db, bind_args->AsInt()->value() );
 }
 
 
@@ -175,7 +175,7 @@ PyResult CorpStationMgrIMBound::Handle_GetCorporateStationInfo(PyCallArgs &call)
 
     PySubStream *ss = new PySubStream();
 
-    if(!m_manager->GetCache()->LoadCachedFile(abs_fname.c_str(), "GetCorporateStationInfo", ss)) {
+    if(!sManager.GetCache()->LoadCachedFile(abs_fname.c_str(), "GetCorporateStationInfo", ss)) {
         _log(CLIENT__ERROR, "GetCorporateStationInfo Failed to load cache file '%s'", abs_fname.c_str());
         ss->decoded = new PyNone();
     } else {
@@ -307,7 +307,7 @@ PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
 
         // This has to be sent to everyone in the station
         // For now, broadcast it
-        m_manager->entity_list.Multicast("OnObjectPublicAttributesUpdated", "objectID", &res1, NOTIF_DEST__LOCATION, location, false);
+        sEntityList.Multicast("OnObjectPublicAttributesUpdated", "objectID", &res1, NOTIF_DEST__LOCATION, location, false);
 
         // This was the first broadcast...
     //}
@@ -326,7 +326,7 @@ PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
     ac.ownerid = oInfo.corporationID; //call.client->GetCharacterID();
     ac.balance = corpBalance;
     PyTuple *res2 = ac.Encode();
-    m_manager->entity_list.Multicast("OnAccountChange", "*corpid&corpAccountKey", &res2, mct);
+    sEntityList.Multicast("OnAccountChange", "*corpid&corpAccountKey", &res2, mct);
 
     // This was the second notification
 
@@ -365,7 +365,7 @@ PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
 
     PyTuple* res3 = Noic.Encode();
     // This is a possible broadcast-candidate
-    m_manager->entity_list.Multicast("OnItemChange", "*stationid&corpid", &res3, NOTIF_DEST__LOCATION, location, false);
+    sEntityList.Multicast("OnItemChange", "*stationid&corpid", &res3, NOTIF_DEST__LOCATION, location, false);
 
     // End of the third notification
 
@@ -379,7 +379,7 @@ PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
 
     PyTuple * res4 = N_oorc.Encode(); // No need for fastencode, no null values
     // This is definately a broadcast-candidate
-    m_manager->entity_list.Multicast("OnOfficeRentalChanged", "stationid", &res4, NOTIF_DEST__LOCATION, location);
+    sEntityList.Multicast("OnOfficeRentalChanged", "stationid", &res4, NOTIF_DEST__LOCATION, location);
 
     // End of the fourth notification
 
@@ -400,7 +400,7 @@ PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
     // Who to send notification? corpRoleJuniorAccountant and equiv? atm it's enough to send it to the renter
     // TODO: get the correct evemail content from somewhere
     // TODO: send it to every corp member who's affected by it. corpRoleAccountant, corpRoleJuniorAccountant or equiv
-    m_manager->lsc_service->SendMail(
+    sManager.lsc_service->SendMail(
         m_db.GetStationCorporationCEO(oInfo.stationID),
         call.client->GetCharacterID(),
         "Bill issued",

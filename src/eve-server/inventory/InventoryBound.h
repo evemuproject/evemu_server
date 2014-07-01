@@ -33,7 +33,7 @@ class InventoryBound
 : public PyBoundObject
 {
 public:
-    InventoryBound(PyServiceMgr *mgr, Inventory &inventory, EVEItemFlags flag);
+    InventoryBound(Inventory &inventory, EVEItemFlags flag);
     ~InventoryBound();
 
     virtual void Release() {

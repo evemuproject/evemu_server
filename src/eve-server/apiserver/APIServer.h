@@ -47,7 +47,7 @@ public:
     APIServer();
     void Run();
     void Stop();
-    void CreateServices(const PyServiceMgr &services);
+    void CreateServices();
 
     std::string& url();
 

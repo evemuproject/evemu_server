@@ -35,7 +35,7 @@ public:
 
     PyCallable_Make_Dispatcher(MissionMgrBound)
 
-    MissionMgrBound(PyServiceMgr *mgr, MissionMgrDB *db)
+    MissionMgrBound(MissionMgrDB *db)
     : PyBoundObject(mgr, "MissionMgrBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -62,8 +62,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(MissionMgrService)
 
-MissionMgrService::MissionMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "missionMgr"),
+MissionMgrService::MissionMgrService()
+: PyService("missionMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -81,7 +81,7 @@ PyBoundObject *MissionMgrService::_CreateBoundObject(Client *c, PyTuple *bind_ar
     _log(CLIENT__MESSAGE, "MissionMgrService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new MissionMgrBound(m_manager, &m_db));
+    return(new MissionMgrBound(&m_db));
 }*/
 
 

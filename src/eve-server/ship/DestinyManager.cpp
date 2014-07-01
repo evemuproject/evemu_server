@@ -1326,7 +1326,7 @@ PyResult DestinyManager::AttemptDockOperation()
             1
         );
         //spawn rookie
-        InventoryItemRef i = who->services().item_factory.SpawnItem( idata );
+        InventoryItemRef i = sItemFactory.SpawnItem( idata );
 
         //move the new rookie ship into the players hanger in station
         if(!i)

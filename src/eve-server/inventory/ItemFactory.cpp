@@ -25,6 +25,7 @@
 
 #include "eve-server.h"
 
+#include "EntityList.h"
 #include "character/Character.h"
 #include "manufacturing/Blueprint.h"
 #include "pos/Structure.h"
@@ -36,9 +37,14 @@
 // Initialize ID Authority variables:
 uint32 ItemFactory::m_nextEntityID = EVEMU_MINIMUM_ENTITY_ID;
 
-ItemFactory::ItemFactory(EntityList& el) : entity_list(el) {}
+ItemFactory::ItemFactory() {}
 
 ItemFactory::~ItemFactory() {
+    ShutDown();
+}
+
+void ItemFactory::ShutDown()
+{
     // items
     {
         std::map<uint32, InventoryItemRef>::const_iterator cur, end;
@@ -93,7 +99,7 @@ ItemFactory::~ItemFactory() {
 const ItemCategory *ItemFactory::GetCategory(EVEItemCategories category) {
     std::map<EVEItemCategories, ItemCategory *>::iterator res = m_categories.find(category);
     if(res == m_categories.end()) {
-        ItemCategory *cat = ItemCategory::Load(*this, category);
+        ItemCategory *cat = ItemCategory::Load(category);
         if(cat == NULL)
             return NULL;
 
@@ -108,7 +114,7 @@ const ItemCategory *ItemFactory::GetCategory(EVEItemCategories category) {
 const ItemGroup *ItemFactory::GetGroup(uint32 groupID) {
     std::map<uint32, ItemGroup *>::iterator res = m_groups.find(groupID);
     if(res == m_groups.end()) {
-        ItemGroup *group = ItemGroup::Load(*this, groupID);
+        ItemGroup *group = ItemGroup::Load(groupID);
         if(group == NULL)
             return NULL;
 
@@ -124,7 +130,7 @@ template<class _Ty>
 const _Ty *ItemFactory::_GetType(uint32 typeID) {
     std::map<uint32, ItemType *>::iterator res = m_types.find(typeID);
     if(res == m_types.end()) {
-        _Ty *type = _Ty::Load(*this, typeID);
+        _Ty *type = _Ty::Load(typeID);
         if(type == NULL)
             return NULL;
 
@@ -171,7 +177,7 @@ RefPtr<_Ty> ItemFactory::_GetItem(uint32 itemID)
     if( res == m_items.end() )
     {
         // load the item
-        RefPtr<_Ty> item = _Ty::Load( *this, itemID );
+        RefPtr<_Ty> item = _Ty::Load( itemID );
         if( !item )
             return RefPtr<_Ty>();
 
@@ -238,7 +244,7 @@ CargoContainerRef ItemFactory::GetCargoContainer(uint32 containerID)
 }
 
 InventoryItemRef ItemFactory::SpawnItem(ItemData &data) {
-    InventoryItemRef i = InventoryItem::Spawn(*this, data);
+    InventoryItemRef i = InventoryItem::Spawn(data);
     if( !i )
         return InventoryItemRef();
 
@@ -248,7 +254,7 @@ InventoryItemRef ItemFactory::SpawnItem(ItemData &data) {
 }
 
 BlueprintRef ItemFactory::SpawnBlueprint(ItemData &data, BlueprintData &bpData) {
-    BlueprintRef bi = Blueprint::Spawn(*this, data, bpData);
+    BlueprintRef bi = Blueprint::Spawn(data, bpData);
     if( !bi )
         return BlueprintRef();
 
@@ -257,7 +263,7 @@ BlueprintRef ItemFactory::SpawnBlueprint(ItemData &data, BlueprintData &bpData) 
 }
 
 CharacterRef ItemFactory::SpawnCharacter(ItemData &data, CharacterData &charData, CorpMemberInfo &corpData) {
-    CharacterRef c = Character::Spawn(*this, data, charData, corpData);
+    CharacterRef c = Character::Spawn(data, charData, corpData);
     if( !c )
         return CharacterRef();
 
@@ -266,7 +272,7 @@ CharacterRef ItemFactory::SpawnCharacter(ItemData &data, CharacterData &charData
 }
 
 ShipRef ItemFactory::SpawnShip(ItemData &data) {
-    ShipRef s = Ship::Spawn(*this, data);
+    ShipRef s = Ship::Spawn(data);
     if( !s )
         return ShipRef();
 
@@ -276,7 +282,7 @@ ShipRef ItemFactory::SpawnShip(ItemData &data) {
 
 SkillRef ItemFactory::SpawnSkill(ItemData &data)
 {
-    SkillRef s = Skill::Spawn( *this, data );
+    SkillRef s = Skill::Spawn( data );
     if( !s )
         return SkillRef();
 
@@ -286,7 +292,7 @@ SkillRef ItemFactory::SpawnSkill(ItemData &data)
 
 OwnerRef ItemFactory::SpawnOwner(ItemData &data)
 {
-    OwnerRef o = Owner::Spawn( *this, data );
+    OwnerRef o = Owner::Spawn( data );
     if( !o )
         return OwnerRef();
 
@@ -296,7 +302,7 @@ OwnerRef ItemFactory::SpawnOwner(ItemData &data)
 
 StructureRef ItemFactory::SpawnStructure(ItemData &data)
 {
-    StructureRef o = Structure::Spawn( *this, data );
+    StructureRef o = Structure::Spawn( data );
     if( !o )
         return StructureRef();
 
@@ -306,7 +312,7 @@ StructureRef ItemFactory::SpawnStructure(ItemData &data)
 
 CargoContainerRef ItemFactory::SpawnCargoContainer(ItemData &data)
 {
-    CargoContainerRef o = CargoContainer::Spawn( *this, data );
+    CargoContainerRef o = CargoContainer::Spawn( data );
     if( !o )
         return CargoContainerRef();
 

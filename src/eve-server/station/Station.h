@@ -74,7 +74,7 @@ public:
      * @param[in] stationTypeID ID of station type to load.
      * @return Pointer to new StationType object; NULL if failed.
      */
-    static StationType *Load(ItemFactory &factory, uint32 stationTypeID);
+    static StationType *Load(uint32 stationTypeID);
 
     /*
      * Access methods:
@@ -107,7 +107,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static _Ty *_LoadType(ItemFactory &factory, uint32 stationTypeID,
+    static _Ty *_LoadType(uint32 stationTypeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data)
     {
@@ -119,15 +119,15 @@ protected:
 
         // get station type data
         StationTypeData stData;
-        if( !factory.db().GetStationType(stationTypeID, stData) )
+        if( !sItemFactory.db().GetStationType(stationTypeID, stData) )
             return NULL;
 
-        return _Ty::template _LoadStationType<_Ty>( factory, stationTypeID, group, data, stData );
+        return _Ty::template _LoadStationType<_Ty>( stationTypeID, group, data, stData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static _Ty *_LoadStationType(ItemFactory &factory, uint32 stationTypeID,
+    static _Ty *_LoadStationType(uint32 stationTypeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data,
         // StationType stuff:
@@ -194,7 +194,7 @@ public:
      * @param[in] stationID ID of station to load.
      * @return Pointer to new Station object; NULL if fails.
      */
-    static StationRef Load(ItemFactory &factory, uint32 stationID);
+    static StationRef Load(uint32 stationID);
 
     /*
      * Access methods:
@@ -213,7 +213,6 @@ public:
 
 protected:
     Station(
-        ItemFactory &_factory,
         uint32 _stationID,
         // InventoryItem stuff:
         const StationType &_type,
@@ -231,7 +230,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadCelestialObject(ItemFactory &factory, uint32 stationID,
+    static RefPtr<_Ty> _LoadCelestialObject(uint32 stationID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data,
         // CelestialObject stuff:
@@ -248,15 +247,15 @@ protected:
 
         // load station data
         StationData stData;
-        if( !factory.db().GetStation( stationID, stData ) )
+        if( !sItemFactory.db().GetStation( stationID, stData ) )
             return RefPtr<_Ty>();
 
-        return _Ty::template _LoadStation<_Ty>( factory, stationID, stType, data, cData, stData );
+        return _Ty::template _LoadStation<_Ty>( stationID, stType, data, cData, stData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadStation(ItemFactory &factory, uint32 stationID,
+    static RefPtr<_Ty> _LoadStation(uint32 stationID,
         // InventoryItem stuff:
         const StationType &type, const ItemData &data,
         // CelestialObject stuff:
@@ -266,7 +265,7 @@ protected:
     );
 
     bool _Load();
-    static uint32 _Spawn(ItemFactory &factory, ItemData &data);
+    static uint32 _Spawn(ItemData &data);
 
     uint32 inventoryID() const { return itemID(); }
     PyRep *GetItem() const { return GetItemRow(); }
@@ -303,7 +302,6 @@ public:
     StationEntity(
         StationRef station,
         SystemManager *system,
-        PyServiceMgr &services,
         const GPoint &position);
 
     /*
@@ -361,7 +359,6 @@ protected:
      * Member fields:
      */
     SystemManager *const m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
     StationRef _stationRef;   // We don't own this
 
     /* Used to calculate the damages on NPCs

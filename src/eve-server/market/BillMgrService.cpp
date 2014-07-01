@@ -31,8 +31,8 @@
 
 PyCallable_Make_InnerDispatcher(BillMgrService)
 
-BillMgrService::BillMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "billMgr"),
+BillMgrService::BillMgrService()
+: PyService("billMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -54,19 +54,19 @@ PyResult BillMgrService::Handle_GetBillTypes( PyCallArgs& call )
     ObjectCachedMethodID method_id(GetName(), "GetBillTypes");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if(!sManager.cache_service->IsCacheLoaded(method_id)) {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetRefTypes();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        sManager.cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = sManager.cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }

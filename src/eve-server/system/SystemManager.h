@@ -53,7 +53,7 @@ class SystemManager
 //  public InventoryItem
 {
 public:
-    SystemManager(uint32 systemID, PyServiceMgr &svc);//, ItemData idata);
+    SystemManager(uint32 systemID);//, ItemData idata);
     virtual ~SystemManager();
 
     //bubble stuff:
@@ -87,10 +87,6 @@ public:
     SystemDB *GetSystemDB() { return(&m_db); }
     const char * GetSystemSecurity() { return m_systemSecurity.c_str(); }
 
-    ItemFactory &itemFactory() const;
-
-    PyServiceMgr * GetServiceMgr() { return &m_services; }
-
     void AddItemToInventory(InventoryItemRef item);
     ShipRef GetShipFromInventory(uint32 shipID);
     void RemoveItemFromInventory(InventoryItemRef item);
@@ -112,7 +108,6 @@ protected:
     std::string m_systemSecurity;
 
     SystemDB m_db;
-    PyServiceMgr &m_services;    //we do not own this
     SpawnManager *m_spawnManager;    //we own this, never NULL, dynamic to keep the knowledge down.
 
     //overall system entity lists:

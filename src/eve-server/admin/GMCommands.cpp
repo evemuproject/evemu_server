@@ -40,7 +40,7 @@
 #include "system/SystemManager.h"
 #include "system/SystemBubble.h"
 
-PyResult Command_create( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_create( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /create [typeID]") );
@@ -82,7 +82,7 @@ PyResult Command_create( Client* who, CommandDB* db, PyServiceMgr* services, con
         qty
     );
 
-    InventoryItemRef i = services->item_factory.SpawnItem( idata );
+    InventoryItemRef i = sItemFactory.SpawnItem( idata );
     if( !i )
         throw PyException( MakeCustomError( "Unable to create item of type %s.", args.arg( 1 ).c_str() ) );
 
@@ -92,7 +92,7 @@ PyResult Command_create( Client* who, CommandDB* db, PyServiceMgr* services, con
     return new PyString( "Creation successful." );
 }
 
-PyResult Command_createitem( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_createitem( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /create [typeID]") );
@@ -136,7 +136,7 @@ PyResult Command_createitem( Client* who, CommandDB* db, PyServiceMgr* services,
         qty
     );
 
-    InventoryItemRef i = services->item_factory.SpawnItem( idata );
+    InventoryItemRef i = sItemFactory.SpawnItem( idata );
     if( !i )
         throw PyException( MakeCustomError( "Unable to create item of type %s.", args.arg( 1 ).c_str() ) );
 
@@ -147,7 +147,7 @@ PyResult Command_createitem( Client* who, CommandDB* db, PyServiceMgr* services,
 }
 
 
-PyResult Command_search( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_search( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /search [text]") );
@@ -191,9 +191,9 @@ PyResult Command_search( Client* who, CommandDB* db, PyServiceMgr* services, con
         return new PyString( result );
 }
 
-PyResult Command_translocate( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_translocate( Client* who, CommandDB* db, const Seperator& args )
 {
-	return Command_tr(who,db,services,args);
+	return Command_tr(who,db,args);
 /*
 	if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /transloacte [entityID]") );
@@ -209,9 +209,9 @@ PyResult Command_translocate( Client* who, CommandDB* db, PyServiceMgr* services
 
     if( !IsStation( loc ) && !IsSolarSystem( loc ) )
     {
-        Client* target = services->entity_list.FindCharacter( loc );
+        Client* target = sEntityList.FindCharacter( loc );
         if( NULL == target )
-            target = services->entity_list.FindByShip( loc );
+            target = sEntityList.FindByShip( loc );
         if( NULL == target )
             throw PyException( MakeCustomError( "Unable to find location %u.", loc ) );
 
@@ -225,7 +225,7 @@ PyResult Command_translocate( Client* who, CommandDB* db, PyServiceMgr* services
 }
 
 
-PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_tr( Client* who, CommandDB* db, const Seperator& args )
 {
 	std::string usageString =
 		"Correct Usage:<br><br>\
@@ -361,9 +361,9 @@ PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const S
 
     if( !IsStation( loc ) && !IsSolarSystem( loc ) )
     {
-        Client* target = services->entity_list.FindCharacter( loc );
+        Client* target = sEntityList.FindCharacter( loc );
         if( NULL == target )
-            target = services->entity_list.FindByShip( loc );
+            target = sEntityList.FindByShip( loc );
         if( NULL == target )
             throw PyException( MakeCustomError( "Unable to find location %u.", loc ) );
 
@@ -376,7 +376,7 @@ PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const S
     return new PyString( "Translocation successful." );
 }
 
-PyResult Command_giveisk( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_giveisk( Client* who, CommandDB* db, const Seperator& args )
 {
 
     if( args.argCount() < 3 ) {
@@ -406,7 +406,7 @@ PyResult Command_giveisk( Client* who, CommandDB* db, PyServiceMgr* services, co
     Client* tgt;
     if( entity >= EVEMU_MINIMUM_ID )
     {
-        tgt = services->entity_list.FindCharacter( entity );
+        tgt = sEntityList.FindCharacter( entity );
         if( NULL == tgt )
             throw PyException( MakeCustomError( "Unable to find character %u", entity ) );
     }
@@ -417,7 +417,7 @@ PyResult Command_giveisk( Client* who, CommandDB* db, PyServiceMgr* services, co
     return new PyString( "Operation successful." );
 }
 
-PyResult Command_pop( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_pop( Client* who, CommandDB* db, const Seperator& args )
 {
     if( 4 != args.argCount() )
         throw PyException( MakeCustomError( "Correct Usage: /pop [message type] [key] [text]" ) );
@@ -441,7 +441,7 @@ PyResult Command_pop( Client* who, CommandDB* db, PyServiceMgr* services, const 
     return new PyString( "Message sent." );
 }
 
-PyResult Command_goto( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args)
+PyResult Command_goto( Client* who, CommandDB* db, const Seperator& args)
 {
     if( 3 != args.argCount()
         || !args.isNumber( 1 )
@@ -461,7 +461,7 @@ PyResult Command_goto( Client* who, CommandDB* db, PyServiceMgr* services, const
     return new PyString( "Goto successful." );
 }
 
-PyResult Command_spawnn( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_spawnn( Client* who, CommandDB* db, const Seperator& args )
 {
     uint32 typeID = 0;
     uint32 actualTypeID = 0;
@@ -514,7 +514,7 @@ PyResult Command_spawnn( Client* who, CommandDB* db, PyServiceMgr* services, con
         loc
     );
 
-    item = services->item_factory.SpawnItem( idata );
+    item = sItemFactory.SpawnItem( idata );
     if( !item )
         throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 
@@ -543,7 +543,7 @@ PyResult Command_spawnn( Client* who, CommandDB* db, PyServiceMgr* services, con
     return new PyString( "Spawn successful." );
 }
 
-PyResult Command_spawn( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_spawn( Client* who, CommandDB* db, const Seperator& args )
 {
     uint32 typeID = 0;
 	uint32 spawnCount = 1;
@@ -649,7 +649,7 @@ PyResult Command_spawn( Client* who, CommandDB* db, PyServiceMgr* services, cons
 			loc
 		);
 
-		item = services->item_factory.SpawnItem( idata );
+		item = sItemFactory.SpawnItem( idata );
 		if( !item )
 			throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 
@@ -686,7 +686,7 @@ PyResult Command_spawn( Client* who, CommandDB* db, PyServiceMgr* services, cons
     return new PyString( "Spawn successful." );
 }
 
-PyResult Command_location( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_location( Client* who, CommandDB* db, const Seperator& args )
 {
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You're not in space." ) );
@@ -715,7 +715,7 @@ PyResult Command_location( Client* who, CommandDB* db, PyServiceMgr* services, c
     return new PyString( reply );
 }
 
-PyResult Command_syncloc( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_syncloc( Client* who, CommandDB* db, const Seperator& args )
 {
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You're not in space." ) );
@@ -731,7 +731,7 @@ PyResult Command_syncloc( Client* who, CommandDB* db, PyServiceMgr* services, co
 
 // command to modify blueprint's attributes, we have to give it blueprint's itemID ...
 // isn't much comfortable, but I don't know about better solution ...
-PyResult Command_setbpattr( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_setbpattr( Client* who, CommandDB* db, const Seperator& args )
 {
 
     if( args.argCount() < 6 ) {
@@ -758,7 +758,7 @@ PyResult Command_setbpattr( Client* who, CommandDB* db, PyServiceMgr* services, 
         throw PyException( MakeCustomError( "Argument 5 must be remaining licensed production runs. (got %s)", args.arg( 5 ).c_str() ) );
     const uint32 licensedProductionRunsRemaining = atoi( args.arg( 5 ).c_str() );
 
-    BlueprintRef bp = services->item_factory.GetBlueprint( blueprintID );
+    BlueprintRef bp = sItemFactory.GetBlueprint( blueprintID );
     if( !bp )
         throw PyException( MakeCustomError( "Failed to load blueprint %u.", blueprintID ) );
 
@@ -770,7 +770,7 @@ PyResult Command_setbpattr( Client* who, CommandDB* db, PyServiceMgr* services, 
     return new PyString( "Properties modified." );
 }
 
-PyResult Command_state(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {
+PyResult Command_state(Client *who, CommandDB *db, const Seperator &args) {
     if(!who->IsInSpace())
         throw(PyException(MakeCustomError("You must be in space.")));
 
@@ -783,7 +783,7 @@ PyResult Command_state(Client *who, CommandDB *db, PyServiceMgr *services, const
     return(new PyString("Update sent."));
 }
 
-PyResult Command_getattr( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_getattr( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() < 3 ) {
         throw PyException( MakeCustomError("Correct Usage: /getattr [itemID] [attributeID]") );
@@ -796,7 +796,7 @@ PyResult Command_getattr( Client* who, CommandDB* db, PyServiceMgr* services, co
         throw PyException( MakeCustomError( "2nd argument must be attributeID (got %s).", args.arg( 2 ).c_str() ) );
     const ItemAttributeMgr::Attr attribute = (ItemAttributeMgr::Attr)atoi( args.arg( 2 ).c_str() );
 
-    InventoryItemRef item = services->item_factory.GetItem( itemID );
+    InventoryItemRef item = sItemFactory.GetItem( itemID );
     if( !item )
         throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
@@ -804,7 +804,7 @@ PyResult Command_getattr( Client* who, CommandDB* db, PyServiceMgr* services, co
     return item->GetAttribute(attribute).GetPyObject();
 }
 
-PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_setattr( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() < 4 ) {
         throw PyException( MakeCustomError("Correct Usage: /setattr [itemID] [attributeID] [value]") );
@@ -838,7 +838,7 @@ PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, co
     if( itemID < EVEMU_MINIMUM_ID )
         throw PyException( MakeCustomError( "1st argument must be a valid 'entity' table itemID (got %s) that MUST be larger >= 140000000.", args.arg( 1 ).c_str() ) );
 
-    InventoryItemRef item = services->item_factory.GetItem( itemID );
+    InventoryItemRef item = sItemFactory.GetItem( itemID );
     if( !item )
         throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
@@ -849,7 +849,7 @@ PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, co
     return new PyString( "Operation successful." );
 }
 
-PyResult Command_fit(Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_fit(Client* who, CommandDB* db, const Seperator& args )
 {
 
     if( args.argCount() < 2 ) {
@@ -902,7 +902,7 @@ PyResult Command_fit(Client* who, CommandDB* db, PyServiceMgr* services, const S
             qty
         );
 
-        InventoryItemRef i = services->item_factory.SpawnItem( idata );
+        InventoryItemRef i = sItemFactory.SpawnItem( idata );
         if( !i )
             throw PyException( MakeCustomError( "Unable to create item of type %u.", typeID ) );
 
@@ -912,7 +912,7 @@ PyResult Command_fit(Client* who, CommandDB* db, PyServiceMgr* services, const S
     }
 }
 
-PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_giveallskills( Client* who, CommandDB* db, const Seperator& args )
 {
     uint8 level = 5;			// Ensure that ALL skills trained are trained to level 5
     CharacterRef character;
@@ -928,7 +928,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
         if( args.isNumber( 1 ) )
         {
             ownerID = atoi( args.arg( 1 ).c_str() );
-            clientPtr = services->entity_list.FindCharacter( ownerID );
+            clientPtr = sEntityList.FindCharacter( ownerID );
 			if( clientPtr == NULL )
 				throw PyException( MakeCustomError( "ERROR: Cannot find character #%d", ownerID ) );
 			else
@@ -944,7 +944,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
             throw PyException( MakeCustomError( "The use of string based Character names for this command is not yet supported!  Use 'me' instead or the entityID of the character to which you wish to give skills." ) );
             /*
             const char *name = args.arg( 1 ).c_str();
-            Client *target = services->entity_list.FindCharacter( name );
+            Client *target = sEntityList.FindCharacter( name );
             if(target == NULL)
                 throw PyException( MakeCustomError( "Cannot find Character by the name of %s", name ) );
             ownerID = target->GetCharacterID();
@@ -1000,7 +1000,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
 					gty
 				);
 
-				InventoryItemRef item = services->item_factory.SpawnItem( idata );
+				InventoryItemRef item = sItemFactory.SpawnItem( idata );
 				skill = SkillRef::StaticCast( item );
 
 				if( !item )
@@ -1017,16 +1017,16 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
     return new PyString ("Skill Gifting Failure");
 }
 
-PyResult Command_giveskills( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args ) {
+PyResult Command_giveskills( Client* who, CommandDB* db, const Seperator& args ) {
 
     //pass to command_giveskill
-    Command_giveskill(who,db,services,args);
+    Command_giveskill(who,db,args);
 
     return NULL;
 
 }
 
-PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
 {
 
     uint32 typeID;
@@ -1043,7 +1043,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
         if( args.isNumber( 1 ) )
         {
             ownerID = atoi( args.arg( 1 ).c_str() );
-            character = services->entity_list.FindCharacter( ownerID )->GetChar();
+            character = sEntityList.FindCharacter( ownerID )->GetChar();
         }
         else if( args.arg( 1 ) == "me" )
         {
@@ -1055,7 +1055,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
             throw PyException( MakeCustomError( "The use of string based Character names for this command is not yet supported!  Use 'me' instead or the entityID of the character to which you wish to give skills." ) );
             /*
             const char *name = args.arg( 1 ).c_str();
-            Client *target = services->entity_list.FindCharacter( name );
+            Client *target = sEntityList.FindCharacter( name );
             if(target == NULL)
                 throw PyException( MakeCustomError( "Cannot find Character by the name of %s", name ) );
             ownerID = target->GetCharacterID();
@@ -1112,7 +1112,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
                 gty
             );
 
-            InventoryItemRef item = services->item_factory.SpawnItem( idata );
+            InventoryItemRef item = sItemFactory.SpawnItem( idata );
             skill = SkillRef::StaticCast( item );
 
             if( !item )
@@ -1140,7 +1140,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
 }
 
 
-PyResult Command_online(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {
+PyResult Command_online(Client *who, CommandDB *db, const Seperator &args) {
 
     if( args.argCount() == 2 )
     {
@@ -1154,7 +1154,7 @@ PyResult Command_online(Client *who, CommandDB *db, PyServiceMgr *services, cons
             tgt = who;
         else
         {
-            tgt = services->entity_list.FindCharacter( entity );
+            tgt = sEntityList.FindCharacter( entity );
             if( NULL == tgt )
                 throw PyException( MakeCustomError( "Unable to find character %u", entity ) );
         }
@@ -1170,7 +1170,7 @@ PyResult Command_online(Client *who, CommandDB *db, PyServiceMgr *services, cons
         throw PyException( MakeCustomError( "Command failed: You got the arguments all wrong!"));
 }
 
-PyResult Command_unload(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args) {
+PyResult Command_unload(Client *who, CommandDB *db, const Seperator &args) {
 
     if( args.argCount() >= 2 && args.argCount() <= 3 )
     {
@@ -1197,7 +1197,7 @@ PyResult Command_unload(Client *who, CommandDB *db, PyServiceMgr *services, cons
             tgt = who;
         else
         {
-            tgt = services->entity_list.FindCharacter( entity );
+            tgt = sEntityList.FindCharacter( entity );
 
             if( NULL == tgt )
                 throw PyException( MakeCustomError( "Unable to find character %u", entity ) );
@@ -1218,7 +1218,7 @@ PyResult Command_unload(Client *who, CommandDB *db, PyServiceMgr *services, cons
         throw PyException( MakeCustomError( "Command failed: You got the arguments all wrong!"));
 }
 
-PyResult Command_heal( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_heal( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount()== 1 )
     {
@@ -1240,7 +1240,7 @@ PyResult Command_heal( Client* who, CommandDB* db, PyServiceMgr* services, const
             }
         uint32 entity = atoi( args.arg( 1 ).c_str() );
 
-        Client *target = services->entity_list.FindCharacter( entity );
+        Client *target = sEntityList.FindCharacter( entity );
         if(target == NULL)
             throw PyException( MakeCustomError( "Cannot find Character by the entity %d", entity ) );
 
@@ -1253,7 +1253,7 @@ PyResult Command_heal( Client* who, CommandDB* db, PyServiceMgr* services, const
     return(new PyString("Heal successful!"));
 }
 
-PyResult Command_repairmodules( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_repairmodules( Client* who, CommandDB* db, const Seperator& args )
 {
 
     if(args.argCount()==1)
@@ -1268,7 +1268,7 @@ PyResult Command_repairmodules( Client* who, CommandDB* db, PyServiceMgr* servic
             }
         uint32 charID = atoi( args.arg( 1 ).c_str() );
 
-        Client *target = services->entity_list.FindCharacter( charID );
+        Client *target = sEntityList.FindCharacter( charID );
         if(target == NULL)
             throw PyException( MakeCustomError( "Cannot find Character by the entity %d", charID ) );
         target->GetShip()->RepairModules();
@@ -1277,7 +1277,7 @@ PyResult Command_repairmodules( Client* who, CommandDB* db, PyServiceMgr* servic
     return(new PyString("Modules repaired successful!"));
 }
 
-PyResult Command_unspawn( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_unspawn( Client* who, CommandDB* db, const Seperator& args )
 {
     uint32 entityID = 0;
     uint32 itemID = 0;
@@ -1298,7 +1298,7 @@ PyResult Command_unspawn( Client* who, CommandDB* db, PyServiceMgr* services, co
         throw PyException( MakeCustomError( "You must be in space to unspawn things." ) );
 
     // Search for the itemRef for itemID:
-    InventoryItemRef itemRef = who->services().item_factory.GetItem( itemID );
+    InventoryItemRef itemRef = sItemFactory.GetItem( itemID );
     SystemEntity * entityRef = who->System()->get( itemID );
 
     // Actually do the unspawn using SystemManager's RemoveEntity:
@@ -1317,7 +1317,7 @@ PyResult Command_unspawn( Client* who, CommandDB* db, PyServiceMgr* services, co
     return new PyString( "Un-Spawn successful." );
 }
 
-PyResult Command_dogma( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_dogma( Client* who, CommandDB* db, const Seperator& args )
 {
     //"dogma" "140019878" "agility" "=" "0.2"
 
@@ -1341,7 +1341,7 @@ PyResult Command_dogma( Client* who, CommandDB* db, PyServiceMgr* services, cons
     double attributeValue = atof( args.arg( 4 ).c_str() );
 
     //get item
-    InventoryItemRef item = services->item_factory.GetItem( itemID );
+    InventoryItemRef item = sItemFactory.GetItem( itemID );
 
     //get attributeID
     uint32 attributeID = db->GetAttributeID( attributeName );
@@ -1352,7 +1352,7 @@ PyResult Command_dogma( Client* who, CommandDB* db, PyServiceMgr* services, cons
     return NULL;
 }
 
-PyResult Command_kick( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_kick( Client* who, CommandDB* db, const Seperator& args )
 {
     Client *target;
 
@@ -1362,12 +1362,12 @@ PyResult Command_kick( Client* who, CommandDB* db, PyServiceMgr* services, const
         if( args.isNumber( 1 ) )
         {
             int id = atoi( args.arg( 1 ).c_str() );
-            target = services->entity_list.FindCharacter( id );
+            target = sEntityList.FindCharacter( id );
         }
         else
         {
             const char *name = args.arg( 1 ).c_str();
-            target = services->entity_list.FindCharacter( name );
+            target = sEntityList.FindCharacter( name );
         }
     }
     //support for characters with first and last names
@@ -1377,7 +1377,7 @@ PyResult Command_kick( Client* who, CommandDB* db, PyServiceMgr* services, const
             throw PyException( MakeCustomError("Unknown arguments") );
 
         std::string name = args.arg( 1 ) + " " + args.arg( 2 );
-        target = services->entity_list.FindCharacter( name.c_str() ) ;
+        target = sEntityList.FindCharacter( name.c_str() ) ;
     }
     else
         throw PyException( MakeCustomError("Correct Usage: /kick [Character Name]") );
@@ -1390,7 +1390,7 @@ PyResult Command_kick( Client* who, CommandDB* db, PyServiceMgr* services, const
     return NULL;
 }
 
-PyResult Command_ban( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_ban( Client* who, CommandDB* db, const Seperator& args )
 {
     Client *target;
 
@@ -1400,7 +1400,7 @@ PyResult Command_ban( Client* who, CommandDB* db, PyServiceMgr* services, const 
         if( !args.isNumber( 1 ) )
         {
             const char *name = args.arg( 1 ).c_str();
-            target = services->entity_list.FindCharacter( name );
+            target = sEntityList.FindCharacter( name );
         }
         else
             throw PyException( MakeCustomError("Correct Usage: /ban [Character Name]") );
@@ -1412,7 +1412,7 @@ PyResult Command_ban( Client* who, CommandDB* db, PyServiceMgr* services, const 
             throw PyException( MakeCustomError("Unknown arguments") );
 
         std::string name = args.arg( 1 ) + " " + args.arg( 2 );
-        target = services->entity_list.FindCharacter( name.c_str() ) ;
+        target = sEntityList.FindCharacter( name.c_str() ) ;
     }
     else
         throw PyException( MakeCustomError("Correct Usage: /ban [Character Name]") );
@@ -1426,7 +1426,7 @@ PyResult Command_ban( Client* who, CommandDB* db, PyServiceMgr* services, const 
     return NULL;
 }
 
-PyResult Command_unban( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_unban( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() == 2 )
     {
@@ -1434,7 +1434,7 @@ PyResult Command_unban( Client* who, CommandDB* db, PyServiceMgr* services, cons
         if( !args.isNumber( 1 ) )
         {
             const char *name = args.arg( 1 ).c_str();
-            services->serviceDB().SetAccountBanStatus(db->GetAccountID(name),false);
+            sManager.serviceDB().SetAccountBanStatus(db->GetAccountID(name),false);
         }
         else
             throw PyException( MakeCustomError("Correct Usage: /ban [Character Name]") );
@@ -1446,7 +1446,7 @@ PyResult Command_unban( Client* who, CommandDB* db, PyServiceMgr* services, cons
             throw PyException( MakeCustomError("Unknown arguments") );
 
         std::string name = args.arg( 1 ) + " " + args.arg( 2 );
-        services->serviceDB().SetAccountBanStatus(db->GetAccountID(name),false);
+        sManager.serviceDB().SetAccountBanStatus(db->GetAccountID(name),false);
     }
     else
         throw PyException( MakeCustomError("Correct Usage: /unban [Character Name / Character ID]") );
@@ -1454,7 +1454,7 @@ PyResult Command_unban( Client* who, CommandDB* db, PyServiceMgr* services, cons
     return NULL;
 }
 
-PyResult Command_kenny( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_kenny( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() == 2 )
     {
@@ -1479,7 +1479,7 @@ PyResult Command_kenny( Client* who, CommandDB* db, PyServiceMgr* services, cons
     return NULL;
 }
 
-PyResult Command_kill( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_kill( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() == 2 )
     {
@@ -1489,7 +1489,7 @@ PyResult Command_kill( Client* who, CommandDB* db, PyServiceMgr* services, const
             }
         uint32 entity = atoi( args.arg( 1 ).c_str() );
 
-        InventoryItemRef itemRef = services->item_factory.GetShip(entity);
+        InventoryItemRef itemRef = sItemFactory.GetShip(entity);
         if( itemRef.get() == NULL )
             throw PyException( MakeCustomError("/kill NOT supported on non-ship types at this time") );
 
@@ -1530,7 +1530,7 @@ PyResult Command_kill( Client* who, CommandDB* db, PyServiceMgr* services, const
     return NULL;
 }
 
-PyResult Command_killallnpcs( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_killallnpcs( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() == 1 )
     {
@@ -1560,7 +1560,7 @@ PyResult Command_killallnpcs( Client* who, CommandDB* db, PyServiceMgr* services
     return NULL;
 }
 
-PyResult Command_cloak( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_cloak( Client* who, CommandDB* db, const Seperator& args )
 {
     if( args.argCount() == 1 )
     {

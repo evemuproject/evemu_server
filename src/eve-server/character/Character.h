@@ -93,7 +93,7 @@ public:
      * @param[in] characterTypeID ID of character type to load.
      * @return Pointer to new object, NULL if failed.
      */
-    static CharacterType *Load(ItemFactory &factory, uint32 characterTypeID);
+    static CharacterType *Load(uint32 characterTypeID);
 
     /*
      * Access functions:
@@ -137,7 +137,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static _Ty *_LoadType(ItemFactory &factory, uint32 typeID,
+    static _Ty *_LoadType(uint32 typeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data)
     {
@@ -150,20 +150,20 @@ protected:
         // query character type data
         uint32 bloodlineID;
         CharacterTypeData charData;
-        if( !factory.db().GetCharacterType(typeID, bloodlineID, charData) )
+        if( !sItemFactory.db().GetCharacterType(typeID, bloodlineID, charData) )
             return NULL;
 
         // load ship type
-        const ItemType *shipType = factory.GetType( charData.shipTypeID );
+        const ItemType *shipType = sItemFactory.GetType( charData.shipTypeID );
         if( shipType == NULL )
             return NULL;
 
-        return _Ty::template _LoadCharacterType<_Ty>( factory, typeID, bloodlineID, group, data, *shipType, charData );
+        return _Ty::template _LoadCharacterType<_Ty>( typeID, bloodlineID, group, data, *shipType, charData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static _Ty *_LoadCharacterType(ItemFactory &factory, uint32 typeID, uint8 bloodlineID,
+    static _Ty *_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data,
         // CharacterType stuff:
@@ -330,7 +330,7 @@ public:
      * @param[in] characterID ID of character to load.
      * @return Pointer to new Character object; NULL if failed.
      */
-    static CharacterRef Load(ItemFactory &factory, uint32 characterID);
+    static CharacterRef Load(uint32 characterID);
     /**
      * Spawns new character.
      *
@@ -341,7 +341,7 @@ public:
      * @param[in] corpData Corporation membership data for new character.
      * @return Pointer to new Character object; NULL if failed.
      */
-    static CharacterRef Spawn(ItemFactory &factory, ItemData &data, CharacterData &charData, CorpMemberInfo &corpData);
+    static CharacterRef Spawn(ItemData &data, CharacterData &charData, CorpMemberInfo &corpData);
 
     /*
      * Primary public interface:
@@ -546,7 +546,6 @@ public:
 
 protected:
     Character(
-        ItemFactory &_factory,
         uint32 _characterID,
         // InventoryItem stuff:
         const CharacterType &_charType,
@@ -563,7 +562,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadOwner(ItemFactory &factory, uint32 characterID,
+    static RefPtr<_Ty> _LoadOwner(uint32 characterID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -577,19 +576,19 @@ protected:
         const CharacterType &charType = static_cast<const CharacterType &>( type );
 
         CharacterData charData;
-        if( !factory.db().GetCharacter( characterID, charData ) )
+        if( !sItemFactory.db().GetCharacter( characterID, charData ) )
             return RefPtr<_Ty>();
 
         CorpMemberInfo corpData;
-        if( !factory.db().GetCorpMemberInfo( characterID, corpData ) )
+        if( !sItemFactory.db().GetCorpMemberInfo( characterID, corpData ) )
             return RefPtr<_Ty>();
 
-        return _Ty::template _LoadCharacter<_Ty>( factory, characterID, charType, data, charData, corpData );
+        return _Ty::template _LoadCharacter<_Ty>( characterID, charType, data, charData, corpData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadCharacter(ItemFactory &factory, uint32 characterID,
+    static RefPtr<_Ty> _LoadCharacter(uint32 characterID,
         // InventoryItem stuff:
         const CharacterType &charType, const ItemData &data,
         // Character stuff:
@@ -598,7 +597,7 @@ protected:
 
     bool _Load();
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data,
         // Character stuff:

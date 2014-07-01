@@ -883,8 +883,7 @@ bool ModuleManager::InstallRig(InventoryItemRef item, EVEItemFlags flag)
 {
     if(item->groupID() >= 773 && item->groupID() <= 786 && item->groupID() != 783)
     {
-        _fitModule(item,flag);
-        return true;
+        return _fitModule(item,flag);
     }
     else
         sLog.Debug("ModuleManager","%s tried to fit item %u, which is not a rig", m_Ship->GetOperator()->GetName(), item->itemID());
@@ -903,8 +902,7 @@ bool ModuleManager::SwapSubSystem(InventoryItemRef item, EVEItemFlags flag)
 {
     if(item->groupID() >= 954 && item->groupID() <= 958)
     {
-        _fitModule(item,flag);
-        return true;
+        return _fitModule(item,flag);
     }
     else
         sLog.Debug("ModuleManager","%s tried to fit item %u, which is not a subsystem", m_Ship->GetOperator()->GetName(), item->itemID());
@@ -952,6 +950,11 @@ void ModuleManager::UnfitModule(uint32 itemID)
 
 bool ModuleManager::_fitModule(InventoryItemRef item, EVEItemFlags flag)
 {
+    if(IsSlotOccupied(flag))
+    {
+        this->_SendErrorMessage("Slot already occupied.");
+        return false;
+    }
     bool verifyFailed = false;
 	GenericModule * mod = ModuleFactory(item, ShipRef(m_Ship));
 

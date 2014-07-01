@@ -30,7 +30,7 @@
 
 class NotificationMgrService : public PyService {
 public:
-    NotificationMgrService(PyServiceMgr* mgr);
+    NotificationMgrService();
     virtual ~NotificationMgrService();
 
 private:

@@ -60,8 +60,6 @@ public:
     EntityList();
     virtual ~EntityList();
 
-    void UseServices(PyServiceMgr *svc) { m_services = svc; }
-
     typedef std::set<uint32> character_set;
 
     void Add(Client **client);
@@ -93,12 +91,11 @@ protected:
     typedef std::map<uint32, SystemManager *> system_list;
     system_list m_systems;
 
-    PyServiceMgr *m_services;    //we do not own this, only used for booting systems.
 };
 
-//Singleton
-#define sEntityList \
-    ( EntityList::get() )
+extern EntityList &_sEntityList;
+// define as a define so the text highlighter will color the variable.
+#define sEntityList _sEntityList
 
 
 #endif

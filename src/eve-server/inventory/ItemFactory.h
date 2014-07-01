@@ -25,6 +25,7 @@
 #ifndef EVE_ITEM_FACTORY_H
 #define EVE_ITEM_FACTORY_H
 
+#include "utils/Singleton.h"
 #include "inventory/InventoryDB.h"
 #include "inventory/ItemRef.h"
 
@@ -41,13 +42,15 @@ class StationType;
 class Inventory;
 
 class ItemFactory
+: public Singleton<ItemFactory>
 {
     friend class InventoryItem;    //only for access to _DeleteItem
 public:
-    ItemFactory(EntityList& el);
+    ItemFactory();
     ~ItemFactory();
-
-    EntityList& entity_list;    //we do not own this.
+    
+    void ShutDown();
+    
     InventoryDB& db() { return(m_db); }
 
     /*
@@ -273,6 +276,10 @@ protected:
 	// ID Authority:
 	static uint32 m_nextEntityID;		// holds the next valid ID for in-memory only objects of EVEDB::invCategories::Entity
 };
+
+extern ItemFactory &_sItemFactory;
+// define as a define so the text highlighter will color the variable.
+#define sItemFactory _sItemFactory
 
 
 #endif

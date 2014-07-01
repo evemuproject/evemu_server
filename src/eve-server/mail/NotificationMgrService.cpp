@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(NotificationMgrService)
 
-NotificationMgrService::NotificationMgrService(PyServiceMgr* mgr)
-: PyService(mgr, "notificationMgr"),
+NotificationMgrService::NotificationMgrService()
+: PyService("notificationMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

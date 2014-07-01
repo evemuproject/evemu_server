@@ -37,8 +37,8 @@ const uint32 LSCService::MAX_CHANNEL_ID = 0xFFFFFFFF;
 
 PyCallable_Make_InnerDispatcher(LSCService)
 
-LSCService::LSCService(PyServiceMgr *mgr, CommandDispatcher* cd)
-: PyService(mgr, "LSC"),
+LSCService::LSCService(CommandDispatcher* cd)
+: PyService("LSC"),
   m_dispatch(new Dispatcher(this)),
   m_commandDispatch(cd)
 {
@@ -1028,8 +1028,8 @@ PyResult LSCService::Handle_SendMessage( PyCallArgs& call )
     {
         sLog.Debug( "LSCService::Handle_SendMessage()", "CALL to SlashService->SlashCmd() via LSC Service, baby!" );
 
-        if( m_manager->LookupService("slash") != NULL )
-            static_cast<SlashService *>(m_manager->LookupService("slash"))->SlashCommand( call.client, message );
+        if( sManager.LookupService("slash") != NULL )
+            static_cast<SlashService *>(sManager.LookupService("slash"))->SlashCommand( call.client, message );
 
         message = " ";      // Still transmit some message but minimal so that chat window is not "locked" by client for not getting a chat
     }
@@ -1247,7 +1247,7 @@ void LSCService::SendMail(uint32 sender, const std::vector<int32> &recipients, c
 
     //now, send a notification to each successful recipient
     PyTuple *answer = notify.Encode();
-    m_manager->entity_list.Multicast(successful_recipients, "OnMessage", "*multicastID", &answer, false);
+    sEntityList.Multicast(successful_recipients, "OnMessage", "*multicastID", &answer, false);
 }
 
 
@@ -1265,7 +1265,7 @@ void Client::SelfEveMail( const char* subject, const char* fmt, ... )
 
     va_end( args );
 
-    m_services.lsc_service->SendMail( GetCharacterID(), GetCharacterID(), subject, str );
+    sManager.lsc_service->SendMail( GetCharacterID(), GetCharacterID(), subject, str );
     SafeFree( str );
 }
 

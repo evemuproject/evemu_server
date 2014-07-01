@@ -33,7 +33,7 @@
 class Standing2Service : public PyService
 {
 public:
-    Standing2Service(PyServiceMgr *mgr);
+    Standing2Service();
     virtual ~Standing2Service();
 
 protected:

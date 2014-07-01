@@ -33,7 +33,7 @@ class KeeperService
 : public PyService
 {
 public:
-    KeeperService(PyServiceMgr *mgr);
+    KeeperService();
     virtual ~KeeperService();
 
 protected:

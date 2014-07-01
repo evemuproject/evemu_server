@@ -48,7 +48,7 @@ public:
      * @param[in] structureID ID of Structure to load.
      * @return Pointer to Structure object; NULL if failed.
      */
-    static StructureRef Load(ItemFactory &factory, uint32 structureID);
+    static StructureRef Load(uint32 structureID);
     /**
      * Spawns new Structure.
      *
@@ -56,7 +56,7 @@ public:
      * @param[in] data Item data for Structure.
      * @return Pointer to new Structure object; NULL if failed.
      */
-    static StructureRef Spawn(ItemFactory &factory, ItemData &data);
+    static StructureRef Spawn(ItemData &data);
 
     /*
      * Primary public interface:
@@ -82,7 +82,6 @@ public:
 
 protected:
     Structure(
-        ItemFactory &_factory,
         uint32 _structureID,
         // InventoryItem stuff:
         const ItemType &_itemType,
@@ -96,7 +95,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 structureID,
+    static RefPtr<_Ty> _LoadItem(uint32 structureID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -111,19 +110,19 @@ protected:
 
         // no additional stuff
 
-        return _Ty::template _LoadStructure<_Ty>( factory, structureID, type, data );
+        return _Ty::template _LoadStructure<_Ty>( structureID, type, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadStructure(ItemFactory &factory, uint32 structureID,
+    static RefPtr<_Ty> _LoadStructure(uint32 structureID,
         // InventoryItem stuff:
         const ItemType &itemType, const ItemData &data
     );
 
     bool _Load();
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );
@@ -151,7 +150,6 @@ public:
     StructureEntity(
         StructureRef structure,
         SystemManager *system,
-        PyServiceMgr &services,
         const GPoint &position);
 
     /*
@@ -207,7 +205,6 @@ protected:
      * Member fields:
      */
     SystemManager *const m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
     StructureRef _structureRef;   // We don't own this
 
     /* Used to calculate the damages on NPCs

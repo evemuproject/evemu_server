@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(FleetProxyService)
 
-FleetProxyService::FleetProxyService(PyServiceMgr *mgr)
-: PyService(mgr, "fleetProxy"),
+FleetProxyService::FleetProxyService()
+: PyService("fleetProxy"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

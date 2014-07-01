@@ -33,7 +33,7 @@ class PyRep;
 class PlanetMgrService: public PyService
 {
 public:
-    PlanetMgrService(PyServiceMgr *mgr);
+    PlanetMgrService();
     virtual ~PlanetMgrService();
 
 protected:

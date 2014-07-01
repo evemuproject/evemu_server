@@ -90,7 +90,7 @@ public:
      * @param[in] solarSystemID ID of solar system to load.
      * @return Pointer to new solar system object; NULL if failed.
      */
-    static SolarSystemRef Load(ItemFactory &factory, uint32 solarSystemID);
+    static SolarSystemRef Load(uint32 solarSystemID);
 
     /*
      * Public Fields:
@@ -118,7 +118,6 @@ public:
 
 protected:
     SolarSystem(
-        ItemFactory &_factory,
         uint32 _solarSystemID,
         // InventoryItem stuff:
         const ItemType &_type,
@@ -144,7 +143,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadCelestialObject(ItemFactory &factory, uint32 solarSystemID,
+    static RefPtr<_Ty> _LoadCelestialObject(uint32 solarSystemID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data,
         // CelestialObject stuff:
@@ -159,20 +158,20 @@ protected:
 
         // load solar system data
         SolarSystemData ssData;
-        if( !factory.db().GetSolarSystem( solarSystemID, ssData ) )
+        if( !sItemFactory.db().GetSolarSystem( solarSystemID, ssData ) )
             return RefPtr<_Ty>();
 
         // get sun type
-        const ItemType *sunType = factory.GetType( ssData.sunTypeID );
+        const ItemType *sunType = sItemFactory.GetType( ssData.sunTypeID );
         if( sunType == NULL )
             return RefPtr<_Ty>();
 
-        return _Ty::template _LoadSolarSystem<_Ty>( factory, solarSystemID, type, data, cData, *sunType, ssData );
+        return _Ty::template _LoadSolarSystem<_Ty>( solarSystemID, type, data, cData, *sunType, ssData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadSolarSystem(ItemFactory &factory, uint32 solarSystemID,
+    static RefPtr<_Ty> _LoadSolarSystem(uint32 solarSystemID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data,
         // CelestialObject stuff:

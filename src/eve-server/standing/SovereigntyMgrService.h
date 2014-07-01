@@ -31,7 +31,7 @@
 class SovereigntyMgrService: public PyService
 {
 public:
-    SovereigntyMgrService(PyServiceMgr *mgr);
+    SovereigntyMgrService();
     virtual ~SovereigntyMgrService();
 
 protected:

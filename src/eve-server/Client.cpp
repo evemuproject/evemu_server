@@ -38,10 +38,9 @@
 
 static const uint32 PING_INTERVAL_US = 60000;
 
-Client::Client(PyServiceMgr &services, EVETCPConnection** con)
+Client::Client(EVETCPConnection** con)
 : DynamicSystemEntity(NULL),
   EVEClientSession( con ),
-  m_services(services),
   m_pingTimer(PING_INTERVAL_US),
   m_system(NULL),
 //  m_destinyTimer(1000, true), //accurate timing is essential
@@ -74,7 +73,7 @@ Client::~Client() {
         // we have valid character
 
         // LSC logout
-        m_services.lsc_service->CharacterLogout(GetCharacterID(), LSCChannel::_MakeSenderInfo(this));
+        sManager.lsc_service->CharacterLogout(GetCharacterID(), LSCChannel::_MakeSenderInfo(this));
 
         //before we remove ourself from the system, store our last location.
         SavePosition();
@@ -95,14 +94,14 @@ Client::~Client() {
 
         //johnsus - characterOnline mod
         // switch character online flag to 0
-        m_services.serviceDB().SetCharacterOnlineStatus(GetCharacterID(), false);
+        sManager.serviceDB().SetCharacterOnlineStatus(GetCharacterID(), false);
     }
 
     if(GetAccountID() != 0) { // this is not very good ....
-        m_services.serviceDB().SetAccountOnlineStatus(GetAccountID(), false);
+        sManager.serviceDB().SetAccountOnlineStatus(GetAccountID(), false);
     }
 
-    m_services.ClearBoundObjects(this);
+    sManager.ClearBoundObjects(this);
 
     targets.DoDestruction();
 
@@ -373,7 +372,7 @@ bool Client::EnterSystem(bool login) {
     if(m_system == NULL) {
         //m_system is NULL, we need new system
         //find our system manager and register ourself with it.
-        m_system = m_services.entity_list.FindOrBootSystem(GetSystemID());
+        m_system = sEntityList.FindOrBootSystem(GetSystemID());
         if(m_system == NULL) {
             sLog.Error("Client", "Failed to boot system %u for char %s (%u)", GetSystemID(), GetName(), GetCharacterID());
             SendErrorMsg("Unable to boot system %u", GetSystemID());
@@ -444,7 +443,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         // Entering station
         stationID = location;
 
-        m_services.serviceDB().GetStationInfo(
+        sManager.serviceDB().GetStationInfo(
             stationID,
             &solarSystemID, &constellationID, &regionID,
             NULL, NULL, NULL
@@ -460,7 +459,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         stationID = 0;
         solarSystemID = location;
 
-        m_services.serviceDB().GetSystemInfo(
+        sManager.serviceDB().GetSystemInfo(
             solarSystemID,
             &constellationID, &regionID,
             NULL, NULL
@@ -496,8 +495,8 @@ void Client::MoveToPosition(const GPoint &pt) {
 
 void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
 {
-    m_services.item_factory.SetUsingClient( this );
-    InventoryItemRef item = m_services.item_factory.GetItem( itemID );
+    sItemFactory.SetUsingClient( this );
+    InventoryItemRef item = sItemFactory.GetItem( itemID );
     if( !item ) {
         sLog.Error("Client","%s: Unable to load item %u", GetName(), itemID);
         return;
@@ -514,7 +513,7 @@ void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
     }
 
     // Release the item factory now that the ItemFactory is finished being used:
-    m_services.item_factory.UnsetUsingClient();
+    sItemFactory.UnsetUsingClient();
 }
 
 void Client::BoardShip(ShipRef new_ship) {
@@ -615,7 +614,7 @@ void Client::_UpdateSession2( uint32 characterID )
     uint32 locationID = 0;
     uint32 shipID = 0;
 
-    ((CharUnboundMgrService *)(m_services.LookupService("charUnboundMgr")))->GetCharacterData( characterID, characterDataMap );
+    ((CharUnboundMgrService *)(sManager.LookupService("charUnboundMgr")))->GetCharacterData( characterID, characterDataMap );
 
     if( characterDataMap.size() == 0 )
     {
@@ -744,7 +743,7 @@ void Client::_SendSessionChange()
     scn.changes->Dump(CLIENT__SESSION, "  Changes: ");
 
     //this is probably not necessary...
-    scn.nodesOfInterest.push_back( services().GetNodeID() );
+    scn.nodesOfInterest.push_back( sManager.GetNodeID() );
 
     //build the packet:
     PyPacket* p = new PyPacket;
@@ -752,7 +751,7 @@ void Client::_SendSessionChange()
     p->type = SESSIONCHANGENOTIFICATION;
 
     p->source.type = PyAddress::Node;
-    p->source.typeID = services().GetNodeID();
+    p->source.typeID = sManager.GetNodeID();
     p->source.callID = 0;
 
     p->dest.type = PyAddress::Client;
@@ -785,7 +784,7 @@ void Client::_SendPingRequest()
     ping_req->type_string = "macho.PingReq";
 
     ping_req->source.type = PyAddress::Node;
-    ping_req->source.typeID = services().GetNodeID();
+    ping_req->source.typeID = sManager.GetNodeID();
     ping_req->source.service = "ping";
     ping_req->source.callID = 0;
 
@@ -951,7 +950,7 @@ void Client::SendNotification(const PyAddress &dest, EVENotificationStream &noti
     p->type = NOTIFICATION;
 
     p->source.type = PyAddress::Node;
-    p->source.typeID = m_services.GetNodeID();
+    p->source.typeID = sManager.GetNodeID();
 
     p->dest = dest;
 
@@ -1029,7 +1028,7 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
 
     uint32 solarSystemID, constellationID, regionID;
     GPoint position;
-    if(!m_services.serviceDB().GetStaticItemInfo(
+    if(!sManager.serviceDB().GetStaticItemInfo(
         toGate,
         &solarSystemID, &constellationID, &regionID, &position
     )) {
@@ -1115,37 +1114,37 @@ bool Client::AddBalance(double amount) {
 
 bool Client::SelectCharacter( uint32 char_id )
 {
-    m_services.item_factory.SetUsingClient( this );
+    sItemFactory.SetUsingClient( this );
 
     _UpdateSession2( char_id );
 
 //    if( !EnterSystem( true ) )
 //        return false;
 
-    m_char = m_services.item_factory.GetCharacter( char_id );
+    m_char = sItemFactory.GetCharacter( char_id );
     if( !GetChar() )
     {
         // Release the item factory now that the ItemFactory is finished being used:
-        m_services.item_factory.UnsetUsingClient();
+        sItemFactory.UnsetUsingClient();
         return false;
     }
 
-    ShipRef ship = m_services.item_factory.GetShip( GetShipID() );
+    ShipRef ship = sItemFactory.GetShip( GetShipID() );
    if( !ship )
    {
         // Release the item factory now that the ItemFactory is finished being used:
-        m_services.item_factory.UnsetUsingClient();
+        sItemFactory.UnsetUsingClient();
         return false;
    }
 
-   ship->Load( m_services.item_factory, GetShipID() );
+   ship->Load( GetShipID() );
 
    BoardShip( ship );
 
     if( !EnterSystem( true ) )
     {
         // Release the item factory now that the ItemFactory is finished being used:
-        m_services.item_factory.UnsetUsingClient();
+        sItemFactory.UnsetUsingClient();
         return false;
     }
 
@@ -1155,12 +1154,12 @@ bool Client::SelectCharacter( uint32 char_id )
     GetChar()->UpdateSkillQueue();
 
     //johnsus - characterOnline mod
-    m_services.serviceDB().SetCharacterOnlineStatus( GetCharacterID(), true );
+    sManager.serviceDB().SetCharacterOnlineStatus( GetCharacterID(), true );
 
     _SendSessionChange();
 
     // Release the item factory now that the ItemFactory is finished being used:
-    m_services.item_factory.UnsetUsingClient();
+    sItemFactory.UnsetUsingClient();
     return true;
 }
 
@@ -1360,7 +1359,6 @@ DoDestinyUpdate ,*args= ([(31759,
     //this adds itself into the system.
     NPC *drone_npc = new NPC(
         m_system,
-        m_services,
         drone,
         GetCorporationID(),
         GetAllianceID(),
@@ -1461,7 +1459,7 @@ void Client::OnCharNoLongerInStation()
 
     PyTuple* tmp = n.Encode();
     // this entire line should be something like this Broadcast("OnCharNoLongerInStation", "stationid", &tmp);
-    services().entity_list.Broadcast( "OnCharNoLongerInStation", "stationid", &tmp );
+    sEntityList.Broadcast( "OnCharNoLongerInStation", "stationid", &tmp );
 }
 
 /* besides broadcasting the message this function should handle everything for this event */
@@ -1473,7 +1471,7 @@ void Client::OnCharNowInStation()
     n.allianceID = GetAllianceID();
 
     PyTuple* tmp = n.Encode();
-    services().entity_list.Broadcast( "OnCharNowInStation", "stationid", &tmp );
+    sEntityList.Broadcast( "OnCharNowInStation", "stationid", &tmp );
 }
 
 /************************************************************************/
@@ -1490,7 +1488,7 @@ void Client::BanClient()
     SendNotifyMsg("You have been banned from this server and will be disconnected shortly.  You will no longer be able to log in");
 
     //ban the client
-    services().serviceDB().SetAccountBanStatus( GetAccountID(), true );
+    sManager.serviceDB().SetAccountBanStatus( GetAccountID(), true );
 }
 
 /************************************************************************/
@@ -1508,7 +1506,7 @@ void Client::_GetVersion( VersionExchangeServer& version )
 
 uint32 Client::_GetUserCount()
 {
-    return services().entity_list.GetClientCount();
+    return sEntityList.GetClientCount();
 }
 
 bool Client::_VerifyVersion( VersionExchangeClient& version )
@@ -1580,7 +1578,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     //sLog.Debug("Client","%s: Received Client Challenge.", GetAddress().c_str());
     //sLog.Debug("Client","Login with %s:", ccp.user_name.c_str());
 
-    if (!services().serviceDB().GetAccountInformation( ccp.user_name.c_str(),  account_info)) {
+    if (!sManager.serviceDB().GetAccountInformation( ccp.user_name.c_str(),  account_info)) {
         goto error_login_auth_failed;
     }
 
@@ -1606,7 +1604,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
             goto error_login_auth_failed;
         }
 
-        if( !services().serviceDB().UpdateAccountHash(
+        if( !sManager.serviceDB().UpdateAccountHash(
                 ccp.user_name.c_str(),
                 password_hash ) )
         {
@@ -1637,7 +1635,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     sLog.Log("Client","successful");
 
     /* update account information, increase login count, last login timestamp and mark account as online */
-    m_services.serviceDB().UpdateAccountInformation( account_info.name.c_str(), true );
+    sManager.serviceDB().UpdateAccountInformation( account_info.name.c_str(), true );
 
     /* marshaled Python string "None" */
     static const uint8 handshakeFunc[] = { 0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65 };
@@ -1730,13 +1728,13 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
             return false;
         }
 
-        if( nodeID != m_services.GetNodeID() )
+        if( nodeID != sManager.GetNodeID() )
         {
-            sLog.Error("Client","Unknown nodeID %u received (expected %u).", nodeID, m_services.GetNodeID());
+            sLog.Error("Client","Unknown nodeID %u received (expected %u).", nodeID, sManager.GetNodeID());
             return false;
         }
 
-        dest = services().FindBoundObject( bindID );
+        dest = sManager.FindBoundObject( bindID );
         if( dest == NULL )
         {
             sLog.Error("Client", "Failed to find bound object %u.", bindID);
@@ -1746,7 +1744,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
     else
     {
         //retrieve a new service handler.
-        dest = services().LookupService( packet->dest.service );
+        dest = sManager.LookupService( packet->dest.service );
         if( dest == NULL )
         {
             sLog.Error("Client","Unable to find service to handle call to: %s", packet->dest.service.c_str());
@@ -1807,13 +1805,13 @@ bool Client::Handle_Notify( PyPacket* packet )
                 continue;
             }
 
-            if(nodeID != m_services.GetNodeID()) {
+            if(nodeID != sManager.GetNodeID()) {
                 sLog.Error("Client","Notification '%s' from %s: Unknown nodeID %u received (expected %u). Skipping.",
-                    notify.method.c_str(), GetName(), nodeID, m_services.GetNodeID());
+                    notify.method.c_str(), GetName(), nodeID, sManager.GetNodeID());
                 continue;
             }
 
-            m_services.ClearBoundObject(bindID);
+            sManager.ClearBoundObject(bindID);
         }
     }
     else

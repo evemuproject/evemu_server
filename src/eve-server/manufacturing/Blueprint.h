@@ -81,7 +81,7 @@ public:
      * @param[in] typeID ID of blueprint type to load.
      * @return Pointer to BlueprintType object; NULL if failed.
      */
-    static BlueprintType *Load(ItemFactory &factory, uint32 typeID);
+    static BlueprintType *Load(uint32 typeID);
 
     /*
      * Access functions:
@@ -123,7 +123,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static _Ty *_LoadType(ItemFactory &factory, uint32 typeID,
+    static _Ty *_LoadType(uint32 typeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data)
     {
@@ -135,7 +135,7 @@ protected:
 
         // pull additional blueprint data
         BlueprintTypeData bpData;
-        if( !factory.db().GetBlueprintType( typeID, bpData ) )
+        if( !sItemFactory.db().GetBlueprintType( typeID, bpData ) )
             return NULL;
 
         // obtain parent blueprint type (might be NULL)
@@ -143,23 +143,23 @@ protected:
         if( bpData.parentBlueprintTypeID != 0 )
         {
             // we have parent type, get it
-            parentBlueprintType = factory.GetBlueprintType( bpData.parentBlueprintTypeID );
+            parentBlueprintType = sItemFactory.GetBlueprintType( bpData.parentBlueprintTypeID );
             if( parentBlueprintType == NULL )
                 return NULL;
         }
 
         // obtain product type
-        const ItemType *productType = factory.GetType( bpData.productTypeID );
+        const ItemType *productType = sItemFactory.GetType( bpData.productTypeID );
         if( productType == NULL )
             return NULL;
 
         // create blueprint type
-        return _Ty::template _LoadBlueprintType<_Ty>( factory, typeID, group, data, parentBlueprintType, *productType, bpData );
+        return _Ty::template _LoadBlueprintType<_Ty>( typeID, group, data, parentBlueprintType, *productType, bpData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static _Ty *_LoadBlueprintType(ItemFactory &factory, uint32 typeID,
+    static _Ty *_LoadBlueprintType(uint32 typeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data,
         // BlueprintType stuff:
@@ -219,7 +219,7 @@ public:
      * @param[in] blueprintID ID of blueprint to load.
      * @return Pointer to new Blueprint object; NULL if failed.
      */
-    static BlueprintRef Load(ItemFactory &factory, uint32 blueprintID);
+    static BlueprintRef Load(uint32 blueprintID);
     /**
      * Spawns new blueprint.
      *
@@ -228,7 +228,7 @@ public:
      * @param[in] bpData Blueprint-specific data.
      * @return Pointer to new Blueprint object; NULL if failed.
      */
-    static BlueprintRef Spawn(ItemFactory &factory, ItemData &data, BlueprintData &bpData);
+    static BlueprintRef Spawn(ItemData &data, BlueprintData &bpData);
 
     /*
      * Public fields:
@@ -288,7 +288,6 @@ public:
 
 protected:
     Blueprint(
-        ItemFactory &_factory,
         uint32 _blueprintID,
         // InventoryItem stuff:
         const BlueprintType &_bpType,
@@ -304,7 +303,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 blueprintID,
+    static RefPtr<_Ty> _LoadItem(uint32 blueprintID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -319,22 +318,22 @@ protected:
 
         // we are blueprint; pull additional blueprint info
         BlueprintData bpData;
-        if( !factory.db().GetBlueprint( blueprintID, bpData ) )
+        if( !sItemFactory.db().GetBlueprint( blueprintID, bpData ) )
             return RefPtr<_Ty>();
 
-        return _Ty::template _LoadBlueprint<_Ty>( factory, blueprintID, bpType, data, bpData );
+        return _Ty::template _LoadBlueprint<_Ty>( blueprintID, bpType, data, bpData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadBlueprint(ItemFactory &factory, uint32 blueprintID,
+    static RefPtr<_Ty> _LoadBlueprint(uint32 blueprintID,
         // InventoryItem stuff:
         const BlueprintType &bpType, const ItemData &data,
         // Blueprint stuff:
         const BlueprintData &bpData
     );
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data,
         // Blueprint stuff:

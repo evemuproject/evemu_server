@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(DungeonExplorationMgrService)
 
-DungeonExplorationMgrService::DungeonExplorationMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "dungeonExplorationMgr"),
+DungeonExplorationMgrService::DungeonExplorationMgrService()
+: PyService("dungeonExplorationMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

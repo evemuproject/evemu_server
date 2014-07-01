@@ -33,7 +33,7 @@ class DungeonService
 : public PyService
 {
 public:
-    DungeonService(PyServiceMgr *mgr);
+    DungeonService();
     virtual ~DungeonService();
 
 protected:

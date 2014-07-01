@@ -32,7 +32,7 @@ class MissionMgrService
 : public PyService
 {
 public:
-    MissionMgrService(PyServiceMgr *mgr);
+    MissionMgrService();
     virtual ~MissionMgrService();
 
 protected:

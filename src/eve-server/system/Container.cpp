@@ -34,35 +34,34 @@
  * CargoContainer
  */
 CargoContainer::CargoContainer(
-    ItemFactory &_factory,
     uint32 _containerID,
     // InventoryItem stuff:
     const ItemType &_containerType,
     const ItemData &_data)
-: InventoryItem(_factory, _containerID, _containerType, _data) {}
+: InventoryItem(_containerID, _containerType, _data) {}
 
-CargoContainerRef CargoContainer::Load(ItemFactory &factory, uint32 containerID)
+CargoContainerRef CargoContainer::Load(uint32 containerID)
 {
-    return InventoryItem::Load<CargoContainer>( factory, containerID );
+    return InventoryItem::Load<CargoContainer>( containerID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> CargoContainer::_LoadCargoContainer(ItemFactory &factory, uint32 containerID,
+RefPtr<_Ty> CargoContainer::_LoadCargoContainer(uint32 containerID,
     // InventoryItem stuff:
     const ItemType &itemType, const ItemData &data)
 {
     // we don't need any additional stuff
-    return CargoContainerRef( new CargoContainer( factory, containerID, itemType, data ) );
+    return CargoContainerRef( new CargoContainer( containerID, itemType, data ) );
 }
 
-CargoContainerRef CargoContainer::Spawn(ItemFactory &factory,
+CargoContainerRef CargoContainer::Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
-    uint32 containerID = CargoContainer::_Spawn( factory, data );
+    uint32 containerID = CargoContainer::_Spawn( data );
     if( containerID == 0 )
         return CargoContainerRef();
-    CargoContainerRef containerRef = CargoContainer::Load( factory, containerID );
+    CargoContainerRef containerRef = CargoContainer::Load( containerID );
 
     // Create default dynamic attributes in the AttributeMap:
     containerRef->SetAttribute(AttrRadius,          containerRef->type().attributes.radius(), true);			// Radius
@@ -76,17 +75,17 @@ CargoContainerRef CargoContainer::Spawn(ItemFactory &factory,
 	return containerRef;
 }
 
-uint32 CargoContainer::_Spawn(ItemFactory &factory,
+uint32 CargoContainer::_Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
     // make sure it's a cargo container
-    const ItemType *st = factory.GetType(data.typeID);
+    const ItemType *st = sItemFactory.GetType(data.typeID);
     if(st == NULL)
         return 0;
 
     // store item data
-    uint32 containerID = InventoryItem::_Spawn(factory, data);
+    uint32 containerID = InventoryItem::_Spawn(data);
     if(containerID == 0)
         return 0;
 
@@ -98,7 +97,7 @@ uint32 CargoContainer::_Spawn(ItemFactory &factory,
 bool CargoContainer::_Load()
 {
     // load contents
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
         return false;
 
     return InventoryItem::_Load();
@@ -107,7 +106,7 @@ bool CargoContainer::_Load()
 void CargoContainer::Delete()
 {
     // delete contents first
-    DeleteContents( m_factory );
+    DeleteContents();
 
     InventoryItem::Delete();
 }
@@ -142,7 +141,7 @@ void CargoContainer::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, C
 
 PyObject *CargoContainer::CargoContainerGetInfo()
 {
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
     {
         codelog( ITEM__ERROR, "%s (%u): Failed to load contents for CargoContainerGetInfo", itemName().c_str(), itemID() );
         return NULL;
@@ -177,11 +176,9 @@ using namespace Destiny;
 ContainerEntity::ContainerEntity(
     CargoContainerRef container,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), container),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _containerRef = container;
     m_destiny->SetPosition(position, false);

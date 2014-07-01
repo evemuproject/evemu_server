@@ -28,8 +28,8 @@
 #include "apiserver/APICharacterManager.h"
 #include "inventory/AttributeEnum.h"
 
-APICharacterManager::APICharacterManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APICharacterManager::APICharacterManager()
+: APIServiceManager()
 {
 }
 

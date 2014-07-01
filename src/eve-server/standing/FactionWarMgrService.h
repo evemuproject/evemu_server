@@ -32,7 +32,7 @@
 class FactionWarMgrService : public PyService
 {
 public:
-    FactionWarMgrService(PyServiceMgr *mgr);
+    FactionWarMgrService();
     ~FactionWarMgrService();
 
     PyCallable_DECL_CALL(GetWarFactions)

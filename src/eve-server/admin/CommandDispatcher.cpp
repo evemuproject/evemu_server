@@ -29,8 +29,7 @@
 #include "PyCallable.h"
 #include "admin/CommandDispatcher.h"
 
-CommandDispatcher::CommandDispatcher( PyServiceMgr& services )
-: m_services( services )
+CommandDispatcher::CommandDispatcher()
 {
 }
 
@@ -85,7 +84,7 @@ PyResult CommandDispatcher::Execute( Client *from, const char* msg )
         throw PyException( MakeCustomError( "Access denied to command '%s'", sep.arg( 0 ).c_str() ) );
     }
 
-    return ( *rec->function )( from, &m_db, &m_services, sep );
+    return ( *rec->function )( from, &m_db, sep );
 }
 
 void CommandDispatcher::AddCommand( const char* cmd, const char* desc, uint64 required_role, CommandFunc function )

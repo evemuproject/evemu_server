@@ -45,14 +45,13 @@ class EntityList;
 
 class PyService : public PyCallable {
 public:
-    PyService(PyServiceMgr *mgr, const char *serviceName);
+    PyService(const char *serviceName);
     virtual ~PyService();
 
     //overload Callable for binding:
     virtual PyResult Call(const std::string &method, PyCallArgs &args);
 
     const char *GetName() const { return(m_name.c_str()); }
-    EntityList &entityList() const { return(m_manager->entity_list); }
 
 protected:
     typedef enum {    //enum to make sure the caller uses legit values.
@@ -88,8 +87,6 @@ protected:
     //some service-level remote calls, need to be reworked:
     virtual PyResult Handle_MachoResolveObject(PyCallArgs &call);
     virtual PyResult Handle_MachoBindObject(PyCallArgs &call);
-
-    PyServiceMgr *const m_manager;
 
 private:
     std::string m_name;

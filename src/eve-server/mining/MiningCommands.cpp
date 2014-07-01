@@ -34,7 +34,7 @@
 uint32 GetAsteroidType( double p, const std::map<double, uint32>& roids );
 void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const GVector& position );
 
-PyResult Command_roid( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_roid( Client* who, CommandDB* db, const Seperator& args )
 {
     if( !args.isNumber( 1 ) )
         throw PyException( MakeCustomError( "Argument 1 should be an item type ID" ) );
@@ -60,7 +60,7 @@ PyResult Command_roid( Client* who, CommandDB* db, PyServiceMgr* services, const
     return new PyString( "Spawn successsfull." );
 }
 
-PyResult Command_spawnbelt( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_spawnbelt( Client* who, CommandDB* db, const Seperator& args )
 {
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You must be in space to spawn things." ) );
@@ -108,7 +108,7 @@ PyResult Command_spawnbelt( Client* who, CommandDB* db, PyServiceMgr* services, 
     return new PyString( "Spawn successsfull." );
 }
 
-PyResult Command_growbelt( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
+PyResult Command_growbelt( Client* who, CommandDB* db, const Seperator& args )
 {
     throw PyException( MakeCustomError( "Not implemented yet." ) );
 }
@@ -137,7 +137,7 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const G
                     "",    //name
                     position );
 
-    InventoryItemRef i = system->itemFactory().SpawnItem( idata );
+    InventoryItemRef i = sItemFactory.SpawnItem( idata );
     if( !i )
         throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 
@@ -158,7 +158,7 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const G
 
     // TODO: Rework this code now that
     AsteroidEntity* new_roid = NULL;
-    new_roid = new AsteroidEntity( i, system, *(system->GetServiceMgr()), position );
+    new_roid = new AsteroidEntity( i, system, position );
     if( new_roid != NULL )
         sLog.Debug( "SpawnAsteroid()", "Spawned new asteroid of radius= %fm and volume= %f m3", radius, volume );
     //TODO: check for a local asteroid belt object?

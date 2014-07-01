@@ -41,7 +41,7 @@ public:
         : PyCallableDispatcher<LookupSvcBound>(c) {}
     };
 
-    LookupSvcBound(PyServiceMgr *mgr, LookupSvcDB *db)
+    LookupSvcBound(LookupSvcDB *db)
     : PyBoundObject(mgr, "LookupSvcBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -68,8 +68,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(LookupService)
 
-LookupService::LookupService(PyServiceMgr *mgr)
-: PyService(mgr, "lookupSvc"),
+LookupService::LookupService()
+: PyService("lookupSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -98,7 +98,7 @@ PyBoundObject* LookupService::_CreateBoundObject( Client* c, const PyRep* bind_a
     _log( CLIENT__MESSAGE, "LookupService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new LookupSvcBound( m_manager, &m_db );
+    return new LookupSvcBound( &m_db );
 }*/
 
 PyResult LookupService::Handle_LookupEvePlayerCharacters(PyCallArgs& call) {

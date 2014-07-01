@@ -28,8 +28,8 @@
 #include "EntityList.h"
 #include "apiserver/APIServerManager.h"
 
-APIServerManager::APIServerManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIServerManager::APIServerManager()
+: APIServiceManager()
 {
 }
 
@@ -57,7 +57,7 @@ std::tr1::shared_ptr<std::string> APIServerManager::ProcessCall(const APICommand
 
 std::tr1::shared_ptr<std::string> APIServerManager::_ServerStatus(const APICommandCall * pAPICommandCall)
 {
-    uint32 playersOnline = services().entity_list.GetClientCount();
+    uint32 playersOnline = sEntityList.GetClientCount();
     std::string playersOnlineStr( itoa( playersOnline ) );
 
     _BuildXMLHeader();

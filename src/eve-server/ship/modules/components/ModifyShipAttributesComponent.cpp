@@ -49,7 +49,7 @@ void ModifyShipAttributesComponent::ModifyShipAttribute(uint32 targetAttrID, uin
 void ModifyShipAttributesComponent::ModifyTargetShipAttribute(uint32 targetItemID, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type )
 {
     //find the ship
-    ShipRef target = m_Ship->GetItemFactory()->GetShip(targetItemID);
+    ShipRef target = sItemFactory.GetShip(targetItemID);
 
     //check if we found the ship
     if( target == 0)

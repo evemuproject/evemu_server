@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(AlertService)
 
-AlertService::AlertService(PyServiceMgr *mgr)
-: PyService(mgr, "alert"),
+AlertService::AlertService()
+: PyService("alert"),
   m_dispatch(new Dispatcher(this)),
   traceLogger(NULL)
 {

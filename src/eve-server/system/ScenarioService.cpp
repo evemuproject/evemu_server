@@ -35,7 +35,7 @@ public:
 
     PyCallable_Make_Dispatcher(ScenarioBound)
 
-    ScenarioBound(PyServiceMgr *mgr, ScenarioDB *db)
+    ScenarioBound(ScenarioDB *db)
     : PyBoundObject(mgr, "ScenarioBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -62,8 +62,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(ScenarioService)
 
-ScenarioService::ScenarioService(PyServiceMgr *mgr)
-: PyService(mgr, "scenario"),
+ScenarioService::ScenarioService()
+: PyService("scenario"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -81,7 +81,7 @@ PyBoundObject *ScenarioService::_CreateBoundObject(Client *c, const PyRep *bind_
     _log(CLIENT__MESSAGE, "ScenarioService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new ScenarioBound(m_manager, &m_db));
+    return(new ScenarioBound(&m_db));
 }*/
 
 

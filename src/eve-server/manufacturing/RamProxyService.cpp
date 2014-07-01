@@ -31,8 +31,8 @@
 
 PyCallable_Make_InnerDispatcher(RamProxyService)
 
-RamProxyService::RamProxyService(PyServiceMgr *mgr)
-: PyService(mgr, "ramProxy"),
+RamProxyService::RamProxyService()
+: PyService("ramProxy"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -126,7 +126,7 @@ PyResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
     }
 
     // load installed item
-    InventoryItemRef installedItem = m_manager->item_factory.GetItem( args.installedItemID );
+    InventoryItemRef installedItem = sItemFactory.GetItem( args.installedItemID );
     if( !installedItem )
         return NULL;
 
@@ -264,7 +264,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
         return NULL;
 
     // return item
-    InventoryItemRef installedItem = m_manager->item_factory.GetItem( installedItemID );
+    InventoryItemRef installedItem = sItemFactory.GetItem( installedItemID );
     if( !installedItem )
         return NULL;
     installedItem->Move( installedItem->locationID(), outputFlag );
@@ -291,7 +291,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
                 quantity
             );
 
-            InventoryItemRef item = m_manager->item_factory.SpawnItem( idata );
+            InventoryItemRef item = sItemFactory.SpawnItem( idata );
             if( !item )
                 return NULL;
 
@@ -316,7 +316,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
                     bp->productType().portionSize() * runs
                 );
 
-                InventoryItemRef item = m_manager->item_factory.SpawnItem( idata );
+                InventoryItemRef item = sItemFactory.SpawnItem( idata );
                 if( !item )
                     return NULL;
 
@@ -358,7 +358,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
                     licensedProductionRuns
                 );
 
-                BlueprintRef copy = m_manager->item_factory.SpawnBlueprint( idata, bdata );
+                BlueprintRef copy = sItemFactory.SpawnBlueprint( idata, bdata );
                 if( !copy )
                     return NULL;
 
@@ -464,7 +464,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
             if(productTypeID == NULL)
                 throw(PyException(MakeUserError("RamInventionNoOutput")));
 
-            productType = m_manager->item_factory.type(productTypeID);
+            productType = sItemFactory.type(productTypeID);
             break;
         } */
         default: {
@@ -701,7 +701,7 @@ void RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const
             if(GetSkillLevel(skills, cur->typeID) < cur->quantity) {
                 std::map<std::string, PyRep *> args;
                 args["item"] = new PyString(
-                    m_manager->item_factory.type(cur->typeID)->name().c_str()
+                    sItemFactory.type(cur->typeID)->name().c_str()
                 );
                 args["skillLevel"] = new PyInt(cur->quantity);
 
@@ -732,7 +732,7 @@ void RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const
             if(qtyNeeded > 0) {
                 std::map<std::string, PyRep *> args;
                 args["item"] = new PyString(
-                    m_manager->item_factory.GetType(cur->typeID)->name().c_str()
+                    sItemFactory.GetType(cur->typeID)->name().c_str()
                 );
 
                 throw(PyException(MakeUserError("RamNeedMoreForJob", args)));
@@ -953,7 +953,7 @@ void RamProxyService::_EncodeMissingMaterials(const std::vector<RequiredItem> &r
 
 void RamProxyService::_GetBOMItems(const PathElement &bomLocation, std::vector<InventoryItemRef> &into)
 {
-    Inventory *inventory = m_manager->item_factory.GetInventory( bomLocation.locationID );
+    Inventory *inventory = sItemFactory.GetInventory( bomLocation.locationID );
     if( inventory != NULL )
         inventory->FindByFlag( (EVEItemFlags)bomLocation.flag, into );
 }

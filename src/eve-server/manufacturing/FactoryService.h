@@ -32,7 +32,7 @@
 class FactoryService : public PyService
 {
 public:
-    FactoryService(PyServiceMgr *mgr);
+    FactoryService();
     virtual ~FactoryService();
 
 private:

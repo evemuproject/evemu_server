@@ -33,7 +33,7 @@ class ReprocessingServiceBound
 : public PyBoundObject
 {
 public:
-    ReprocessingServiceBound(PyServiceMgr *mgr, ReprocessingDB& db, uint32 stationID);
+    ReprocessingServiceBound(ReprocessingDB& db, uint32 stationID);
     virtual ~ReprocessingServiceBound();
 
     PyCallable_DECL_CALL(GetOptionsForItemTypes)
@@ -63,8 +63,8 @@ PyCallable_Make_InnerDispatcher(ReprocessingServiceBound)
 
 PyCallable_Make_InnerDispatcher(ReprocessingService)
 
-ReprocessingService::ReprocessingService(PyServiceMgr *mgr)
-: PyService(mgr, "reprocessingSvc"),
+ReprocessingService::ReprocessingService()
+: PyService("reprocessingSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -87,7 +87,7 @@ PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *b
         return NULL;
     }
 
-    ReprocessingServiceBound *obj = new ReprocessingServiceBound(m_manager, m_db, stationID);
+    ReprocessingServiceBound *obj = new ReprocessingServiceBound(m_db, stationID);
     if(!obj->Load()) {
         _log(SERVICE__ERROR, "Failed to load static info for station %u.", stationID);
         delete obj;
@@ -98,8 +98,8 @@ PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *b
 
 //******************************************************************************
 
-ReprocessingServiceBound::ReprocessingServiceBound(PyServiceMgr *mgr, ReprocessingDB& db, uint32 stationID)
-: PyBoundObject(mgr),
+ReprocessingServiceBound::ReprocessingServiceBound(ReprocessingDB& db, uint32 stationID)
+: PyBoundObject(),
   m_dispatch(new Dispatcher(this)),
   m_db(db),
   m_stationID(stationID),
@@ -231,7 +231,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
     cur = call_args.items.begin();
     end = call_args.items.end();
     for(; cur != end; cur++) {
-        InventoryItemRef item = m_manager->item_factory.GetItem( *cur );
+        InventoryItemRef item = sItemFactory.GetItem( *cur );
         if( !item )
             continue;
 
@@ -271,7 +271,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
                 quantity
             );
 
-            InventoryItemRef i = m_manager->item_factory.SpawnItem( idata );
+            InventoryItemRef i = sItemFactory.SpawnItem( idata );
             if( !i )
                 continue;
 
@@ -320,7 +320,7 @@ double ReprocessingServiceBound::_CalcReprocessingEfficiency(const Client *c, In
 }
 
 PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const {
-    InventoryItemRef item = m_manager->item_factory.GetItem( itemID );
+    InventoryItemRef item = sItemFactory.GetItem( itemID );
     if( !item )
         return NULL;    // No action as GetQuote is also called for reprocessed items (probably for check)
 

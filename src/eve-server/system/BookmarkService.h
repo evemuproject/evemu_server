@@ -41,7 +41,7 @@ public:
     uint32 GetNextAvailableBookmarkID();
     uint32 GetNextAvailableFolderID();
 
-    BookmarkService(PyServiceMgr *mgr);
+    BookmarkService();
     virtual ~BookmarkService();
 
     bool LookupBookmark(uint32 characterID, uint32 bookmarkID, uint32 &itemID, uint32 &typeID, double &x, double &y, double &z);

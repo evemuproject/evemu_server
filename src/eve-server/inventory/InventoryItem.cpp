@@ -114,16 +114,14 @@ ItemData::ItemData(
  * InventoryItem
  */
 InventoryItem::InventoryItem(
-    ItemFactory &_factory,
     uint32 _itemID,
     const ItemType &_type,
     const ItemData &_data)
 : RefObject( 0 ),
-  //attributes(_factory, *this, true, true),
+  //attributes(*this, true, true),
   mAttributeMap(*this),
   mDefaultAttributeMap(*this,true),
   m_saveTimer(0,true),
-  m_factory(_factory),
   m_itemID(_itemID),
   m_itemName(_data.name),
   m_type(_type),
@@ -156,16 +154,16 @@ InventoryItem::~InventoryItem()
     //SaveItem();
 }
 
-InventoryItemRef InventoryItem::Load(ItemFactory &factory, uint32 itemID)
+InventoryItemRef InventoryItem::Load(uint32 itemID)
 {
-    return InventoryItem::Load<InventoryItem>( factory, itemID );
+    return InventoryItem::Load<InventoryItem>( itemID );
 }
 
-InventoryItemRef InventoryItem::LoadEntity(ItemFactory &factory, uint32 itemID, const ItemData &data)
+InventoryItemRef InventoryItem::LoadEntity(uint32 itemID, const ItemData &data)
 {
-    const ItemType *type = factory.GetType( data.typeID );
+    const ItemType *type = sItemFactory.GetType( data.typeID );
 
-	InventoryItemRef itemRef = InventoryItemRef( new InventoryItem(factory, itemID, *type, data) );
+	InventoryItemRef itemRef = InventoryItemRef( new InventoryItem(itemID, *type, data) );
 
 	itemRef->_Load();
 
@@ -173,7 +171,7 @@ InventoryItemRef InventoryItem::LoadEntity(ItemFactory &factory, uint32 itemID, 
 }
 
 template<class _Ty>
-RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
+RefPtr<_Ty> InventoryItem::_LoadItem(uint32 itemID,
     // InventoryItem stuff:
     const ItemType &type, const ItemData &data)
 {
@@ -200,7 +198,7 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
         // Blueprint:
         ///////////////////////////////////////
         case EVEDB::invCategories::Blueprint: {
-            return Blueprint::_LoadItem<Blueprint>( factory, itemID, type, data );
+            return Blueprint::_LoadItem<Blueprint>( itemID, type, data );
         }
 
         ///////////////////////////////////////
@@ -208,7 +206,7 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
         ///////////////////////////////////////
         case EVEDB::invCategories::Entity: {
             if( (type.groupID() == EVEDB::invGroups::Spawn_Container) )
-                return CargoContainerRef( new CargoContainer( factory, itemID, type, data ) );
+                return CargoContainerRef( new CargoContainer( itemID, type, data ) );
             else
 				if( (type.groupID() >= EVEDB::invGroups::Asteroid_Angel_Cartel_Frigate
 							&& type.groupID() <= EVEDB::invGroups::Deadspace_Serpentis_Frigate) 
@@ -220,9 +218,9 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
 							&& type.groupID() <= 852 /* Asteroid Serpentis Commander Battleship */)
 							|| (type.groupID() >= 959 /* Deadspace Sleeper Sleepless Sentinel */
 							&& type.groupID() <= 987 /* Deadspace Sleeper Emergent Patroller */) )
-					return InventoryItemRef( new InventoryItem(factory, itemID, type, data) );
+					return InventoryItemRef( new InventoryItem(itemID, type, data) );
 				else
-					return CelestialObjectRef( new CelestialObject( factory, itemID, type, data ) );
+					return CelestialObjectRef( new CelestialObject( itemID, type, data ) );
         }
 
         ///////////////////////////////////////
@@ -234,30 +232,30 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
                 || (type.groupID() == EVEDB::invGroups::Freight_Container)
                 || (type.groupID() == EVEDB::invGroups::Cargo_Container)
                 || (type.groupID() == EVEDB::invGroups::Wreck) )
-                return CargoContainerRef( new CargoContainer( factory, itemID, type, data ) );
+                return CargoContainerRef( new CargoContainer( itemID, type, data ) );
             else
-                return CelestialObjectRef( new CelestialObject( factory, itemID, type, data ) );
+                return CelestialObjectRef( new CelestialObject( itemID, type, data ) );
         }
 
         ///////////////////////////////////////
         // Ship:
         ///////////////////////////////////////
         case EVEDB::invCategories::Ship: {
-            return Ship::_LoadItem<Ship>( factory, itemID, type, data );
+            return Ship::_LoadItem<Ship>( itemID, type, data );
         }
 
         ///////////////////////////////////////
         // Skill:
         ///////////////////////////////////////
         case EVEDB::invCategories::Skill: {
-            return Skill::_LoadItem<Skill>( factory, itemID, type, data );
+            return Skill::_LoadItem<Skill>( itemID, type, data );
         }
 
         ///////////////////////////////////////
         // Owner:
         ///////////////////////////////////////
         case EVEDB::invCategories::Owner: {
-            return Owner::_LoadItem<Owner>( factory, itemID, type, data );
+            return Owner::_LoadItem<Owner>( itemID, type, data );
         }
     }
 
@@ -267,12 +265,12 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
         // Station:
         ///////////////////////////////////////
         case EVEDB::invGroups::Station: {
-            return Station::_LoadItem<Station>( factory, itemID, type, data );
+            return Station::_LoadItem<Station>( itemID, type, data );
         }
     }
 
     // Generic item, create one:
-    return InventoryItemRef( new InventoryItem( factory, itemID, type, data ) );
+    return InventoryItemRef( new InventoryItem( itemID, type, data ) );
 }
 
 bool InventoryItem::_Load()
@@ -282,17 +280,17 @@ bool InventoryItem::_Load()
 	mDefaultAttributeMap.Load();
 
     // update inventory
-    Inventory *inventory = m_factory.GetInventory( locationID(), false );
+    Inventory *inventory = sItemFactory.GetInventory( locationID(), false );
     if( inventory != NULL )
         inventory->AddItem( InventoryItemRef( this ) );
 
     return true;
 }
 
-InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
+InventoryItemRef InventoryItem::Spawn(ItemData &data)
 {
     // obtain type of new item
-    const ItemType *t = factory.GetType( data.typeID );
+    const ItemType *t = sItemFactory.GetType( data.typeID );
     if( t == NULL )
         return InventoryItemRef();
 
@@ -315,10 +313,10 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         ///////////////////////////////////////
         case EVEDB::invCategories::Entity: {
 			// Spawn generic item for Entities at this time:
-			uint32 itemID = InventoryItem::_SpawnEntity( factory, data );
+			uint32 itemID = InventoryItem::_SpawnEntity( data );
 			if( itemID == 0 )
 				return InventoryItemRef();
-			InventoryItemRef itemRef = InventoryItem::LoadEntity( factory, itemID, data );
+			InventoryItemRef itemRef = InventoryItem::LoadEntity( itemID, data );
 			return itemRef;
 		}
 
@@ -328,7 +326,7 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Blueprint: {
             BlueprintData bdata; // use default blueprint attributes
 
-            BlueprintRef blueRef = Blueprint::Spawn( factory, data, bdata );
+            BlueprintRef blueRef = Blueprint::Spawn( data, bdata );
             blueRef.get()->SaveAttributes();
 
             return blueRef;
@@ -349,11 +347,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
                 || (t->groupID() == EVEDB::invGroups::Wreck) )
             {
                 // Spawn new Cargo Container
-                uint32 itemID = CargoContainer::_Spawn( factory, data );
+                uint32 itemID = CargoContainer::_Spawn( data );
                 if( itemID == 0 )
                     return CargoContainerRef();
 
-                CargoContainerRef cargoRef = CargoContainer::Load( factory, itemID );
+                CargoContainerRef cargoRef = CargoContainer::Load( itemID );
 
                 // THESE SHOULD BE MOVED INTO A CargoContainer::Spawn() function that does not exist yet
                 // Create default dynamic attributes in the AttributeMap:
@@ -368,18 +366,18 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
                 cargoRef.get()->SaveAttributes();
 
                 return cargoRef;
-                //uint32 itemID = InventoryItem::_Spawn( factory, data );
+                //uint32 itemID = InventoryItem::_Spawn( data );
                 //if( itemID == 0 )
                 //    return InventoryItemRef();
-                //return InventoryItem::Load( factory, itemID );
+                //return InventoryItem::Load( itemID );
             }
             else
             {
                 // Spawn new Celestial Object
-                uint32 itemID = CelestialObject::_Spawn( factory, data );
+                uint32 itemID = CelestialObject::_Spawn( data );
                 if( itemID == 0 )
                     return CelestialObjectRef();
-                CelestialObjectRef celestialRef = CelestialObject::Load( factory, itemID );
+                CelestialObjectRef celestialRef = CelestialObject::Load( itemID );
                 celestialRef.get()->SaveAttributes();
 
                 return celestialRef;
@@ -390,7 +388,7 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         // Ship:
         ///////////////////////////////////////
         case EVEDB::invCategories::Ship: {
-            ShipRef shipRef = Ship::Spawn( factory, data );
+            ShipRef shipRef = Ship::Spawn( data );
             shipRef.get()->SaveAttributes();
 
             return shipRef;
@@ -400,7 +398,7 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         // Skill:
         ///////////////////////////////////////
         case EVEDB::invCategories::Skill: {
-            return Skill::Spawn( factory, data );
+            return Skill::Spawn( data );
         }
 
         ///////////////////////////////////////
@@ -408,7 +406,7 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         ///////////////////////////////////////
         case EVEDB::invCategories::Owner:
         {
-            return Owner::Spawn( factory, data );
+            return Owner::Spawn( data );
         }
 
         ///////////////////////////////////////
@@ -417,11 +415,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Charge:
 		{
             // Spawn generic item:
-            uint32 itemID = InventoryItem::_Spawn( factory, data );
+            uint32 itemID = InventoryItem::_Spawn( data );
             if( itemID == 0 )
                 return InventoryItemRef();
 
-            InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO A Charge::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -442,11 +440,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Module:
         {
             // Spawn generic item:
-            uint32 itemID = InventoryItem::_Spawn( factory, data );
+            uint32 itemID = InventoryItem::_Spawn( data );
             if( itemID == 0 )
                 return InventoryItemRef();
 
-            InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO A Module::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -467,11 +465,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Drone:
         {
             // Spawn generic item:
-            uint32 itemID = InventoryItem::_Spawn( factory, data );
+            uint32 itemID = InventoryItem::_Spawn( data );
             if( itemID == 0 )
                 return InventoryItemRef();
 
-            InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO A Drone::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -494,11 +492,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Deployable:
         {
             // Spawn generic item:
-            uint32 itemID = InventoryItem::_Spawn( factory, data );
+            uint32 itemID = InventoryItem::_Spawn( data );
             if( itemID == 0 )
                 return InventoryItemRef();
 
-            InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO A Deployable::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -521,11 +519,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Asteroid:
         {
             // Spawn generic item:
-            uint32 itemID = InventoryItem::_Spawn( factory, data );
+            uint32 itemID = InventoryItem::_Spawn( data );
             if( itemID == 0 )
                 return InventoryItemRef();
 
-            InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO AN Asteroid::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -544,11 +542,11 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Structure:
         {
             // Spawn generic item:
-            uint32 itemID = InventoryItem::_Spawn( factory, data );
+            uint32 itemID = InventoryItem::_Spawn( data );
             if( itemID == 0 )
                 return InventoryItemRef();
 
-            InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO A Structure::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -573,12 +571,12 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invGroups::Station: {
             //_log( ITEM__ERROR, "Refusing to create station '%s'.", data.name.c_str() );
             //return InventoryItemRef();
-            //return Station::Spawn( factory, data );
-            uint32 itemID = Station::_Spawn( factory, data );
+            //return Station::Spawn( data );
+            uint32 itemID = Station::_Spawn( data );
             if( itemID == 0 )
                 return StationRef();
 
-            StationRef stationRef = Station::Load( factory, itemID );
+            StationRef stationRef = Station::Load( itemID );
 
             // THESE SHOULD BE MOVED INTO A Station::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
@@ -597,10 +595,10 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
     }
 
     // Spawn generic item:
-    uint32 itemID = InventoryItem::_Spawn( factory, data );
+    uint32 itemID = InventoryItem::_Spawn( data );
     if( itemID == 0 )
         return InventoryItemRef();
-    InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+    InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
 	// Create some basic attributes that are NOT found in dgmTypeAttributes for most items, yet most items DO need:
     itemRef.get()->SetAttribute(AttrIsOnline,    1);                                              // Is Online
@@ -614,13 +612,13 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
     return itemRef;
 }
 
-uint32 InventoryItem::_Spawn(ItemFactory &factory,
+uint32 InventoryItem::_Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
     // obtain type of new item
     // this also checks that the type is valid
-    const ItemType *t = factory.GetType(data.typeID);
+    const ItemType *t = sItemFactory.GetType(data.typeID);
     if(t == NULL)
         return 0;
 
@@ -629,19 +627,19 @@ uint32 InventoryItem::_Spawn(ItemFactory &factory,
         data.name = t->name();
 
     // insert new entry into DB
-    return factory.db().NewItem(data);
+    return sItemFactory.db().NewItem(data);
 }
 
 // This Spawn function is meant for in-memory only items created from the
 // EVEDB::invCategories::Entity category, items meant to never be saved to database
 // and be thrown away on server shutdown.
-uint32 InventoryItem::_SpawnEntity(ItemFactory &factory,
+uint32 InventoryItem::_SpawnEntity(
     // InventoryItem stuff:
     ItemData &data
 ) {
     // obtain type of new item
     // this also checks that the type is valid
-    const ItemType *t = factory.GetType(data.typeID);
+    const ItemType *t = sItemFactory.GetType(data.typeID);
     if(t == NULL)
         return 0;
 
@@ -650,7 +648,7 @@ uint32 InventoryItem::_SpawnEntity(ItemFactory &factory,
         data.name = t->name();
 
     // Get a new Entity ID from ItemFactory's ID Authority:
-	return factory.GetNextEntityID();
+	return sItemFactory.GetNextEntityID();
 }
 
 void InventoryItem::Delete() {
@@ -661,13 +659,13 @@ void InventoryItem::Delete() {
 
     //take ourself out of the DB
     //attributes.Delete();
-    m_factory.db().DeleteItem( itemID() );
+    sItemFactory.db().DeleteItem( itemID() );
 
     mAttributeMap.Delete();
     mDefaultAttributeMap.Delete();
 
     //delete ourselves from factory cache
-    m_factory._DeleteItem( itemID() );
+    sItemFactory._DeleteItem( itemID() );
 }
 
 PyPackedRow* InventoryItem::GetItemStatusRow() const
@@ -817,7 +815,7 @@ void InventoryItem::Move(uint32 new_location, EVEItemFlags new_flag, bool notify
         return; //nothing to do...
 
     //first, take myself out of my old inventory, if its loaded.
-    Inventory *old_inventory = m_factory.GetInventory( old_location, false );
+    Inventory *old_inventory = sItemFactory.GetInventory( old_location, false );
     if(old_inventory != NULL)
         old_inventory->RemoveItem( InventoryItemRef( this ) );  //releases its ref
 
@@ -825,7 +823,7 @@ void InventoryItem::Move(uint32 new_location, EVEItemFlags new_flag, bool notify
     m_flag = new_flag;
 
     //then make sure that my new inventory is updated, if its loaded.
-    Inventory *new_inventory = m_factory.GetInventory( new_location, false );
+    Inventory *new_inventory = sItemFactory.GetInventory( new_location, false );
     if( new_inventory != NULL )
         new_inventory->AddItem( InventoryItemRef( this ) ); //makes a new ref
 
@@ -920,7 +918,7 @@ InventoryItemRef InventoryItem::Split(int32 qty_to_take, bool notify) {
         qty_to_take
     );
 
-    InventoryItemRef res = m_factory.SpawnItem(idata);
+    InventoryItemRef res = sItemFactory.SpawnItem(idata);
     if(notify)
         res->Move( locationID(), flag() );
 
@@ -1007,7 +1005,7 @@ void InventoryItem::SaveItem()
 
     SaveAttributes();
 
-    m_factory.db().SaveItem(
+    sItemFactory.db().SaveItem(
         itemID(),
         ItemData(
             itemName().c_str(),
@@ -1027,7 +1025,7 @@ void InventoryItem::SaveItem()
 //contents of changes are consumed and cleared
 void InventoryItem::SendItemChange(uint32 toID, std::map<int32, PyRep *> &changes) const {
     //TODO: figure out the appropriate list of interested people...
-    Client *c = m_factory.entity_list.FindCharacter(toID);
+    Client *c = sEntityList.FindCharacter(toID);
     if(c == NULL)
         return; //not found or not online...
 

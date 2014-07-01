@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(MarketProxyService)
 
-MarketProxyService::MarketProxyService(PyServiceMgr *mgr)
-: PyService(mgr, "marketProxy"),
+MarketProxyService::MarketProxyService()
+: PyService("marketProxy"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -63,7 +63,7 @@ PyBoundObject *MarketProxyService::_CreateBoundObject(Client *c, const PyRep *bi
     _log(MARKET__MESSAGE, "MarketProxyService bind request for:");
     bind_args->Dump(MARKET__MESSAGE, "    ");
 
-    return(new MarketProxyBound(m_manager, &m_db));
+    return(new MarketProxyBound(&m_db));
 }*/
 
 
@@ -133,19 +133,19 @@ PyResult MarketProxyService::Handle_GetMarketGroups(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetMarketGroups");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if(!sManager.cache_service->IsCacheLoaded(method_id)) {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetMarketGroups();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        sManager.cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = sManager.cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -187,10 +187,10 @@ PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
 #   pragma message( "TODO: temporary solution, make cache objects with arguments" )
 
 #    pragma message("TODO: need to check if cache is refreshed when marker orders change.")
-//    m_manager->cache_service->InvalidateCache(method_id);
+//    sManager.cache_service->InvalidateCache(method_id);
     
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id))
+    if(!sManager.cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
         uint32 locid = call.client->GetSystemID();
@@ -212,12 +212,12 @@ PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        sManager.cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = sManager.cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -366,7 +366,7 @@ PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
         //sell order
 
         //verify that they actually have the item in the quantity specified...
-        InventoryItemRef item = m_manager->item_factory.GetItem( args.itemID );
+        InventoryItemRef item = sItemFactory.GetItem( args.itemID );
         if( !item ) {
             codelog(MARKET__ERROR, "%s: Failed to find item %d for sell order.", call.client->GetName(), args.itemID);
             call.client->SendErrorMsg("Unable to find items %d to sell!", args.itemID);
@@ -549,7 +549,7 @@ PyResult MarketProxyService::Handle_CancelCharOrder(PyCallArgs &call) {
     }
     else
     {
-        InventoryItemRef new_item = m_manager->item_factory.SpawnItem(idata);
+        InventoryItemRef new_item = sItemFactory.SpawnItem(idata);
         //use the owner change packet to alert the buyer of the new item
         new_item->ChangeOwner(call.client->GetCharacterID(), true);
     }
@@ -625,7 +625,7 @@ void MarketProxyService::_SendOnMarketRefresh(Client *who) {
 
 void MarketProxyService::_BroadcastOnOwnOrderChanged(uint32 regionID, uint32 orderID, const char *action, bool isCorp, PyRep* order) {
     std::vector<Client *> clients;
-    m_manager->entity_list.FindByRegionID(regionID, clients);
+    sEntityList.FindByRegionID(regionID, clients);
     std::vector<Client *>::iterator cur, end;
     cur = clients.begin();
     end = clients.end();
@@ -638,7 +638,7 @@ void MarketProxyService::_BroadcastOnOwnOrderChanged(uint32 regionID, uint32 ord
 
 void MarketProxyService::_BroadcastOnMarketRefresh(uint32 regionID) {
     std::vector<Client *> clients;
-    m_manager->entity_list.FindByRegionID(regionID, clients);
+    sEntityList.FindByRegionID(regionID, clients);
     std::vector<Client *>::iterator cur, end;
     cur = clients.begin();
     end = clients.end();
@@ -652,7 +652,7 @@ void MarketProxyService::_InvalidateOrdersCache(uint32 typeID)
     std::string method_name ("GetOrders_");
     method_name += itoa(typeID);
     ObjectCachedMethodID method_id(GetName(), method_name.c_str());
-    m_manager->cache_service->InvalidateCache( method_id );
+    sManager.cache_service->InvalidateCache( method_id );
 }
 
 //NOTE: there are a lot of race conditions to deal with here if we ever
@@ -713,7 +713,7 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
     seller->AddBalance(money);
     //TODO: record this in the wallet history.
 
-    Client *buyer = m_manager->entity_list.FindCharacter(orderOwnerID);
+    Client *buyer = sEntityList.FindCharacter(orderOwnerID);
     if(quantity == qtyReq) {
         _log(MARKET__TRACE, "%s: Completely satisfied order %u, deleting.", seller->GetName(), buy_order_id);
         PyRep* order = m_db.GetOrderRow(buy_order_id);
@@ -785,13 +785,13 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
         quantity
     );
 
-    InventoryItemRef new_item = m_manager->item_factory.SpawnItem(idata);
+    InventoryItemRef new_item = sItemFactory.SpawnItem(idata);
     //use the owner change packet to alert the buyer of the new item
     new_item->ChangeOwner(buyer->GetCharacterID(), true);
 
     //give the money to the seller...
     //TODO: take off market overhead fees...
-    Client *seller = m_manager->entity_list.FindCharacter(orderOwnerID);
+    Client *seller = sEntityList.FindCharacter(orderOwnerID);
     if(seller != NULL) {
         //the seller is logged in, send them a notification...
         if(!seller->AddBalance(money))

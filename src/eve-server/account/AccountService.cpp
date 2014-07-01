@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(AccountService)
 
-AccountService::AccountService(PyServiceMgr *mgr)
-: PyService(mgr, "account"),
+AccountService::AccountService()
+: PyService("account"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -108,19 +108,19 @@ PyResult AccountService::Handle_GetEntryTypes(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetEntryTypes");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if(!sManager.cache_service->IsCacheLoaded(method_id)) {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetEntryTypes();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        sManager.cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = sManager.cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -131,19 +131,19 @@ PyResult AccountService::Handle_GetKeyMap(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetKeyMap");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if(!sManager.cache_service->IsCacheLoaded(method_id)) {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetKeyMap();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        sManager.cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = sManager.cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -173,7 +173,7 @@ PyResult AccountService::Handle_GiveCash(PyCallArgs &call) {
 
     //NOTE: this will need work once we reorganize the entity list...
     bool targetIsChar;
-    Client *other = m_manager->entity_list.FindCharacter(args.destination);
+    Client *other = sEntityList.FindCharacter(args.destination);
     if(other == NULL) {
         // then the money has to be sent to a corporation...
         // check this too
@@ -232,7 +232,7 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
 
     MulticastTarget mct;
     mct.corporations.insert(corpID);
-    m_manager->entity_list.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
+    sEntityList.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
 
     //record the transactions in the wallet.
     if(!m_db.GiveCash(
@@ -398,7 +398,7 @@ PyResult AccountService::Handle_GiveCashFromCorpAccount(PyCallArgs &call) {
     }
 
     //NOTE: this will need work once we reorganize the entity list...
-    Client *other = m_manager->entity_list.FindCharacter(args.destination);
+    Client *other = sEntityList.FindCharacter(args.destination);
     if(other == NULL) {
         _log(CLIENT__ERROR, "%s: Failed to find character %u", call.client->GetName(), args.destination);
         call.client->SendErrorMsg("Unable to find the target");
@@ -433,7 +433,7 @@ PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * con
 
     MulticastTarget mct;
     mct.corporations.insert(corpID);
-    m_manager->entity_list.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
+    sEntityList.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
 
     if(!other->AddBalance(amount)) {
         _log(CLIENT__ERROR, "%s: Failed to add %.2f ISK to %u for donation from %u",

@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(PosMgrService)
 
-PosMgrService::PosMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "posMgr"),
+PosMgrService::PosMgrService()
+: PyService("posMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -49,7 +49,7 @@ PyBoundObject* PosMgrService::_CreateBoundObject( Client* c, const PyRep* bind_a
     _log( CLIENT__MESSAGE, "PosMgrService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new PosMgrServiceBound( m_manager, &m_db );
+    return new PosMgrServiceBound( &m_db );
 }*/
 
 PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args) {
