@@ -32,7 +32,7 @@ ItemFactory item_factory( sEntityList );
 sLog.Log("server init", "starting item factory");
 
 //now, the service manager...
-PyServiceMgr services( 888444, sEntityList, item_factory );
+PyServiceMgr services( 888444 );
 sLog.Log("server init", "starting service manager");
 </pre>
 Then we can register a service.  In this case the inventory broker service.<br>

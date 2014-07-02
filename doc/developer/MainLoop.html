@@ -51,7 +51,7 @@
     <pre class="brush: cpp">
         while( ( tcpc = tcps.PopConnection() ) )
         {
-            Client* c = new Client( services, &tcpc );
+            Client* c = new Client( &tcpc );
 
             sEntityList.Add( &c );
         }
@@ -59,7 +59,7 @@
 &nbsp;&nbsp;Process each entity, retrieveing and acting on network packets.  curently there is noting being done in services.Process();  See the next section for the entity list process.
     <pre class="brush: cpp">
         sEntityList.Process();
-        services.Process();
+        sManager.Process();
     </pre>
 &nbsp;&nbsp;Get the amount of time elapsed and delay 
     <pre class="brush: cpp">

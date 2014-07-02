@@ -40,7 +40,7 @@ bool Client::ProcessNet()
         _SendPingRequest();
     }
     </pre>
-&nbsp;&nbsp;
+&nbsp;&nbsp;Pop a packet from the stack, this may also do some processing of the packet.
     <pre class="brush: cpp">
     PyPacket *p;
     while((p = PopPacket())) {
@@ -50,7 +50,7 @@ bool Client::ProcessNet()
             p->Dump(CLIENT__IN_ALL, dumper);
         }
     </pre>
-&nbsp;&nbsp;
+&nbsp;&nbsp;Call the packet dispatcher to handle the packet.
     <pre class="brush: cpp">
         try
         {
@@ -73,6 +73,5 @@ bool Client::ProcessNet()
     return true;
 }
     </pre>
-    Simply copy and past the contents of this file into a new file and fill in your own content.
   </body>
 </html>
