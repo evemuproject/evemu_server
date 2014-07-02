@@ -232,18 +232,10 @@ ItemType::ItemType(
   m_marketGroupID(_data.marketGroupID),
   m_chanceOfDuplicating(_data.chanceOfDuplicating),
   m_Effects(new TypeEffects(_id)),
-  m_AttributeMap(_id)
+  m_AttributeMap(_id, _data)
 {
     // assert for data consistency
     assert(_data.groupID == _group.id());
-
-    // set some attributes
-    // to-do: find out if we NEED to set these?
-//    m_AttributeMap.SetAttribute(AttrRadius, _data.radius);
-//    m_AttributeMap.SetAttribute(AttrMass, _data.mass);
-//    m_AttributeMap.SetAttribute(AttrVolume, _data.volume);
-//    m_AttributeMap.SetAttribute(AttrCapacity, _data.capacity);
-//    m_AttributeMap.SetAttribute(AttrRaceID, _data.race);
 
     _log(ITEM__TRACE, "Created object %p for type %s (%u).", this, name().c_str(), id());
 }

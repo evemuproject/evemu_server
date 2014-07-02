@@ -257,66 +257,6 @@ bool AttributeMap::Load()
     }
 
     return true;
-
-/*
-    /// EXISTING AttributeMap::Load() function
-    DBQueryResult res;
-
-    if(!sDatabase.RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem->itemID())) {
-        sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
-        return false;
-    }
-
-    DBResultRow row;
-
-    int amount = res.GetRowCount();
-
-    // Right now, assume that we need to load all attributes with default values from dgmTypeAttributes table
-    // IF AND ONLY IF the number of attributes pulled from the entity_attributes table for this item is ZERO:
-    if( amount > 0 )
-    {
-        // This item was found in the 'entity_attributes' table, so load all attributes found there
-        // into the Attribute Map for this item:
-        for (int i = 0; i < amount; i++)
-        {
-            res.GetRow(row);
-            EvilNumber attr_value;
-            uint32 attributeID = row.GetUInt(1);
-            if ( !row.IsNull(2) )
-                attr_value = row.GetInt64(2);
-            else if( !row.IsNull(3) )
-                attr_value = row.GetDouble(3);
-            else
-                sLog.Error( "AttributeMap::Load()", "Both valueInt and valueFloat fields of this (itemID,attributeID) = (%u,%u) are NULL.", row.GetInt(0), attributeID );
-
-            SetAttribute(attributeID, attr_value, false);
-            //Add(attributeID, attr_value);
-        }
-    }
-    else
-    {
-        // This item was NOT found in the 'entity_attributes' table, so let's assume that
-        // this item was just created.
-        // 1) Get complete list of attributes with default values from dgmTypeAttributes table using the item's typeID:
-        DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem->typeID() );
-        if (attr_set == NULL)
-            return false;
-
-        DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
-
-        // Store all these attributes to the item's AttributeMap
-        for (; itr != attr_set->attributeset.end(); itr++)
-        {
-            SetAttribute((*itr)->attributeID, (*itr)->number, false);
-            //Add((*itr)->attributeID, (*itr)->number);
-        }
-
-        // 2) Save these newly created and loaded attributes to the 'entity_attributes' table
-        SaveAttributes();
-    }
-
-    return true;
-*/
 }
 
 bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
@@ -508,9 +448,16 @@ AttributeMap::AttrMapItr AttributeMap::end()
 /* End of new attribute system                                          */
 /************************************************************************/
 
-TypeAttributeMap::TypeAttributeMap(uint32 typeID)
+TypeAttributeMap::TypeAttributeMap(uint32 typeID, const TypeData &_data)
 {
     m_typeID = typeID;
+    // set up some inventory type attributes.  These come from the invTypes table.
+    mAttributes[AttrRadius] = _data.radius;
+    mAttributes[AttrMass] = _data.mass;
+    mAttributes[AttrVolume] = _data.volume;
+    mAttributes[AttrCapacity] = _data.capacity;
+    mAttributes[AttrRaceID] = _data.race;
+    // get the Type Attributes
     DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( typeID );
     if (attr_set != NULL)
     {

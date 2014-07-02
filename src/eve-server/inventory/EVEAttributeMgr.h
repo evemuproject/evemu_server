@@ -34,6 +34,7 @@
 #include "ship/dgmtypeattributeinfo.h"
 
 class PyRep;
+class TypeData;
 class ItemType;
 class ItemFactory;
 class InventoryItem;
@@ -284,7 +285,7 @@ public:
      *
      * @param[in] item reference to the InventoryItem for which attributes will be managed
      */
-    TypeAttributeMap(uint32 type);
+    TypeAttributeMap(uint32 type, const TypeData &_data);
     /**
      * GetAttribute
      * Retrieves the attribute of the entity.
