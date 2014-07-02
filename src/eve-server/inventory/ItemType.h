@@ -260,11 +260,6 @@ public:
     static ItemType *Load(uint32 typeID);
 
     /*
-     * Attributes:
-     */
-    TypeAttributeMgr attributes;
-
-    /*
      * Helper methods
      */
     uint32 id() const { return(m_id); }
@@ -283,13 +278,56 @@ public:
     uint32 marketGroupID() const { return(m_marketGroupID); }
     double chanceOfDuplicating() const { return(m_chanceOfDuplicating); }
 
-    double radius() const { return(attributes.radius()); }
-    double mass() const { return(attributes.mass()); }
-    double volume() const { return(attributes.volume()); }
-    double capacity() const { return(attributes.capacity()); }
-    EVERace race() const { return(static_cast<EVERace>(attributes.raceID())); }
+    double radius() const { return m_AttributeMap.GetAttribute(AttrRadius).get_float(); }
+    double mass() const { return m_AttributeMap.GetAttribute(AttrMass).get_float(); }
+    double volume() const { return m_AttributeMap.GetAttribute(AttrVolume).get_float(); }
+    double capacity() const { return m_AttributeMap.GetAttribute(AttrCapacity).get_float(); }
+    EVERace race() const { return(static_cast<EVERace>(m_AttributeMap.GetAttribute(AttrRaceID).get_int())); }
 	bool HasEffect(uint32 effectID) const { return m_Effects->HasEffect(effectID); }
     const TypeEffectsRef &GetEffects() const { return m_Effects; }
+
+    /**
+     * GetAttribute
+     * Retrieves the attribute of the entity.
+     * @param attributeID the attribute to check for.
+     * @returns the attribute value
+     * @note a value of zero is returned and an error message generated if the value is not found.
+     *
+     * @note this function should be used very infrequently and only for specific reasons
+     */
+    EvilNumber GetAttribute(const uint32 attributeID) const;
+    /**
+     * GetAttribute
+     * Retrieves the attribute of the entity.
+     * @note Should only be used when the attribute might not be defined.
+     * @param attributeID the attribute to check for.
+     * @param defaultValue a default value to return if no attribute is found.
+     * @returns the attribute value or the default value.
+     * @note does not generate an error message if the value is not found.
+     *
+     * @note this function should be used very infrequently and only for specific reasons
+     */
+    EvilNumber GetAttribute(const uint32 attributeID, const EvilNumber &defaultValue) const;
+    /**
+     * HasAttribute
+     * Checks to see if the entity has the specified attribute.
+     * @param attributeID the attribute to check for.
+     * @returns true if this item has the attribute 'attributeID', false if it does not have this attribute
+     *
+     * @note this function should be used very infrequently and only for specific reasons
+     */
+    bool HasAttribute(const uint32 attributeID) const;
+    /**
+     * HasAttribute
+     * Checks to see if the entity has the specified attribute.
+     * value not altered if attribute not found.  This could be useful for preserving a default value.
+     * @param attributeID the attribute to check for.
+     * @param value the location to return the attribute if it exist.
+     * @returns true if this item has the attribute 'attributeID', false if it does not have this attribute
+     *
+     * @note this function should be used very infrequently and only for specific reasons
+     */
+    bool HasAttribute(const uint32 attributeID, EvilNumber &value) const;
 
 protected:
     ItemType(
@@ -299,6 +337,7 @@ protected:
     );
 
     const TypeEffectsRef m_Effects;
+    TypeAttributeMap m_AttributeMap;
 
 	/*
      * Member functions

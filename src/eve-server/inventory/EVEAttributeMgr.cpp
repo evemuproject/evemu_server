@@ -31,339 +31,29 @@
 #include "inventory/InventoryDB.h"
 #include "inventory/InventoryItem.h"
 
-/*
- * EVEAttributeMgr
- */
-bool EVEAttributeMgr::m_persistentLoaded = false;
-bool EVEAttributeMgr::m_persistent[EVEAttributeMgr::Invalid_Attr];
-
-PyRep *EVEAttributeMgr::PyGet(Attr attr) const {
-    return _PyGet(GetReal(attr));
-}
-
-void EVEAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) const {
-    // integers first
-    {
-        std::map<Attr, int_t>::const_iterator cur, end;
-        cur = m_ints.begin();
-        end = m_ints.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = _PyGet(cur->second);
-        }
-    }
-    // then reals
-    {
-        std::map<Attr, real_t>::const_iterator cur, end;
-        cur = m_reals.begin();
-        end = m_reals.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = _PyGet(cur->second);
-        }
-    }
-}
-
-PyRep *EVEAttributeMgr::_PyGet(const real_t &v)
-{
-    if(_IsInt(v) == true)
-    {
-        return new PyInt(static_cast<int32>(v));
-    }
-    else
-    {
-        return new PyFloat(v);
-    }
-}
-
-void EVEAttributeMgr::_LoadPersistent() {
-    if(!m_persistentLoaded) {
-        memset(m_persistent, false, sizeof(m_persistent));
-
-        #define ATTR(ID, name, default_value, persistent) \
-            m_persistent[Attr_##name] = persistent;
-        #include "inventory/EVEAttributes.h"
-
-        m_persistentLoaded = true;
-    }
-}
-
-/*
- * EVEAdvancedAttributeMgr
- */
-void EVEAdvancedAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) const {
-    // integers first
-    {
-        std::map<Attr, int_t>::const_iterator cur, end;
-        cur = m_ints.begin();
-        end = m_ints.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = PyGet(cur->first);
-        }
-    }
-    // then reals
-    {
-        std::map<Attr, real_t>::const_iterator cur, end;
-        cur = m_reals.begin();
-        end = m_reals.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = PyGet(cur->first);
-        }
-    }
-}
-
-/*
- * TypeAttributeMgr
- */
-bool TypeAttributeMgr::Load(InventoryDB &db) {
-    // load new contents from DB
-    return db.LoadTypeAttributes(type().id(), *this);
-}
-
-/*
- * ItemAttributeMgr
- */
-ItemAttributeMgr::ItemAttributeMgr( const InventoryItem &item, bool save, bool notify) :
-    m_item(item), m_save(save), m_notify(notify) {}
-
-ItemAttributeMgr::real_t ItemAttributeMgr::GetReal(Attr attr) const {
-    real_t v;
-    if(!_Get(attr, v))
-        if(!m_item.type().attributes._Get(attr, v)) // try the type attributes
-            v = GetDefault(attr);
-
-    _CalcTauCap(attr, v);
-
-    return v;
-}
-
-void ItemAttributeMgr::SetIntEx(Attr attr, const int_t &v, bool persist) {
-    PyRep *oldValue = NULL;
-    if(GetNotify() == true && !IsRechargable(attr)) {
-        // get old value
-        oldValue = PyGet(attr);
-    }
-    // set the attribute value
-    EVEAdvancedAttributeMgr::SetInt(attr, v);
-    // check if we shall save to DB
-    if(GetSave() == true && (persist || IsPersistent(attr))) {
-        // save to DB
-        sItemFactory.db().UpdateAttribute_int(m_item.itemID(), attr, v);
-    }
-    if(GetNotify() == true) {
-        std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
-        if(i != m_tauCap.end()) {
-            // build the special list for rechargables
-            PyList *l = new PyList;
-
-            l->AddItemInt( v );
-            l->AddItemLong( Win32TimeNow() );
-            l->AddItem( _PyGet( GetReal( i->second.tau ) / 5.0 ) );
-            l->AddItem( PyGet( i->second.cap ) );
-
-            oldValue = l;
-        }
-        // send change
-        _SendAttributeChange(attr, oldValue, new PyFloat(v));
-    }
-}
-
-void ItemAttributeMgr::SetRealEx(Attr attr, const real_t &v, bool persist) {
-    // first check if it can be stored as integer
-    if(_IsInt(v)) {
-        // store as integer
-        SetIntEx(attr, static_cast<int32>(v), persist);
-    } else {
-        // store as real
-        PyRep *oldValue = NULL;
-        if(GetNotify() == true && !IsRechargable(attr)) {
-            // get old value
-            oldValue = PyGet(attr);
-        }
-        // set the attribute value
-        EVEAdvancedAttributeMgr::SetReal(attr, v);
-        // check if we shall save to DB
-        if(GetSave() == true && (persist || IsPersistent(attr))) {
-            // save to DB
-            sItemFactory.db().UpdateAttribute_double(m_item.itemID(), attr, v);
-        }
-        if(GetNotify() == true) {
-            std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
-            if(i != m_tauCap.end()) {
-                // build the special list for rechargables
-                PyList *l = new PyList;
-
-                l->AddItemReal( v );
-                l->AddItemLong( Win32TimeNow() );
-                l->AddItem( _PyGet( GetReal( i->second.tau ) / 5.0 ) );
-                l->AddItem( PyGet( i->second.cap ) );
-
-                oldValue = l;
-            }
-            // send change
-            _SendAttributeChange(attr, oldValue, new PyFloat(v));
-        }
-    }
-}
-
-void ItemAttributeMgr::Clear(Attr attr) {
-    PyRep *oldValue = NULL;
-    if(GetNotify() == true && !IsRechargable(attr)) {
-        // get old value
-        oldValue = PyGet(attr);
-    }
-    // clear the attribute
-    EVEAdvancedAttributeMgr::Clear(attr);
-    // delete the attribute from DB (no matter if it really is there)
-    if(GetSave() == true) {
-        sItemFactory.db().EraseAttribute(m_item.itemID(), attr);
-    }
-    if(GetNotify() == true) {
-        std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
-        if(i != m_tauCap.end()) {
-            // build the special list for rechargables
-            PyList *l = new PyList;
-
-            l->AddItem( PyGet( attr ) );
-            l->AddItemLong( Win32TimeNow() );
-            l->AddItem( _PyGet( GetReal( i->second.tau ) / 5.0 ) );
-            l->AddItem( PyGet( i->second.cap ) );
-
-            oldValue = l;
-        }
-        // send change
-        _SendAttributeChange(attr, oldValue, new PyFloat(GetReal(attr)));
-    }
-}
-
-void ItemAttributeMgr::DeleteEx(bool notify) {
-    // save & set notify state
-    bool old_notify = GetNotify();
-    SetNotify(notify);
-
-    // delete the attributes
-    EVEAdvancedAttributeMgr::Delete();
-
-    // restore old notify state
-    SetNotify(old_notify);
-}
-
-bool ItemAttributeMgr::Load(bool notify) {
-
-    // save & set notify state
-    bool old_notify = GetNotify();
-    SetNotify(notify);
-
-    // save & set save state
-    bool old_save = GetSave();
-    SetSave(false);
-
-    // delete old contents
-    EVEAdvancedAttributeMgr::Delete();
-    // load the new contents
-    bool res = sItemFactory.db().LoadItemAttributes(item().itemID(), *this);
-
-    // restore save state
-    SetSave(old_save);
-
-    // restore notify state
-    SetNotify(old_notify);
-
-    return res;
-}
-
-void ItemAttributeMgr::Save() const {
-
-    /* check if we have something to save, if not return*/
-    if(m_ints.empty() == true && m_reals.empty() == true)
-        return;
-
-    /* disabled because its useless logging */
-    //_log(ITEM__TRACE, "Saving %lu attributes of item %u.", m_ints.size()+m_reals.size(), m_item.itemID());
-    // integers first
-    {
-        std::map<Attr, int_t>::const_iterator cur, end;
-        cur = m_ints.begin();
-        end = m_ints.end();
-        for(; cur != end; cur++) {
-            real_t v = GetReal(cur->first);
-            if(_IsInt(v))
-                sItemFactory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
-            else
-                sItemFactory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
-        }
-    }
-    // then reals
-    {
-        std::map<Attr, real_t>::const_iterator cur, end;
-        cur = m_reals.begin();
-        end = m_reals.end();
-        for(; cur != end; cur++) {
-            real_t v = GetReal(cur->first);
-            if(_IsInt(v))
-                sItemFactory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
-            else
-                sItemFactory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
-        }
-    }
-}
-
-void ItemAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) const {
-    // first insert type attributes
-    m_item.type().attributes.EncodeAttributes(into);
-    // now insert (or overwrite) with our values
-    EVEAdvancedAttributeMgr::EncodeAttributes(into);
-}
-
-void ItemAttributeMgr::_SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *newValue) {
-    if(GetNotify() == false)
-        return;
-
-    Client *c = sEntityList.FindCharacter( item().ownerID() );
-    if(c != NULL)
-    {
-        Notify_OnModuleAttributeChange omac;
-        omac.ownerID = m_item.ownerID();
-        omac.itemKey = m_item.itemID();
-        omac.attributeID = attr;
-        omac.time = Win32TimeNow();
-        omac.oldValue = oldValue;
-        omac.newValue = newValue;
-
-        PyTuple* tmp = omac.Encode();
-        c->QueueDestinyEvent(&tmp);
-    }
-    else
-    {
-        // delete the reps
-        PyDecRef( oldValue );
-        PyDecRef( newValue );
-    }
-}
-
 /************************************************************************/
 /* Start of new attribute system                                        */
 /************************************************************************/
-AttributeMap::AttributeMap( InventoryItem & item ) : mItem(item), mChanged(true), mDefault(false)
+AttributeMap::AttributeMap( InventoryItemRef item )
+: mItem(item),
+  mChanged(true),
+  mDefault(false)
 {
     // load the initial attributes for this item
     //Load();
 }
 
-AttributeMap::AttributeMap( InventoryItem & item, bool bDefaultMap ) : mItem(item), mChanged(true), mDefault(bDefaultMap)
+AttributeMap::AttributeMap( InventoryItemRef item, bool bDefaultMap )
+: mItem(item),
+  mChanged(true),
+  mDefault(bDefaultMap)
 {
     // load the initial attributes for this item, if we are acting as container for "default" attributes
     //if(mDefault)
 	//	Load();
 }
 
-bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofity /*= true*/ )
+bool AttributeMap::SetAttribute( uint32 attributeId, const EvilNumber &num, bool notify /*= true*/ )
 {
     AttrMapItr itr = mAttributes.find(attributeId);
 
@@ -371,7 +61,7 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
     if (itr == mAttributes.end()) {
         mAttributes.insert(std::make_pair(attributeId, num));
 		mChanged = true;	// Mark the map as having been modified by a new attribute being added
-        if (nofity == true)
+        if (notify == true)
             return Add(attributeId, num);
         return true;
     }
@@ -382,7 +72,7 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
 
     // notify dogma to change the attribute, if we are unable to queue the change
     // event. Don't change the value.
-    if (nofity == true)
+    if (notify == true)
         if (!Change(attributeId, itr->second, num))
             return false;
 
@@ -393,12 +83,24 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
     return true;
 }
 
+bool AttributeMap::SetAttribute( uint32 attributeId, const int &num, bool notify /*= true*/ )
+{
+    EvilNumber val(num);
+    SetAttribute(attributeId, val, notify);
+}
+
+bool AttributeMap::SetAttribute( uint32 attributeId, const double &num, bool notify /*= true*/ )
+{
+    EvilNumber val(num);
+    SetAttribute(attributeId, val, notify);
+}
+
 EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
 {
     AttrMapConstItr itr = mAttributes.find(attributeId);
     if (itr != mAttributes.end())
         return itr->second;
-    sLog.Error("AttributeMap::GetAttribute()", "unable to find attribute: %u for item %u, '%s' of type %u", attributeId, mItem.itemID(), mItem.itemName().c_str(), mItem.typeID());
+    sLog.Error("AttributeMap::GetAttribute()", "unable to find attribute: %u for item %u, '%s' of type %u", attributeId, mItem->itemID(), mItem->itemName().c_str(), mItem->typeID());
     return EvilNumber(0);
 }
 
@@ -431,30 +133,32 @@ bool AttributeMap::HasAttribute(const uint32 attributeID, EvilNumber &value) con
         return false;
 }
 
-bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, EvilNumber& new_val )
+bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, const EvilNumber& new_val )
 {
    Notify_OnModuleAttributeChange modChange;
 
-	modChange.ownerID = mItem.ownerID();
-	modChange.itemKey = mItem.itemID();
+	modChange.ownerID = mItem->ownerID();
+	modChange.itemKey = mItem->itemID();
 	modChange.attributeID = attributeID;
 	modChange.time = Win32TimeNow();
-	modChange.newValue = new_val.GetPyObject();
+    EvilNumber n(new_val);
+	modChange.newValue = n.GetPyObject();
 	modChange.oldValue = old_val.GetPyObject();
 
 	return SendAttributeChanges(modChange.Encode());
 }
 
-bool AttributeMap::Add( uint32 attributeID, EvilNumber& num )
+bool AttributeMap::Add( uint32 attributeID, const EvilNumber& num )
 {
   Notify_OnModuleAttributeChange modChange;
 
-	modChange.ownerID = mItem.ownerID();
-	modChange.itemKey = mItem.itemID();
+	modChange.ownerID = mItem->ownerID();
+	modChange.itemKey = mItem->itemID();
 	modChange.attributeID = attributeID;
 	modChange.time = Win32TimeNow();
-	modChange.newValue = num.GetPyObject();
-	modChange.oldValue = num.GetPyObject();
+    EvilNumber n(num);
+	modChange.newValue = n.GetPyObject();
+	modChange.oldValue = n.GetPyObject();
 
 	return SendAttributeChanges(modChange.Encode());
 }
@@ -468,7 +172,7 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
     }
 
     // Oh hell, this character finding needs to be optimized ( redesigned so its not needed.. ).
-    if( (mItem.ownerID() == 1) || (IsStation(mItem.itemID())) )
+    if( (mItem->ownerID() == 1) || (IsStation(mItem->itemID())) )
     {
         // This item is owned by the EVE System either directly, as in the case of a character object,
         // or indirectly, as in the case of a Station, which is owned by the corporation that runs it.
@@ -477,12 +181,12 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
     }
     else
     {
-        Client *client = sEntityList.FindCharacter(mItem.ownerID());
-        //Client *client = this->mItem.GetItemFactory()->GetUsingClient();
+        Client *client = sEntityList.FindCharacter(mItem->ownerID());
+        //Client *client = this->mItem->GetItemFactory()->GetUsingClient();
 
         if (client == NULL)
         {
-            //sLog.Error("AttributeMap::SendAttributeChanges()", "unable to find client:%u", mItem.ownerID());
+            //sLog.Error("AttributeMap::SendAttributeChanges()", "unable to find client:%u", mItem->ownerID());
             //return false;
             return true;
         }
@@ -503,14 +207,14 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 
 bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
 {
-    EvilNumber value = mItem.GetDefaultAttribute(attrID);
+    EvilNumber value = mItem->GetDefaultAttribute(attrID);
     return SetAttribute(attrID, value, notify);
 }
 
 bool AttributeMap::Load()
 {
     /* First, we load default attributes values using existing attribute system */
-    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
+    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem->typeID() );
     if (attr_set == NULL)
         return false;
 
@@ -524,14 +228,14 @@ bool AttributeMap::Load()
 
 	if(mDefault)
 	{
-		if(!sDatabase.RunQuery(res, "SELECT * FROM entity_default_attributes WHERE itemID='%u'", mItem.itemID())) {
+		if(!sDatabase.RunQuery(res, "SELECT * FROM entity_default_attributes WHERE itemID='%u'", mItem->itemID())) {
 			sLog.Error("AttributeMap (DEFAULT)", "Error in db load query: %s", res.error.c_str());
 			return false;
 		}
 	}
 	else
 	{
-		if(!sDatabase.RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+		if(!sDatabase.RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem->itemID())) {
 			sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
 			return false;
 		}
@@ -558,7 +262,7 @@ bool AttributeMap::Load()
     /// EXISTING AttributeMap::Load() function
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+    if(!sDatabase.RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem->itemID())) {
         sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
@@ -594,7 +298,7 @@ bool AttributeMap::Load()
         // This item was NOT found in the 'entity_attributes' table, so let's assume that
         // this item was just created.
         // 1) Get complete list of attributes with default values from dgmTypeAttributes table using the item's typeID:
-        DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
+        DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem->typeID() );
         if (attr_set == NULL)
             return false;
 
@@ -627,9 +331,9 @@ bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, %d, NULL)",
-			mItem.itemID(), attributeID, value)
+			mItem->itemID(), attributeID, value)
 		) {
-			codelog(SERVICE__ERROR, "Failed to store DEFAULT attribute %d for item %u: %s", attributeID, mItem.itemID(), err.c_str());
+			codelog(SERVICE__ERROR, "Failed to store DEFAULT attribute %d for item %u: %s", attributeID, mItem->itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -640,9 +344,9 @@ bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, %d, NULL)",
-			mItem.itemID(), attributeID, value)
+			mItem->itemID(), attributeID, value)
 		) {
-			codelog(SERVICE__ERROR, "Failed to store attribute %d for item %u: %s", attributeID, mItem.itemID(), err.c_str());
+			codelog(SERVICE__ERROR, "Failed to store attribute %d for item %u: %s", attributeID, mItem->itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -662,9 +366,9 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, NULL, %f)",
-			mItem.itemID(), attributeID, value)
+			mItem->itemID(), attributeID, value)
 		) {
-			codelog(SERVICE__ERROR, "Failed to store DEFAULT attribute %d for item %u: %s", attributeID, mItem.itemID(), err.c_str());
+			codelog(SERVICE__ERROR, "Failed to store DEFAULT attribute %d for item %u: %s", attributeID, mItem->itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -675,9 +379,9 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, NULL, %f)",
-			mItem.itemID(), attributeID, value)
+			mItem->itemID(), attributeID, value)
 		) {
-			codelog(SERVICE__ERROR, "Failed to store attribute %d for item %u: %s", attributeID, mItem.itemID(), err.c_str());
+			codelog(SERVICE__ERROR, "Failed to store attribute %d for item %u: %s", attributeID, mItem->itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -707,13 +411,13 @@ bool AttributeMap::Save()
 			{
 				success = sDatabase.RunQuery(err,
 					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
-					mItem.itemID(), itr->first, itr->second.get_int());
+					mItem->itemID(), itr->first, itr->second.get_int());
 			}
 			else
 			{
 				success = sDatabase.RunQuery(err,
 					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
-					mItem.itemID(), itr->first, itr->second.get_int());
+					mItem->itemID(), itr->first, itr->second.get_int());
 			}
 
             if (!success)
@@ -727,13 +431,13 @@ bool AttributeMap::Save()
 			{
 				success = sDatabase.RunQuery(err,
 					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
-					mItem.itemID(), itr->first, itr->second.get_float());
+					mItem->itemID(), itr->first, itr->second.get_float());
 			}
 			else
 			{
 				success = sDatabase.RunQuery(err,
 					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
-					mItem.itemID(), itr->first, itr->second.get_float());
+					mItem->itemID(), itr->first, itr->second.get_float());
 			}
 
             if (!success)
@@ -763,10 +467,10 @@ bool AttributeMap::Delete()
 			"DELETE"
 			" FROM entity_default_attributes"
 			" WHERE itemID=%u",
-			mItem.itemID()
+			mItem->itemID()
 		))
 		{
-			sLog.Error( "AttributeMap::Delete()", "Failed to delete DEFAULT item %u: %s", mItem.itemID(), err.c_str());
+			sLog.Error( "AttributeMap::Delete()", "Failed to delete DEFAULT item %u: %s", mItem->itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -776,10 +480,10 @@ bool AttributeMap::Delete()
 			"DELETE"
 			" FROM entity_attributes"
 			" WHERE itemID=%u",
-			mItem.itemID()
+			mItem->itemID()
 		))
 		{
-			sLog.Error( "AttributeMap::Delete()", "Failed to delete item %u: %s", mItem.itemID(), err.c_str());
+			sLog.Error( "AttributeMap::Delete()", "Failed to delete item %u: %s", mItem->itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -803,4 +507,54 @@ AttributeMap::AttrMapItr AttributeMap::end()
 /************************************************************************/
 /* End of new attribute system                                          */
 /************************************************************************/
+
+TypeAttributeMap::TypeAttributeMap(uint32 typeID)
+{
+    m_typeID = typeID;
+    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( typeID );
+    if (attr_set != NULL)
+    {
+        DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
+        for (; itr != attr_set->attributeset.end(); itr++)
+            mAttributes[(*itr)->attributeID] = (*itr)->number;
+    }
+}
+
+EvilNumber TypeAttributeMap::GetAttribute( const uint32 attributeId ) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeId);
+    if (itr != mAttributes.end())
+        return itr->second;
+    sLog.Error("TypeAttributeMap::GetAttribute()", "unable to find attribute: %u for type %u", attributeId, m_typeID);
+    return EvilNumber(0);
+}
+
+EvilNumber TypeAttributeMap::GetAttribute( const uint32 attributeId, const EvilNumber &defaultValue ) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeId);
+    if (itr != mAttributes.end())
+        return itr->second;
+    return defaultValue;
+}
+
+bool TypeAttributeMap::HasAttribute(const uint32 attributeID) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+        return true;
+    else
+        return false;
+}
+
+bool TypeAttributeMap::HasAttribute(const uint32 attributeID, EvilNumber &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second;
+        return true;
+    }
+    else
+        return false;
+}
 

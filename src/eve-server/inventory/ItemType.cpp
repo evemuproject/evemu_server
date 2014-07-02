@@ -222,8 +222,7 @@ ItemType::ItemType(
     uint32 _id,
     const ItemGroup &_group,
     const TypeData &_data)
-: attributes(*this),
-  m_id(_id),
+: m_id(_id),
   m_group(&_group),
   m_name(_data.name),
   m_description(_data.description),
@@ -232,17 +231,19 @@ ItemType::ItemType(
   m_published(_data.published),
   m_marketGroupID(_data.marketGroupID),
   m_chanceOfDuplicating(_data.chanceOfDuplicating),
-  m_Effects(new TypeEffects(_id))
+  m_Effects(new TypeEffects(_id)),
+  m_AttributeMap(_id)
 {
     // assert for data consistency
     assert(_data.groupID == _group.id());
 
     // set some attributes
-    attributes.Set_radius(_data.radius);
-    attributes.Set_mass(_data.mass);
-    attributes.Set_volume(_data.volume);
-    attributes.Set_capacity(_data.capacity);
-    attributes.Set_raceID(_data.race);
+    // to-do: find out if we NEED to set these?
+//    m_AttributeMap.SetAttribute(AttrRadius, _data.radius);
+//    m_AttributeMap.SetAttribute(AttrMass, _data.mass);
+//    m_AttributeMap.SetAttribute(AttrVolume, _data.volume);
+//    m_AttributeMap.SetAttribute(AttrCapacity, _data.capacity);
+//    m_AttributeMap.SetAttribute(AttrRaceID, _data.race);
 
     _log(ITEM__TRACE, "Created object %p for type %s (%u).", this, name().c_str(), id());
 }
@@ -318,5 +319,26 @@ _Ty *ItemType::_LoadType(uint32 typeID,
 
 bool ItemType::_Load() {
     // load type attributes
-    return (attributes.Load( sItemFactory.db() ));
+    return true;
 }
+
+EvilNumber ItemType::GetAttribute( const uint32 attributeID ) const
+{
+     return m_AttributeMap.GetAttribute(attributeID);
+}
+
+EvilNumber ItemType::GetAttribute( const uint32 attributeID , const EvilNumber &defaultValue ) const
+{
+     return m_AttributeMap.GetAttribute(attributeID, defaultValue);
+}
+
+bool ItemType::HasAttribute(const uint32 attributeID) const
+{
+     return m_AttributeMap.HasAttribute(attributeID);
+}
+
+bool ItemType::HasAttribute(const uint32 attributeID, EvilNumber &value) const
+{
+     return m_AttributeMap.HasAttribute(attributeID, value);
+}
+

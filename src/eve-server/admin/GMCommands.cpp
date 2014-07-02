@@ -794,7 +794,7 @@ PyResult Command_getattr( Client* who, CommandDB* db, const Seperator& args )
 
     if( !args.isNumber( 2 ) )
         throw PyException( MakeCustomError( "2nd argument must be attributeID (got %s).", args.arg( 2 ).c_str() ) );
-    const ItemAttributeMgr::Attr attribute = (ItemAttributeMgr::Attr)atoi( args.arg( 2 ).c_str() );
+    const uint32 attribute = atoi( args.arg( 2 ).c_str() );
 
     InventoryItemRef item = sItemFactory.GetItem( itemID );
     if( !item )
@@ -829,7 +829,7 @@ PyResult Command_setattr( Client* who, CommandDB* db, const Seperator& args )
 
     if( !args.isNumber( 2 ) )
         throw PyException( MakeCustomError( "2nd argument must be attributeID (got %s).", args.arg( 2 ).c_str() ) );
-    const ItemAttributeMgr::Attr attribute = (ItemAttributeMgr::Attr)atoi( args.arg( 2 ).c_str() );
+    const uint32 attribute = atoi( args.arg( 2 ).c_str() );
 
     if( !args.isNumber( 3 ) )
         throw PyException( MakeCustomError( "3rd argument must be value (got %s).", args.arg( 3 ).c_str() ) );
