@@ -1241,7 +1241,7 @@ bool InventoryItem::SaveAttributes()
 
 bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
 {
-    bool success = mAttributeMap.ResetAttribute(attrID, false);
+    bool success = mAttributeMap.ResetAttribute(attrID, true);
     EvilNumber nVal = mAttributeMap.GetAttribute(attrID, EvilNumber(0));
     // modify the value by attribute modifiers applied by modules and enemy's.
     double amount = 0;

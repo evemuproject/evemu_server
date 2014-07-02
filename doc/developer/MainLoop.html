@@ -24,7 +24,7 @@
     <meta name="viewport" content="width=device-width">
   </head>
   <body>
-    <h3>This is a headding</h3>
+    <h3>The Main Loop</h3>
 &nbsp;&nbsp;This is where the "magic" happens.  Here the server plods through the tedium of doing it's job.<br>
 &nbsp;&nbsp;The first thing that's done is to set up the signal catcher to catch the interupt, abort and terminate signals.  The signals are simply redirected to a function that sets the variable RunLoops to false.
     <pre class="brush: cpp">
@@ -56,7 +56,7 @@
             sEntityList.Add( &c );
         }
     </pre>
-&nbsp;&nbsp;Process each entity, retrieveing and acting on network packets.  curently there is noting being done in services.Process();
+&nbsp;&nbsp;Process each entity, retrieveing and acting on network packets.  curently there is noting being done in services.Process();  See the next section for the entity list process.
     <pre class="brush: cpp">
         sEntityList.Process();
         services.Process();
@@ -75,6 +75,82 @@
 &nbsp;&nbsp;That's the main loop.  When RunLoops becomes false, we exit and cleanup and close the server.
     <pre class="brush: cpp">
     sLog.Log("server shutdown", "Main loop stopped" );
+    </pre>
+    <h3>The EntityList Process</h3>
+&nbsp;&nbsp;The first thing the entity list does is loop through all clients handling any messages they may have sent.
+    <pre class="brush: cpp">
+void EntityList::Process()
+{
+    Client *active_client = NULL;
+    client_list::iterator client_cur = m_clients.begin();
+    client_list::iterator client_end = m_clients.end();
+    client_list::iterator client_tmp;
+
+    while(client_cur != client_end)
+    {
+        active_client = *client_cur;
+    </pre>
+&nbsp;&nbsp;Check to see if the client sent any messages and kill the client if the connections dead.  This is described in more detail on the <a href="client/client-net.html">client net page</a>.
+    <pre class="brush: cpp">
+        if(!active_client->ProcessNet())
+        {
+            sLog.Log("Entity List", "Destroying client for account %u", active_client->GetAccountID());
+            SafeDelete(active_client);
+
+            client_tmp = client_cur++;
+            m_clients.erase( client_tmp );
+        }
+        else
+        {
+            client_cur++;
+        }
+    }
+    </pre>
+&nbsp;&nbsp;Find out if the destiny manager (ship movement) is waiting to process a time interval (tick).
+    <pre class="brush: cpp">
+    SystemManager *active_system = NULL;
+    bool destiny = DestinyManager::IsTicActive();
+    </pre>
+&nbsp;&nbsp;Loop through the star systems currently loaded by the server.
+    <pre class="brush: cpp">
+    //first process any systems, watching for deletion.
+    system_list::iterator cur, end, tmp;
+    cur = m_systems.begin();
+    end = m_systems.end();
+    while(cur != end)
+    {
+        active_system = cur->second;
+    </pre>
+&nbsp;&nbsp;If the destiny manager needs to process a tick process the systems tick.
+    <pre class="brush: cpp">
+        //if it is destiny time, process it first.
+        if(destiny)
+        {
+            active_system->ProcessDestiny();
+        }
+    </pre>
+&nbsp;&nbsp;Process information for the system.
+    <pre class="brush: cpp">
+        if(!active_system->Process())
+        {
+            sLog.Log("Entity List", "Destroying system");
+            tmp = cur++;
+            delete cur->second;
+            m_systems.erase(tmp);
+        }
+        else
+        {
+            cur++;
+        }
+    }
+    </pre>
+&nbsp;&nbsp;Let the destiny manager know were completed the tick.
+    <pre class="brush: cpp">
+    if( destiny == true )
+    {
+        DestinyManager::TicCompleted();
+    }
+}
     </pre>
   </body>
 </html>

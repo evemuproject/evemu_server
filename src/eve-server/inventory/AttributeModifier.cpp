@@ -65,13 +65,18 @@ double AttributeModifier::GetFactor()
     EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
     if(m_Type == CALC_PERCENTAGE)
     {
-        if(source < 2 && source > -2)
+        if(source < 2 && source > 0)
             return (1.0 - source) * 100;
         else
             return (100.0 - source);
     }
     if(m_Type == CALC_DIFFERENCE)
-        return source;
+    {
+        if(source < 2 && source > 0)
+            return -(1.0 - source) * 100;
+        else
+            return source;
+    }
     return 0;
 }
 
