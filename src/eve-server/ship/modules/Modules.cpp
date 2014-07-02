@@ -39,7 +39,6 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
 
     m_Item = item;
     m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
 
     GenerateModifiers();
     // attach overload modifiers.
@@ -64,12 +63,6 @@ GenericModule::~GenericModule()
     m_Ship->RemoveAttributeModifier(m_ShipModifiers);
     m_Ship->RemoveAttributeModifier(m_ShipPassiveModifiers);
     m_Ship->RemoveAttributeModifier(m_ShipActiveModifiers);
-
-    //delete members
-    delete m_Effects;
-
-    //null ptrs
-    m_Effects = NULL;
 }
 
 void GenericModule::Offline()
@@ -94,12 +87,12 @@ void GenericModule::Online()
 void GenericModule::GenerateModifiers()
 {
     // load and setup ONLINE effects
-    ModuleEffects::EffectMap effects = m_Effects->GetEffects();
-    ModuleEffects::EffectMap::iterator itr = effects.begin();
+    TypeEffects::EffectMap effects = m_Item->type().GetEffects()->GetEffects();
+    TypeEffects::EffectMap::iterator itr = effects.begin();
     for (; itr != effects.end(); itr++)
     {
-        MEffect *effect = itr->second;
-        if (effect == NULL)
+        EVEEffectRef effect = itr->second;
+        if (effect.get() == NULL)
             continue;
         int nEffects = effect->GetSizeOfAttributeList();
         if (nEffects == 0)

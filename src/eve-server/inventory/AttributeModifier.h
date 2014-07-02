@@ -45,7 +45,7 @@ public:
      * @param effect The effect for this modifier.
      * @param active Is the modifier active?
      */
-    AttributeModifier(InventoryItemRef item, MEffect *effect, int effect_index, bool active);
+    AttributeModifier(InventoryItemRef item, EVEEffectRef effect, int effect_index, bool active);
     ~AttributeModifier() { m_Item = InventoryItemRef(); };
 
     /**
@@ -58,7 +58,7 @@ public:
      * Checks for stacking penalty.
      * @return true if there is a stacking penalty.
      */
-    bool StackPenalty() { return m_Effect == NULL ? false : m_Effect->GetStackingPenaltyApplied(m_EffectIndex) != 0; };
+    bool StackPenalty() { return m_Effect.get() == NULL ? false : m_Effect->GetStackingPenaltyApplied(m_EffectIndex) != 0; };
     /**
      * Get whether the modifier is active;
      * @return Ture if the modifier should be applied.
@@ -68,7 +68,7 @@ public:
      * Get the attribute modified by this modifier.
      * @return The modified attribute.
      */
-    uint32 GetTargetAttribute() { return m_Effect == NULL ? 0 : m_Effect->GetTargetAttributeID(m_EffectIndex); };
+    uint32 GetTargetAttribute() { return m_Effect.get() == NULL ? 0 : m_Effect->GetTargetAttributeID(m_EffectIndex); };
     /**
      * Sets the modifiers active state.
      * @param state The new modifier state.
@@ -91,9 +91,9 @@ private:
      */
     InventoryItemRef m_Item;
     /**
-     * The calculation Type.
+     * The Effect to use.
      */
-    MEffect *m_Effect;
+    EVEEffectRef m_Effect;
     /**
      * The index of the effect info.
      */

@@ -28,11 +28,11 @@
 #include "inventory/InventoryItem.h"
 #include "inventory/AttributeModifier.h"
 
-AttributeModifier::AttributeModifier(InventoryItemRef item, MEffect *effect, int effect_index, bool active)
-: RefObject( 0 )
+AttributeModifier::AttributeModifier(InventoryItemRef item, EVEEffectRef effect, int effect_index, bool active)
+: RefObject( 0 ),
+  m_Effect(effect)
 {
     m_Item = item;
-    m_Effect = effect;
     m_EffectIndex = effect_index;
     m_Active = active;
 }
@@ -47,7 +47,7 @@ void AttributeModifier::SetActive(bool state)
 
 double AttributeModifier::GetAmount()
 {
-    if(m_Effect == NULL)
+    if(m_Effect.get() == NULL)
         return 0;
     EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
     if(m_Type == CALC_ADDITION)
@@ -59,7 +59,7 @@ double AttributeModifier::GetAmount()
 
 double AttributeModifier::GetFactor()
 {
-    if(m_Effect == NULL)
+    if(m_Effect.get() == NULL)
         return 0;
     double source = m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float();
     EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);

@@ -55,8 +55,9 @@ public:
     virtual bool isSubSystem()                                        { return false; }
     bool requiresTarget()
     {
-        if( m_Effects->HasDefaultEffect() )
-            return m_Effects->GetDefaultEffect()->GetIsAssistance() || m_Effects->GetDefaultEffect()->GetIsOffensive();
+        EVEEffectRef effect = m_Item->type().GetEffects()->GetDefaultEffect();
+        if( effect.get() != NULL )
+            return effect->GetIsAssistance() || effect->GetIsOffensive();
         else
             return false;
     }

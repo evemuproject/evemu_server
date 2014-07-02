@@ -28,6 +28,7 @@
 
 #include "inventory/EVEAttributeMgr.h"
 #include "inventory/ItemFactory.h"
+#include "inventory/TypeEffect.h"
 
 /*
  * LOADING INVOKATION EXPLANATION:
@@ -287,13 +288,8 @@ public:
     double volume() const { return(attributes.volume()); }
     double capacity() const { return(attributes.capacity()); }
     EVERace race() const { return(static_cast<EVERace>(attributes.raceID())); }
-	bool HasEffect(uint32 effectID) const
-	{
-		if(std::find(m_effects.begin(), m_effects.end(), effectID)!=m_effects.end())
-			return true;
-		else
-			return false;
-	}
+	bool HasEffect(uint32 effectID) const { return m_Effects->HasEffect(effectID); }
+    const TypeEffectsRef &GetEffects() const { return m_Effects; }
 
 protected:
     ItemType(
@@ -302,7 +298,7 @@ protected:
         const TypeData &_data
     );
 
-	std::vector<uint32> m_effects;
+    const TypeEffectsRef m_Effects;
 
 	/*
      * Member functions

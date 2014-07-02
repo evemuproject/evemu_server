@@ -27,6 +27,8 @@
 #define __ITEM_REF__H__INCL__
 
 class InventoryItem;
+class EVEEffect;
+class TypeEffects;
 
 class Blueprint;
 class Ship;
@@ -50,6 +52,10 @@ class AttributeModifierSource;
  */
 typedef RefPtr<InventoryItem>            InventoryItemRef;
 typedef RefPtr<const InventoryItem>      InventoryItemConstRef;
+typedef RefPtr<EVEEffect>                EVEEffectRef;
+typedef RefPtr<const EVEEffect>          EVEEffectConstRef;
+typedef RefPtr<TypeEffects>              TypeEffectsRef;
+typedef RefPtr<const TypeEffects>        TypeEffectsConstRef;
 
 typedef RefPtr<Blueprint>                BlueprintRef;
 typedef RefPtr<const Blueprint>          BlueprintConstRef;

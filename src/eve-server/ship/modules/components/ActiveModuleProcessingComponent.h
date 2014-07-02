@@ -91,7 +91,7 @@ private:
 
     bool m_ButtonCycle;
     EvilNumber m_CycleTime;
-    MEffect *m_Effect;
+    EVEEffectRef m_Effect;
 	InventoryItemRef m_Charge;
 
     //internal access to owner

@@ -239,7 +239,8 @@ SET( inventory_INCLUDE
      "${TARGET_INCLUDE_DIR}/inventory/ItemFactory.h"
      "${TARGET_INCLUDE_DIR}/inventory/ItemRef.h"
      "${TARGET_INCLUDE_DIR}/inventory/ItemType.h"
-     "${TARGET_INCLUDE_DIR}/inventory/Owner.h" )
+     "${TARGET_INCLUDE_DIR}/inventory/Owner.h"
+     "${TARGET_INCLUDE_DIR}/inventory/TypeEffect.h" )
 SET( inventory_SOURCE
      "${TARGET_SOURCE_DIR}/inventory/AttributeModifier.cpp"
      "${TARGET_SOURCE_DIR}/inventory/EVEAttributeMgr.cpp"
@@ -251,7 +252,8 @@ SET( inventory_SOURCE
      "${TARGET_SOURCE_DIR}/inventory/ItemDB.cpp"
      "${TARGET_SOURCE_DIR}/inventory/ItemFactory.cpp"
      "${TARGET_SOURCE_DIR}/inventory/ItemType.cpp"
-     "${TARGET_SOURCE_DIR}/inventory/Owner.cpp" )
+     "${TARGET_SOURCE_DIR}/inventory/Owner.cpp"
+     "${TARGET_SOURCE_DIR}/inventory/TypeEffect.cpp" )
 
 SET( mail_INCLUDE
      "${TARGET_INCLUDE_DIR}/mail/MailDB.h"

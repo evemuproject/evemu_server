@@ -34,11 +34,14 @@
 #include "system/SystemBubble.h"
 
 ActiveModuleProcessingComponent::ActiveModuleProcessingComponent(InventoryItemRef item, ActiveModule * mod, ShipRef ship)
-: m_Item( item ), m_Mod( mod ), m_Ship( ship ), m_timer(0)
+: m_Item( item ),
+  m_Mod( mod ),
+  m_Ship( ship ),
+  m_timer(0),
+  m_Effect((EVEEffect *)NULL)
 {
 	m_Stop = false;
     m_ButtonCycle = false;
-    m_Effect = NULL;
 }
 
 ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
@@ -123,12 +126,12 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
         m_timer.Start(m_CycleTime.get_int());
         return;
     }
-    m_Effect = NULL;
+    m_Effect = EVEEffectRef(NULL);
     // if the effectID given is -1 attempt to look up the default effect.
     if(effectID == -1)
-        m_Effect = m_Mod->m_Effects->GetDefaultEffect();
+        m_Effect = m_Item->type().GetEffects()->GetDefaultEffect();
     bool autoRepeat;
-    if(m_Effect != NULL)
+    if(m_Effect.get() != NULL)
     {
         m_CycleTime = m_Mod->GetAttribute(m_Effect->GetDurationAttributeID());
         autoRepeat = !m_Effect->GetDisallowAutoRepeat();
@@ -172,7 +175,7 @@ bool ActiveModuleProcessingComponent::BeginCycle()
 {
     // consume capacitor
     double capNeed;
-    if(m_Effect != NULL)
+    if(m_Effect.get() != NULL)
         capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID()).get_float();
     else
         capNeed = m_Mod->GetAttribute(AttrCapacitorNeed).get_float();
@@ -259,7 +262,7 @@ double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
 	return (double)(m_timer.GetRemainingTime());
 }
 
-void DoButton(ShipRef Ship, InventoryItemRef Item, MEffect *Effect, float CycleTime, uint32 targetID, bool start, bool active, uint32 chargeID)
+void DoButton(ShipRef Ship, InventoryItemRef Item, EVEEffect *Effect, float CycleTime, uint32 targetID, bool start, bool active, uint32 chargeID)
 {
     // if we have no ship or module to affect do nothing.
     if(Item.get() == NULL || Ship.get() == NULL || Effect == NULL)
@@ -347,7 +350,7 @@ void ActiveModuleProcessingComponent::StartButton()
         }
     }
 
-    DoButton(m_Ship, m_Item, m_Effect, m_CycleTime.get_float(), tID, true, true, chargeID);
+    DoButton(m_Ship, m_Item, m_Effect.get(), m_CycleTime.get_float(), tID, true, true, chargeID);
 }
 
 void ActiveModuleProcessingComponent::EndButton()
@@ -358,6 +361,6 @@ void ActiveModuleProcessingComponent::EndButton()
     if(m_Charge.get() != NULL)
         chargeID = m_Charge->itemID();
 
-    DoButton(m_Ship, m_Item, m_Effect, m_CycleTime.get_float(), tID, false, false, chargeID);    
+    DoButton(m_Ship, m_Item, m_Effect.get(), m_CycleTime.get_float(), tID, false, false, chargeID);    
 }
 

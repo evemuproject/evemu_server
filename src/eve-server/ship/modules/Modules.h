@@ -72,14 +72,14 @@ public:
     virtual uint32 typeID()                                        { return m_Item->typeID(); }
     virtual uint32 groupID()                                        { return m_Item->groupID(); }
     virtual bool isOnline()                                        { return (m_Item->GetAttribute(AttrIsOnline) == 1); }
-    virtual bool isHighPower()                                    { return m_Effects->isHighSlot(); }
-    virtual bool isMediumPower()                                { return m_Effects->isMediumSlot(); }
-    virtual bool isLowPower()                                    { return m_Effects->isLowSlot(); }
+    virtual bool isHighPower() const                               { return m_Item->type().GetEffects()->isHighSlot(); }
+    virtual bool isMediumPower() const                            { return m_Item->type().GetEffects()->isMediumSlot(); }
+    virtual bool isLowPower() const                              { return m_Item->type().GetEffects()->isLowSlot(); }
 
     virtual bool isTurretFitted()
     {
         // Try to make the effect called 'turretFitted' active, if it exists, to test for module being a turret:
-        if( m_Effects->HasEffect(Effect_turretFitted) )     // Effect_turretFitted from enum EveAttrEnum::Effect_turretFitted
+        if( m_Item->type().GetEffects()->HasEffect(Effect_turretFitted) )     // Effect_turretFitted from enum EveAttrEnum::Effect_turretFitted
             return true;
         else
             return false;
@@ -88,7 +88,7 @@ public:
     virtual bool isLauncherFitted()
     {
         // Try to make the effect called 'launcherFitted' active, if it exists, to test for module being a launcher:
-        if( m_Effects->HasEffect(Effect_launcherFitted) )   // Effect_launcherFitted from enum EveAttrEnum::Effect_launcherFitted
+        if( m_Item->type().GetEffects()->HasEffect(Effect_launcherFitted) )   // Effect_launcherFitted from enum EveAttrEnum::Effect_launcherFitted
             return true;
         else
             return false;
@@ -121,7 +121,6 @@ public:
 protected:
     InventoryItemRef m_Item;
     ShipRef m_Ship;
-    ModuleEffects * m_Effects;
     bool _isOverload;
 
     ModuleStates m_Module_State;

@@ -231,7 +231,8 @@ ItemType::ItemType(
   m_basePrice(_data.basePrice),
   m_published(_data.published),
   m_marketGroupID(_data.marketGroupID),
-  m_chanceOfDuplicating(_data.chanceOfDuplicating)
+  m_chanceOfDuplicating(_data.chanceOfDuplicating),
+  m_Effects(new TypeEffects(_id))
 {
     // assert for data consistency
     assert(_data.groupID == _group.id());
@@ -316,12 +317,6 @@ _Ty *ItemType::_LoadType(uint32 typeID,
 }
 
 bool ItemType::_Load() {
-	// load type effects
-	sItemFactory.db().GetTypeEffectsList( m_id, m_effects );
-
     // load type attributes
     return (attributes.Load( sItemFactory.db() ));
 }
-
-
-
