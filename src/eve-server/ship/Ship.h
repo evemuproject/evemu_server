@@ -200,7 +200,7 @@ public:
     /*
      * Public fields:
      */
-    const ShipType &    type() const { return static_cast<const ShipType &>(InventoryItem::type()); }
+    const ShipType &type() const { return static_cast<const ShipType &>(InventoryItem::type()); }
 
     /*
      * Primary public packet builders:

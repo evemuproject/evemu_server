@@ -101,7 +101,7 @@ private:
         subSystemSlot
     };
 
-    void _removeModule(EVEItemFlags flag, GenericModule * mod);
+    bool _removeModule(EVEItemFlags flag, GenericModule * mod);
 
     void _process(processType p);
     void _processEx(processType p, slotType t);

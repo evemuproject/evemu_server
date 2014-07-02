@@ -27,7 +27,6 @@
 #define ACTIVE_MODULES_H
 
 #include "Modules.h"
-#include "ship/modules/components/ModifyShipAttributesComponent.h"
 #include "ship/modules/components/ActiveModuleProcessingComponent.h"
 
 class ActiveModule : public GenericModule
@@ -97,6 +96,8 @@ public:
     bool isBusy() {
       return m_ActiveModuleProc->IsBusy();
     }
+    
+    virtual bool isActiveModule() { return true; }
 
 protected:
 	ActiveModuleProcessingComponent * m_ActiveModuleProc;

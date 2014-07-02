@@ -164,7 +164,8 @@ bool ModuleContainer::RemoveModule(EVEItemFlags flag)
 	if( mod == NULL )
 		return false;	// NO module pointer found at this slot flag, DO NOT attempt to dereference
 
-    _removeModule(mod->flag(), mod);
+    if(!_removeModule(mod->flag(), mod))
+        return false; // could not remove module for some reason...  possibly still loaded and no room for the charges?
 
     //delete the module
     delete mod;
@@ -180,7 +181,8 @@ bool ModuleContainer::RemoveModule(uint32 itemID)
 	if( mod == NULL )
 		return false;	// NO module pointer found at this slot flag, DO NOT attempt to dereference
 
-    _removeModule(mod->flag(), mod);
+    if(!_removeModule(mod->flag(), mod))
+        return false; // could not remove module for some reason...  possibly still loaded and no room for the charges?
 
     //delete the module
     delete mod;
@@ -454,8 +456,9 @@ void ModuleContainer::SaveModules()
 
 }
 
-void ModuleContainer::_removeModule(EVEItemFlags flag, GenericModule * mod)
+bool ModuleContainer::_removeModule(EVEItemFlags flag, GenericModule * mod)
 {
+    // to-do: unload charges, to ships hold in space or station in dock.
     switch(_checkBounds(flag))
     {
     case NaT:
@@ -485,18 +488,20 @@ void ModuleContainer::_removeModule(EVEItemFlags flag, GenericModule * mod)
         m_TotalLaunchersFitted--;
 
     // Maintain the Modules Fitted By Group counter for this module group:
-    if( m_ModulesFittedByGroupID.find(mod->getItem()->groupID()) != m_ModulesFittedByGroupID.end() )
+    std::map<uint32, uint32>::iterator itr = m_ModulesFittedByGroupID.find(mod->getItem()->groupID());
+    if( itr != m_ModulesFittedByGroupID.end() )
     {
         uint32 moduleCount = 0;
-        if( (moduleCount = m_ModulesFittedByGroupID.find(mod->getItem()->groupID())->second) > 1)
+        if( itr->second > 1)
             // We still have more than one module of this group fitted, so just reduce number fitted by 1:
-            m_ModulesFittedByGroupID.find(mod->getItem()->groupID())->second -= 1;
+            itr->second -= 1;
         else
             // This was the last module of this group fitted, so remove the entry from the map:
-            m_ModulesFittedByGroupID.erase(mod->getItem()->groupID());
+            m_ModulesFittedByGroupID.erase(itr);
     }
     else
         sLog.Error( "ModuleContainer::_removeModule()", "Removing Module from ship fit when it had NO entry in m_ModulesFittedByGroup !" );
+    return true;
 }
 
 void ModuleContainer::_process(processType p)
@@ -764,9 +769,9 @@ ModuleManager::ModuleManager(Ship *const ship)
             cur = items.begin();
             end = items.end();
             while( (cur != end) ) {
-                if( cur->get()->categoryID() == EVEDB::invCategories::Charge )
+                if( (*cur).get()->categoryID() == EVEDB::invCategories::Charge )
                     chargeRef = (*cur);
-                if( cur->get()->categoryID() == EVEDB::invCategories::Module )
+                if( (*cur).get()->categoryID() == EVEDB::invCategories::Module )
                     moduleRef = (*cur);
                 cur++;
             }
@@ -808,10 +813,10 @@ ModuleManager::ModuleManager(Ship *const ship)
             std::vector<InventoryItemRef>::iterator cur, end;
             cur = items.begin();
             end = items.end();
-            while( (cur->get()->categoryID() != EVEDB::invCategories::Module) && (cur != end) ) {
+            while( ((*cur).get()->categoryID() != EVEDB::invCategories::Module) && (cur != end) ) {
                 cur++;
             }
-            if( cur->get()->categoryID() == EVEDB::invCategories::Module )
+            if( (*cur).get()->categoryID() == EVEDB::invCategories::Module )
                 itemRef = (*cur);
             if( !(itemRef.get() == NULL) )
             {

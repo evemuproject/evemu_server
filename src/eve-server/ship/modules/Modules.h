@@ -117,6 +117,8 @@ public:
 	Basic_Log * GetLog() { return m_pMM_Log; }
     
     ShipRef GetShip() { return m_Ship; };
+    
+    virtual bool isActiveModule() { return false; }
 
 protected:
     InventoryItemRef m_Item;

@@ -383,6 +383,7 @@ SET( ship_SOURCE
      "${TARGET_SOURCE_DIR}/ship/TargetManager.cpp" )
 
 SET( ship_modules_INCLUDE
+     "${TARGET_INCLUDE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ActiveModules.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ModuleDB.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ModuleDefs.h"
@@ -396,6 +397,7 @@ SET( ship_modules_INCLUDE
 	 "${TARGET_INCLUDE_DIR}/ship/modules/weapon_modules/ProjectileTurret.h" 
 	 "${TARGET_INCLUDE_DIR}/ship/modules/weapon_modules/WeaponModule.h" )
 SET( ship_modules_SOURCE
+     "${TARGET_SOURCE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ActiveModules.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ModuleDB.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ModuleEffects.cpp"
@@ -406,15 +408,6 @@ SET( ship_modules_SOURCE
 	 "${TARGET_SOURCE_DIR}/ship/modules/weapon_modules/EnergyTurret.cpp"
 	 "${TARGET_SOURCE_DIR}/ship/modules/weapon_modules/ProjectileTurret.cpp"
 	 "${TARGET_SOURCE_DIR}/ship/modules/weapon_modules/WeaponModule.cpp")
-    #"${TARGET_SOURCE_DIR}/ship/modules/.cpp"
-    #"${TARGET_SOURCE_DIR}/ship/modules/.cpp" )
-
-SET( ship_modules_components_INCLUDE
-     "${TARGET_INCLUDE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.h"
-     "${TARGET_INCLUDE_DIR}/ship/modules/components/ModifyShipAttributesComponent.h" )
-SET( ship_modules_components_SOURCE
-     "${TARGET_SOURCE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.cpp"
-     "${TARGET_SOURCE_DIR}/ship/modules/components/ModifyShipAttributesComponent.cpp" )
     #"${TARGET_SOURCE_DIR}/ship/modules/.cpp"
     #"${TARGET_SOURCE_DIR}/ship/modules/.cpp" )
 
@@ -510,7 +503,6 @@ SOURCE_GROUP( "src\\npc"           FILES ${npc_INCLUDE} )
 SOURCE_GROUP( "src\\pos"           FILES ${pos_INCLUDE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_INCLUDE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_INCLUDE} )
-SOURCE_GROUP( "src\\ship\\modules\\components" FILES ${ship_modules_components_INCLUDE} )
 SOURCE_GROUP( "src\\standing"      FILES ${standing_INCLUDE} )
 SOURCE_GROUP( "src\\station"       FILES ${station_INCLUDE} )
 SOURCE_GROUP( "src\\system"        FILES ${system_INCLUDE} )
@@ -537,7 +529,6 @@ SOURCE_GROUP( "src\\npc"           FILES ${npc_SOURCE} )
 SOURCE_GROUP( "src\\pos"           FILES ${pos_SOURCE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_SOURCE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_SOURCE} )
-SOURCE_GROUP( "src\\ship\\modules\\components" FILES ${ship_modules_components_SOURCE} )
 SOURCE_GROUP( "src\\standing"      FILES ${standing_SOURCE} )
 SOURCE_GROUP( "src\\station"       FILES ${station_SOURCE} )
 SOURCE_GROUP( "src\\system"        FILES ${system_SOURCE} )
@@ -565,7 +556,6 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${pos_INCLUDE}            ${pos_SOURCE}
                 ${ship_INCLUDE}           ${ship_SOURCE}
                 ${ship_modules_INCLUDE}   ${ship_modules_SOURCE}
-                ${ship_modules_components_INCLUDE} ${ship_modules_components_SOURCE}
                 ${standing_INCLUDE}       ${standing_SOURCE}
                 ${station_INCLUDE}        ${station_SOURCE}
                 ${system_INCLUDE}         ${system_SOURCE} )

@@ -26,8 +26,6 @@
 #ifndef ACTIVE_MODULE_PROCESSING_COMPONENT_H
 #define ACTIVE_MODULE_PROCESSING_COMPONENT_H
 
-#include "ship/modules/components/ModifyShipAttributesComponent.h"
-
 class ActiveModule;
 
 class ActiveModuleProcessingComponent
