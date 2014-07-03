@@ -273,16 +273,6 @@ public:
     /* end experimental new attribute system                                */
     /************************************************************************/
     
-    /**
-     * CalculateRechargeRate
-     * Calculate the recharge rate of capacitor or shields.
-     * @param Capacity The maximum capacity of the item.
-     * @param RechargeTimeMS The time in ms that it takes to fully recharge the item.
-     * @param Current The current charge of the item.
-     * @return The rate of charge for the item.
-     */
-    static double CalculateRechargeRate(double Capacity, double RechargeTimeMS, double Current);
-
 protected:
     InventoryItem(
         uint32 _itemID,
@@ -371,6 +361,7 @@ protected:
     GPoint              m_position;
     std::string         m_customInfo;
 
+	std::map<EVEItemFlags, double> m_cargoHoldsUsedVolumeByFlag;
     std::vector<AttributeModifierSourceRef> m_attributeModifiers;
 };
 

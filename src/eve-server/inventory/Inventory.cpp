@@ -139,9 +139,12 @@ Inventory *Inventory::Cast(InventoryItemRef item)
 bool Inventory::LoadContents()
 {
     // check if the contents has already been loaded...
-    if( ContentsLoaded() )
-    {
-        return true;
+    if( !IsStation(this->inventoryID()) )
+	{
+        if( ContentsLoaded() )
+        {
+            return true;
+        }
     }
 
     sLog.Debug("Inventory", "Recursively loading contents of inventory %u", inventoryID() );
@@ -308,6 +311,15 @@ InventoryItemRef Inventory::GetByTypeFlag(uint32 typeID, EVEItemFlags flag) cons
     return InventoryItemRef();
 }
 
+void Inventory::GetInventoryList(std::map<uint32, InventoryItemRef> &inventory)
+{
+    std::map<uint32, InventoryItemRef>::const_iterator cur, end;
+    cur = mContents.begin();
+    end = mContents.end();
+    for(; cur != end; cur++)
+		inventory.insert(std::pair<uint32, InventoryItemRef>(cur->first,cur->second));
+}
+
 uint32 Inventory::FindByFlag(EVEItemFlags _flag, std::vector<InventoryItemRef> &items) const
 {
     std::map<uint32, InventoryItemRef>::const_iterator cur, end;
@@ -461,19 +473,17 @@ void Inventory::StackAll(EVEItemFlags locFlag, uint32 forOwner)
 
 double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
 {
-    //double totalVolume = 0.0;
-    EvilNumber totalVolume(0.0);
     //TODO: And implement Sizes for packaged ships
 
-    std::map<uint32, InventoryItemRef>::const_iterator cur, end;
-    cur = mContents.begin();
-    end = mContents.end();
-    for(; cur != end; cur++)
-    {
-        if( cur->second->flag() == locationFlag )
-            //totalVolume += cur->second->quantity() * cur->second->volume();
-            totalVolume += cur->second->GetAttribute(AttrQuantity) * cur->second->GetAttribute(AttrVolume);
-    }
+	std::vector<InventoryItemRef> items;
+	std::vector<InventoryItemRef>::iterator cur, end;
+	items.clear();
+	FindByFlag(locationFlag,items);
+	cur = items.begin();
+	end = items.end();
+    EvilNumber totalVolume(0.0);
+	for(; cur != end; cur++)
+		totalVolume += ((*cur)->GetAttribute(AttrVolume) * (*cur)->quantity());
 
     // this is crap... bleh... as it should return a EvilNumber
     return totalVolume.get_float();

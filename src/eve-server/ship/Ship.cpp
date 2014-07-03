@@ -696,6 +696,33 @@ void Ship::RemoveRig( InventoryItemRef item, uint32 inventoryID )
     item->Delete();
 }
 
+/**
+ * CalculateRechargeRate
+ * Calculate the recharge rate of capacitor or shields.
+ * @param Capacity The maximum capacity of the item.
+ * @param RechargeTimeMS The time in ms that it takes to fully recharge the item.
+ * @param Current The current charge of the item.
+ * @return The rate of charge for the item.
+ */
+double CalculateRechargeRate(double Capacity, double RechargeTimeMS, double Current)
+{
+    // prevent divide by zero.
+    RechargeTimeMS = RechargeTimeMS < 1 ? 1 : RechargeTimeMS;
+    Current = Current < 1 ? 1 : Current;
+    double Cmax = Capacity < 1 ? 1 : Capacity;
+    // tau = "cap recharge time" / 5.0
+    double tau = RechargeTimeMS / 5000.0;
+    // (2*Cmax) / tau
+    double Cmax2_tau = (Cmax * 2) / tau;
+    double C = Current;
+    // C / Cmax
+    double C_Cmax = C / Cmax;
+    // sqrt( C / Cmax )
+    double sC_Cmax = sqrt(C_Cmax);
+    // charge rate in Gj / sec
+    return Cmax2_tau * (sC_Cmax - C_Cmax);
+}
+
 void Ship::Process()
 {
     // Check to see if there is at least one update interval.
@@ -718,8 +745,8 @@ void Ship::Process()
         do
         {
             // update one interval of time.
-            double capDelta = InventoryItem::CalculateRechargeRate( capMax, capRate, cap + capChange );
-            double shieldDelta = InventoryItem::CalculateRechargeRate( shieldMax, shieldRate, shield + shieldChange );
+            double capDelta = CalculateRechargeRate( capMax, capRate, cap + capChange );
+            double shieldDelta = CalculateRechargeRate( shieldMax, shieldRate, shield + shieldChange );
             capChange += capDelta * interval;
             shieldChange += shieldDelta * interval;
         }

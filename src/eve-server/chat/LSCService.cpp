@@ -369,7 +369,7 @@ PyResult LSCService::Handle_JoinChannels(PyCallArgs &call) {
             else
                 channel = m_channels[ channelID ];
 
-            if( !channel->IsJoined( charID ) )
+            if( (!channel->IsJoined( charID )) && (channelID != call.client->GetCharacterID()) )
             {
                 ChannelJoinReply chjr;
 

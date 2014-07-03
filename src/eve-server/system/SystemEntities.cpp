@@ -192,13 +192,14 @@ PyDict *SystemStargateEntity::MakeSlimItem() const {
 
 
 SystemAsteroidBeltEntity::SystemAsteroidBeltEntity(SystemManager *system, const DBSystemEntity &entity)
-: SimpleSystemEntity(system, entity)
+: SimpleSystemEntity(system, entity),
+  m_manager(NULL)
 {
 }
 
 SystemAsteroidBeltEntity::~SystemAsteroidBeltEntity() {
     targets.DoDestruction();
-    //delete m_manager;
+    delete m_manager;
 }
 
 void SystemAsteroidBeltEntity::EncodeDestiny( Buffer& into ) const

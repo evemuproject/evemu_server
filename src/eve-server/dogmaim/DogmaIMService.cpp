@@ -273,9 +273,6 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	EVEItemFlags moduleFlag = moduleRef->flag();
 	InventoryItemRef chargeRef;
 
-    // to-do: this no longer works as the first charge to load creates a loading cycle that prevents further loading.
-    //        need to implement a multi load function in module manager and pass in a list of charges.
-
     // loop through the list of charges.
     uint32 loadedChargeID = 0;
     std::vector<int32>::iterator itr = args.chargeList.begin();
@@ -299,6 +296,7 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
         //Return new item result
         return result.Encode();
     }
+
 	return NULL;
 }
 

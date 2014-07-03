@@ -281,6 +281,5 @@ extern ItemFactory &_sItemFactory;
 // define as a define so the text highlighter will color the variable.
 #define sItemFactory _sItemFactory
 
-
 #endif
 

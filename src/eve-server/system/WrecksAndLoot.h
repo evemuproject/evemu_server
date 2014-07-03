@@ -29,7 +29,7 @@
 
 // //////////////// Permanent Memory Object Classes //////////////////////
 
-// This class is a singleton object
+// This class is a singleton object, containing all Effects loaded from dgmEffects table as memory objects of type MEffect:
 class DGM_Types_to_Wrecks_Table
 : public Singleton< DGM_Types_to_Wrecks_Table >
 {

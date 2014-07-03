@@ -35,9 +35,9 @@
 
 NPCAIMgr::NPCAIMgr(NPC *who)
 : m_state(Idle),
-  m_entityFlyRange2(EvilNumber::pow(who->Item()->GetAttribute(AttrEntityFlyRange), 2) ),
-  m_entityChaseMaxDistance2(EvilNumber::pow(who->Item()->GetAttribute(AttrEntityChaseMaxDistance), 2) ),
-  m_entityAttackRange2(EvilNumber::pow(who->Item()->GetAttribute(AttrEntityAttackRange), 2) ),
+  m_entityFlyRange2(who->Item()->GetAttribute(AttrEntityFlyRange)*who->Item()->GetAttribute(AttrEntityFlyRange)),
+  m_entityChaseMaxDistance2(who->Item()->GetAttribute(AttrEntityChaseMaxDistance)*who->Item()->GetAttribute(AttrEntityChaseMaxDistance)),
+  m_entityAttackRange2(who->Item()->GetAttribute(AttrEntityAttackRange)*who->Item()->GetAttribute(AttrEntityAttackRange)),
   m_npc(who),
   m_processTimer(50),    //arbitrary.
   m_mainAttackTimer(1),    //we want this to always trigger the first time through.
@@ -84,47 +84,51 @@ void NPCAIMgr::Process() {
     switch(m_state) {
     case Idle:
 		{
-			//TODO: wander around?
-			//TODO: look around for shit to shoot at?
-			//         The parameter proximityRange tells us how far we "see"
-			bool targetSelected = false;
-			if( m_beginFindTarget.Check() )
+			// Make sure we're not warping to the spawn point:
+			if( !(m_npc->Destiny()->IsWarping()) )
 			{
-				std::set<SystemEntity *> possibleTargets;
-				m_npc->Bubble()->GetEntities(possibleTargets);
-				std::set<SystemEntity *>::iterator cur, end;
-				cur = possibleTargets.begin();
-				end = possibleTargets.end();
-				for(; cur != end; cur++)
-				{
-					// We find a target
-					// TODO: Determine the weakest target to engage
-					if( (*cur)->IsClient() )
-					{
-						// Check to see if this player ship is not cloaked, so we can really target them:
-						if( ((*cur)->CastToClient()->Destiny()) != NULL )
-						{
-							if( !((*cur)->CastToClient()->Destiny()->IsCloaked()) )
-							{
-								// TODO: Check to see if target's standings are below 0.0, if so, engage, otherwise, ignore:
-								//Client * const currentClient = (*cur)->CastToClient();
-								//if( currentClient->GetStandingsFrom(this->m_npc->CastToNPC()->GetCorporationID()) >= 0.0 )
-								//	break;
-						
-								// Check to see if it's a capsule
-								// Target him and begin the process of the attack.
-								if( !((*cur)->Item()->groupID() == EVEDB::invGroups::Capsule) )
-								{
-									this->Targeted((*cur));
-									targetSelected = true;
-								}
-							}
-						}
-					}
+                //TODO: wander around?
+                //TODO: look around for shit to shoot at?
+                //         The parameter proximityRange tells us how far we "see"
+                bool targetSelected = false;
+                if( m_beginFindTarget.Check() )
+                {
+                    std::set<SystemEntity *> possibleTargets;
+                    m_npc->Bubble()->GetEntities(possibleTargets);
+                    std::set<SystemEntity *>::iterator cur, end;
+                    cur = possibleTargets.begin();
+                    end = possibleTargets.end();
+                    for(; cur != end; cur++)
+                    {
+                        // We find a target
+                        // TODO: Determine the weakest target to engage
+                        if( (*cur)->IsClient() )
+                        {
+                            // Check to see if this player ship is not cloaked, so we can really target them:
+                            if( ((*cur)->CastToClient()->Destiny()) != NULL )
+                            {
+                                if( !((*cur)->CastToClient()->Destiny()->IsCloaked()) )
+                                {
+                                    // TODO: Check to see if target's standings are below 0.0, if so, engage, otherwise, ignore:
+                                    //Client * const currentClient = (*cur)->CastToClient();
+                                    //if( currentClient->GetStandingsFrom(this->m_npc->CastToNPC()->GetCorporationID()) >= 0.0 )
+                                    //	break;
 
-					if( targetSelected )
-						break;
-				}
+                                    // Check to see if it's a capsule
+                                    // Target him and begin the process of the attack.
+                                    if( !((*cur)->Item()->groupID() == EVEDB::invGroups::Capsule) )
+                                    {
+                                        this->Targeted((*cur));
+                                        targetSelected = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        if( targetSelected )
+                            break;
+                    }
+                }
 			}
 			break;
 		}
@@ -392,11 +396,11 @@ void NPCAIMgr::_SendWeaponEffect( const char*effect, SystemEntity *target )
     //sfx.duration_ms = 1960;    //no idea...
     //sfx.duration_ms = m_npc->Item()->speed();
     sfx.duration_ms = m_npc->Item()->GetAttribute(AttrSpeed).get_float();
-    sfx.repeat = 1;
+    sfx.repeat = new PyBool(true);
     sfx.startTime = Win32TimeNow();
 
     PyTuple* up = sfx.Encode();
-    m_npc->Destiny()->SendDestinyUpdate( &up );    //consumed
+    m_npc->Destiny()->SendSingleDestinyUpdate( &up );    //consumed
     PySafeDecRef( up );
 }
 

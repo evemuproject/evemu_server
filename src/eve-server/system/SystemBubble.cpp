@@ -47,34 +47,27 @@ SystemBubble::SystemBubble(const GPoint &center, double radius)
 
 //send a set of destiny events and updates to everybody in the bubble.
 void SystemBubble::BubblecastDestiny(std::vector<PyTuple *> &updates, std::vector<PyTuple *> &events, const char *desc) const {
-    BubblecastDestinyUpdate(updates, desc);
-    BubblecastDestinyEvent(events, desc);
-}
-
-//send a set of destiny updates to everybody in the bubble.
-void SystemBubble::BubblecastDestinyUpdate(std::vector<PyTuple *> &updates, const char *desc) const {
     //this could be done more efficiently....
-    std::vector<PyTuple *>::iterator cur, end;
-    cur = updates.begin();
-    end = updates.end();
-    for(; cur != end; cur++) {
-        PyTuple *up = *cur;
-        BubblecastDestinyUpdate(&up, desc);    //update is consumed.
+    {
+        std::vector<PyTuple *>::iterator cur, end;
+        cur = updates.begin();
+        end = updates.end();
+        for(; cur != end; cur++) {
+            PyTuple *up = *cur;
+            BubblecastDestinyUpdate(&up, desc);    //update is consumed.
+        }
+        updates.clear();
     }
-    updates.clear();
-}
-
-//send a set of destiny events to everybody in the bubble.
-void SystemBubble::BubblecastDestinyEvent(std::vector<PyTuple *> &events, const char *desc) const {
-    //this could be done more efficiently....
-    std::vector<PyTuple *>::iterator cur, end;
-    cur = events.begin();
-    end = events.end();
-    for(; cur != end; cur++) {
-        PyTuple *up = *cur;
-        BubblecastDestinyUpdate(&up, desc);    //update is consumed.
+    {
+        std::vector<PyTuple *>::iterator cur, end;
+        cur = events.begin();
+        end = events.end();
+        for(; cur != end; cur++) {
+            PyTuple *up = *cur;
+            BubblecastDestinyUpdate(&up, desc);    //update is consumed.
+        }
+        events.clear();
     }
-    events.clear();
 }
 
 //send a destiny update to everybody in the bubble.

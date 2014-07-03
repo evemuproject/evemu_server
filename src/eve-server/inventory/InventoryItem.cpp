@@ -278,7 +278,10 @@ bool InventoryItem::_Load()
     mAttributeMap.Load();
 	mDefaultAttributeMap.Load();
 
-    // update inventory
+	// fill basic cargo hold data:
+	m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold,mAttributeMap.GetAttribute(AttrCapacity).get_float()));
+
+     // update inventory
     Inventory *inventory = sItemFactory.GetInventory( locationID(), false );
     if( inventory != NULL )
         inventory->AddItem( InventoryItemRef( this ) );
@@ -312,10 +315,14 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
         ///////////////////////////////////////
         case EVEDB::invCategories::Entity: {
 			// Spawn generic item for Entities at this time:
-			uint32 itemID = InventoryItem::_SpawnEntity( data );
+			// (commented lines for _SpawnEntity and LoadEntity can be used alternatively to prevent Entities from being created and saved to the DB,
+			//  however, this may be causing the weird and bad targetting of NPC ships when they enter the bubble and your ship is already in it)
+			//uint32 itemID = InventoryItem::_SpawnEntity( factory, data );		// Use this to prevent Asteroids from being stored in DB
+			uint32 itemID = InventoryItem::_Spawn( data );
 			if( itemID == 0 )
 				return InventoryItemRef();
-			InventoryItemRef itemRef = InventoryItem::LoadEntity( itemID, data );
+			//InventoryItemRef itemRef = InventoryItem::LoadEntity( factory, itemID, data );		// Use this to prevent Asteroids from being stored in DB
+			InventoryItemRef itemRef = InventoryItem::Load( itemID );
 			return itemRef;
 		}
 
@@ -409,7 +416,7 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
         }
 
         ///////////////////////////////////////
-        // Module:
+        // Charge:
         ///////////////////////////////////////
         case EVEDB::invCategories::Charge:
 		{
@@ -518,18 +525,23 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
         case EVEDB::invCategories::Asteroid:
         {
             // Spawn generic item:
+			// (commented lines for _SpawnEntity and LoadEntity can be used alternatively to prevent asteroids from being created and saved to the DB,
+			//  however, initial testing of this throws a client exception when attempting to show brackets for these asteroid space objects when using
+			//  these alternative functions.  more investigation into that is required before they can be used with Asteroids)
             uint32 itemID = InventoryItem::_Spawn( data );
+            //uint32 itemID = InventoryItem::_SpawnEntity( factory, data );		// Use this to prevent Asteroids from being stored in DB
             if( itemID == 0 )
                 return InventoryItemRef();
 
             InventoryItemRef itemRef = InventoryItem::Load( itemID );
+            //InventoryItemRef itemRef = InventoryItem::LoadEntity( factory, itemID, data );		// Use this to prevent Asteroids from being stored in DB
 
             // THESE SHOULD BE MOVED INTO AN Asteroid::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->SetAttribute(AttrRadius, 500.0);       // Radius
             itemRef.get()->SetAttribute(AttrMass,   1000000.0);    // Mass
-            itemRef.get()->SetAttribute(AttrVolume, 8000.0);       // Volume
-            itemRef.get()->SetAttribute(AttrQuantity, 1000.0);      // Quantity
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type().attributes.volume());       // Volume
+            itemRef.get()->SetAttribute(AttrQuantity, 5000.0);      // Quantity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -906,7 +918,6 @@ InventoryItemRef InventoryItem::Split(int32 qty_to_take, bool notify) {
     if(!AlterQuantity(-qty_to_take, notify)) {
         _log(ITEM__ERROR, "%s (%u): Failed to remove quantity %d during split.", itemName().c_str(), itemID(), qty_to_take);
         return InventoryItemRef();
-
     }
 
     ItemData idata(
@@ -1208,6 +1219,11 @@ bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num, bool notify /*
 	return status;
 }
 
+EvilNumber InventoryItem::GetAttribute( uint32 attributeID )
+{
+    return mAttributeMap.GetAttribute(attributeID);
+}
+
 EvilNumber InventoryItem::GetAttribute( const uint32 attributeID ) const
 {
      return mAttributeMap.GetAttribute(attributeID);
@@ -1282,21 +1298,3 @@ void InventoryItem::RemoveAttributeModifier(AttributeModifierSourceRef modifier)
     }
 }
 
-double InventoryItem::CalculateRechargeRate(double Capacity, double RechargeTimeMS, double Current)
-{
-    // prevent divide by zero.
-    RechargeTimeMS = RechargeTimeMS < 1 ? 1 : RechargeTimeMS;
-    Current = Current < 1 ? 1 : Current;
-    double Cmax = Capacity < 1 ? 1 : Capacity;
-    // tau = "cap recharge time" / 5.0
-    double tau = RechargeTimeMS / 5000.0;
-    // (2*Cmax) / tau
-    double Cmax2_tau = (Cmax * 2) / tau;
-    double C = Current;
-    // C / Cmax
-    double C_Cmax = C / Cmax;
-    // sqrt( C / Cmax )
-    double sC_Cmax = sqrt(C_Cmax);
-    // charge rate in Gj / sec
-    return Cmax2_tau * (sC_Cmax - C_Cmax);
-}
