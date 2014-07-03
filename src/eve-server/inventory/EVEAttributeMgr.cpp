@@ -86,13 +86,13 @@ bool AttributeMap::SetAttribute( uint32 attributeId, const EvilNumber &num, bool
 bool AttributeMap::SetAttribute( uint32 attributeId, const int &num, bool notify /*= true*/ )
 {
     EvilNumber val(num);
-    SetAttribute(attributeId, val, notify);
+    return SetAttribute(attributeId, val, notify);
 }
 
 bool AttributeMap::SetAttribute( uint32 attributeId, const double &num, bool notify /*= true*/ )
 {
     EvilNumber val(num);
-    SetAttribute(attributeId, val, notify);
+    return SetAttribute(attributeId, val, notify);
 }
 
 EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
