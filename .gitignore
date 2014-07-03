@@ -92,6 +92,7 @@ zlib/
 
 # compiler files
 *.gch
+*.a
 
 # CMake files
 cmake_install.cmake
@@ -108,7 +109,7 @@ nbproject/
 build/
 release/
 
-# eclipse proget files
+# eclipse project files
 .settings
 .project
 
