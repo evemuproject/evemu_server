@@ -71,7 +71,10 @@ void GenericModule::Offline()
     m_Item->PutOffline();
     m_Module_State = MOD_OFFLINE;
     m_ShipModifiers->SetActive(false);
+    m_ShipPassiveModifiers->SetActive(false);
+    m_ShipActiveModifiers->SetActive(false); // should be false anyway.
     m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
 void GenericModule::Online()
@@ -81,7 +84,9 @@ void GenericModule::Online()
     m_Module_State = MOD_ONLINE;
     m_ShipModifiers->SetActive(true);
     m_ShipPassiveModifiers->SetActive(true);
+    m_ShipActiveModifiers->SetActive(false); // should be false anyway.
     m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
 void GenericModule::GenerateModifiers()

@@ -1256,10 +1256,8 @@ bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
     }
     double value = AttributeModifierSource::FinalizeModification(nVal.get_float(), amount, factors, stackedfactors);
     if(nVal.get_type() == EVIL_NUMBER_TYPE::evil_number_int)
-        nVal = EvilNumber((int64)value);
-    else
-        nVal = EvilNumber(value);
-    return mAttributeMap.SetAttribute(attrID, nVal, notify);
+        return mAttributeMap.SetAttribute(attrID, (int64)value, notify);
+    return mAttributeMap.SetAttribute(attrID, value, notify);
 }
 
 void InventoryItem::AddAttributeModifier(AttributeModifierSourceRef modifier)

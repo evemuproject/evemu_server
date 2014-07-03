@@ -83,7 +83,7 @@ bool AttributeMap::SetAttribute( uint32 attributeId, const EvilNumber &num, bool
     return true;
 }
 
-bool AttributeMap::SetAttribute( uint32 attributeId, const int &num, bool notify /*= true*/ )
+bool AttributeMap::SetAttribute( uint32 attributeId, const int64 &num, bool notify /*= true*/ )
 {
     EvilNumber val(num);
     return SetAttribute(attributeId, val, notify);

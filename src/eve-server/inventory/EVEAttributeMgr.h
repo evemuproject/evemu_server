@@ -93,7 +93,7 @@ public:
      * @retval true  The attribute has successfully been set and queued.
      * @retval false The attribute change has not been queued but has not been changed.
      */
-    bool SetAttribute(uint32 attributeId, const int &num, bool notify = true);
+    bool SetAttribute(uint32 attributeId, const int64 &num, bool notify = true);
 	/**
      * @brief set the attribute with @num
      *
