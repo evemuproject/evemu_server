@@ -42,8 +42,8 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
 
     GenerateModifiers();
     // attach overload modifiers.
-    m_Item->AddAttributeModifier(m_OverloadModifiers);
     m_OverloadModifiers->SetActive(false);
+    m_Item->AddAttributeModifier(m_OverloadModifiers);
     // attach ship modifiers.
     m_Ship->AddAttributeModifier(m_ShipModifiers);
     m_Ship->AddAttributeModifier(m_ShipPassiveModifiers);
