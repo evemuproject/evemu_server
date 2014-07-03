@@ -50,7 +50,7 @@ bool Client::ProcessNet()
             p->Dump(CLIENT__IN_ALL, dumper);
         }
     </pre>
-&nbsp;&nbsp;Call the packet dispatcher to handle the packet.
+&nbsp;&nbsp;If login is complete the packet will end up here where we call the packet dispatcher to handle the packet.
     <pre class="brush: cpp">
         try
         {
@@ -72,6 +72,39 @@ bool Client::ProcessNet()
 
     return true;
 }
+    </pre>
+&nbsp;&nbsp;The Pop packet function is a simple.  It retrieves a packet and calls one of several functions defined as mPacketHangler.
+    <pre class="brush: cpp">
+    PyPacket* EVEClientSession::PopPacket()
+{
+    PyRep* r = mNet->PopRep();
+    if( r == NULL )
+        return NULL;
+
+    if(is_log_enabled(NET__PRES_REP)) {
+        _log(NET__PRES_REP, "%s: Raw Rep Dump:", GetAddress().c_str());
+        r->Dump(NET__PRES_REP, "    ");
+    }
+
+    assert( mPacketHandler );
+    return ( this->*mPacketHandler )( r );
+}
+    </pre>
+&nbsp;&nbsp;When the connection is first made or reset it defaults to _HandleVersion.  This just waits for and responds to a version request the client sends on inittial contact with the server.<br>
+&nbsp;&nbsp;If the version request it valid the handler is changed to _HandleCommand.  Here there are 2 possible valid actions, a que check for the client to see how many other login request are pending before it.  And and the actual login request (VIP key).<br>
+&nbsp;&nbsp;Then the handler changes to _HandleCrypto.  This check the crypo key to make sure we are comunincating with the client with proper protocols.  If this succeds control is passed to _HandleAuthentication.<br>
+&nbsp;&nbsp;_HandleAuthentication This checks that the username and password information is correct.  Control then passes to _HandleFuncResult which sends some final handshaking to the client and passes control to _HandlePacket.<br>
+&nbsp;&nbsp;_HandlePacket it then used for the remainder of the connection life.  In theory all of this could be done in the accepting thread before the client is added to the entitylist.
+    <pre class="brush: cpp">
+    PyPacket* _HandleVersion( PyRep* rep );
+    PyPacket* _HandleCommand( PyRep* rep );
+    PyPacket* _HandleCrypto( PyRep* rep );
+    PyPacket* _HandleAuthentication( PyRep* rep );
+    PyPacket* _HandleFuncResult( PyRep* rep );
+    PyPacket* _HandlePacket( PyRep* rep );
+    </pre>
+&nbsp;&nbsp;
+    <pre class="brush: cpp">
     </pre>
   </body>
 </html>
