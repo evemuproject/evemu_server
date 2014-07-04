@@ -84,7 +84,7 @@ void MissileLauncher::DestroyRig()
 
 void MissileLauncher::Activate(SystemEntity * targetEntity)
 {
-	if( this->m_chargeRef != NULL )
+	if( this->m_chargeRef )
 	{
 		m_targetEntity = targetEntity;
 		m_targetID = targetEntity->Item()->itemID();
@@ -99,7 +99,7 @@ void MissileLauncher::Activate(SystemEntity * targetEntity)
 	}
 }
 
-void MissileLauncher::Deactivate() 
+void MissileLauncher::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
 	m_ActiveModuleProc->DeactivateCycle();
@@ -225,7 +225,7 @@ void MissileLauncher::DoCycle()
 			explosive_damage,		// explosive damage
 			effectMissileLaunching	// from EVEEffectID::
 		);
-		
+
 		m_targetEntity->ApplyDamage( damageDealt );
 
 		// Reduce ammo charge by 1 unit:

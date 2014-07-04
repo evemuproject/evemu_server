@@ -243,9 +243,9 @@ PyResult SkillMgrBound::Handle_RespecCharacter(PyCallArgs &call)
         codelog(CLIENT__ERROR, "Failed to decode RespecCharacter arguments");
         return NULL;
     }
-	
+
 	CharacterRef cref = call.client->GetChar();
-	if(cref->GetSkillInTraining() != NULL) 
+	if(cref->GetSkillInTraining())
 		throw(PyException(MakeUserError("RespecSkillInTraining")));
 
     // return early if this is an illegal call

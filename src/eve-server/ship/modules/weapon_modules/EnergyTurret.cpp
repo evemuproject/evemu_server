@@ -84,7 +84,7 @@ void EnergyTurret::DestroyRig()
 
 void EnergyTurret::Activate(SystemEntity * targetEntity)
 {
-	if( this->m_chargeRef != NULL )
+	if( this->m_chargeRef )
 	{
 		m_targetEntity = targetEntity;
 		m_targetID = targetEntity->Item()->itemID();
@@ -101,7 +101,7 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 	}
 }
 
-void EnergyTurret::Deactivate() 
+void EnergyTurret::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
 	m_ActiveModuleProc->DeactivateCycle();
@@ -218,7 +218,7 @@ void EnergyTurret::DoCycle()
 			explosive_damage,		// explosive damage
 			effectTargetAttack		// from EVEEffectID::
 		);
-		
+
 		m_targetEntity->ApplyDamage( damageDealt );
 	}
 }

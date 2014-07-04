@@ -512,7 +512,7 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
 					throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
 				if(module->GetAttribute(AttrChargeGroup1) != item->groupID())
 					throw PyException( MakeCustomError( "Incorrect charge type for this module.") );
-				
+
 				// NOTE: Module Manager will check for actual room to load charges and make stack splits, or reject loading altogether
 			}
 			else
@@ -871,7 +871,7 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 			{
 				m_ModuleManager->LoadCharge(item, flag);
 				InventoryItemRef loadedChargeOnModule = m_ModuleManager->GetLoadedChargeOnModule(flag);
-				if( loadedChargeOnModule != NULL )
+				if( loadedChargeOnModule )
 				{
 					return loadedChargeOnModule->itemID();
 				}

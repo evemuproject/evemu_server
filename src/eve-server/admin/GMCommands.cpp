@@ -354,7 +354,7 @@ PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const S
 	p_targetClient->MoveToLocation(solarSystemID, destinationPoint);
 	p_targetClient->Destiny()->SendJumpInEffect("effects.JumpIn");
 
-/*	
+/*
 	uint32 loc = atoi( args.arg( 2 ).c_str() );
 
     sLog.Log( "Command", "Translocate to %u.", loc );
@@ -830,7 +830,7 @@ PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, co
         target = args.arg( 1 );
         if( target != "myship" )
             throw PyException( MakeCustomError( "1st argument should be an entity ID ('myship'=current ship) (got %s).", args.arg( 1 ).c_str() ) );
-        
+
         itemID = who->GetShipID();
     }
     else
@@ -972,7 +972,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
     SkillRef skill;
 
     // Make sure character reference is not NULL before trying to use it:
-    if( character != NULL )
+    if( character )
     {
 		// Query Database to get list of ALL skills, then LOOP through each one, checking character for skill, setting level to 5:
 		// QUERY DB FOR LIST OF ALL SKILLS:
@@ -1502,7 +1502,7 @@ PyResult Command_kill( Client* who, CommandDB* db, PyServiceMgr* services, const
         uint32 entity = atoi( args.arg( 1 ).c_str() );
 
         InventoryItemRef itemRef = services->item_factory.GetShip(entity);
-        if( itemRef == NULL )
+        if( !itemRef )
             throw PyException( MakeCustomError("/kill NOT supported on non-ship types at this time") );
 
         // WARNING: This cast of SystemEntity * to DynamicSystemEntity * will CRASH if the get() does not return
