@@ -403,22 +403,3 @@ void NPCAIMgr::_SendWeaponEffect( const char*effect, SystemEntity *target )
     m_npc->Destiny()->SendSingleDestinyUpdate( &up );    //consumed
     PySafeDecRef( up );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

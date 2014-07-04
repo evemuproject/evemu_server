@@ -6,11 +6,11 @@
 x
     THIS SHOULD TAKE COMMAND LINE ARGS FOR THESE:igh ghf hgh
 
-host="localhost"	#Database Host
-port="3306"		#Database Port
-user="evemu"		#Database Username
-pass="changeme"		#Database Password
-database="evemu"	#Database name
+host="localhost"    #Database Host
+port="3306"        #Database Port
+user="evemu"        #Database Username
+pass="changeme"        #Database Password
+database="evemu"    #Database name
 
 #######################
 # Dont Edit Past Here #
@@ -30,6 +30,8 @@ until [ "${option}" = "x" ]; do
     read -p " Enter option:  " option
 
     if [ "${option}" = "i" ]; then
+        echo "UNZIP ALL .ZIP archives in /ofic-updates directory,"
+        read -p "then press any key to continue..."
         echo "[+] Entering database setup.."
 	echo "[+] Searching for base database files.."
 

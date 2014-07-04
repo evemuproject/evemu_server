@@ -28,6 +28,7 @@
 #include "PyServiceMgr.h"
 #include "npc/NPC.h"
 #include "npc/SpawnManager.h"
+#include "ship/DestinyManager.h"
 #include "system/SystemManager.h"
 #include "system/SystemBubble.h"
 #include "system/BubbleManager.h"

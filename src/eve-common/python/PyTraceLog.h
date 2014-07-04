@@ -249,8 +249,9 @@ protected:
         PyString & msg = *packet->AsString();
         if (mLogToConsole == true)
         {
-            fwrite(msg.content().c_str(), msg.content().size(), 1, stdout);
-            fputc('\n', stdout);
+            //fwrite(msg.content().c_str(), msg.content().size(), 1, stdout);
+            //fputc('\n', stdout);
+			sLog.Error( ">>>>> CLIENT EXCEPTION INTERCEPTED <<<<<\n", msg.content().c_str() );
         }
 
         if (mLogToFile == true)

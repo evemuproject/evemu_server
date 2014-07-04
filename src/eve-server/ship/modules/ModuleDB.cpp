@@ -27,6 +27,18 @@
 
 #include "ship/modules/ModuleDB.h"
 
+void ModuleDB::GetAllTypeIDs(DBQueryResult &res)
+{
+    if( !sDatabase.RunQuery(res,
+        " SELECT "
+        " typeID "
+        " FROM invTypes "
+        " WHERE 1 "))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
+    }
+}
+
 void ModuleDB::GetAllDgmEffects(DBQueryResult &res)
 {
     if( !sDatabase.RunQuery(res,
@@ -45,6 +57,18 @@ void ModuleDB::GetAllDgmEffectsInfo(DBQueryResult &res)
         " SELECT "
         " effectID "
         " FROM dgmEffectsInfo "
+        " WHERE 1 "))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
+    }
+}
+
+void ModuleDB::GetAllDgmTypeEffects(DBQueryResult &res)
+{
+    if( !sDatabase.RunQuery(res,
+        " SELECT "
+        " effectID "
+        " FROM dgmTypeEffects "
         " WHERE 1 "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
@@ -136,6 +160,19 @@ void ModuleDB::GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res)
     }
 }
 
+void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
+{
+    if( !sDatabase.RunQuery(res,
+        " SELECT "
+        " effectID, "
+		" isDefault "
+        " FROM dgmTypeEffects "
+        " WHERE typeID = '%u' ", typeID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
+    }
+}
+
 void ModuleDB::GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res)
 {
     if( !sDatabase.RunQuery(res,
@@ -177,20 +214,6 @@ void ModuleDB::GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res)
         " FROM dgmShipBonusModifiers "
         " WHERE shipID = '%u' ",
         shipID))
-    {
-        _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
-    }
-}
-
-void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
-{
-    if( !sDatabase.RunQuery(res,
-        " SELECT "
-		" effectID, "
-        " isDefault "
-        " FROM dgmTypeEffects "
-        " WHERE typeID = '%u' ",
-        typeID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }

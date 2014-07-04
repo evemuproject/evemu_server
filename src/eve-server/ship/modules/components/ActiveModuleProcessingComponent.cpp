@@ -309,14 +309,23 @@ void DoButton(ShipRef Ship, InventoryItemRef Item, EVEEffect *Effect, float Cycl
     shipEff.error = new PyNone;
 
     PyTuple *event = shipEff.Encode();
-    Ship->GetOperator()->GetDestiny()->SendSelfDestinyEvent(&event);
+    Ship->GetOperator()->GetDestiny()->SendSingleDestinyUpdate(&event);
 
         // Create Special Effect:
-// shipRef, moduleID, moduleTypeID,
-// targetID, chargeID, effectString,
-// isOffensive, isActive, duration, repeat
     if( !Effect->GetGuid().empty() && (Effect->GetIsOffensive() == (targetID > 0 ) ) )
     {
+//  void DestinyManager::SendSpecialEffect(
+//        const ShipRef shipRef,
+//        uint32 moduleID,
+//        uint32 moduleTypeID,
+//        uint32 targetID,
+//        uint32 chargeTypeID,
+//        std::string effectString,
+//        bool isOffensive,
+//        bool start,
+//        bool isActive,
+//        double duration,
+//        uint32 repeat) const
         Ship->GetOperator()->GetDestiny()->SendSpecialEffect
             (
              Ship,
@@ -326,9 +335,10 @@ void DoButton(ShipRef Ship, InventoryItemRef Item, EVEEffect *Effect, float Cycl
              targetID > 0 ? chargeID : 0,
              effectName.c_str(),
              Effect->GetIsOffensive() ? 1 : 0,
-             active ? 1 : 0,
+             start ? true : false,
+             active ? true : false,
              CycleTime,
-             start ? 1 : 0
+             start ? true : false
              );
     }
 }

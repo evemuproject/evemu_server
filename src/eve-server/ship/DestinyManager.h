@@ -72,41 +72,8 @@ public:
 
     void Process();
 
-    /**
-     * Send a single destiny update to self.
-     * @param up The update to send.
-     */
-    void SendSelfDestinyUpdate(PyTuple **up) const;
-    /**
-     * Send a single destiny event to self.
-     * @param up The event to send.
-     */
-    void SendSelfDestinyEvent(PyTuple **up) const;
-    /**
-     * Send a single destiny update to self or bubble.
-     * @param up The update to send.
-     */
-    void SendDestinyUpdate(PyTuple **up, bool self_only=false) const;
-    /**
-     * Send a single destiny event to self or bubble.
-     * @param up The event to send.
-     */
-    void SendDestinyEvent(PyTuple **up, bool self_only=false) const;
-    /**
-     * Send a list of destiny updates to self or bubble.
-     * @param updates The updates to send.
-     */
+    void SendSingleDestinyUpdate(PyTuple **up, bool self_only=false) const;
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, bool self_only) const;
-    /**
-     * Send a list of destiny events to self or bubble.
-     * @param events The events to send.
-     */
-    void SendDestinyEvent(std::vector<PyTuple *> &events, bool self_only) const;
-    /**
-     * Send a list of destiny updates and events to self or bubble.
-     * @param updates The updates to send.
-     * @param events The events to send.
-     */
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, std::vector<PyTuple *> &events, bool self_only) const;
 
 	// Information query functions:
@@ -169,7 +136,7 @@ public:
     void SendCloakShip(const bool IsWarpSafe) const;
     void SendUncloakShip() const;
     void SendSpecialEffect(const ShipRef shipRef, uint32 moduleID, uint32 moduleTypeID,
-    uint32 targetID, uint32 chargeID, std::string effectString, bool isOffensive, bool isActive, double duration, uint32 repeat) const;
+    uint32 targetID, uint32 chargeTypeID, std::string effectString, bool isOffensive, bool start, bool isActive, double duration, uint32 repeat) const;
 
 protected:
     void ProcessTic();

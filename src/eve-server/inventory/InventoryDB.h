@@ -29,7 +29,7 @@
 #include "ServiceDB.h"
 #include "inventory/ItemRef.h"
 
-class EVEAttributeMgr;
+//class EVEAttributeMgr;
 
 class CategoryData;
 
@@ -142,14 +142,6 @@ public:
      * Type attribute stuff
      * (dgmTypeAttributes)
      */
-    /**
-     * Loads type attributes into given attribute manager.
-     *
-     * @param[in] typeID ID of type which attributes should be loaded.
-     * @param[in] into Attribute manager the attributes should be loaded into.
-     * @return True if load was successful, false if not.
-     */
-    bool LoadTypeAttributes(uint32 typeID, EVEAttributeMgr &into);
 
     /*
      * Item stuff
@@ -169,14 +161,6 @@ public:
      * Item attribute stuff
      * (entity_attributes)
      */
-    /**
-     * Loads item attributes into given attribute manager.
-     *
-     * @param[in] itemID ID of item which attributes should be loaded.
-     * @param[in] into Attribute manager the attributes should be loaded into.
-     * @return True if load was successful, false if not.
-     */
-    bool LoadItemAttributes(uint32 itemID, EVEAttributeMgr &into);
 
     bool UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v);
     bool UpdateAttribute_double(uint32 itemID, uint32 attributeID, double v);

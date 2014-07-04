@@ -540,7 +540,7 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->SetAttribute(AttrRadius, 500.0);       // Radius
             itemRef.get()->SetAttribute(AttrMass,   1000000.0);    // Mass
-            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type().attributes.volume());       // Volume
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type().GetAttribute(AttrVolume));       // Volume
             itemRef.get()->SetAttribute(AttrQuantity, 5000.0);      // Quantity
             itemRef.get()->SaveAttributes();
 
@@ -1217,11 +1217,6 @@ bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num, bool notify /*
 		status = status && mDefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
 
 	return status;
-}
-
-EvilNumber InventoryItem::GetAttribute( uint32 attributeID )
-{
-    return mAttributeMap.GetAttribute(attributeID);
 }
 
 EvilNumber InventoryItem::GetAttribute( const uint32 attributeID ) const
