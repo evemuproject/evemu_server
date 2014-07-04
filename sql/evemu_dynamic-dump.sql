@@ -191,50 +191,52 @@ CREATE TABLE `channelMods` (
 
 DROP TABLE IF EXISTS `character_`;
 
-CREATE TABLE `character_` (
-  `characterID` int(10) unsigned NOT NULL default '0',
-  `accountID` int(10) unsigned default NULL,
-  `title` varchar(85) NOT NULL default '',
+CREATE TABLE IF NOT EXISTS `character_` (
+  `characterID` int(10) unsigned NOT NULL DEFAULT '0',
+  `accountID` int(10) unsigned DEFAULT NULL,
+  `title` varchar(85) NOT NULL DEFAULT '',
   `description` text NOT NULL,
-  `bounty` double NOT NULL default '0',
-  `balance` double NOT NULL default '0',
-  `aurBalance` double NOT NULL default '0',
-  `securityRating` double NOT NULL default '0',
-  `petitionMessage` varchar(85) NOT NULL default '',
-  `logonMinutes` int(10) unsigned NOT NULL default '0',
-  `skillPoints` double NOT NULL default '0',
+  `bounty` double NOT NULL DEFAULT '0',
+  `balance` double NOT NULL DEFAULT '0',
+  `aurBalance` double NOT NULL DEFAULT '0',
+  `securityRating` double NOT NULL DEFAULT '0',
+  `petitionMessage` varchar(85) NOT NULL DEFAULT '',
+  `logonMinutes` int(10) unsigned NOT NULL DEFAULT '0',
+  `skillPoints` double NOT NULL DEFAULT '0',
   `skillQueueEndTime` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `corporationID` int(10) unsigned NOT NULL default '0',
-  `corpRole` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
-  `rolesAtAll` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
-  `rolesAtBase` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
-  `rolesAtHQ` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
-  `rolesAtOther` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
-  `corporationDateTime` bigint(20) unsigned NOT NULL default '0',
-  `startDateTime` bigint(20) unsigned NOT NULL default '0',
-  `createDateTime` bigint(20) unsigned NOT NULL default '0',
-  `ancestryID` int(10) unsigned NOT NULL default '0',
-  `careerID` int(10) unsigned NOT NULL default '0',
-  `schoolID` int(10) unsigned NOT NULL default '0',
-  `careerSpecialityID` int(10) unsigned NOT NULL default '0',
-  `gender` tinyint(4) NOT NULL default '0',
-  `stationID` int(10) unsigned NOT NULL default '0',
-  `solarSystemID` int(10) unsigned NOT NULL default '0',
-  `constellationID` int(10) unsigned NOT NULL default '0',
-  `regionID` int(10) unsigned NOT NULL default '0',
-  `online` tinyint(1) NOT NULL default '0',
-  `freeRespecs` tinyint(1) unsigned NOT NULL default '0',
-  `lastRespecDateTime` bigint(20) unsigned NOT NULL default '0',
-  `nextRespecDateTime` bigint(20) unsigned NOT NULL default '0',
-  `deletePrepareDateTime` BIGINT(20) UNSIGNED NULL DEFAULT '0',
-  `shipID` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`characterID`),
+  `corporationID` int(10) unsigned NOT NULL DEFAULT '0',
+  `corpRole` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `rolesAtAll` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `rolesAtBase` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `rolesAtHQ` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `rolesAtOther` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `corporationDateTime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `startDateTime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `createDateTime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `ancestryID` int(10) unsigned NOT NULL DEFAULT '0',
+  `careerID` int(10) unsigned NOT NULL DEFAULT '0',
+  `schoolID` int(10) unsigned NOT NULL DEFAULT '0',
+  `careerSpecialityID` int(10) unsigned NOT NULL DEFAULT '0',
+  `gender` tinyint(4) NOT NULL DEFAULT '0',
+  `stationID` int(10) unsigned NOT NULL DEFAULT '0',
+  `solarSystemID` int(10) unsigned NOT NULL DEFAULT '0',
+  `constellationID` int(10) unsigned NOT NULL DEFAULT '0',
+  `regionID` int(10) unsigned NOT NULL DEFAULT '0',
+  `online` tinyint(1) NOT NULL DEFAULT '0',
+  `freeRespecs` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `lastRespecDateTime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `nextRespecDateTime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `deletePrepareDateTime` bigint(20) unsigned DEFAULT '0',
+  `shipID` int(10) unsigned NOT NULL DEFAULT '0',
+  `age` int(20) NOT NULL,
+  PRIMARY KEY (`characterID`),
   KEY `FK_CHARACTER__ACCOUNTS` (`accountID`),
   KEY `FK_CHARACTER__CHRANCESTRIES` (`ancestryID`),
   KEY `FK_CHARACTER__CHRCAREERS` (`careerID`),
   KEY `FK_CHARACTER__CHRCAREERSPECIALITIES` (`careerSpecialityID`),
-  KEY `FK_CHARACTER__CHRSCHOOLS` (`schoolID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `FK_CHARACTER__CHRSCHOOLS` (`schoolID`),
+  KEY `characterID` (`characterID`,`accountID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT="Version 2";
 
 /*Data for the table `character_` */
 
@@ -818,6 +820,34 @@ CREATE TABLE `chrSkillQueue` (
 	`typeID` INT(10) UNSIGNED NOT NULL,
 	`level` INT(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+
+
+/* Table structure for table `chrPausedSkillQueue` */
+
+CREATE TABLE IF NOT EXISTS `chrPausedSkillQueue` (
+  `characterID` int(10) unsigned NOT NULL,
+  `orderIndex` int(10) unsigned NOT NULL,
+  `typeID` int(10) unsigned NOT NULL,
+  `level` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`characterID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Char Paused Skill Queue';
+
+/*Data for the table `chrPausedSkillQueue` */
+
+/*  Table structure for table `chrSkillHistory`  */
+
+DROP TABLE IF EXISTS `chrSkillHistory`;
+CREATE TABLE `chrSkillHistory` (
+  `eventTypeID` smallint(6) NOT NULL,
+  `characterID` int(11) NOT NULL,
+  `logDate` bigint(20) NOT NULL,
+  `skillTypeID` int(8) NOT NULL,
+  `skillLevel` tinyint(4) NOT NULL,
+  `relativePoints` bigint(20) NOT NULL,
+  `absolutePoints` bigint(20) NOT NULL,
+  `AI` int(11) NOT NULL AUTO_INCREMENT,
+  UNIQUE KEY `AI` (`AI`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Char Skill History' AUTO_INCREMENT=1 ;
 
 -- Mail subsystem
 DROP TABLE IF EXISTS `mailLabel`;

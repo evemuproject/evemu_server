@@ -205,29 +205,6 @@ public:
     bool SaveCorpMemberInfo(uint32 characterID, const CorpMemberInfo &data);
     bool DeleteCharacter(uint32 characterID);
 
-    // Skill queue:
-    struct QueuedSkill {
-        uint32 typeID;
-        uint8 level;
-    };
-    typedef std::vector<QueuedSkill> SkillQueue;
-
-    /**
-     * Loads skill queue.
-     *
-     * @param[in] characterID ID of character whose queue should be loaded.
-     * @param[in] into SkillQueue into which loaded data should be stored.
-     * @return True if load succeeds, false if fails.
-     */
-    bool LoadSkillQueue(uint32 characterID, SkillQueue &into);
-    /**
-     * Saves skill queue.
-     *
-     * @param[in] characterID ID of character whose skill queue is saved.
-     * @param[in] queue Queue to save.
-     * @return True if save succeeds, false if fails.
-     */
-    bool SaveSkillQueue(uint32 characterID, const SkillQueue &queue);
     // Certificates:
     struct currentCertificates {
         uint32 certificateID;

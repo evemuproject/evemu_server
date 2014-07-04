@@ -1527,34 +1527,6 @@ bool InventoryDB::GetStation(uint32 stationID, StationData &into) {
     return true;
 }
 
-bool InventoryDB::LoadSkillQueue(uint32 characterID, SkillQueue &into) {
-    DBQueryResult res;
-
-    if( !sDatabase.RunQuery( res,
-        "SELECT"
-        " typeID, level"
-        " FROM chrSkillQueue"
-        " WHERE characterID = %u"
-        " ORDER BY orderIndex ASC",
-        characterID ) )
-    {
-        _log(DATABASE__ERROR, "Failed to query skill queue of character %u: %s.", characterID, res.error.c_str());
-        return false;
-    }
-
-    DBResultRow row;
-    while( res.GetRow( row ) )
-    {
-        QueuedSkill qs;
-        qs.typeID = row.GetUInt( 0 );
-        qs.level = row.GetUInt( 1 );
-
-        into.push_back( qs );
-    }
-
-    return true;
-}
-
 bool InventoryDB::LoadCertificates( uint32 characterID, Certificates &into )
 {
     DBQueryResult res;
@@ -1631,50 +1603,6 @@ bool InventoryDB::SaveCertificates( uint32 characterID, const Certificates &from
     return true;
 }
 
-bool InventoryDB::SaveSkillQueue(uint32 characterID, const SkillQueue &queue) {
-    DBerror err;
-
-    if( !sDatabase.RunQuery( err,
-        "DELETE"
-        " FROM chrSkillQueue"
-        " WHERE characterID = %u",
-        characterID ) )
-    {
-        _log(DATABASE__ERROR, "Failed to delete skill queue of character %u: %s.", characterID, err.c_str());
-        return false;
-    }
-
-    if( queue.empty() )
-        // nothing else to do
-        return true;
-
-    // now build insert query:
-    std::string query;
-
-    for(size_t i = 0; i < queue.size(); i++)
-    {
-        const QueuedSkill &qs = queue[ i ];
-
-        char buf[ 64 ];
-        snprintf( buf, 64, "(%u, %lu, %u, %u)", characterID, (unsigned long)i, qs.typeID, qs.level );
-
-        if( i != 0 )
-            query += ',';
-        query += buf;
-    }
-
-    if( !sDatabase.RunQuery( err,
-        "INSERT"
-        " INTO chrSkillQueue (characterID, orderIndex, typeID, level)"
-        " VALUES %s",
-        query.c_str() ) )
-    {
-        _log(DATABASE__ERROR, "Failed to insert skill queue of character %u: %s.", characterID, err.c_str());
-        return false;
-    }
-
-    return true;
-}
 bool InventoryDB::GetTypeID(uint32 itemID, uint32 &typeID)
 {
     DBQueryResult res;

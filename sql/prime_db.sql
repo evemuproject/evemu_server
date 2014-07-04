@@ -58,7 +58,7 @@ INSERT INTO character_
   corporationDateTime, startDateTime, createDateTime,
   ancestryID, careerID, schoolID, careerSpecialityID, gender,
   stationID, solarSystemID, constellationID, regionID,
-  0 AS online, 2 AS freeRespecs, 0 AS lastRespecDateTime, 0 AS nextRespecDateTime, 0 AS deletePrepareDateTime, 0 AS shipID
+  0 AS online, 0 AS freeRespecs, 0 AS lastRespecDateTime, 0 AS nextRespecDateTime, 0 AS deletePrepareDateTime, 0 AS shipID, 0 AS age
  FROM characterStatic;
 
 /*
@@ -133,5 +133,14 @@ INSERT INTO eveStaticOwners (ownerID, ownerName, typeID)
 /*
  * Set the auto-increment lower bound for other critical tables
  */
-ALTER TABLE account AUTO_INCREMENT=1
+ALTER TABLE account AUTO_INCREMENT=1;
 ALTER TABLE accountApi AUTO_INCREMENT=1000000;
+
+/*
+ *  Fix skill integer/float confusion  (fixes broken skill training)
+ */
+
+UPDATE `dgmTypeAttributes` SET `valueInt`=0,`valueFloat`=NULL WHERE `attributeID`=280 AND `valueFloat`=0;
+UPDATE `entity_attributes` SET `valueInt`=0,`valueFloat`=NULL WHERE `attributeID`=280 AND `valueFloat`=0;
+UPDATE `entity_default_attributes` SET `valueInt`=0,`valueFloat`=NULL WHERE `attributeID`=280 AND `valueFloat`=0;
+

@@ -86,14 +86,8 @@ uint32 Skill::_Spawn(ItemFactory &factory, ItemData &data)
     return InventoryItem::_Spawn( factory, data );
 }
 
-//uint32 Skill::GetSPForLevel(uint8 level)
-//{
-//    return(SKILL_BASE_POINTS * skillTimeConstant() * pow(32, (level - 1) / 2.0));
-//}
-
 EvilNumber Skill::GetSPForLevel( EvilNumber level )
 {
-    //return EVIL_SKILL_BASE_POINTS * GetAttribute(AttrSkillTimeConstant) * e_pow(32, (level - 1) / 2.0);
     return EVIL_SKILL_BASE_POINTS * GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
 }
 
