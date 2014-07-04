@@ -33,8 +33,8 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
     m_ShipActiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
     m_ShipPassiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
     m_OverloadModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
-    m_Module_State = MOD_UNFITTED;
-    m_Charge_State = MOD_UNLOADED;
+    m_ModuleState = MOD_UNFITTED;
+    m_ChargeState = MOD_UNLOADED;
     _isOverload = false;
 
     m_Item = item;
@@ -69,7 +69,7 @@ void GenericModule::Offline()
 {
     //change item state
     m_Item->PutOffline();
-    m_Module_State = MOD_OFFLINE;
+    m_ModuleState = MOD_OFFLINE;
     m_ShipModifiers->SetActive(false);
     m_ShipPassiveModifiers->SetActive(false);
     m_ShipActiveModifiers->SetActive(false); // should be false anyway.
@@ -81,7 +81,7 @@ void GenericModule::Online()
 {
     //change item state
     m_Item->PutOnline();
-    m_Module_State = MOD_ONLINE;
+    m_ModuleState = MOD_ONLINE;
     m_ShipModifiers->SetActive(true);
     m_ShipPassiveModifiers->SetActive(true);
     m_ShipActiveModifiers->SetActive(false); // should be false anyway.

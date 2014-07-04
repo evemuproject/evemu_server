@@ -299,7 +299,7 @@ void DGM_Skill_Bonus_Modifiers_Table::_Populate()
     mSkillBonusModifierPtr = NULL;
     uint32 skillID;
 
-	uint32 total_effect_count = 0;
+	uint32 total_modifier_count = 0;
 	uint32 error_count = 0;
 
 	//go through and populate each skill bonus modifier
@@ -313,11 +313,13 @@ void DGM_Skill_Bonus_Modifiers_Table::_Populate()
 		else
 			error_count++;
 
-		total_effect_count++;
+		total_modifier_count++;
     }
 
 	if( error_count > 0 )
-		sLog.Error("DGM_Skill_Bonus_Modifiers_Table::_Populate()","ERROR Populating the DGM_Skill_Bonus_Modifiers_Table memory object: %u of %u skill bonus modifiers failed to load!", error_count, total_effect_count);
+		sLog.Error("DGM_Skill_Bonus_Modifiers_Table::_Populate()","ERROR Populating the DGM_Skill_Bonus_Modifiers_Table memory object: %u of %u skill bonus modifiers failed to load!", error_count, total_modifier_count);
+
+	sLog.Log("DGM_Skill_Bonus_Modifiers_Table", "..........%u total modifier objects loaded", total_modifier_count);
 
     //cleanup
     delete res;
@@ -368,7 +370,7 @@ void DGM_Ship_Bonus_Modifiers_Table::_Populate()
     mShipBonusModifierPtr = NULL;
     uint32 shipID;
 
-	uint32 total_effect_count = 0;
+	uint32 total_modifier_count = 0;
 	uint32 error_count = 0;
 
 	//go through and populate each ship bonus modifier
@@ -382,11 +384,13 @@ void DGM_Ship_Bonus_Modifiers_Table::_Populate()
 		else
 			error_count++;
 
-		total_effect_count++;
+		total_modifier_count++;
     }
 
 	if( error_count > 0 )
-		sLog.Error("DGM_Ship_Bonus_Modifiers_Table::_Populate()","ERROR Populating the DGM_Ship_Bonus_Modifiers_Table memory object: %u of %u ship bonus modifiers failed to load!", error_count, total_effect_count);
+		sLog.Error("DGM_Ship_Bonus_Modifiers_Table::_Populate()","ERROR Populating the DGM_Ship_Bonus_Modifiers_Table memory object: %u of %u ship bonus modifiers failed to load!", error_count, total_modifier_count);
+
+	sLog.Log("DGM_Ship_Bonus_Modifiers_Table", "..........%u total modifier objects loaded", total_modifier_count);
 
     //cleanup
     delete res;

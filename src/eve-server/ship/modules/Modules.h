@@ -75,6 +75,11 @@ public:
     virtual bool isHighPower() const                               { return m_Item->type().GetEffects()->isHighSlot(); }
     virtual bool isMediumPower() const                            { return m_Item->type().GetEffects()->isMediumSlot(); }
     virtual bool isLowPower() const                              { return m_Item->type().GetEffects()->isLowSlot(); }
+	virtual bool isLoaded()										{ return false; }
+	ModuleStates GetModuleState()								{ return m_ModuleState; }
+	ChargeStates GetChargeState()								{ return m_ChargeState; }
+
+	InventoryItemRef GetLoadedChargeRef()					{ return InventoryItemRef(); }
 
     virtual bool isTurretFitted()
     {
@@ -125,8 +130,8 @@ protected:
     ShipRef m_Ship;
     bool _isOverload;
 
-    ModuleStates m_Module_State;
-    ChargeStates m_Charge_State;
+    ModuleStates m_ModuleState;
+    ChargeStates m_ChargeState;
 
 	Basic_Log * m_pMM_Log;		// We do not own this
 
