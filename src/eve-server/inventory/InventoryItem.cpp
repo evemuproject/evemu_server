@@ -279,7 +279,8 @@ bool InventoryItem::_Load()
 	mDefaultAttributeMap.Load();
 
 	// fill basic cargo hold data:
-	m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold,mAttributeMap.GetAttribute(AttrCapacity).get_float()));
+    if(HasAttribute(AttrCapacity))
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold,mAttributeMap.GetAttribute(AttrCapacity).get_float()));
 
      // update inventory
     Inventory *inventory = sItemFactory.GetInventory( locationID(), false );
