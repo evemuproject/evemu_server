@@ -283,8 +283,8 @@ PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
             return NULL;
         }
 
-        // no quantity given, assume 0=all - formerly assumed to be 1
-        return _ExecAdd( call.client, args.ints, 0, mFlag );
+        // no quantity given, assume 1
+        return _ExecAdd( call.client, args.ints, 1, mFlag );
     }
     else
     {
@@ -465,13 +465,13 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
                     }
                     else
                     {
-                        c->GetShip()->AddItem( newFlag, newItem );
+                        newItem = c->GetShip()->AddItem( newFlag, newItem );
                         flag = newFlag;
                     }
                 }
                 else if( (flag >= flagLowSlot0 && flag <= flagHiSlot7) || (flag >= flagRigSlot0 && flag <= flagRigSlot7) )
                 {
-                    c->GetShip()->AddItem( flag, newItem );
+                    newItem = c->GetShip()->AddItem( flag, newItem );
                 }
                 else if(
 							flag == flagCargoHold
@@ -494,6 +494,10 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
                     mInventory.ValidateAddItem( flag, newItem );
                 }
 
+                // something caused the item not to be added, so don't move it!
+                if(newItem.get() == NULL)
+                    continue;
+                
                 if(old_flag >= flagLowSlot0 && old_flag <= flagHiSlot7)
                 {
 
@@ -544,7 +548,7 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
                 }
                 else
                 {
-                    c->GetShip()->AddItem( newFlag, sourceItem );
+                    sourceItem = c->GetShip()->AddItem( newFlag, sourceItem );
                     flag = newFlag;
                 }
             }
@@ -556,7 +560,7 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
                     // (warning! this may have problems with item inventories other than station items, but only if bound inventory is not being updated)
                     c->GetShip()->RemoveItem( sourceItem, mInventory.inventoryID(), flag );
 
-                c->GetShip()->AddItem( flag, sourceItem );
+                sourceItem = c->GetShip()->AddItem( flag, sourceItem );
             }
             else if(
                     flag == flagCargoHold
@@ -578,6 +582,10 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
             {
                 mInventory.ValidateAddItem( flag, sourceItem );
             }
+            
+            // something caused the item not to be added, so don't move it!
+            if(sourceItem.get() == NULL)
+                continue;
 
             if(old_flag >= flagLowSlot0 && old_flag <= flagHiSlot7)
             {

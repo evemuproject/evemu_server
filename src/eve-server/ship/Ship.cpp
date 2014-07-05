@@ -856,7 +856,7 @@ uint32 Ship::FindAvailableModuleSlot( InventoryItemRef item )
     return slotFound;
 }
 
-uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
+InventoryItemRef Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 {
     ValidateAddItem( flag, item );
 
@@ -874,14 +874,21 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 				InventoryItemRef loadedChargeOnModule = m_ModuleManager->GetLoadedChargeOnModule(flag);
 				if( loadedChargeOnModule.get() != NULL )
 				{
-					return loadedChargeOnModule->itemID();
+					return loadedChargeOnModule;
 				}
 				else
-					return 0;
+					return InventoryItemRef(NULL);
 			}
 			break;
 
 		case EVEDB::invCategories::Module:
+            // check item qty.
+            if(item->quantity() > 1)
+            {
+                // more than one.  split the stack and fit only one.
+                // split the stack to a new stack of 1 so the old stack doesn't jump around inventory layout.
+                item = item->Split(1, true);
+            }
 			if( m_ModuleManager->FitModule(item, flag) )
 				item->Move(itemID(), flag);
 			break;
@@ -894,7 +901,7 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 			break;
 	}
 
-	return 0;
+	return item;
 }
 
 uint32 Ship::LoadCharge( EVEItemFlags flag, std::vector<InventoryItemRef> chargeList)

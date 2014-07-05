@@ -227,7 +227,13 @@ public:
     uint32 FindAvailableModuleSlot( InventoryItemRef item );
     EvilNumber GetMaxTurrentHardpoints() { return GetAttribute(AttrTurretSlotsLeft); }
     EvilNumber GetMaxLauncherHardpoints() { return GetAttribute(AttrLauncherSlotsLeft); }
-    uint32 AddItem( EVEItemFlags flag, InventoryItemRef item);
+    /**
+     * Add item to ship
+     * @param flag Location flag of where on the ship the item goes
+     * @param item The item to add
+     * @return The item reference of the item actually loaded (if the stack was split)
+     */
+    InventoryItemRef AddItem( EVEItemFlags flag, InventoryItemRef item);
     void RemoveItem( InventoryItemRef item, uint32 inventoryID, EVEItemFlags flag );
     void UpdateModules();
     void UnloadModule(uint32 itemID);
