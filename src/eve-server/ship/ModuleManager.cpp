@@ -1305,6 +1305,8 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
     ActiveModule * mod = (ActiveModule *)(m_Modules->GetModule(flag));			// Should not be dangrous to assume ALL modules where charges are loaded are ACTIVE modules
     if( mod != NULL )
     {
+        InventoryItemRef chargeRef = InventoryItemRef(NULL);
+        InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
         EvilNumber zero(0);
         int64 launcherGroup[3] = {
             mod->GetAttribute(AttrLauncherGroup, zero).get_int(),
@@ -1320,6 +1322,7 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
         double modSize = mod->GetAttribute(AttrChargeSize).get_float();
         bool TypeMismatch = false;
         bool SizeMismatch = false;
+        bool TypeFound = false;
         std::vector<InventoryItemRef>::iterator itr = chargeList.begin();
         // remove incompatible charges.
         while(itr != chargeList.end())
@@ -1357,6 +1360,12 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
                 itr = chargeList.erase(itr);
                 continue;
             }
+            if(chargeRef.get() == NULL)
+            {
+                // save a reference to the first charge of the same type as already loaded.
+                if(loadedChargeRef.get() != NULL)
+                    chargeRef = *itr;
+            }
             itr++;
         }
         // if the charge list is empty, there is noting to load check for an error.
@@ -1371,7 +1380,8 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
                 throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
             throw PyException( MakeCustomError( "No valid charges for loading." ) );
         }
-        InventoryItemRef chargeRef = chargeList[0];
+        if(chargeRef.get() == NULL)
+            chargeRef = chargeList[0];
 		// Scenarios to handle:
 		// + no charge loaded: check capacity >= volume of charge to add, if true, LOAD
 		//     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that will EQUAL capacity, SPLIT remainder off, then LOAD!
