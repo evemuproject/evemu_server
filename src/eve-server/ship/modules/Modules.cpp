@@ -45,14 +45,11 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
     m_OverloadModifiers->SetActive(false);
     m_Item->AddAttributeModifier(m_OverloadModifiers);
     // attach ship modifiers.
+    m_ShipActiveModifiers->SetActive(false);
+    m_ShipPassiveModifiers->SetActive(false);
     m_Ship->AddAttributeModifier(m_ShipModifiers);
     m_Ship->AddAttributeModifier(m_ShipPassiveModifiers);
     m_Ship->AddAttributeModifier(m_ShipActiveModifiers);
-    // update attributes.
-    m_ShipActiveModifiers->SetActive(false);
-    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
-    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
-    m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
 GenericModule::~GenericModule()
