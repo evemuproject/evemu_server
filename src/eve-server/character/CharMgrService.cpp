@@ -183,9 +183,18 @@ PyResult CharMgrService::Handle_SetActivityStatus( PyCallArgs& call )
 
 PyResult CharMgrService::Handle_GetSettingsInfo( PyCallArgs& call )
 {
-    sLog.Debug( "CharMgrService", "Called GetSettingsInfo stub." );
-
-    return NULL;
+    // response to UpdateSettingsStatistics in settingsSvc.py
+    // this appears to be the proper for for the response but the typecode is unknow!
+    PyTuple* res = new PyTuple( 2 );
+        // type code? unknown what the value should be!
+        res->items[ 0 ] = new PyString( "123" );
+        // error code? 0 = no error
+        // if called with any value other than zero the exception output will show 'Verified = False'
+        // if called with zero 'Verified = True'
+        res->items[ 1 ] = new PyInt( 0 );
+    return res;
+//    sLog.Debug( "CharMgrService", "Called GetSettingsInfo stub." );
+//    return NULL;
 }
 
 PyResult CharMgrService::Handle_GetCharacterDescription(PyCallArgs &call)
