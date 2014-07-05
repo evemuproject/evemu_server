@@ -101,6 +101,9 @@ void GenericModule::GenerateModifiers()
             continue;
         for (int i = 0; i < nEffects; i++)
         {
+            // ignore anything that affects a non attribute.
+            if(effect->GetSourceAttributeID(i) == 0 || effect->GetTargetAttributeID(i) == 0)
+                continue;
             bool Stack = false;
             if (effect->GetStackingPenaltyApplied(i) != 0)
                 Stack = true;
