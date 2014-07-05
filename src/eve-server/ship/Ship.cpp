@@ -747,56 +747,23 @@ bool Ship::ValidateItemSpecifics(InventoryItemRef equip) {
     //declaring explicitly as int...not sure if this is needed or not
     int groupID = m_pOperator->GetShip()->groupID();
     int typeID = m_pOperator->GetShip()->typeID();
-    EvilNumber canFitShipGroup1 = equip->GetAttribute(AttrCanFitShipGroup1);
-    EvilNumber canFitShipGroup2 = equip->GetAttribute(AttrCanFitShipGroup2);
-    EvilNumber canFitShipGroup3 = equip->GetAttribute(AttrCanFitShipGroup3);
-    EvilNumber canFitShipGroup4 = equip->GetAttribute(AttrCanFitShipGroup4);
-    EvilNumber canFitShipType1 = equip->GetAttribute(AttrCanFitShipType1);
-    EvilNumber canFitShipType2 = equip->GetAttribute(AttrCanFitShipType2);
-    EvilNumber canFitShipType3 = equip->GetAttribute(AttrCanFitShipType3);
-    EvilNumber canFitShipType4 = equip->GetAttribute(AttrCanFitShipType4);
+    EvilNumber canFitShipGroup1 = equip->GetAttribute(AttrCanFitShipGroup1, 0);
+    EvilNumber canFitShipGroup2 = equip->GetAttribute(AttrCanFitShipGroup2, 0);
+    EvilNumber canFitShipGroup3 = equip->GetAttribute(AttrCanFitShipGroup3, 0);
+    EvilNumber canFitShipGroup4 = equip->GetAttribute(AttrCanFitShipGroup4, 0);
+    EvilNumber canFitShipType1 = equip->GetAttribute(AttrCanFitShipType1, 0);
+    EvilNumber canFitShipType2 = equip->GetAttribute(AttrCanFitShipType2, 0);
+    EvilNumber canFitShipType3 = equip->GetAttribute(AttrCanFitShipType3, 0);
+    EvilNumber canFitShipType4 = equip->GetAttribute(AttrCanFitShipType4, 0);
 
 	if( canFitShipGroup1 != 0 || canFitShipGroup2 != 0 || canFitShipGroup3 != 0 || canFitShipGroup4 != 0 )
         if( canFitShipGroup1 != groupID && canFitShipGroup2 != groupID && canFitShipGroup3 != groupID && canFitShipGroup4 != groupID )
 			return false;
-	/*
-    if( canFitShipGroup1 != 0 )
-        if( canFitShipGroup1 != groupID )
-            return false;
-
-    if( canFitShipGroup2 != 0 )
-        if( canFitShipGroup2 != groupID )
-            return false;
-
-    if( canFitShipGroup3 != 0 )
-        if( canFitShipGroup3 != groupID )
-            return false;
-
-    if( canFitShipGroup4 != 0 )
-        if( canFitShipGroup4 != groupID )
-            return false;
-	*/
 
     if( canFitShipType1 != 0 || canFitShipType2 != 0 || canFitShipType3 != 0 || canFitShipType4 != 0 )
         if( canFitShipType1 != typeID && canFitShipType2 != typeID && canFitShipType3 != typeID && canFitShipType4 != typeID )
             return false;
-	/*
-    if( canFitShipType1 != 0 )
-        if( canFitShipType1 != typeID )
-            return false;
 
-    if( canFitShipType2 != 0 )
-        if( canFitShipType2 != typeID )
-            return false;
-
-    if( canFitShipType3 != 0 )
-        if( canFitShipType3 != typeID )
-            return false;
-
-    if( canFitShipType4 != 0 )
-        if( canFitShipType4 != typeID )
-            return false;
-	*/
     return true;
 
 }
