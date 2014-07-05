@@ -135,7 +135,12 @@ bool AttributeMap::HasAttribute(const uint32 attributeID, EvilNumber &value) con
 
 bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, const EvilNumber& new_val )
 {
-   Notify_OnModuleAttributeChange modChange;
+    // attributes greater than 10000 are not supported by the client.
+    // these are for private internal server use only!
+    if(attributeID >= 10000)
+        return true;
+
+    Notify_OnModuleAttributeChange modChange;
 
 	modChange.ownerID = mItem->ownerID();
 	modChange.itemKey = mItem->itemID();
@@ -150,7 +155,12 @@ bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, const EvilNu
 
 bool AttributeMap::Add( uint32 attributeID, const EvilNumber& num )
 {
-  Notify_OnModuleAttributeChange modChange;
+    // attributes greater than 10000 are not supported by the client.
+    // these are for private internal server use only!
+    if(attributeID >= 10000)
+        return true;
+
+    Notify_OnModuleAttributeChange modChange;
 
 	modChange.ownerID = mItem->ownerID();
 	modChange.itemKey = mItem->itemID();
