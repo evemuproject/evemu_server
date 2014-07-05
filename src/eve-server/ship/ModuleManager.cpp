@@ -1302,10 +1302,76 @@ void ModuleManager::RepairModule(uint32 itemID)
 
 void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEItemFlags flag)
 {
-    InventoryItemRef chargeRef = chargeList[0];
     ActiveModule * mod = (ActiveModule *)(m_Modules->GetModule(flag));			// Should not be dangrous to assume ALL modules where charges are loaded are ACTIVE modules
     if( mod != NULL )
     {
+        EvilNumber zero(0);
+        int64 launcherGroup[3] = {
+            mod->GetAttribute(AttrLauncherGroup, zero).get_int(),
+            mod->GetAttribute(AttrLauncherGroup2, zero).get_int(),
+            mod->GetAttribute(AttrLauncherGroup3, zero).get_int() };
+        int64 chargeGroup[5] = {
+            mod->GetAttribute(AttrChargeGroup1, zero).get_int(),
+            mod->GetAttribute(AttrChargeGroup2, zero).get_int(),
+            mod->GetAttribute(AttrChargeGroup3, zero).get_int(),
+            mod->GetAttribute(AttrChargeGroup4, zero).get_int(),
+            mod->GetAttribute(AttrChargeGroup5, zero).get_int() };
+
+        double modSize = mod->GetAttribute(AttrChargeSize).get_float();
+        bool TypeMismatch = false;
+        bool SizeMismatch = false;
+        std::vector<InventoryItemRef>::iterator itr = chargeList.begin();
+        // remove incompatible charges.
+        while(itr != chargeList.end())
+        {
+            // get the charge reference.
+            InventoryItemRef charge = *itr;
+            // if it was a null reference remove it.
+            if(charge.get() == NULL)
+            {
+                itr = chargeList.erase(itr);
+                continue;
+            }
+            // charges must be the same size.
+            double chargeSize = charge->GetAttribute(AttrChargeSize).get_float();
+            if(chargeSize != modSize)
+            {
+                SizeMismatch = true;
+                itr = chargeList.erase(itr);
+                continue;
+            }
+            // if module has launcher group and charge is from launcher group
+            int l = 0;
+            for(;l < 3;l++)
+                if(launcherGroup[l] == charge->groupID())
+                    break;
+            // if module has charge group and charge is from charge group
+            int c = 0;
+            for(;c < 5;c++)
+                if(chargeGroup[c] == charge->groupID())
+                    break;
+            // if we didn't find at least one group it's bad.
+            if(c == 5 && l == 3)
+            {
+                TypeMismatch = true;
+                itr = chargeList.erase(itr);
+                continue;
+            }
+            itr++;
+        }
+        // if the charge list is empty, there is noting to load check for an error.
+        if(chargeList.empty())
+        {
+            // no charges were acceptable.
+            if(TypeMismatch)
+                // we haven't loaded any charges and were at the end of the list.
+                throw PyException( MakeCustomError( "Cannot load different types of charge!" ) );
+            if(SizeMismatch)
+                // we haven't loaded any charges and were at the end of the list.
+                throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
+            throw PyException( MakeCustomError( "No valid charges for loading." ) );
+        }
+        InventoryItemRef chargeRef = chargeList[0];
 		// Scenarios to handle:
 		// + no charge loaded: check capacity >= volume of charge to add, if true, LOAD
 		//     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that will EQUAL capacity, SPLIT remainder off, then LOAD!
