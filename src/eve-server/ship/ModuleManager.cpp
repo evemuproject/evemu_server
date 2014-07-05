@@ -1305,6 +1305,10 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
     ActiveModule * mod = (ActiveModule *)(m_Modules->GetModule(flag));			// Should not be dangrous to assume ALL modules where charges are loaded are ACTIVE modules
     if( mod != NULL )
     {
+        // if the module is busy we can't load a charge.
+        if(mod->isBusy())
+            throw PyException( MakeCustomError( "Module is busy, cannot load charge!" ) );
+
         InventoryItemRef chargeRef = InventoryItemRef(NULL);
         InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
         EvilNumber zero(0);
@@ -1380,8 +1384,25 @@ void ModuleManager::LoadCharge(std::vector<InventoryItemRef> &chargeList, EVEIte
                 throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
             throw PyException( MakeCustomError( "No valid charges for loading." ) );
         }
+        // at this point all chagres listed are compatible with the module.
         if(chargeRef.get() == NULL)
             chargeRef = chargeList[0];
+        itr = chargeList.begin();
+        // Now that we know the type of charge to load, remove incompatible charges.
+        uint32 chargeTypeID = chargeRef->typeID();
+        while(itr != chargeList.end())
+        {
+            // Make sure there compatible.
+            if(chargeTypeID != (*itr)->typeID())
+            {
+                itr = chargeList.erase(itr);
+                continue;
+            }
+            itr++;
+        }
+        // at this pont we have a list of charges that are all compatible with the module and are all the same typeID
+        // to-do: unload the old charge if it's a different typeID
+
 		// Scenarios to handle:
 		// + no charge loaded: check capacity >= volume of charge to add, if true, LOAD
 		//     - ELSE: if charge to load is qty > 1, calculate smallest integer qty that will EQUAL capacity, SPLIT remainder off, then LOAD!
