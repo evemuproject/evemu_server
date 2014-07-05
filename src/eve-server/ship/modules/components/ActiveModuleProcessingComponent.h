@@ -45,30 +45,15 @@ public:
      * Activates a module cycle timer and triggers StartCycle()
      * @param buttonEffect the effect id for the ships module button.
      */
-	void ActivateCycle(uint32 effectID) { ActivateCycle(effectID, InventoryItemRef()); };
-    /**
-     * Activates a module cycle timer and triggers StartCycle()
-     * @param buttonEffect the effect id for the ships module button.
-     * @param charge the charge currently loaded into the module.
-     */
-	void ActivateCycle(uint32 effectID, InventoryItemRef charge);
+	void ActivateCycle(uint32 effectID);
     /**
      * Flags the cycle to stop at completion of current cycle.
      */
     void DeactivateCycle();
-
-private:
     /**
-     * Begin a new cycle.
+     * Aborts the current cycle, stopping it immediately.
      */
-    bool BeginCycle();
-    /**
-     * A cycle has completed and a new cycle might start.
-     */
-    void ProcessActiveCycle();
-    
-    void StartButton();
-    void EndButton();
+    void AbortCycle();
 
 public:
     /**
@@ -80,17 +65,24 @@ public:
      * Get if the module is busy.
      * @return true if the module is busy.
      */
-    bool IsBusy() { return m_ButtonCycle; };
+    bool IsBusy() { return m_timer.Enabled(); };
 
 private:
+    /**
+     * Begin a new cycle.
+     */
+    bool BeginCycle();
+    /**
+     * A cycle has completed and a new cycle might start.
+     */
+    void ProcessActiveCycle();
+
     //internal storage and record keeping
     bool m_Stop;
 	Timer m_timer;
 
-    bool m_ButtonCycle;
     EvilNumber m_CycleTime;
     EVEEffectRef m_Effect;
-	InventoryItemRef m_Charge;
 
     //internal access to owner
 	InventoryItemRef m_Item;

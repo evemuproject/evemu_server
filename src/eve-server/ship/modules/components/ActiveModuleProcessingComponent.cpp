@@ -41,7 +41,6 @@ ActiveModuleProcessingComponent::ActiveModuleProcessingComponent(InventoryItemRe
   m_Effect((EVEEffect *)NULL)
 {
 	m_Stop = false;
-    m_ButtonCycle = false;
 }
 
 ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
@@ -66,7 +65,7 @@ void ActiveModuleProcessingComponent::Process()
         return;  // nope still waiting.
 
     //time passed and we can drain cap and make/maintain changes to the attributes
-    if(m_Mod->m_Charge_State == MOD_LOADED || (m_Mod->m_RequiresCharge == false && m_Mod->m_Charge_State == MOD_UNLOADED) )
+    if(m_Mod->m_ChargeState != MOD_LOADING && m_Mod->m_ChargeState != MOD_RELOADING )
     {
         // module is ready to do it's work.
         sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
@@ -75,9 +74,8 @@ void ActiveModuleProcessingComponent::Process()
     else {
         // end the loading cycle.
         m_Stop = true;
-        m_ButtonCycle = false;
         // put the charge in the module.
-        m_Mod->EndLoading(m_Charge);
+        m_Mod->EndLoading();
         // disable and stop the timer.
         m_timer.Disable();
         //m_Item->SetActive(false, 1253, 0, false);
@@ -91,37 +89,33 @@ void ActiveModuleProcessingComponent::Process()
     {
         // yep stop the cycle
         m_timer.Disable();
-        //m_Item->SetActive(false, 1253, 0, false);
-        EndButton();
     }
 
 }
 
-void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryItemRef charge)
+void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID)
 {
     // cannot activate module if it's still cycling from last activation.
-  	if(m_ButtonCycle == true)
+    if(m_timer.Enabled())
         return;
     // are we reloading?
-    if(m_Mod->m_Charge_State == ChargeStates::MOD_LOADING || m_Mod->m_Charge_State == ChargeStates::MOD_RELOADING)
+    if(m_Mod->m_ChargeState == ChargeStates::MOD_LOADING || m_Mod->m_ChargeState == ChargeStates::MOD_RELOADING)
     {
-        // store the charge for loading.
-        m_Charge = charge;
         // loading, set cycle time to reload cycle time.
         m_CycleTime = m_Mod->m_LoadCycleTime;
         // instant load, do nothing more.
         if(m_CycleTime <= 0)
         {
-            // put the charge in the module.
-            m_Mod->EndLoading(m_Charge);
+            // put the charge in the module, immediately.
+            m_Mod->EndLoading();
             return;
         }
         if(m_Mod->isOnline())
         {
+            // this is a hack to try and get the module to flash.
             m_Item->PutOffline();
             m_Item->PutOnline();
         }
-        m_ButtonCycle = true;
         // start the timer.
         m_timer.Start(m_CycleTime.get_int());
         return;
@@ -130,18 +124,21 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
     // if the effectID given is -1 attempt to look up the default effect.
     if(effectID == -1)
         m_Effect = m_Item->type().GetEffects()->GetDefaultEffect();
+    else
+        m_Effect = m_Item->type().GetEffects()->GetEffect(effectID);
     bool autoRepeat;
     if(m_Effect.get() != NULL)
     {
+        // an actual effect is being used.
         m_CycleTime = m_Mod->GetAttribute(m_Effect->GetDurationAttributeID());
         autoRepeat = !m_Effect->GetDisallowAutoRepeat();
     }
     else
     {
+        // no effect specified, assume default behavior.
         EvilNumber zero(0);
         autoRepeat = m_Mod->GetAttribute(AttrDisallowRepeatingActivation, zero) == 0;
-        // to-do: move this to module so that the module can factor in skill effects on time.
-        // create function bool GetCycleTime(m_CycleTime); ?? returns false if no time found.
+        // get the modules cycle time.
         if(!m_Mod->HasAttribute(AttrDuration, m_CycleTime))
         {
             if(!m_Mod->HasAttribute(AttrSpeed, m_CycleTime))
@@ -153,9 +150,6 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
     }
     
     m_Stop = false;
-    if(!autoRepeat)
-    	m_Stop = true;
-    m_Charge = charge;
 
     if(m_CycleTime > 0)
     {
@@ -164,11 +158,24 @@ void ActiveModuleProcessingComponent::ActivateCycle(uint32 effectID, InventoryIt
         // start the timer.
         m_timer.Start(m_CycleTime.get_int());
     }
+    if(!autoRepeat)
+    	m_Stop = true;
 }
 
 void ActiveModuleProcessingComponent::DeactivateCycle()
 {
     m_Stop = true;
+}
+
+void ActiveModuleProcessingComponent::AbortCycle()
+{
+	// Immediately stop active cycle for things such as target destroyed or left bubble, or asteroid emptied and removed from space:
+	m_Stop = true;
+	m_timer.Disable();
+    if(m_Mod->m_ChargeState == ChargeStates::MOD_LOADING || m_Mod->m_ChargeState == ChargeStates::MOD_RELOADING)
+        m_Mod->EndLoading();
+    else
+        m_Mod->StopCycle(true);
 }
 
 bool ActiveModuleProcessingComponent::BeginCycle()
@@ -193,26 +200,14 @@ bool ActiveModuleProcessingComponent::BeginCycle()
     // sufficient capacitor begin new cycle.
 	m_Ship->SetAttribute(AttrCharge, capCapacity);
 
-   // check for overloading.
+    // check for overloading.
     if(m_Mod->_isOverload)
     {
         // to-do: implement heat damage
-//        EvilNumber heat;
-//        if(m_Mod->HasAttribute(AttrHeatDamage, heat))
-//        {
-//            // to-do: this needs work.
-//            EvilNumber hp = m_Mod->GetAttribute(AttrHp);
-//            hp -= heat;
-//            m_Mod->SetAttribute(AttrHp, hp);
-//            if(hp.get_float() <= 0)
-//                DeactivateCycle();
-//        }
     }
 
     // start new cycle.
     m_Mod->StartCycle();
-    // start the new button cycle.
-    StartButton();
 
     return true;
  }
@@ -220,19 +215,15 @@ bool ActiveModuleProcessingComponent::BeginCycle()
 void ActiveModuleProcessingComponent::ProcessActiveCycle()
 {
     // cycle ended perform end of cycle actions.
-    m_Mod->EndCycle();
+    m_Mod->StopCycle();
 
-    // to-do: check to make sure target still valid.
-    // stop if it's disapeared.  or errors may occure.
-    
     //check for stop signal
     if(m_Stop)
     {
         return; // cycle stopped.
     }
 
-    // cycle not stopped start next cycle.
-
+    // cycling not stopped start next cycle.
     try
     {
         // Check to see if our target is still in this bubble or has left or been destroyed:
@@ -261,116 +252,3 @@ double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
 {
 	return (double)(m_timer.GetRemainingTime());
 }
-
-void DoButton(ShipRef Ship, InventoryItemRef Item, EVEEffect *Effect, float CycleTime, uint32 targetID, bool start, bool active, uint32 chargeID)
-{
-    // if we have no ship or module to affect do nothing.
-    if(Item.get() == NULL || Ship.get() == NULL || Effect == NULL)
-        return;
-
-    Client *c = sEntityList.FindCharacter(Ship->ownerID());
-    if(c == NULL)
-        return;
-
-    uint32 effectID = Effect->GetEffectID();
-    std::string effectName = Effect->GetGuid();
-
-    uint32 itemID = Item->itemID();
-    // create ship button effect
-    Notify_OnGodmaShipEffect shipEff;
-    shipEff.itemID = itemID;
-    shipEff.effectID = effectID;
-    shipEff.when = Win32TimeNow();
-    shipEff.start = start ? 1 : 0;
-    shipEff.active = active ? 1 : 0;
-
-    PyList* env = new PyList;
-    env->AddItem(new PyInt(shipEff.itemID));
-    env->AddItem(new PyInt(Item->ownerID()));
-    if(targetID > 0)
-    {
-      env->AddItem(new PyInt(Ship->itemID()));
-      env->AddItem(new PyInt(targetID));
-    }
-    else
-    {
-      env->AddItem(new PyInt(Item->locationID()));
-      env->AddItem(new PyNone);
-    }
-    env->AddItem(new PyNone);
-    env->AddItem(new PyNone);
-    env->AddItem(new PyInt(effectID));
-
-    shipEff.environment = env;
-    shipEff.startTime = shipEff.when;
-    shipEff.duration = CycleTime;
-    shipEff.repeat = new PyInt(1000);
-    shipEff.randomSeed = new PyNone;
-    shipEff.error = new PyNone;
-
-    PyTuple *event = shipEff.Encode();
-    Ship->GetOperator()->GetDestiny()->SendSingleDestinyUpdate(&event);
-
-        // Create Special Effect:
-    if( !Effect->GetGuid().empty() && (Effect->GetIsOffensive() == (targetID > 0 ) ) )
-    {
-//  void DestinyManager::SendSpecialEffect(
-//        const ShipRef shipRef,
-//        uint32 moduleID,
-//        uint32 moduleTypeID,
-//        uint32 targetID,
-//        uint32 chargeTypeID,
-//        std::string effectString,
-//        bool isOffensive,
-//        bool start,
-//        bool isActive,
-//        double duration,
-//        uint32 repeat) const
-        Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-            (
-             Ship,
-             itemID,
-             Item->typeID(),
-             targetID,
-             targetID > 0 ? chargeID : 0,
-             effectName.c_str(),
-             Effect->GetIsOffensive() ? 1 : 0,
-             start ? true : false,
-             active ? true : false,
-             CycleTime,
-             start ? true : false
-             );
-    }
-}
-
-void ActiveModuleProcessingComponent::StartButton()
-{
-    m_ButtonCycle = true;
-    uint32 tID = m_Mod->GetTargetID();
-    uint32 chargeID = 0;
-    if(m_Charge.get() != NULL)
-        chargeID = m_Charge->itemID();
-    else
-    {
-        // no charge loaded, check to see if this is a civilian module.
-        EvilNumber civilianCharge;
-        if(m_Mod->HasAttribute(AttrAmmoLoaded, civilianCharge))
-        {
-            chargeID = civilianCharge.get_int();
-        }
-    }
-
-    DoButton(m_Ship, m_Item, m_Effect.get(), m_CycleTime.get_float(), tID, true, true, chargeID);
-}
-
-void ActiveModuleProcessingComponent::EndButton()
-{
-    m_ButtonCycle = false;
-    uint32 tID = m_Mod->GetTargetID();
-    uint32 chargeID = 0;
-    if(m_Charge.get() != NULL)
-        chargeID = m_Charge->itemID();
-
-    DoButton(m_Ship, m_Item, m_Effect.get(), m_CycleTime.get_float(), tID, false, false, chargeID);    
-}
-

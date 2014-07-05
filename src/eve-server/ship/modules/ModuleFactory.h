@@ -30,9 +30,11 @@
 #include "ActiveModules.h"
 #include "RigModule.h"
 #include "SubSystemModules.h"
+#include "ship/modules/logistics_modules/RepairModule.h"
+#include "ship/modules/mining_modules/MiningLaser.h"
 #include "ship/modules/weapon_modules/EnergyTurret.h"
 #include "ship/modules/weapon_modules/ProjectileTurret.h"
-#include "ship/modules/logistics_modules/RepairModule.h"
+#include "ship/modules/weapon_modules/MissileLauncher.h"
 
 //how you should access the modules
 static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
@@ -117,9 +119,9 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Clone_Vat_Bay:                           return (new GenericModule(item, ship)); break;
 
             // Mining Modules Subgroup:
-            case EVEDB::invGroups::Mining_Laser:                            return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Strip_Miner:                             return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Frequency_Mining_Laser:                  return (new ActiveModule(item, ship)); break;    // Active
+            case EVEDB::invGroups::Mining_Laser:                            return (new MiningLaser(item, ship)); break;    // Active
+            case EVEDB::invGroups::Strip_Miner:                             return (new MiningLaser(item, ship)); break;    // Active
+            case EVEDB::invGroups::Frequency_Mining_Laser:                  return (new MiningLaser(item, ship)); break;    // Active
             case EVEDB::invGroups::Mining_Upgrade:                          return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Gas_Cloud_Harvester:                     return (new ActiveModule(item, ship)); break;    // Active
 
@@ -152,15 +154,15 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             case EVEDB::invGroups::Heat_Sink:                               return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Magnetic_Field_Stabilizer:               return (new GenericModule(item, ship)); break;
             case EVEDB::invGroups::Ballistic_Control_system:                return (new GenericModule(item, ship)); break;
-            case EVEDB::invGroups::Missile_Launcher_Snowball:               return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Cruise:                 return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Rocket:                 return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Siege:                  return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Standard:               return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Heavy:                  return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Assault:                return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Defender:               return (new ActiveModule(item, ship)); break;    // Active
-            case EVEDB::invGroups::Missile_Launcher_Citadel:                return (new ActiveModule(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Snowball:               return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Cruise:                 return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Rocket:                 return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Siege:                  return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Standard:               return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Heavy:                  return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Assault:                return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Defender:               return (new MissileLauncher(item, ship)); break;    // Active
+            case EVEDB::invGroups::Missile_Launcher_Citadel:                return (new MissileLauncher(item, ship)); break;    // Active
             case EVEDB::invGroups::Super_Weapon:                            return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Interdiction_Sphere_Launcher:            return (new ActiveModule(item, ship)); break;    // Active
             case EVEDB::invGroups::Missile_Launcher_Heavy_Assault:          return (new ActiveModule(item, ship)); break;    // Active

@@ -66,7 +66,7 @@ enum ChargeStates
     MOD_LOADING,
     MOD_RELOADING,
     MOD_LOADED
-};
+    };
 
 // These are the module states where an effect will, ahem, take 'effect':
 // *** use these values to decode the 'effectAppliedBehavior' field of the 'dgmEffectsInfo' database table

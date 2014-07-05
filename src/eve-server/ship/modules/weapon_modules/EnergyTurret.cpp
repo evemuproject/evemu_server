@@ -45,35 +45,7 @@ void EnergyTurret::Load(InventoryItemRef charge)
 
 void EnergyTurret::StartCycle()
 {
-    // Create Destiny Updates:
-    DoDestiny_OnDamageStateChange dmgChange;
-    dmgChange.entityID = m_targetEntity->GetID();
-
-    PyList *states = new PyList;
-    states->AddItem(new PyFloat(0));
-    states->AddItem(new PyFloat(0));
-    states->AddItem(new PyFloat(0.99));
-    dmgChange.state = states;
-
-    Notify_OnDamageMessage dmgMsg;
-    dmgMsg.messageID = ""; // Can be left blank as Damage.cpp fills this in.  This can be one in this set {"AttackHit1", "AttackHit2", "AttackHit3", "AttackHit4", "AttackHit5", "AttackHit6"}
-    dmgMsg.weapon = m_Item->itemID();
-    dmgMsg.splash = "";
-    dmgMsg.target = m_targetEntity->GetID();
-    dmgMsg.damage = (m_Item->GetAttribute(AttrDamageMultiplier).get_float() * 48.0);
-
-//    PyTuple *event = dmgMsg.Encode();
-//    PyTuple *update = dmgChange.Encode();
-//    m_Ship->GetOperator()->GetDestiny()->SendSelfDestinyUpdate(&update);
-//    m_Ship->GetOperator()->GetDestiny()->SendSelfDestinyUpdate(&event);
-    
-    std::vector<PyTuple*> events;
-    events.push_back(dmgMsg.Encode());
-
-    std::vector<PyTuple*> updates;
-    updates.push_back(dmgChange.Encode());
-
-    m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
+    ActiveModule::StartCycle();
 
     // Create Damage action:
     //Damage( SystemEntity *_source,

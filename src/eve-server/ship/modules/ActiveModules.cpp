@@ -25,6 +25,7 @@
 
 
 #include "eve-server.h"
+#include "EntityList.h"
 
 #include "ship/modules/ActiveModules.h"
 
@@ -35,8 +36,7 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
 
 	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
     m_targetEntity = NULL;
-    m_Charge_State = ChargeStates::MOD_UNLOADED;
-    m_RequiresCharge = false;
+    m_ChargeState = ChargeStates::MOD_UNLOADED;
     // load cycle for most charges is zero.
     m_LoadCycleTime = 0;
 }
@@ -63,13 +63,15 @@ void ActiveModule::Offline()
 
 void ActiveModule::Activate(SystemEntity * targetEntity)
 {
-	// This may be handled by the Module class itself (eg. Afterburner.cpp)
-    // but many modules may just need to run.
+    // store the target entity.
+    m_targetEntity = targetEntity;
+    // activate the module.
     m_ActiveModuleProc->ActivateCycle(-1);
 }
 
 void ActiveModule::Deactivate()
 {
+	m_ModuleState = MOD_DEACTIVATING;
     m_ActiveModuleProc->DeactivateCycle();
 }
 
@@ -83,37 +85,139 @@ void ActiveModule::Load(InventoryItemRef charge)
     }
 
     m_targetEntity = NULL;
-    m_Charge_State = ChargeStates::MOD_LOADING;
-	m_ChargeRef = InventoryItemRef();
-    m_ActiveModuleProc->ActivateCycle( -1, charge);
+    m_ChargeState = ChargeStates::MOD_LOADING;
+	m_ChargeRef = charge;
+    m_ActiveModuleProc->ActivateCycle( -1);
 }
 
 void ActiveModule::Unload()
 {
-    m_Charge_State = ChargeStates::MOD_UNLOADED;
+    m_ChargeState = ChargeStates::MOD_UNLOADED;
 	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
 }
 
-void ActiveModule::EndLoading(InventoryItemRef charge)
+void ActiveModule::EndLoading()
 {
-	m_ChargeRef = charge;
-    m_Charge_State = ChargeStates::MOD_LOADED;
+    m_ChargeState = ChargeStates::MOD_LOADED;
+    // finally, move the charge into the module.
     if(m_ChargeRef.get() != NULL)
         m_ChargeRef->Move(m_Ship->itemID(), flag());
 }
 
 void ActiveModule::StartCycle()
 {
+    m_ModuleState = MOD_ACTIVATED;
+    m_ChargeID = 0;
+    EvilNumber civilianCharge;
+    if(m_Item->HasAttribute(AttrAmmoLoaded, civilianCharge))
+        m_ChargeID = civilianCharge.get_int();
+    if(m_ChargeRef.get() != NULL)
+        m_ChargeID = m_ChargeRef->typeID();
+    DoGraphics(true);
     m_ShipActiveModifiers->SetActive(true);
     m_ShipPassiveModifiers->SetActive(false);
     m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
     m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
-void ActiveModule::EndCycle()
+void ActiveModule::StopCycle(bool abort)
 {
+    // Aknor had the chargeID as the itemID instead of typeID in the graphics stop, do the same.
+    if(m_ChargeRef.get() != NULL)
+        m_ChargeID = m_ChargeRef->itemID();
+    m_ModuleState = MOD_ONLINE;
+    DoGraphics(false);
     m_ShipActiveModifiers->SetActive(false);
     m_ShipPassiveModifiers->SetActive(true);
     m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
     m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
+}
+
+void ActiveModule::DoGraphics(bool active, EVEEffectRef Effect)
+{
+    // no effect specified try to get a default.
+    if(Effect.get() == NULL)
+        Effect = m_Item->type().GetEffects()->GetDefaultEffect();
+    // no effect?  no graphics!
+    if(Effect.get() == NULL)
+        return;
+    // get the cycle time.
+    double CycleTime = m_Item->GetAttribute(Effect->GetDurationAttributeID()).get_float();
+
+    uint32 effectID = Effect->GetEffectID();
+    std::string effectName = Effect->GetGuid();
+    uint32 targetID = 0;
+    if(m_targetEntity != NULL)
+        targetID = m_targetEntity->GetID();
+    uint32 itemID = m_Item->itemID();
+    
+    // create ship button effect
+    Notify_OnGodmaShipEffect shipEff;
+    shipEff.itemID = itemID;
+    shipEff.effectID = effectID;
+    shipEff.when = Win32TimeNow();
+    shipEff.start = active ? 1 : 0;
+    shipEff.active = active ? 1 : 0;
+
+    PyList* env = new PyList;
+    env->AddItem(new PyInt(shipEff.itemID));
+    env->AddItem(new PyInt(m_Ship->ownerID()));
+    env->AddItem(new PyInt(m_Ship->itemID()));
+    if(targetID != 0)
+        env->AddItem(new PyInt(targetID));
+    else
+        env->AddItem(new PyNone);
+    env->AddItem(new PyNone);
+    env->AddItem(new PyNone);
+    env->AddItem(new PyInt(10));
+
+    shipEff.environment = env;
+    shipEff.startTime = shipEff.when;
+    shipEff.duration = active ? CycleTime : 1.0;
+    shipEff.repeat = new PyInt(active ? 1000 : 0);
+    shipEff.randomSeed = new PyNone;
+    shipEff.error = new PyNone;
+
+    if(active)
+    {
+        PyTuple* tmp = new PyTuple(3);
+        tmp->SetItem(2, shipEff.Encode());
+
+        std::vector<PyTuple*> events;
+        events.push_back(shipEff.Encode());
+
+        std::vector<PyTuple*> updates;
+
+        m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
+    }
+    else
+    {
+        PyList* events = new PyList;
+        events->AddItem(shipEff.Encode());
+
+        Notify_OnMultiEvent multi;
+        multi.events = events;
+
+        PyTuple* tmp = multi.Encode();
+
+        m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
+    }
+
+    m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect (
+         m_Ship,
+         itemID,
+         m_Item->typeID(),
+         targetID,
+         // projectile turrets sets this to 0 on start?
+         //m_ChargeRef.get() != NULL ? (active ? m_ChargeRef->typeID() : m_ChargeRef->itemID() ) : 0,
+         m_ChargeID,
+         effectName.c_str(),
+         Effect->GetIsOffensive() ? 1 : 0,
+         active ? 1 : 0,
+         active ? 1 : 0,
+         active ? CycleTime : 1.0,
+         active ? 1000 : 0   // this number vaires (1000, 50000) : (0, 1)
+         );
+    if(!active)
+        m_ActiveModuleProc->DeactivateCycle();
 }

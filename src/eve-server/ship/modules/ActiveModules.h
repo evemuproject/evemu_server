@@ -62,7 +62,7 @@ public:
     }
 
 	// Calls Reserved for components usage only!
-private:
+protected:
     /**
      * Called when the cycle starts.
      * This is where special effects should be started.
@@ -72,14 +72,15 @@ private:
     /**
      * Called when the cycle completes.
      * This is where repair/mining modules should do there actions.
+     * @param abort True if the module was stopped in mid cycle.
      * @note mining modules should also gather there minerals when deactivated and then not again when the cycle ends.
      */
-	virtual void EndCycle();
+	virtual void StopCycle(bool abort=false);
 
     /**
      * Called when charge loading cycle ends.
      */
-    virtual void EndLoading(InventoryItemRef charge);
+    virtual void EndLoading();
     /**
      * Get the targetID of this modules target.
      * @return The targets targetID.
@@ -104,9 +105,10 @@ protected:
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_ChargeRef;		// we do not own this
-    bool m_RequiresCharge;
+    uint32 m_ChargeID;                  // use for civilian guns that have a charge but not ammo.
     uint32 m_LoadCycleTime;
 
+    void DoGraphics(bool active, EVEEffectRef Effect = EVEEffectRef(NULL));
 };
 
 

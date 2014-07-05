@@ -20,40 +20,21 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Reve
- */
+    Author:        AknorJaden
+*/
 
-#include "eve-server.h"
+#ifndef __MISSILELAUNCHER_H__
+#define __MISSILELAUNCHER_H__
 
-#include "EntityList.h"
-#include "system/SystemBubble.h"
-#include "system/Damage.h"
 #include "ship/modules/weapon_modules/WeaponModule.h"
 
-WeaponModule::WeaponModule(InventoryItemRef item, ShipRef ship)
-: ActiveModule(item, ship)
+class MissileLauncher: public WeaponModule
 {
-}
+public:
+    MissileLauncher( InventoryItemRef item, ShipRef ship );
 
-void WeaponModule::Activate(SystemEntity * targetEntity)
-{
-    // weapons can't fire at nothing.
-    if(targetEntity == NULL)
-        return;
-    // if the weapon is already busy do nothing.
-    if(m_ActiveModuleProc->IsBusy())
-        return;
-    // make sure its a valid target and charge.
-    if (m_ChargeRef.get() == NULL)
-    {
-        // to-do: add the civilian charge to the weapon.
-        // check for civilian version with infinite ammo.
-        if(!HasAttribute(AttrAmmoLoaded))
-        {
-            sLog.Error("WeaponModule::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!");
-            // to-do: change this to something less invasive for the client.
-            throw PyException(MakeCustomError("ERROR!  Cannot find charge that is supposed to be loaded into this module!"));
-        }
-    }
-    ActiveModule::Activate(targetEntity);
-}
+	// Calls Reserved for components usage only!
+	void StartCycle();
+};
+
+#endif

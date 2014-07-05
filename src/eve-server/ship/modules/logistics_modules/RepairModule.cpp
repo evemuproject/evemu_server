@@ -33,10 +33,12 @@ RepairModule::RepairModule(InventoryItemRef item, ShipRef ship)
 {
 }
 
-void RepairModule::EndCycle()
+void RepairModule::StartCycle()
 {
-    // check for shield repair.
+    ActiveModule::StartCycle();
+    
     EvilNumber boost;
+    // check for shield repair.
     if(HasAttribute(AttrShieldBonus, boost))
     {
         double Shield = m_Ship->GetAttribute(AttrShieldCharge).get_float();
@@ -48,11 +50,6 @@ void RepairModule::EndCycle()
                 boost *= bonus / 100.0;
             }
         }
-        // adjust for the effects of other modules on shield boosters.
-        if(HasAttribute(AttrShieldBonus, bonus))
-        {
-            boost *= 1.0 + (bonus / 100.0);
-        }
         double newShield = Shield + boost.get_float();
         double capacity = m_Ship->GetAttribute(AttrShieldCapacity).get_float();
         if(newShield > capacity)
@@ -60,6 +57,13 @@ void RepairModule::EndCycle()
         if(newShield != Shield)
           m_Ship->SetAttribute(AttrShieldCharge, newShield);
     }
+}
+
+void RepairModule::StopCycle(bool abort)
+{
+    ActiveModule::StopCycle(abort);
+
+    EvilNumber boost;
     // check for armor repair.
     if(HasAttribute(AttrArmorDamageAmount, boost))
     {

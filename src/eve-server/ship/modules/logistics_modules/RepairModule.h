@@ -35,11 +35,17 @@ public:
     
 private:
     /**
+     * Called when the cycle starts
+     * This is where shield modules should do there actions.
+     */
+	virtual void StartCycle();
+    /**
      * Called when the cycle completes.
      * This is where repair/mining modules should do there actions.
+     * @param abort True if the module was stopped in mid cycle.
      * @note mining modules should also gather there minerals when deactivated and then not again when the cycle ends.
      */
-	virtual void EndCycle();
+	virtual void StopCycle(bool abort);
 
 };
 
