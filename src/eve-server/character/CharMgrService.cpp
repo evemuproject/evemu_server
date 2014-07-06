@@ -192,7 +192,7 @@ PyResult CharMgrService::Handle_GetSettingsInfo( PyCallArgs& call )
         // if called with any value other than zero the exception output will show 'Verified = False'
         // if called with zero 'Verified = True'
         res->items[ 1 ] = new PyInt( 0 );
-    sLog.Debug( "CharMgrService", "Called GetSettingsInfo, this will cause a client exception at UpdateSettingsStatistics in settingsSvc.py." );
+    sLog.Warning( "CharMgrService", "Called GetSettingsInfo, this will cause a client exception at UpdateSettingsStatistics in settingsSvc.py." );
     return res;
 //    sLog.Debug( "CharMgrService", "Called GetSettingsInfo stub." );
 //    return NULL;
