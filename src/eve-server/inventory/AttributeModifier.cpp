@@ -142,7 +142,7 @@ double AttributeModifierSource::FinalizeModification(double value, double amount
     value += amount;
     // Sort the modification factors so the highest is least penalized.
     // Sort by absolute value as some modifiers are negatives!
-    std::sort(stackingFactors.begin(), stackingFactors.end(), [](double x, double y) { return abs(x) < abs(y); } );
+    std::sort(stackingFactors.begin(), stackingFactors.end(), [](double x, double y) { return abs(x) > abs(y); } );
     // Loop through the stack penalized factors.
     double N = 0; // Number of modules found.
     // Loop through the list and calculate the penalized factors.
@@ -160,7 +160,7 @@ double AttributeModifierSource::FinalizeModification(double value, double amount
     }
     // Sort the factors.
     // Sort by absolute value as some modifiers are negatives!
-    std::sort(nonStackingFactors.begin(), nonStackingFactors.end(), [](double x, double y) { return abs(x) < abs(y); } );
+    std::sort(nonStackingFactors.begin(), nonStackingFactors.end(), [](double x, double y) { return abs(x) > abs(y); } );
     // Loop through the factors.
     itr = nonStackingFactors.begin();
     for (; itr != nonStackingFactors.end(); itr++)
