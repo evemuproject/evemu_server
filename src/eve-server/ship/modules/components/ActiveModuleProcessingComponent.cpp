@@ -65,13 +65,8 @@ void ActiveModuleProcessingComponent::Process()
         return;  // nope still waiting.
 
     //time passed and we can drain cap and make/maintain changes to the attributes
-    if(m_Mod->m_ChargeState != MOD_LOADING && m_Mod->m_ChargeState != MOD_RELOADING )
+    if(m_Mod->m_ChargeState == MOD_LOADING || m_Mod->m_ChargeState == MOD_RELOADING )
     {
-        // module is ready to do it's work.
-        sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
-        ProcessActiveCycle();
-    }
-    else {
         // end the loading cycle.
         m_Stop = true;
         // put the charge in the module.
@@ -80,6 +75,11 @@ void ActiveModuleProcessingComponent::Process()
         m_timer.Disable();
         //m_Item->SetActive(false, 1253, 0, false);
         return;
+    }
+    else {
+        // module is ready to do it's work.
+        sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
+        ProcessActiveCycle();
     }
     // if were not stopping try to start another cycle.
     if(!m_Stop)
