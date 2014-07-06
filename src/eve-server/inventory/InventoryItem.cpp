@@ -780,6 +780,7 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result )
         es.duration = INT_MAX;
         es.repeat = 0;
         es.randomSeed = new PyNone;
+        es.env_area = new PyNone;
 
         result.activeEffects[es.env_effectID] = es.Encode();
     }
