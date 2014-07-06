@@ -456,7 +456,6 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
                 // window and NOT onto a specific slot.  'flagAutoFit' means "put this module into which ever slot makes sense")
                 if( (flag == flagAutoFit) )
                 {
-                    sLog.Error( "InventoryBound::_ExecAdd()", "ERROR: handling adding modules where flag = flagAutoFit not yet supported!!!" );
                     EVEItemFlags newFlag = (EVEItemFlags)(c->GetShip()->FindAvailableModuleSlot( newItem ));
                     if( newFlag == flagIllegal )
                     {
@@ -539,7 +538,6 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
             // window and NOT onto a specific slot.  'flagAutoFit' means "put this module into which ever slot makes sense")
             if( (flag == flagAutoFit) )
             {
-                sLog.Error( "InventoryBound::_ExecAdd()", "ERROR: handling adding modules where flag = flagAutoFit not yet supported!!!" );
                 EVEItemFlags newFlag = (EVEItemFlags)(c->GetShip()->FindAvailableModuleSlot( sourceItem ));
                 if( newFlag == flagIllegal )
                 {
