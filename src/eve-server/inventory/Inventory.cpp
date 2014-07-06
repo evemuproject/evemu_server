@@ -421,7 +421,7 @@ void Inventory::AddItem(InventoryItemRef item)
     {
         mContents.insert( std::make_pair( item->itemID(), item ) );
 
-        sLog.Debug("Inventory", "Updated location %u to contain item %u with flag %d.", inventoryID(), item->itemID(), (int)item->flag() );
+        //sLog.Debug("Inventory", "Updated location %u to contain item %u with flag %d.", inventoryID(), item->itemID(), (int)item->flag() );
     }
 	else
 	{
@@ -437,7 +437,7 @@ void Inventory::RemoveItem(InventoryItemRef item)
     {
         mContents.erase( res );
 
-        sLog.Debug("Inventory", "Updated location %u to no longer contain item %u.", inventoryID(), item->itemID() );
+        //sLog.Debug("Inventory", "Updated location %u to no longer contain item %u.", inventoryID(), item->itemID() );
     }
 	else
 	{
