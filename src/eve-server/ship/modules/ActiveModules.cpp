@@ -131,6 +131,8 @@ void ActiveModule::StopCycle(bool abort)
     m_ShipPassiveModifiers->SetActive(true);
     m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
     m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
+    if(!m_ActiveModuleProc->ContinueCycling())
+        m_ActiveModuleProc->DeactivateCycle();
 }
 
 void ActiveModule::DoGraphics(bool active, EVEEffectRef Effect)
@@ -218,6 +220,4 @@ void ActiveModule::DoGraphics(bool active, EVEEffectRef Effect)
          active ? CycleTime : 1.0,
          active ? 1000 : 0   // this number vaires (1000, 50000) : (0, 1)
          );
-    if(!active)
-        m_ActiveModuleProc->DeactivateCycle();
 }

@@ -178,6 +178,29 @@ void ActiveModuleProcessingComponent::AbortCycle()
         m_Mod->StopCycle(true);
 }
 
+bool ActiveModuleProcessingComponent::ContinueCycling()
+{
+    // we've been asked to stop so don't continue!
+    if(m_Stop == true)
+        return false;
+
+    // check for capacitor 
+    double capNeed;
+    if(m_Effect.get() != NULL)
+        capNeed = m_Mod->GetAttribute(m_Effect->GetDischargeAttributeID()).get_float();
+    else
+        capNeed = m_Mod->GetAttribute(AttrCapacitorNeed).get_float();
+	double capCapacity = m_Ship->GetAttribute(AttrCharge).get_float();
+	capCapacity -= capNeed;
+
+    // check for sufficient capacitor.
+    if(capCapacity < 0)
+        // insufficient capacitor, can't continue.
+        return false;
+
+    return true;
+}
+
 bool ActiveModuleProcessingComponent::BeginCycle()
 {
     // consume capacitor
@@ -210,7 +233,7 @@ bool ActiveModuleProcessingComponent::BeginCycle()
     m_Mod->StartCycle();
 
     return true;
- }
+}
 
 void ActiveModuleProcessingComponent::ProcessActiveCycle()
 {

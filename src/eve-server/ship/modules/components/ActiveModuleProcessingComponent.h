@@ -54,6 +54,11 @@ public:
      * Aborts the current cycle, stopping it immediately.
      */
     void AbortCycle();
+    /**
+     * Ask if cycling should continue.
+     * @return True if cycling should continue.
+     */
+    bool ContinueCycling();
 
 public:
     /**
