@@ -810,7 +810,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 					moduleRef = (*cur);
 				cur++;
 			}
-			if( !(moduleRef == NULL) )
+			if( moduleRef )
 			{
 				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
 				{
@@ -819,7 +819,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 						Online(moduleRef->itemID());
 					else
 						Offline(moduleRef->itemID());
-					if( chargeRef != NULL )
+					if( chargeRef )
 						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
 				}
 				else
@@ -849,7 +849,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 					moduleRef = (*cur);
 				cur++;
 			}
-			if( !(moduleRef == NULL) )
+			if( moduleRef )
 			{
 				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
 				{
@@ -858,7 +858,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 						Online(moduleRef->itemID());
 					else
 						Offline(moduleRef->itemID());
-					if( chargeRef != NULL )
+					if( chargeRef )
 						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
 				}
 				else
@@ -888,7 +888,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 					moduleRef = (*cur);
 				cur++;
 			}
-			if( !(moduleRef == NULL) )
+			if( moduleRef )
 			{
 				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
 				{
@@ -896,7 +896,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 						Online(moduleRef->itemID());
 					else
 						Offline(moduleRef->itemID());
-					if( chargeRef != NULL )
+					if( chargeRef )
 						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
 				}
 				else
@@ -923,7 +923,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 			}
 			if( cur->get()->categoryID() == EVEDB::invCategories::Module )
 				itemRef = (*cur);
-			if( !(itemRef == NULL) )
+			if( itemRef )
 			{
 				_fitModule( itemRef, (EVEItemFlags)flagIndex );
 				// We don't think Rigs need the Online attribute set, but keep this code here in case we do:
@@ -950,7 +950,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 			}
 			if( cur->get()->categoryID() == EVEDB::invCategories::Module )
 				itemRef = (*cur);
-			if( !(itemRef == NULL) )
+			if( itemRef )
 			{
 				_fitModule( itemRef, (EVEItemFlags)flagIndex );
 				// We don't think Subsystems need the Online attribute set, but keep this code here in case we do:
@@ -1658,7 +1658,7 @@ int32 ModuleManager::RemoveSubsystemEffect(uint32 attributeID, uint32 originator
     {
         modMap = m_LocalSubsystemModifierMaps->find(attributeID)->second;
         modMap->m_MapIsDirty = true;
-        
+
         if( modMap->m_ModifierMap.find(modifierRef->GetModifierValue()) != modMap->m_ModifierMap.end() )
         {
             modMap->m_MapIsDirty = true;
@@ -1756,7 +1756,7 @@ int32 ModuleManager::RemoveShipSkillEffect(uint32 attributeID, uint32 originator
     {
         modMap = m_LocalShipSkillModifierMaps->find(attributeID)->second;
         modMap->m_MapIsDirty = true;
-        
+
         if( modMap->m_ModifierMap.find(modifierRef->GetModifierValue()) != modMap->m_ModifierMap.end() )
         {
             modMap->m_MapIsDirty = true;

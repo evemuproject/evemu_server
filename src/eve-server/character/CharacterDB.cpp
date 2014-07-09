@@ -189,28 +189,55 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
     uint32 unprocessedNotifications = 0;
     uint32 daysLeft = 14;
     uint32 userType = 23;
-    uint64 skillQueueEndTime = ( Win32TimeNow() + (5*Win32Time_Hour) + (25*Win32Time_Minute) );
     uint64 allianceMemberStartDate = Win32TimeNow() - 15*Win32Time_Day;
     uint64 startDate = Win32TimeNow() - 24*Win32Time_Day;
 
     if(!sDatabase.RunQuery(res,
-        "SELECT "
-        " itemName AS shortName,bloodlineID,gender,bounty,character_.corporationID,allianceID,title,startDateTime,createDateTime,"
-        " securityRating,character_.balance, 0 As aurBalance,character_.stationID,solarSystemID,constellationID,regionID,"
-        " petitionMessage,logonMinutes,tickerName, %u AS worldSpaceID, '%s' AS shipName, %u AS shipTypeID, %u AS unreadMailCount,"
-        " %u AS upcomingEventCount, %u AS unprocessedNotifications, %u AS daysLeft, %u AS userType, 0 AS paperDollState, 0 AS newPaperdollState,"
-        " 0 AS oldPaperdollState, skillPoints, %" PRIu64 " AS skillQueueEndTime, %" PRIu64 " AS allianceMemberStartDate, %" PRIu64 " AS startDate,"
-        " 0 AS locationSecurity"
-        " FROM character_ "
-        "    LEFT JOIN entity ON characterID = itemID"
-        "    LEFT JOIN corporation USING (corporationID)"
-        "    LEFT JOIN bloodlineTypes USING (typeID)"
-        " WHERE characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, skillQueueEndTime, allianceMemberStartDate, startDate, characterID))
+        "SELECT " // fixed DB query -allan 01/09/14
+        "  entity.itemName AS shortName, "
+        "  bloodlineTypes.bloodlineID, "
+        "  ch.gender, "
+        "  ch.bounty, "
+        "  ch.corporationID, "
+        "  corporation.allianceID, "
+        "  ch.title, "
+        "  ch.startDateTime, "
+        "  ch.createDateTime, "
+        "  ch.securityRating, "
+        "  ch.balance, "
+        "  ch.aurBalance, "
+        "  ch.stationID, "
+        "  ch.solarSystemID, "
+        "  ch.constellationID, "
+        "  ch.regionID, "
+        "  ch.petitionMessage, "
+        "  ch.logonMinutes, "
+        "  corporation.tickerName, "
+        "  %u AS worldSpaceID, "
+        "  '%s' AS shipName, "
+        "  %u AS shipTypeID, "
+        "  %u AS unreadMailCount,"
+        "  %u AS upcomingEventCount, "
+        "  %u AS unprocessedNotifications, "
+        "  %u AS daysLeft, "
+        "  %u AS userType, "
+        "  0 AS paperDollState, "
+        "  0 AS newPaperdollState,"
+        "  0 AS oldPaperdollState, "
+        "  ch.skillPoints, "
+        "  ch.skillQueueEndTime, "
+        "  %" PRIu64 " AS allianceMemberStartDate, "
+        "  %" PRIu64 " AS startDate, "
+        "  0 AS locationSecurity "
+        " FROM character_ AS ch"
+        "    LEFT JOIN entity ON entity.itemID = ch.characterID "
+        "    LEFT JOIN corporation USING (corporationID) "
+        "    LEFT JOIN bloodlineTypes USING (typeID) "
+        " WHERE ch.characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, allianceMemberStartDate, startDate, characterID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
     }
-
     return DBResultToCRowset(res);
 }
 
@@ -218,24 +245,24 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
     DBQueryResult res;
 
     if(!sDatabase.RunQuery(res,
-        "SELECT "
-        " entity.typeID,"
-        " character_.corporationID,"
-        " chrBloodlines.raceID,"
-        " bloodlineTypes.bloodlineID,"
-        " character_.ancestryID,"
-        " character_.careerID,"
-        " character_.schoolID,"
-        " character_.careerSpecialityID,"
-        " entity.itemName AS characterName,"
-        " 0 as age,"    //hack
-        " character_.createDateTime,"
-        " character_.gender,"
-        " character_.characterID,"
-        " character_.description,"
-        " character_.corporationDateTime"
-        " FROM character_ "
-        "    LEFT JOIN entity ON characterID = itemID"
+        "SELECT "       // fixed DB Query   -allan 01/11/14
+        "  entity.typeID,"
+        "  entity.itemName AS characterName,"
+        "  ch.corporationID,"
+        "  chrBloodlines.raceID,"
+        "  bloodlineTypes.bloodlineID,"
+        "  ch.ancestryID,"
+        "  ch.careerID,"
+        "  ch.schoolID,"
+        "  ch.careerSpecialityID,"
+        "  ch.age,"
+        "  ch.createDateTime,"
+        "  ch.gender,"
+        "  ch.characterID,"
+        "  ch.description,"
+        "  ch.corporationDateTime"
+        " FROM character_ AS ch"
+        "    LEFT JOIN entity ON entity.itemID = ch.characterID "
         "    LEFT JOIN bloodlineTypes USING (typeID)"
         "    LEFT JOIN chrBloodlines USING (bloodlineID)"
         " WHERE characterID=%u", characterID))
@@ -443,7 +470,7 @@ bool CharacterDB::GetCharHomeStation(uint32 characterID, uint32 &stationID) {
 		_log(DATABASE__ERROR, "Could't get the location of the clone for char %u", characterID );
 		return false;
 	}
-    
+
 	DBResultRow row;
     res.GetRow(row);
     stationID = row.GetUInt(0);
@@ -645,7 +672,7 @@ void CharacterDB::SetAvatar(uint32 charID, PyRep* hairDarkness) {
 	if(!sDatabase.RunQuery(err,
 		"INSERT INTO avatars ("
 		"charID, hairDarkness)"
-		"VALUES (%u, %f)", 
+		"VALUES (%u, %f)",
 		charID, hairDarkness->AsFloat()->value()))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
@@ -658,7 +685,7 @@ void CharacterDB::SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNam
 	if(!sDatabase.RunQuery(err,
 		"INSERT INTO avatar_colors ("
 		"charID, colorID, colorNameA, colorNameBC, weight, gloss)"
-		"VALUES (%u, %u, %u, %u, %f, %f)", 
+		"VALUES (%u, %u, %u, %u, %f, %f)",
 		charID, colorID, colorNameA, colorNameBC, weight, gloss))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
@@ -671,11 +698,11 @@ void CharacterDB::SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  
 	if(!sDatabase.RunQuery(err,
 		"INSERT INTO avatar_modifiers ("
 		"charID, modifierLocationID, paperdollResourceID, paperdollResourceVariation)"
-		"VALUES (%u, %u, %u, %u)", 
-		charID, 
-		modifierLocationID->AsInt()->value(), 
-		paperdollResourceID->AsInt()->value(), 
-		paperdollResourceVariation->IsInt() ? paperdollResourceVariation->AsInt()->value() : NULL ))
+		"VALUES (%u, %u, %u, %u)",
+		charID,
+		modifierLocationID->AsInt()->value(),
+		paperdollResourceID->AsInt()->value(),
+		paperdollResourceVariation->IsInt() ? paperdollResourceVariation->AsInt()->value() : 0 ))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}
@@ -687,12 +714,12 @@ void CharacterDB::SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep
 	if(!sDatabase.RunQuery(err,
 		"INSERT INTO avatar_sculpts ("
 		"charID, sculptLocationID, weightUpDown, weightLeftRight, weightForwardBack)"
-		"VALUES (%u, %u, %f, %f, %f)", 
-		charID, 
-		sculptLocationID->AsInt()->value(), 
-		weightUpDown->IsFloat() ? weightUpDown->AsFloat()->value() : NULL, 
-		weightLeftRight->IsFloat() ? weightLeftRight->AsFloat()->value() : NULL, 
-		weightForwardBack->IsFloat() ? weightForwardBack->AsFloat()->value() : NULL))
+		"VALUES (%u, %u, %f, %f, %f)",
+		charID,
+		sculptLocationID->AsInt()->value(),
+		weightUpDown->IsFloat() ? weightUpDown->AsFloat()->value() : 0,
+		weightLeftRight->IsFloat() ? weightLeftRight->AsFloat()->value() : 0,
+		weightForwardBack->IsFloat() ? weightForwardBack->AsFloat()->value() : 0))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}
@@ -980,5 +1007,200 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
         /* normally this should never happen... */
         printf("CharacterDB::del_name_validation_set: unable to remove: %s as its not in the set", name);
         return false;
+    }
+}
+
+bool CharacterDB::LoadSkillQueue(uint32 characterID, SkillQueue &into) {
+    DBQueryResult res;
+
+    if( !sDatabase.RunQuery( res,
+        "SELECT"
+        " typeID, level"
+        " FROM chrSkillQueue"
+        " WHERE characterID = %u"
+        " ORDER BY orderIndex ASC",
+        characterID ) )
+    {
+        _log(DATABASE__ERROR, "Failed to query skill queue of character %u: %s.", characterID, res.error.c_str());
+        return false;
+    }
+
+    DBResultRow row;
+    while( res.GetRow( row ) )
+    {
+        QueuedSkill qs;
+        qs.typeID = row.GetUInt( 0 );
+        qs.level = row.GetUInt( 1 );
+
+        into.push_back( qs );
+    }
+
+    return true;
+}
+
+bool CharacterDB::LoadPausedSkillQueue(uint32 characterID, SkillQueue &into) {
+    DBQueryResult res;
+
+    if( !sDatabase.RunQuery( res,
+        "SELECT"
+        "  typeID, level"
+        " FROM chrPausedSkillQueue"
+        " WHERE characterID = %u"
+        " ORDER BY orderIndex ASC",
+        characterID ) )
+    {
+        _log(DATABASE__ERROR, "Failed to query skill queue of character %u: %s.", characterID, res.error.c_str());
+        return false;
+    }
+
+    DBResultRow row;
+    while( res.GetRow( row ) )
+    {
+        QueuedSkill qs;
+        qs.typeID = row.GetUInt( 0 );
+        qs.level = row.GetUInt( 1 );
+
+        into.push_back( qs );
+    }
+
+    // now, delete paused queue because subsquent pressess of 'apply' button will add paused queue again, and again, etc...
+    DBerror err;
+    if( !sDatabase.RunQuery( err,
+        "DELETE FROM chrPausedSkillQueue"
+        " WHERE characterID = %u",
+        characterID ) )
+    {
+        _log(DATABASE__ERROR, "Failed to delete skill queue of character %u: %s.", characterID, err.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+bool CharacterDB::SaveSkillQueue(uint32 characterID, SkillQueue &queue) {
+    DBerror err;
+
+    if( !sDatabase.RunQuery( err,
+        "DELETE"
+        " FROM chrSkillQueue"
+        " WHERE characterID = %u",
+        characterID ) )
+    {
+        _log(DATABASE__ERROR, "Failed to delete skill queue of character %u: %s.", characterID, err.c_str());
+        return false;
+    }
+
+    if( queue.empty() )
+        // nothing else to do
+        return true;
+
+    // now build insert query:
+    std::string query;
+
+    for(size_t i = 0; i < queue.size(); i++)
+    {
+        const QueuedSkill &qs = queue[ i ];
+
+        char buf[ 64 ];
+        snprintf( buf, 64, "(%u, %lu, %u, %u)", characterID, (unsigned long)i, qs.typeID, qs.level );
+
+        if( i != 0 )
+            query += ',';
+        query += buf;
+    }
+
+    if( !sDatabase.RunQuery( err,
+        "INSERT"
+        " INTO chrSkillQueue (characterID, orderIndex, typeID, level)"
+        " VALUES %s",
+        query.c_str() ) )
+    {
+        _log(DATABASE__ERROR, "Failed to insert skill queue of character %u: %s.", characterID, err.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+bool CharacterDB::SavePausedSkillQueue(uint32 characterID, SkillQueue &queue) {
+    DBerror err;
+
+    if( !sDatabase.RunQuery( err,
+        "DELETE FROM chrPausedSkillQueue"
+        " WHERE characterID = %u",
+        characterID ) )
+    {
+        _log(DATABASE__ERROR, "Failed to delete skill queue of character %u: %s.", characterID, err.c_str());
+        return false;
+    }
+
+    if( queue.empty() )
+        // nothing else to do
+        return true;
+
+    std::string query;
+
+    for(size_t i = 0; i < queue.size(); i++)
+    {
+        const QueuedSkill &qs = queue[ i ];
+
+        char buf[ 64 ];
+        snprintf( buf, 64, "(%u, %lu, %u, %u)", characterID, (unsigned long)i, qs.typeID, qs.level );
+
+        if( i != 0 )
+            query += ',';
+        query += buf;
+    }
+
+    if( !sDatabase.RunQuery( err,
+        "INSERT"
+        " INTO chrPausedSkillQueue (characterID, orderIndex, typeID, level)"
+        " VALUES %s",
+        query.c_str() ) )
+    {
+        _log(DATABASE__ERROR, "Failed to insert paused skill queue of character %u: %s.", characterID, err.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+void CharacterDB::SaveSkillHistory(int eventID, double logDate, uint32 characterID, uint32 skillTypeID, int skillLevel, double relativePoints, double absolutePoints) {
+    DBerror err;
+    if( !sDatabase.RunQuery( err,
+        "INSERT INTO chrSkillHistory (eventTypeID, logDate, characterID, skillTypeID, skillLevel, relativePoints, absolutePoints)"
+        " VALUES (%u, %f, %u, %u, %u, %f, %f)", eventID, logDate, characterID, skillTypeID, skillLevel, relativePoints, absolutePoints ))
+            _log(DATABASE__ERROR, "Failed to set chrSkillHistory for character %u: %s", characterID, err.c_str());
+}
+
+PyObject* CharacterDB::GetSkillHistory(uint32 characterID) {
+    // eventTypeIDs:
+    // 34 - SkillClonePenalty
+    // 36 - SkillTrainingStarted
+    // 37 - SkillTrainingComplete
+    // 38 - SkillTrainingCanceled
+    // 39 - GMGiveSkill
+    // 307 - SkillPointsApplied
+
+    DBQueryResult res;
+    if(!sDatabase.RunQuery(res,
+        "SELECT logDate, eventTypeID, skillTypeID, relativePoints AS absolutePoints"
+        " FROM chrSkillHistory"
+        " WHERE characterID = %d"
+        " ORDER BY logDate DESC"
+        " LIMIT 100",
+        characterID )) {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return(DBResultToRowset(res));
+}
+
+void CharacterDB::UpdateSkillQueueEndTime(EvilNumber time, uint32 charID ) {
+    DBerror err;
+    if( !sDatabase.RunQuery( err, "UPDATE character_ SET skillQueueEndTime = %f WHERE characterID = %u ", time.get_float(), charID )) {
+        _log(DATABASE__ERROR, "Failed to set skillQueueEndTime for character %u: %s", charID, err.c_str());
+        return;
     }
 }

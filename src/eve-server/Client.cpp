@@ -81,9 +81,9 @@ Client::~Client() {
 
         // Save character info including attributes, save current ship's attributes, current ship's fitted mModulesMgr,
         // and save all skill attributes to the Database:
-		if( GetShip() != NULL )
+		if( GetShip() )
 			GetShip()->SaveShip();                              // Save Ship's and Modules' attributes and info to DB
-		if( GetChar() != NULL )
+		if( GetChar() )
 		{
 	        GetChar()->SaveFullCharacter();                     // Save Character info to DB
 			GetChar()->SaveSkillQueue();                        // Save Skill Queue to DB
@@ -669,7 +669,7 @@ void Client::_UpdateSession2( uint32 characterID )
     mSession.SetLong( "rolesAtOther", rolesAtOther );
 
     m_shipId = shipID;
-    if( m_char != NULL )
+    if( m_char )
         m_char->SetActiveShip(m_shipId);
     if (IsInSpace())
         mSession.SetInt( "shipid", shipID );

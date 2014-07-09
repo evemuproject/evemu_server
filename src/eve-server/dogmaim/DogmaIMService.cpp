@@ -93,8 +93,8 @@ public:
     PyCallable_DECL_CALL(AddTarget)
     PyCallable_DECL_CALL(RemoveTarget)
     PyCallable_DECL_CALL(ClearTargets)
-    
-    
+
+
 
 protected:
     Dispatcher *const m_dispatch;
@@ -217,7 +217,7 @@ PyResult DogmaIMBound::Handle_GetTargeters(PyCallArgs &call) {
 
 PyResult DogmaIMBound::Handle_SetModuleOnline( PyCallArgs& call ) {
 	Call_TwoIntegerArgs args; //locationID, moduleID
-	
+
 	if( !args.Decode( &call.tuple ) )
     {
         codelog( SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName() );
@@ -231,7 +231,7 @@ PyResult DogmaIMBound::Handle_SetModuleOnline( PyCallArgs& call ) {
 
 PyResult DogmaIMBound::Handle_TakeModuleOffline( PyCallArgs& call ) {
 	Call_TwoIntegerArgs args; //locationID, moduleID
-	
+
 	if( !args.Decode( &call.tuple ) )
     {
         codelog( SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName() );
@@ -245,7 +245,7 @@ PyResult DogmaIMBound::Handle_TakeModuleOffline( PyCallArgs& call ) {
 
 PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	Call_Dogma_LoadAmmoToBank args;
-	
+
 	if( !args.Decode( &call.tuple ) )
     {
         codelog( SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName() );
@@ -265,7 +265,7 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	// Get Reference to Ship, Module, and Charge
 	ShipRef shipRef = call.client->GetShip();
 	InventoryItemRef moduleRef = shipRef->GetModule(args.moduleItemID);
-	if( moduleRef == NULL )
+	if( !moduleRef )
 	{
 		sLog.Error("DogmaIMBound::Handle_LoadAmmoToBank()", "ERROR: cannot find module into which charge should be loaded!  How did we get here!?!?!" );
 		return NULL;
@@ -432,7 +432,7 @@ PyResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
     Rsp_Dogma_AddTarget rsp;
     rsp.success = true;
     rsp.targets.push_back(target->GetID());
-	
+
     return(rsp.Encode());
 }
 
@@ -555,7 +555,7 @@ PyResult DogmaIMBound::Handle_GetAllInfo( PyCallArgs& call )
 
     //Contains a dict of the ship and its modules
 
-    if(call.client->GetShip() == NULL) {
+    if(!call.client->GetShip()) {
         codelog(SERVICE__ERROR, "Unable to build ship status for ship %u", call.client->GetShipID());
         return NULL;
     }

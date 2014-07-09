@@ -278,7 +278,7 @@ public:
    double weightUpDown;
    double weightLeftRight;
    double weightForwardBack;
-   
+
    void Build(uint32 ownerID, PyDict* data);
 
 private:
@@ -318,8 +318,8 @@ class Character
     friend class InventoryItem;    // to let it construct us
     friend class Owner;    // to let it construct us
 public:
-    typedef InventoryDB::QueuedSkill QueuedSkill;
-    typedef InventoryDB::SkillQueue SkillQueue;
+    typedef CharacterDB::QueuedSkill QueuedSkill;
+    typedef CharacterDB::SkillQueue SkillQueue;
     typedef InventoryDB::currentCertificates cCertificates;
     typedef InventoryDB::Certificates Certificates;
 
@@ -355,6 +355,9 @@ public:
     void Delete();
 
     /**
+     *  Skill Functions
+     */
+    /**
      * Checks whether character has the skill.
      *
      * @param[in] skillTypeID ID of skill type to be checked.
@@ -378,9 +381,18 @@ public:
      */
     SkillRef GetSkill(uint32 skillTypeID) const;
     /**
+     * Gets level of skill that is trained.
+     *
+     * @param[in] skillTypeID ID of skill type to be checked
+     * @param[in] zeroForNotInjected true if method should return 0 for un injected skills,
+     *  false if it should return -1
+     * @return value 0..5 - the level of skill trained, or, if it was not injected,
+     *  0 if zeroForNotInjected.is true, -1 otherwise
+     */
+     int GetSkillLevel(uint32 skillTypeID, bool zeroForNotInjected=true) const;
+    /**
      * Returns skill currently in training.
      *
-     * @param[in] newref Whether new reference should be returned.
      * @return Pointer to Skill object; NULL if skill was not found.
      */
     SkillRef GetSkillInTraining() const;
@@ -394,7 +406,7 @@ public:
     /**
      * Calculates Total Skillpoints the character has trained
      *
-     * @return Skillpoints per minute rate.
+     * @return Total Skillpoints trained.
      */
     EvilNumber GetTotalSPTrained() { return m_totalSPtrained; };
     /**
@@ -409,36 +421,15 @@ public:
      */
     EvilNumber GetEndOfTraining() const;
 
-    /* InjectSkillIntoBrain(InventoryItem *skill)
-     *
-     * Perform injection of passed skill into the character.
-     * @author xanarox
-     * @param InventoryItem
-     */
-    bool InjectSkillIntoBrain(SkillRef skill);
-    /*
-     * GM Version, allows level set
-     */
-    bool InjectSkillIntoBrain(SkillRef skill, uint8 level);
-    /* AddSkillToSkillQueue()
-     *
-     * This will add a skill into the skill queue.
-     * @author xanarox
-     */
-    void AddToSkillQueue(uint32 typeID, uint8 level);
-    /**
-     * Clears skill queue.
-     */
-    void ClearSkillQueue();
-    /**
-     * Updates skill queue.
-     */
-    void UpdateSkillQueue();
-    /**
-     * Update skill training end time on char select screen.
-     * @author allan
-     */
-    void UpdateSkillQueueEndTime( const SkillQueue &queue);
+    bool            InjectSkillIntoBrain(SkillRef skill);
+    void            AddToSkillQueue(uint32 typeID, uint8 level);
+    void            ClearSkillQueue();
+    void            PauseSkillQueue();
+    void            LoadPausedSkillQueue();
+    void            UpdateSkillQueue();
+    void            UpdateSkillQueueEndTime( const SkillQueue &queue);
+    PyObject*       GetSkillHistory();
+    EvilNumber      GetTotalSP();
 
     /* GrantCertificate( uint32 certificateID )
      *
@@ -495,6 +486,7 @@ public:
     // Account:
     uint32                  accountID() const { return m_accountID; }
 
+    // Character Data:
     const std::string &     title() const { return m_title; }
     const std::string &     description() const { return m_description; }
     bool                    gender() const { return m_gender; }
@@ -531,18 +523,21 @@ public:
     uint32                  schoolID() const { return m_schoolID; }
     uint32                  careerSpecialityID() const { return m_careerSpecialityID; }
 
-    // Some importand dates:
+    // Some important dates:
     uint64                  startDateTime() const { return m_startDateTime; }
     uint64                  createDateTime() const { return m_createDateTime; }
     uint64                  corporationDateTime() const { return m_corporationDateTime; }
 
+    // ship:
     uint32                  shipID() const { return m_shipID; }
+    void                    SetActiveShip(uint32 shipID);
 
-    void SaveCharacter();
-	void SaveFullCharacter();
-    void SaveSkillQueue() const;
-    void SaveCertificates() const;
-    void SetActiveShip(uint32 shipID);
+    // saves:
+    void                    SaveCharacter();
+	void                    SaveFullCharacter();
+    void                    SaveSkillQueue();
+    void                    SaveCertificates() const;
+    void                    SaveSkillHistory(int, double, uint32, uint32, int, double, double);
 
 protected:
     Character(
@@ -658,6 +653,9 @@ protected:
     EvilNumber m_totalSPtrained;
 
     Certificates m_certificates;
+
+    CharacterDB m_db;
+
 };
 
 #endif /* !__CHARACTER__H__INCL__ */
