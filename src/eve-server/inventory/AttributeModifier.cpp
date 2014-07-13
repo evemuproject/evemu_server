@@ -67,7 +67,7 @@ double AttributeModifier::GetFactor()
     {
 // possible problem with effectInfo 657 in groupID 78 with calc_percentage.
 // some modules have value 1 that should be 1% not 0% change
-        if(source < 2 && source > 0 && this->m_Effect->GetEffectID() != 657)
+        if(source < 2 && source > 0 && m_Effect->GetEffectID() != 657)
             return (1.0 - source) * 100;
         else
             return (100.0 - source);
