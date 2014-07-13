@@ -65,17 +65,23 @@ double AttributeModifier::GetFactor()
     EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
     if(m_Type == CALC_PERCENTAGE)
     {
-        if(source < 2 && source > 0)
+// possible problem with effectInfo 657 in groupID 78 with calc_percentage.
+// some modules have value 1 that should be 1% not 0% change
+        if(source < 2 && source > 0 && this->m_Effect->GetEffectID() != 657)
             return (1.0 - source) * 100;
         else
             return (100.0 - source);
     }
     if(m_Type == CALC_DIFFERENCE)
     {
-        if(source < 2 && source > 0)
+        if(source > 0)
             return -(1.0 - source) * 100;
         else
             return source;
+    }
+    if(m_Type == CALC_MULTIPLIER)
+    {
+        return source * 100;
     }
     return 0;
 }
