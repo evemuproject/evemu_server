@@ -1,6 +1,6 @@
 -- Errors may still exist in these tables
 -- 26972 = 'Faction Drone Wreck' needs checking
---Several 'commander' wrecks are still classified as regular wrecks
+-- Several 'commander' wrecks are still classified as regular wrecks
  
 -- ----------------------------
 -- Table structure for `invTypesToWrecks`
