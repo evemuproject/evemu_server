@@ -349,66 +349,50 @@ bool AttributeMap::Save()
     if (mChanged == false)
         return true;
 
+    std::string table;
+    // get the appropriate table name.
+    if(mDefault)
+        table = "entity_default_attributes";
+    else
+        table = "entity_attributes";
+    std::ostringstream Inserts;
+    Inserts << "INSERT INTO " << table << " (itemID, attributeID, valueInt, valueFloat) ";
+    bool first = true;
     AttrMapItr itr = mAttributes.begin();
     AttrMapItr itr_end = mAttributes.end();
     for (; itr != itr_end; itr++)
     {
-        if ( itr->second.get_type() == evil_number_int ) {
-
-            DBerror err;
-
-			if(mDefault)
-			{
-				success = sDatabase.RunQuery(err,
-					"INSERT INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) "
-                    "VALUES (%u, %u, %" PRId64 ", NULL) "
-                    "ON DUPLICATE KEY UPDATE "
-                    "entity_default_attributes.valueInt=%" PRId64 ", "
-                    "entity_default_attributes.valueFloat=NULL",
-					mItem->itemID(), itr->first, itr->second.get_int(), itr->second.get_int());
-			}
-			else
-			{
-				success = sDatabase.RunQuery(err,
-					"INSERT INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) "
-                    "VALUES (%u, %u, %" PRId64 ", NULL) "
-                    "ON DUPLICATE KEY UPDATE "
-                    "entity_attributes.valueInt=%" PRId64 ", "
-                    "entity_attributes.valueFloat=NULL",
-					mItem->itemID(), itr->first, itr->second.get_int(), itr->second.get_int());
-			}
-
-            if (!success)
-                sLog.Error("AttributeMap", "unable to save attribute");
-
-        } else if (itr->second.get_type() == evil_number_float ) {
-
-            DBerror err;
-
-			if(mDefault)
-			{
-				success = sDatabase.RunQuery(err,
-					"INSERT INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) "
-                    "VALUES (%u, %u, NULL, %f) "
-                    "ON DUPLICATE KEY UPDATE "
-                    "entity_default_attributes.valueInt=NULL, "
-                    "entity_default_attributes.valueFloat=%f",
-					mItem->itemID(), itr->first, itr->second.get_float(), itr->second.get_float());
-			}
-			else
-			{
-				success = sDatabase.RunQuery(err,
-					"INSERT INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) "
-                    "VALUES (%u, %u, NULL, %f) "
-                    "ON DUPLICATE KEY UPDATE "
-                    "entity_attributes.valueInt=NULL, "
-                    "entity_attributes.valueFloat=%f",
-					mItem->itemID(), itr->first, itr->second.get_float(), itr->second.get_float());
-			}
-
-            if (!success)
-                sLog.Error("AttributeMap", "unable to save attribute");
+        // if this is the first row specify the VALUES keyword
+        if(first == true)
+        {
+            Inserts << "VALUES";
+            first = false;
         }
+        // otherwise coma separate the values.
+        else
+            Inserts << ", ";
+        // itemID and attributeID keys.
+        Inserts << "(" << mItem->itemID() << ", " << itr->first << ", ";
+        // the value to set.
+        if ( itr->second.get_type() == evil_number_int ) {
+            Inserts << itr->second.get_int() << ", NULL)";
+        } else {
+            Inserts << " NULL, " << itr->second.get_float() << ")";
+        }
+    }
+
+    // did we get at least 1 insert?
+    if(first != true)
+    {
+        // finish creating the command.
+        Inserts << "ON DUPLICATE KEY UPDATE ";
+        Inserts << table << ".valueInt=VALUES(valueInt), ";
+        Inserts << table << ".valueFloat=VALUES(valueFloat)";
+        std::string values = Inserts.str();
+        DBerror err;
+        success = sDatabase.RunQuery(err, values.c_str());
+        if (!success)
+            sLog.Error("AttributeMap", "unable to save attributes");
     }
 
     mChanged = false;
