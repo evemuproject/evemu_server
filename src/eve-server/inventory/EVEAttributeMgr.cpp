@@ -225,13 +225,13 @@ bool AttributeMap::Load()
 {
     /* First, we load default attributes values using existing attribute system */
     DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem->typeID() );
-    if (attr_set == NULL)
-        return false;
+    if (attr_set != NULL)
+    {
+        DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
 
-    DgmTypeAttributeSet::AttrSetItr itr = attr_set->attributeset.begin();
-
-    for (; itr != attr_set->attributeset.end(); itr++)
-        SetAttribute((*itr)->attributeID, (*itr)->number, false);
+        for (; itr != attr_set->attributeset.end(); itr++)
+            SetAttribute((*itr)->attributeID, (*itr)->number, false);
+    }
 
     /* Then we load the saved attributes from the db, if there are any yet, and overwrite the defaults */
     DBQueryResult res;
