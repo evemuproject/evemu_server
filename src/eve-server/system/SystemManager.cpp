@@ -125,7 +125,8 @@ bool SystemManager::_LoadSystemCelestials() {
                 stationRef->SetAttribute(AttrDamage,        0.0);                                        // Structure Damage
                 stationRef->SetAttribute(AttrShieldCapacity,20000000.0);                         // Shield Capacity
                 stationRef->SetAttribute(AttrShieldCharge,  stationRef->GetAttribute(AttrShieldCapacity));     // Shield Charge
-                stationRef->SetAttribute(AttrArmorHP,       stationRef->type().GetAttribute(AttrArmorHP));   // Armor HP
+                // use default value of zero to avoid error message as most station types do not have an ArmorHP value.
+                stationRef->SetAttribute(AttrArmorHP,       stationRef->type().GetAttribute(AttrArmorHP, 0));   // Armor HP
                 stationRef->SetAttribute(AttrArmorDamage,   0.0);                                   // Armor Damage
                 stationRef->SetAttribute(AttrMass,          stationRef->type().GetAttribute(AttrMass));         // Mass
                 stationRef->SetAttribute(AttrRadius,        stationRef->type().GetAttribute(AttrRadius));     // Radius
