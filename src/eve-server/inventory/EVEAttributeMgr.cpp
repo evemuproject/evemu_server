@@ -343,8 +343,6 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 /* we should save skills */
 bool AttributeMap::Save()
 {
-	bool success = false;
-
     /* if nothing changed... it means this action has been successful we return true... */
     if (mChanged == false)
         return true;
@@ -356,6 +354,7 @@ bool AttributeMap::Save()
     else
         table = "entity_attributes";
     std::ostringstream Inserts;
+    // start the insert into command.
     Inserts << "INSERT INTO " << table << " (itemID, attributeID, valueInt, valueFloat) ";
     bool first = true;
     AttrMapItr itr = mAttributes.begin();
@@ -388,11 +387,13 @@ bool AttributeMap::Save()
         Inserts << "ON DUPLICATE KEY UPDATE ";
         Inserts << table << ".valueInt=VALUES(valueInt), ";
         Inserts << table << ".valueFloat=VALUES(valueFloat)";
-        std::string values = Inserts.str();
+        // execute the command.
         DBerror err;
-        success = sDatabase.RunQuery(err, values.c_str());
-        if (!success)
+        if (!sDatabase.RunQuery(err, Inserts.str().c_str()))
+        {
             sLog.Error("AttributeMap", "unable to save attributes");
+            return false;
+        }
     }
 
     mChanged = false;
