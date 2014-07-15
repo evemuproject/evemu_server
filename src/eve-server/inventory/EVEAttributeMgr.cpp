@@ -360,14 +360,22 @@ bool AttributeMap::Save()
 			if(mDefault)
 			{
 				success = sDatabase.RunQuery(err,
-					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
-					mItem->itemID(), itr->first, itr->second.get_int());
+					"INSERT INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) "
+                    "VALUES (%u, %u, %" PRId64 ", NULL) "
+                    "ON DUPLICATE KEY UPDATE "
+                    "entity_default_attributes.valueInt=%" PRId64 ", "
+                    "entity_default_attributes.valueFloat=NULL",
+					mItem->itemID(), itr->first, itr->second.get_int(), itr->second.get_int());
 			}
 			else
 			{
 				success = sDatabase.RunQuery(err,
-					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
-					mItem->itemID(), itr->first, itr->second.get_int());
+					"INSERT INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) "
+                    "VALUES (%u, %u, %" PRId64 ", NULL) "
+                    "ON DUPLICATE KEY UPDATE "
+                    "entity_attributes.valueInt=%" PRId64 ", "
+                    "entity_attributes.valueFloat=NULL",
+					mItem->itemID(), itr->first, itr->second.get_int(), itr->second.get_int());
 			}
 
             if (!success)
@@ -380,14 +388,22 @@ bool AttributeMap::Save()
 			if(mDefault)
 			{
 				success = sDatabase.RunQuery(err,
-					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
-					mItem->itemID(), itr->first, itr->second.get_float());
+					"INSERT INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) "
+                    "VALUES (%u, %u, NULL, %f) "
+                    "ON DUPLICATE KEY UPDATE "
+                    "entity_default_attributes.valueInt=NULL, "
+                    "entity_default_attributes.valueFloat=%f",
+					mItem->itemID(), itr->first, itr->second.get_float(), itr->second.get_float());
 			}
 			else
 			{
 				success = sDatabase.RunQuery(err,
-					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
-					mItem->itemID(), itr->first, itr->second.get_float());
+					"INSERT INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) "
+                    "VALUES (%u, %u, NULL, %f) "
+                    "ON DUPLICATE KEY UPDATE "
+                    "entity_attributes.valueInt=NULL, "
+                    "entity_attributes.valueFloat=%f",
+					mItem->itemID(), itr->first, itr->second.get_float(), itr->second.get_float());
 			}
 
             if (!success)
