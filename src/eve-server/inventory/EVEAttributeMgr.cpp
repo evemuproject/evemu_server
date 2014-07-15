@@ -347,15 +347,15 @@ bool AttributeMap::Save()
     if (mChanged == false)
         return true;
 
-    std::string table;
-    // get the appropriate table name.
-    if(mDefault)
-        table = "entity_default_attributes";
-    else
-        table = "entity_attributes";
     std::ostringstream Inserts;
     // start the insert into command.
-    Inserts << "INSERT INTO " << table << " (itemID, attributeID, valueInt, valueFloat) ";
+    Inserts << "INSERT INTO ";
+    // set the appropriate table name.
+    if(mDefault)
+        Inserts << "entity_default_attributes";
+    else
+        Inserts << "entity_attributes";
+    Inserts << " (itemID, attributeID, valueInt, valueFloat) ";
     bool first = true;
     AttrMapItr itr = mAttributes.begin();
     AttrMapItr itr_end = mAttributes.end();
@@ -385,8 +385,8 @@ bool AttributeMap::Save()
     {
         // finish creating the command.
         Inserts << "ON DUPLICATE KEY UPDATE ";
-        Inserts << table << ".valueInt=VALUES(valueInt), ";
-        Inserts << table << ".valueFloat=VALUES(valueFloat)";
+        Inserts << "valueInt=VALUES(valueInt), ";
+        Inserts << "valueFloat=VALUES(valueFloat)";
         // execute the command.
         DBerror err;
         if (!sDatabase.RunQuery(err, Inserts.str().c_str()))
