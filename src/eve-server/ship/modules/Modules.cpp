@@ -113,11 +113,12 @@ void GenericModule::GenerateModifiers()
             uint32 state = effect->GetModuleStateWhenEffectApplied(i);
             if(affecting == 0 || affecting == m_Item->groupID())
             {
-                typeTargetGroupIDlist *types = effect->GetTargetGroupIDlist(i);
-                typeTargetGroupIDlist::iterator tItr = types->begin();
-                for (; tItr != types->end(); tItr++)
+                typeTargetGroupIDlist *groups = effect->GetTargetGroupIDlist(i);
+                typeTargetGroupIDlist::iterator tItr = groups->begin();
+                for (; tItr != groups->end(); tItr++)
                 {
-                    if (*tItr == 6)
+                    uint groupID = *tItr;
+                    if (groupID == 6) // target ship
                     {
                         if(state == EFFECT_ONLINE)
                             m_ShipModifiers->AddModifier(mod);
@@ -126,14 +127,20 @@ void GenericModule::GenerateModifiers()
                         if(state == EFFECT_PASSIVE)
                             m_ShipPassiveModifiers->AddModifier(mod);
                     }
-                    else if(*tItr == 0)
+                    else if(groupID == 0) // target self
                     {
                         if(state == EFFECT_OVERLOAD)
                             m_OverloadModifiers->AddModifier(mod);
                     }
-                    else
+                    else // target module
                     {
                         // to-do: add module modifiers.
+                        if(state == EFFECT_ONLINE)
+                        {
+                            if(m_ModuleModifiers.find(groupID) == m_ModuleModifiers.end())
+                                m_ModuleModifiers[groupID] = AttributeModifierSourceRef(new AttributeModifierSource(m_Item));
+                            m_ModuleModifiers[groupID]->AddModifier(mod);
+                        }
                     }
                 }
             }

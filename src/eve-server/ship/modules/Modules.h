@@ -139,7 +139,8 @@ protected:
     AttributeModifierSourceRef m_ShipPassiveModifiers;
     AttributeModifierSourceRef m_ShipActiveModifiers;
     AttributeModifierSourceRef m_OverloadModifiers;
-    
+    std::map<uint32, AttributeModifierSourceRef> m_ModuleModifiers;
+
     void GenerateModifiers();
 };
 
