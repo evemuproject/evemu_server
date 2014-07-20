@@ -40,7 +40,7 @@ bool Client::ProcessNet()
         _SendPingRequest();
     }
     </pre>
-&nbsp;&nbsp;Pop a packet from the stack, this may also do some processing of the packet.
+&nbsp;&nbsp;Pop a packet from the stack, this may also do some processing of the packet if the client is still logging in.
     <pre class="brush: cpp">
     PyPacket *p;
     while((p = PopPacket())) {
@@ -50,7 +50,7 @@ bool Client::ProcessNet()
             p->Dump(CLIENT__IN_ALL, dumper);
         }
     </pre>
-&nbsp;&nbsp;If login is complete the packet will end up here where we call the packet dispatcher to handle the packet.
+&nbsp;&nbsp;If login is complete the packet will end up here where we call the <a href="Packet-Dispatch.html">packet dispatcher</a> to handle the packet.
     <pre class="brush: cpp">
         try
         {
