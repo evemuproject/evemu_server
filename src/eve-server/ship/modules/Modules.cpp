@@ -117,7 +117,7 @@ void GenericModule::GenerateModifiers()
                 typeTargetGroupIDlist::iterator tItr = groups->begin();
                 for (; tItr != groups->end(); tItr++)
                 {
-                    uint groupID = *tItr;
+                    uint32 groupID = *tItr;
                     if (groupID == 6) // target ship
                     {
                         if(state == EFFECT_ONLINE)
