@@ -399,7 +399,13 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
     {
         // Split the stack into a new inventory item (new_item) with quantity minus one,
         // original item (ship) will be left with quantity = 1, then will be assembled:
-        InventoryItemRef new_item = ship->Split(ship->quantity()-1,true);
+        //InventoryItemRef new_item = ship->Split(ship->quantity()-1,true);
+        ship = RefPtr<Ship>::StaticCast( ship->Split(1, true) );
+        if( !ship )
+        {
+            _log( ITEM__ERROR, "Failed to split stack to assemble ship %u.", itemID );
+            return NULL;
+        }
     }
 
     ship->ChangeSingleton(true, true);
