@@ -28,6 +28,7 @@
 #include "EVEServerConfig.h"
 #include "character/Character.h"
 #include "character/CharacterDB.h"
+#include "inventory/ItemFactory.h"
 
 CharacterDB::CharacterDB()
 {
@@ -189,23 +190,25 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
     uint32 unprocessedNotifications = 0;
     uint32 daysLeft = 14;
     uint32 userType = 23;
-    uint64 skillQueueEndTime = ( Win32TimeNow() + (5*Win32Time_Hour) + (25*Win32Time_Minute) );
+    //uint64 skillQueueEndTime = ( Win32TimeNow() + (5*Win32Time_Hour) + (25*Win32Time_Minute) );
     uint64 allianceMemberStartDate = Win32TimeNow() - 15*Win32Time_Day;
     uint64 startDate = Win32TimeNow() - 24*Win32Time_Day;
-
+    
     if(!sDatabase.RunQuery(res,
         "SELECT "
         " itemName AS shortName,bloodlineID,gender,bounty,character_.corporationID,allianceID,title,startDateTime,createDateTime,"
         " securityRating,character_.balance, 0 As aurBalance,character_.stationID,solarSystemID,constellationID,regionID,"
         " petitionMessage,logonMinutes,tickerName, %u AS worldSpaceID, '%s' AS shipName, %u AS shipTypeID, %u AS unreadMailCount,"
         " %u AS upcomingEventCount, %u AS unprocessedNotifications, %u AS daysLeft, %u AS userType, 0 AS paperDollState, 0 AS newPaperdollState,"
-        " 0 AS oldPaperdollState, skillPoints, %" PRIu64 " AS skillQueueEndTime, %" PRIu64 " AS allianceMemberStartDate, %" PRIu64 " AS startDate,"
+//        " 0 AS oldPaperdollState, skillPoints, %" PRIu64 " AS skillQueueEndTime, %" PRIu64 " AS allianceMemberStartDate, %" PRIu64 " AS startDate,"
+        " 0 AS oldPaperdollState, skillPoints, character_.skillQueueEndTime, %" PRIu64 " AS allianceMemberStartDate, %" PRIu64 " AS startDate,"
         " 0 AS locationSecurity"
         " FROM character_ "
         "    LEFT JOIN entity ON characterID = itemID"
         "    LEFT JOIN corporation USING (corporationID)"
         "    LEFT JOIN bloodlineTypes USING (typeID)"
-        " WHERE characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, skillQueueEndTime, allianceMemberStartDate, startDate, characterID))
+//        " WHERE characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, skillQueueEndTime, allianceMemberStartDate, startDate, characterID))
+        " WHERE characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, allianceMemberStartDate, startDate, characterID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
