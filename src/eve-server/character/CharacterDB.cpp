@@ -185,6 +185,9 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
         }
     }
 
+    CharacterRef chr = sItemFactory.GetCharacter(characterID);
+    chr->UpdateSkillQueue();
+
     uint32 unreadMailCount = 0;
     uint32 upcomingEventCount = 0;
     uint32 unprocessedNotifications = 0;
