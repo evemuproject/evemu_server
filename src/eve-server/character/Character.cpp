@@ -924,7 +924,8 @@ void Character::UpdateSkillQueueEndTime(const SkillQueue &queue)
         const QueuedSkill &qs = queue[ i ];     // get skill id from queue
         SkillRef skill = Character::GetSkill( qs.typeID );   //make ref for current skill
 
-        chrMinRemaining += (skill->GetSPForLevel(qs.level) - skill->GetAttribute( AttrSkillPoints )) / GetSPPerMin(skill);
+        if(skill.get() != NULL)
+            chrMinRemaining += (skill->GetSPForLevel(qs.level) - skill->GetAttribute( AttrSkillPoints )) / GetSPPerMin(skill);
     }
     chrMinRemaining = chrMinRemaining * EvilTime_Minute + EvilTimeNow();
 
