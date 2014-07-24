@@ -280,6 +280,7 @@ bool InventoryItem::_Load()
 
 	// fill basic cargo hold data:
     EvilNumber capacity;
+    // check that item has capacity, not all items do.
     if(mAttributeMap.HasAttribute(AttrCapacity, capacity))
         m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold, capacity.get_float()));
 

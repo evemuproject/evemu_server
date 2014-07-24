@@ -40,7 +40,6 @@ void EnergyTurret::Load(InventoryItemRef charge)
     if(charge->quantity() > 1)
         throw new PyException( MakeCustomError( "Can only load one crystal per turret.") );
     ActiveModule::Load(charge);
-
 }
 
 void EnergyTurret::StartCycle()
@@ -87,7 +86,7 @@ void EnergyTurret::StartCycle()
     if (m_targetEntity->ApplyDamage(damageDealt))
     {
         // target died.
-        m_ActiveModuleProc->DeactivateCycle();
+        Deactivate();
     }
 
     // check if the crystal takes damage.

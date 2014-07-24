@@ -41,13 +41,14 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
     DBQueryResult res;
     DBResultRow row;
 
+	//first we check to see if there is such ids in the entity tables
     if(!sDatabase.RunQuery(res,
         "SELECT "
         " entity.itemID as ownerID,"
         " entity.itemName as ownerName,"
         " entity.typeID,"
-        " NULL as ownerNameID,"
-        " 0 as gender"
+		" 1 as gender,"
+        " NULL as ownerNameID"
         " FROM entity "
         " WHERE itemID in (%s)", ids.c_str()))
     {
@@ -57,13 +58,15 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
 
     //this is pretty hackish... will NOT work if they mix things...
     //this was only put in to deal with "new" statics, like corporations.
+
+	//second: we check to see if the id points to a static entity (Agents, NPC Corps, etc.)
     if(!res.GetRow(row)) {
         if(!sDatabase.RunQuery(res,
             "SELECT "
             " ownerID,ownerName,typeID,"
-            " NULL as ownerNameID,"
-            " 0 as gender"
-            " FROM eveStaticOwners "
+			" 1 as gender,"
+            " NULL as ownerNameID"
+            " FROM evestaticowners "
             " WHERE ownerID in (%s)", ids.c_str()))
         {
             codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -73,14 +76,15 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
         res.Reset();
     }
 
+	//third: we check to see it the id points to a player's character
     if(!res.GetRow(row)) {
         if(!sDatabase.RunQuery(res,
             "SELECT "
             " characterID as ownerID,"
             " itemName as ownerName,"
             " typeID,"
-            " NULL as ownerNameID,"
-            " 0 as gender"
+			" 1 as gender,"
+            " NULL as ownerNameID"
             " FROM character_ "
             " LEFT JOIN entity ON characterID = itemID"
             " WHERE characterID in (%s)", ids.c_str()))
@@ -283,22 +287,24 @@ PyObject *ConfigDB::GetMap(uint32 solarSystemID) {
     //how in the world do they get a list in the freakin rowset for destinations???
     if(!sDatabase.RunQuery(res,
         "SELECT "
-        "   itemID,"
-        "   itemName,"
-        "   typeID,"
-        "   groupID,"
-        "   solarSystemID AS locationID,"
-        "   x,y,z,"
-        "   NULL AS orbitID,"
-        "   NULL AS destinations,"
-        "   NULL AS xMin,"
-        "   NULL AS xMax,"
-        "   NULL AS yMin,"
-        "   NULL AS yMax,"
-        "   NULL AS zMin,"
-        "   NULL AS zMax,"
-        "   NULL AS luminosity"
-        " FROM mapDenormalize"
+        "   s.solarSystemID AS locationID,"
+        "   s.xMin AS xMin,"
+        "   s.xMax AS xMax,"
+        "   s.yMin AS yMin,"
+        "   s.yMax AS yMax,"
+        "   s.zMin AS zMin,"
+        "   s.zMax AS zMax,"
+        "   s.luminosity AS luminosity,"
+        "   d.x AS x, d.y AS y, d.z AS z,"
+        "   d.itemID,"
+        "   d.itemName,"
+        "   d.typeID,"
+        "   d.groupID,"
+        "   d.orbitID AS orbitID,"
+        "   j.celestialID AS destinations"
+        " FROM mapSolarSystems AS s"
+        "  LEFT JOIN mapDenormalize AS d USING (solarSystemID)"
+        "  LEFT JOIN mapJumps AS j ON j.stargateID = d.itemID"
         " WHERE solarSystemID=%u", solarSystemID
     ))
     {
@@ -373,7 +379,7 @@ PyRep *ConfigDB::GetCelestialStatistic(uint32 celestialID) {
     if (!sDatabase.RunQuery(res,
         " SELECT "
         " groupID "
-        " FROM eveNames "
+        " FROM mapDenormalize "
         " WHERE itemID = %u ", celestialID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());

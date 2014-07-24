@@ -51,9 +51,10 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 			// Charged mining laser:
 			// + Modulated Strip Miner II
 			// + Modulated Deep Core Strip Miner II
-			if( m_ChargeRef != NULL )
+			if( m_ChargeRef.get() != NULL )
 			{
-                ActiveModule::Activate(targetEntity);
+				// Activate active processing component timer:
+				ActiveModule::Activate(targetEntity);
 			}
 			else
 			{
@@ -63,7 +64,9 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 		}
 		else
 		{
-            ActiveModule::Activate(targetEntity);
+			// Non-charged mining laser:
+			// Activate active processing component timer:
+	    	ActiveModule::Activate(targetEntity);
 		}
 	}
 	else
@@ -75,8 +78,6 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 
 void MiningLaser::StopCycle(bool abort)
 {
-    ActiveModule::StopCycle(abort);
-
 	// Retrieve ore from target Asteroid and put into flagCargoHold
 	InventoryItemRef asteroidRef = m_targetEntity->Item();
 	InventoryItemRef moduleRef = this->getItem();
@@ -88,7 +89,7 @@ void MiningLaser::StopCycle(bool abort)
 	// Calculate how many units of ore to pull from the asteroid on this cycle:
 	//oreUnitsToPull = asteroidRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
 	oreUnitsToPull = moduleRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
-	if( m_ChargeRef != NULL )
+	if( m_ChargeRef.get() != NULL )
 	{
 		// Use mining crystal charge to multiply ore amount taken:
 		if( moduleRef->HasAttribute(AttrSpecialisationAsteroidYieldMultiplier) )
@@ -99,6 +100,10 @@ void MiningLaser::StopCycle(bool abort)
 			oreUnitsToPull = 0.0;
 		}
 	}
+    // adjust for aborted cycle.
+	if( abort )
+        oreUnitsToPull *= (m_CycleTime.get_float() - GetRemainingCycleTimeMS()) / m_CycleTime.get_float();
+    // round to next lowest integer.
 	oreUnitsToPull = floor(oreUnitsToPull);
 
 	if( oreUnitsToPull > remainingOreUnits )
@@ -152,7 +157,7 @@ void MiningLaser::StopCycle(bool abort)
 		{
 			// Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!
 			m_ModuleState = MOD_DEACTIVATING;
-			m_ActiveModuleProc->AbortCycle();
+			AbortCycle();
 		}
 
 		if( remainingOreUnits == 0 )

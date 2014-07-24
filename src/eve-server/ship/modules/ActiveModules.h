@@ -27,15 +27,12 @@
 #define ACTIVE_MODULES_H
 
 #include "Modules.h"
-#include "ship/modules/components/ActiveModuleProcessingComponent.h"
 
 class ActiveModule : public GenericModule
 {
-  friend ActiveModuleProcessingComponent;
   friend ModuleManager;
 public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
-    ~ActiveModule();
 
 	virtual void Process();
     virtual void Offline();
@@ -82,11 +79,19 @@ protected:
      */
     virtual void EndLoading();
     /**
+     * Begin a new cycle.
+     */
+    bool BeginCycle();
+    /**
+     * A cycle has completed and a new cycle might start.
+     */
+    void ProcessActiveCycle();
+
+public:
+    /**
      * Get the targetID of this modules target.
      * @return The targets targetID.
      */
-
-public:
     uint32 GetTargetID() { return m_targetEntity == NULL ? 0 : m_targetEntity->Item()->itemID(); };
     /**
      * Get the targetEntity of this modules target.
@@ -94,14 +99,43 @@ public:
      */
     SystemEntity *GetTargetEntity() { return m_targetEntity; };
     
-    bool isBusy() {
-      return m_ActiveModuleProc->IsBusy();
-    }
-    
+    /**
+     * Aborts the current cycle, stopping it immediately.
+     */
+    void AbortCycle();
+    /**
+     * Ask if cycling should continue.
+     * @return True if cycling should continue.
+     */
+    bool ContinueCycling();
+
+    /**
+     * Gets the cycle time remaining.
+     * @return the remaining cycle time in ms.
+     */
+	double GetRemainingCycleTimeMS();
+    /**
+     * Get if the module is busy.
+     * @return true if the module is busy.
+     */
+    bool isBusy() { return m_timer.Enabled(); };
+
     virtual bool isActiveModule() { return true; }
 
 protected:
-	ActiveModuleProcessingComponent * m_ActiveModuleProc;
+    bool m_Stop;
+/****************************************************
+	A little note about the timer:
+		Timer.Check() has two functions:
+			1. It checks if the timer has expired out 
+			2. It subtracts from the start time
+	Don't be fooled by it's name because if you don't
+	call it in a loop, you won't get the time moving.
+*****************************************************/
+	Timer m_timer;
+    EvilNumber m_CycleTime;
+    EVEEffectRef m_Effect;
+    
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_ChargeRef;		// we do not own this

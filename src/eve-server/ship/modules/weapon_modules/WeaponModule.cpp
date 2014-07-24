@@ -41,7 +41,7 @@ void WeaponModule::Activate(SystemEntity * targetEntity)
     if(targetEntity == NULL)
         return;
     // if the weapon is already busy do nothing.
-    if(m_ActiveModuleProc->IsBusy())
+    if(m_timer.Enabled())
         return;
     // make sure its a valid target and charge.
     if (m_ChargeRef.get() == NULL)

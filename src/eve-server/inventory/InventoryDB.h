@@ -29,8 +29,6 @@
 #include "ServiceDB.h"
 #include "inventory/ItemRef.h"
 
-//class EVEAttributeMgr;
-
 class CategoryData;
 
 class GroupData;

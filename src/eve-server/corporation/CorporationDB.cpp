@@ -273,7 +273,7 @@ PyObject *CorporationDB::ListNPCDivisions() {
 
     if(!sDatabase.RunQuery(res,
         "SELECT "
-        "   divisionID, divisionName, description, leaderType"
+        "   divisionID, divisionName, divisionNameID, description, leaderType, leaderTypeID"
         " FROM crpNPCDivisions"
     ))
     {

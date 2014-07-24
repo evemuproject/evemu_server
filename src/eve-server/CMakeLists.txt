@@ -381,7 +381,6 @@ SET( ship_SOURCE
      "${TARGET_SOURCE_DIR}/ship/TargetManager.cpp" )
 
 SET( ship_modules_INCLUDE
-     "${TARGET_INCLUDE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ActiveModules.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ModuleDB.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ModuleDefs.h"
@@ -397,7 +396,6 @@ SET( ship_modules_INCLUDE
 	 "${TARGET_INCLUDE_DIR}/ship/modules/weapon_modules/MissileLauncher.h" 
 	 "${TARGET_INCLUDE_DIR}/ship/modules/weapon_modules/WeaponModule.h" )
 SET( ship_modules_SOURCE
-     "${TARGET_SOURCE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ActiveModules.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ModuleDB.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ModuleEffects.cpp"

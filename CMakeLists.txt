@@ -26,6 +26,8 @@ ENABLE_TESTING()
 ###########
 # Options #
 ###########
+SET( AUTO_DOWNLOAD_DEPENDENCIES ON
+     CACHE BOOL "When CHECKED, CMake will automatically download Boost and MySQL, otherwise, CMake will look for them in locations specified by 'Boost_DIR', 'Boost_INCLUDE_DIR', 'MYSQL_INCLUDE_DIRS', and 'MYSQL_LIBRARIES'" )
 SET( EVEMU_ROOT ".."
      CACHE PATH "The root directory of EVEmu workspace." )
 SET( TIXML_USE_STL ON
@@ -40,6 +42,7 @@ ELSE( CMAKE_CROSSCOMPILING )
 ENDIF( CMAKE_CROSSCOMPILING )
 
 MARK_AS_ADVANCED(
+  AUTO_DOWNLOAD_DEPENDENCIES
   EVEMU_ROOT
   EVEMU_TARGETS_IMPORT
   EVEMU_TARGETS_EXPORT
@@ -175,7 +178,6 @@ CHECK_CXX_SYMBOL_EXISTS( localtime_s "ctime" HAVE_LOCALTIME_S )
 INCLUDE( "BuildPackage" )
 
 FIND_PACKAGE( "Doxygen" )
-FIND_PACKAGE( "Threads" REQUIRED )
 
 BUILD_PACKAGE( "Boost" )
 BUILD_PACKAGE( "Lua51" )
@@ -183,6 +185,8 @@ BUILD_PACKAGE( "MySQL" )
 BUILD_PACKAGE( "TinyXML" )
 BUILD_PACKAGE( "UTF8CPP" )
 BUILD_PACKAGE( "ZLIB" )
+
+FIND_PACKAGE( "Threads" REQUIRED )
 
 ADD_SUBDIRECTORY( "dep/gangsta" )
 ADD_SUBDIRECTORY( "dep/utils" )

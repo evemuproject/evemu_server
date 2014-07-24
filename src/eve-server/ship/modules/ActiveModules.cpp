@@ -28,12 +28,13 @@
 #include "EntityList.h"
 
 #include "ship/modules/ActiveModules.h"
+#include "system/SystemBubble.h"
 
 ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
-: GenericModule(item, ship)
+: GenericModule(item, ship),
+  m_timer(0)
 {
-    m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship);
-
+	m_Stop = false;
 	m_ChargeRef = InventoryItemRef();		// Ensure ref is NULL
     m_targetEntity = NULL;
     m_ChargeState = ChargeStates::MOD_UNLOADED;
@@ -41,18 +42,38 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
     m_LoadCycleTime = 0;
 }
 
-ActiveModule::~ActiveModule()
-{
-    //delete members
-    delete m_ActiveModuleProc;
-
-    //null ptrs
-    m_ActiveModuleProc = NULL;
-}
-
 void ActiveModule::Process()
 {
-    m_ActiveModuleProc->Process();
+    //check if the timer expired & subtract time.  will always fail if disabled. (stopped))
+    if(!m_timer.Check())
+        return;  // nope still waiting.
+
+    //time passed and we can drain cap and make/maintain changes to the attributes
+    if(m_ChargeState == MOD_LOADING || m_ChargeState == MOD_RELOADING )
+    {
+        // end the loading cycle.
+        m_Stop = true;
+        // put the charge in the module.
+        EndLoading();
+        // disable and stop the timer.
+        m_timer.Disable();
+        //m_Item->SetActive(false, 1253, 0, false);
+        return;
+    }
+    else {
+        // module is ready to do it's work.
+        sLog.Debug("ActiveModule", "Cycle finished, processing...");
+        ProcessActiveCycle();
+    }
+    // if were not stopping try to start another cycle.
+    if(!m_Stop)
+        BeginCycle();
+    //check if we have a signal to stop the cycle
+    if(m_Stop)
+    {
+        // yep stop the cycle
+        m_timer.Disable();
+    }
 }
 
 void ActiveModule::Offline()
@@ -63,16 +84,75 @@ void ActiveModule::Offline()
 
 void ActiveModule::Activate(SystemEntity * targetEntity)
 {
+    // cannot activate module if it's still cycling from last activation.
+    if(m_timer.Enabled())
+        return;
     // store the target entity.
     m_targetEntity = targetEntity;
-    // activate the module.
-    m_ActiveModuleProc->ActivateCycle(-1);
+    // are we reloading?
+    if(m_ChargeState == ChargeStates::MOD_LOADING || m_ChargeState == ChargeStates::MOD_RELOADING)
+    {
+        // loading, set cycle time to reload cycle time.
+        m_CycleTime = m_LoadCycleTime;
+        // instant load, do nothing more.
+        if(m_CycleTime <= 0)
+        {
+            // put the charge in the module, immediately.
+            EndLoading();
+            return;
+        }
+        if(isOnline())
+        {
+            // this is a hack to try and get the module to flash.
+            m_Item->PutOffline();
+            m_Item->PutOnline();
+        }
+        // start the timer.
+        m_timer.Start(m_CycleTime.get_int());
+        return;
+    }
+    // if the effectID given is -1 attempt to look up the default effect.
+    m_Effect = m_Item->type().GetEffects()->GetDefaultEffect();
+    bool autoRepeat;
+    if(m_Effect.get() != NULL)
+    {
+        // an actual effect is being used.
+        m_CycleTime = GetAttribute(m_Effect->GetDurationAttributeID());
+        autoRepeat = !m_Effect->GetDisallowAutoRepeat();
+    }
+    else
+    {
+        // no effect specified, assume default behavior.
+        EvilNumber zero(0);
+        autoRepeat = GetAttribute(AttrDisallowRepeatingActivation, zero) == 0;
+        // get the modules cycle time.
+        if(!HasAttribute(AttrDuration, m_CycleTime))
+        {
+            if(!HasAttribute(AttrSpeed, m_CycleTime))
+            {
+                sLog.Error( "ActiveModule::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Item->itemName().c_str(), m_Item->itemID() );
+                return;
+            }
+        }
+    }
+    
+    m_Stop = false;
+
+    if(m_CycleTime > 0)
+    {
+        if(!BeginCycle())
+            return;
+        // start the timer.
+        m_timer.Start(m_CycleTime.get_int());
+    }
+    if(!autoRepeat)
+    	m_Stop = true;
 }
 
 void ActiveModule::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-    m_ActiveModuleProc->DeactivateCycle();
+    m_Stop = true;
 }
 
 void ActiveModule::Load(InventoryItemRef charge)
@@ -84,10 +164,9 @@ void ActiveModule::Load(InventoryItemRef charge)
         charge->ChangeSingleton(true, true);
     }
 
-    m_targetEntity = NULL;
     m_ChargeState = ChargeStates::MOD_LOADING;
 	m_ChargeRef = charge;
-    m_ActiveModuleProc->ActivateCycle( -1);
+    Activate(NULL);
 }
 
 void ActiveModule::Unload()
@@ -131,8 +210,8 @@ void ActiveModule::StopCycle(bool abort)
     m_ShipPassiveModifiers->SetActive(true);
     m_ShipActiveModifiers->UpdateModifiers(m_Ship.get(), true);
     m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
-    if(!m_ActiveModuleProc->ContinueCycling())
-        m_ActiveModuleProc->DeactivateCycle();
+    if(!ContinueCycling())
+        Deactivate();
 }
 
 void ActiveModule::DoGraphics(bool active, EVEEffectRef Effect)
@@ -220,4 +299,113 @@ void ActiveModule::DoGraphics(bool active, EVEEffectRef Effect)
          active ? CycleTime : 1.0,
          active ? 1000 : 0   // this number vaires (1000, 50000) : (0, 1)
          );
+}
+
+void ActiveModule::AbortCycle()
+{
+	// Immediately stop active cycle for things such as target destroyed or left bubble, or asteroid emptied and removed from space:
+	m_Stop = true;
+	m_timer.Disable();
+    if(m_ChargeState == ChargeStates::MOD_LOADING || m_ChargeState == ChargeStates::MOD_RELOADING)
+        EndLoading();
+    else
+        StopCycle(true);
+}
+
+bool ActiveModule::ContinueCycling()
+{
+    // we've been asked to stop so don't continue!
+    if(m_Stop == true)
+        return false;
+
+    // check for capacitor 
+    double capNeed;
+    if(m_Effect.get() != NULL)
+        capNeed = GetAttribute(m_Effect->GetDischargeAttributeID()).get_float();
+    else
+        capNeed = GetAttribute(AttrCapacitorNeed).get_float();
+	double capCapacity = m_Ship->GetAttribute(AttrCharge).get_float();
+	capCapacity -= capNeed;
+
+    // check for sufficient capacitor.
+    if(capCapacity < 0)
+        // insufficient capacitor, can't continue.
+        return false;
+
+    return true;
+}
+
+bool ActiveModule::BeginCycle()
+{
+    // consume capacitor
+    double capNeed;
+    if(m_Effect.get() != NULL)
+        capNeed = GetAttribute(m_Effect->GetDischargeAttributeID()).get_float();
+    else
+        capNeed = GetAttribute(AttrCapacitorNeed).get_float();
+	double capCapacity = m_Ship->GetAttribute(AttrCharge).get_float();
+	capCapacity -= capNeed;
+
+    // check for sufficient capacitor.
+    if(capCapacity < 0)
+    {
+        // insufficient capacitor, deactivate.
+        Deactivate();
+        return false;
+    }
+
+    // sufficient capacitor begin new cycle.
+	m_Ship->SetAttribute(AttrCharge, capCapacity);
+
+    // check for overloading.
+    if(_isOverload)
+    {
+        // to-do: implement heat damage
+    }
+
+    // start new cycle.
+    StartCycle();
+
+    return true;
+}
+
+void ActiveModule::ProcessActiveCycle()
+{
+    // cycle ended perform end of cycle actions.
+    StopCycle();
+
+    //check for stop signal
+    if(m_Stop)
+    {
+        return; // cycle stopped.
+    }
+
+    // cycling not stopped start next cycle.
+    try
+    {
+        // Check to see if our target is still in this bubble or has left or been destroyed:
+        uint32 m_targetID = GetTargetID();
+        if(m_targetID > 0)
+        {
+            if (!(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)))
+            {
+                // Target has left our bubble or been destroyed, deactivate this module:
+                Deactivate();
+                return;
+            }
+        }
+    }
+    catch (...)
+    {
+        // something has gone wrong with our target.  Shutdown!
+        // may happen as a result of kill all npcs
+        Deactivate();
+        return;
+    }
+
+}
+
+double ActiveModule::GetRemainingCycleTimeMS()
+{
+	return (double)(m_timer.GetRemainingTime());
 }

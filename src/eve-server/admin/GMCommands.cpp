@@ -1044,10 +1044,6 @@ PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
     uint32 typeID;
     uint8 level;
     CharacterRef character;
-    EVEItemFlags flag;
-    uint32 gty = 1;
-    //uint8 oldSkillLevel = 0;
-    EvilNumber oldSkillLevel(0);
     uint32 ownerID = 0;
 
     if( args.argCount() == 4 )
@@ -1091,26 +1087,27 @@ PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
             level = 5;
     } else
         throw PyException( MakeCustomError("Correct Usage: /giveskill [Character Name or ID] [skillID] [desired level]") );
-
-    SkillRef skill;
-
     // Make sure Character reference is not NULL before trying to use it:
     if(character.get() != NULL)
     {
+        SkillRef skill;
+        uint8 skillLevel;
         if(character->HasSkill( typeID ) )
         {
             // Character already has this skill, so let's get the current level and check to see
             // if we need to update its level to what's required:
-            SkillRef oldSkill = character->GetSkill( typeID );
-            oldSkillLevel = oldSkill->GetAttribute( AttrSkillLevel );
-
-            // Now check the current level to the required level and update it
-            if( oldSkillLevel < level )
+            skill = character->GetSkill( typeID );
+            skillLevel = skill->GetAttribute(AttrSkillLevel).get_int();
+            if( skillLevel >= level )
             {
-                character->InjectSkillIntoBrain( oldSkill, level);
-                return new PyString ( "Gifting skills complete" );
+                return new PyNone;
             }
-			skill = oldSkill;
+            else
+            {
+                EvilNumber tmp = EVIL_SKILL_BASE_POINTS * skill->GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
+                skill->SetAttribute(AttrSkillLevel, level);
+                skill->SetAttribute(AttrSkillPoints, tmp);
+            }
         }
         else
         {
@@ -1119,19 +1116,25 @@ PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
             ItemData idata(
                 typeID,
                 ownerID,
-                0, //temp location
-                flag = (EVEItemFlags)flagSkill,
-                gty
+                ownerID,
+                flagSkill,
+                1
             );
 
             InventoryItemRef item = sItemFactory.SpawnItem( idata );
-            skill = SkillRef::StaticCast( item );
 
             if( !item )
+            {
                 throw PyException( MakeCustomError( "Unable to create item of type %s.", item->typeID() ) );
-
-            character->InjectSkillIntoBrain( skill, level);
-            return new PyString ( "Gifting skills complete" );
+                return new PyString ("Skill Gifting Failure - Unable to create new skill %s.", item->typeID() );
+        }
+            else
+            {
+                skill = SkillRef::StaticCast( item );
+                EvilNumber tmp = EVIL_SKILL_BASE_POINTS * skill->GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
+                skill->SetAttribute(AttrSkillLevel, level);
+                skill->SetAttribute(AttrSkillPoints, tmp);
+            }
         }
 
 		// Either way, this character now has this skill trained to the specified level, so inform client:
@@ -1148,7 +1151,8 @@ PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
         }
     }
 
-    return new PyString ("Skill Gifting Failure");
+    throw PyException( MakeCustomError( "ERROR: Unable to validate character object, it was found to be NULL!" ) );
+    return new PyString ("Skill Gifting Failure - Character Ref = NULL");
 }
 
 
