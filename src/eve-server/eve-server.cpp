@@ -374,6 +374,10 @@ int main( int argc, char* argv[] )
     uint32 start;
     uint32 etime;
     uint32 last_time = GetTickCount();
+#define BUFLEN 256
+    char buf[BUFLEN];
+    fd_set fds;
+    struct timeval tv;
 
     EVETCPConnection* tcpc;
     while( RunLoops == true )
@@ -400,6 +404,25 @@ int main( int argc, char* argv[] )
         // do the stuff for thread sleeping
         if( MAIN_LOOP_DELAY > etime )
             Sleep( MAIN_LOOP_DELAY - etime );
+
+        tv.tv_sec = 0;
+        tv.tv_usec = 0;
+        FD_ZERO(&fds);
+        FD_SET(STDIN_FILENO, &fds);
+        // check for input.
+        select(STDIN_FILENO+1, &fds, NULL, NULL, &tv); 
+        if (FD_ISSET(STDIN_FILENO, &fds))
+        {
+            if (fgets(buf,BUFLEN, stdin))
+            {
+                sLog.Log( "STDIN", "Recieved command: %s", buf );
+                // check for command exit.
+                if (strncmp(buf, "exit", 4) == 0)
+                    RunLoops = false;
+                else
+                    sLog.Debug("STDIN", "Command not recognized: (%d)%s", strlen(buf), buf);
+             }
+        }
     }
 
     sLog.Log("server shutdown", "Main loop stopped" );
