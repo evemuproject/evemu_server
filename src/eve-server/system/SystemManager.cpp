@@ -46,8 +46,7 @@ using namespace Destiny;
 SystemManager::SystemManager(uint32 systemID)//, ItemData idata)
 : m_systemID(systemID),
   m_systemName(""),
-  m_spawnManager(new SpawnManager(*this)),
-  m_entityChanged(false)//,
+  m_spawnManager(new SpawnManager(*this))//,
 //  InventoryItem( systemID, *(sItemFactory.GetType( 5 )), idata )
 {
     m_db.GetSystemInfo(GetID(), NULL, NULL, &m_systemName, &m_systemSecurity);
@@ -134,7 +133,6 @@ bool SystemManager::_LoadSystemCelestials() {
 
                 m_entities[stationEntity->GetStationObject()->itemID()] = stationEntity;
                 bubbles.Add(stationEntity, true);
-                m_entityChanged = true;
             }
             else if(( sItemFactory.GetItem( cur->itemID )->groupID() == EVEDB::invGroups::Stargate ) ||
                ( sItemFactory.GetItem( cur->itemID )->groupID() == EVEDB::invGroups::Asteroid_Belt ))
@@ -151,7 +149,6 @@ bool SystemManager::_LoadSystemCelestials() {
                 }
                 m_entities[se->GetID()] = se;
                 bubbles.Add(se, false);
-                m_entityChanged = true;
             }
             else
             {
@@ -167,7 +164,6 @@ bool SystemManager::_LoadSystemCelestials() {
                 }
                 m_entities[se->GetID()] = se;
                 //bubbles.Add(se, false);
-                m_entityChanged = true;
             }
         }
     }
@@ -598,7 +594,6 @@ bool SystemManager::_LoadSystemDynamics() {
         _log(SPAWN__MESSAGE, "Loaded dynamic entity %u of type %u for system %u", cur->itemID, cur->typeID, m_systemID);
         m_entities[se->GetID()] = se;
         bubbles.Add(se, false);
-        m_entityChanged = true;
     }
 
     return true;
@@ -631,23 +626,20 @@ bool SystemManager::BootSystem() {
 
 //called many times a second
 bool SystemManager::Process() {
-    m_entityChanged = false;
-
-    std::map<uint32, SystemEntity *>::const_iterator cur, end;
-    cur = m_entities.begin();
-    end = m_entities.end();
+    // create a copy of the entity list so that changes will not affect iteration.
+    std::map<uint32, SystemEntity *> tmp_entities(m_entities);
+    std::map<uint32, SystemEntity *>::const_iterator cur, end, fnd;
+    cur = tmp_entities.begin();
+    end = tmp_entities.end();
     while(cur != end) {
-        cur->second->Process();
-
-        if(m_entityChanged) {
-            //somebody changed the entity list, need to start over or bail...
-            m_entityChanged = false;
-
-            cur = m_entities.begin();
-            end = m_entities.end();
-        } else {
-            cur++;
+        if((fnd = m_entities.find(cur->first)) != m_entities.end())
+        {
+            if(fnd->second != NULL)
+                fnd->second->Process();
+            else
+                m_entities.erase(fnd);
         }
+        cur++;
     }
 
     bubbles.Process();
@@ -660,30 +652,20 @@ void SystemManager::ProcessDestiny() {
     //this is here so it isnt called so frequently.
     m_spawnManager->Process();
 
-    m_entityChanged = false;
-
-    std::map<uint32, SystemEntity *>::const_iterator cur, end;
-    cur = m_entities.begin();
-    end = m_entities.end();
+    // create a copy of the entity list so that changes will not affect iteration.
+    std::map<uint32, SystemEntity *> tmp_entities(m_entities);
+    std::map<uint32, SystemEntity *>::const_iterator cur, end, fnd;
+    cur = tmp_entities.begin();
+    end = tmp_entities.end();
     while(cur != end) {
-		// Crash protection since we've seen intermittent crashes as described by error message in the 'else':
-		if(cur->second != NULL)
-			cur->second->ProcessDestiny();
-		else
-		{
-			sLog.Error("SystemManager::Process()", "ERROR! Somehow the SystemEntity * for entityID '%u' was deleted without being removed from the SystemManager's m_entities map!", cur->first);
-			m_entities.erase(cur->first);
-		}
-
-        if(m_entityChanged) {
-            //somebody changed the entity list, need to start over or bail...
-            m_entityChanged = false;
-
-            cur = m_entities.begin();
-            end = m_entities.end();
-        } else {
-            cur++;
+        if((fnd = m_entities.find(cur->first)) != m_entities.end())
+        {
+            if(fnd->second != NULL)
+                fnd->second->ProcessDestiny();
+            else
+                m_entities.erase(fnd);
         }
+        cur++;
     }
 }
 
@@ -699,7 +681,6 @@ bool SystemManager::BuildDynamicEntity(Client *who, const DBSystemDynamicEntity 
     sLog.Debug( "SystemManager::BuildDynamicEntity()", "Loaded dynamic entity %u of type %u for system %u", entity.itemID, entity.typeID, m_systemID );
     m_entities[se->GetID()] = se;
     bubbles.Add(se, false);
-    m_entityChanged = true;
 
     return true;
 }
@@ -707,7 +688,6 @@ bool SystemManager::BuildDynamicEntity(Client *who, const DBSystemDynamicEntity 
 void SystemManager::AddClient(Client *who) {
     AddEntity( who );
     m_entities[who->GetID()] = who;
-    m_entityChanged = true;
     //this is actually handled in SetPosition via UpdateBubble.
     if(who->IsInSpace()) {
         bubbles.Add(who, false);
@@ -744,7 +724,6 @@ void SystemManager::RemoveNPC(NPC *who) {
 
 void SystemManager::AddEntity(SystemEntity *who) {
     m_entities[who->GetID()] = who;
-    m_entityChanged = true;
     bubbles.Add(who, false);
 
     // Add Entity's Item Ref to Solar System Dynamic Inventory:
@@ -755,7 +734,6 @@ void SystemManager::RemoveEntity(SystemEntity *who) {
     std::map<uint32, SystemEntity *>::iterator itr = m_entities.find(who->GetID());
     if(itr != m_entities.end()) {
         m_entities.erase(itr);
-        m_entityChanged = true;
     } else
         _log(SERVICE__ERROR, "Entity %u not found is system %u to be deleted.", who->GetID(), GetID());
 

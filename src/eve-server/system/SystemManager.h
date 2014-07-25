@@ -111,7 +111,6 @@ protected:
     SpawnManager *m_spawnManager;    //we own this, never NULL, dynamic to keep the knowledge down.
 
     //overall system entity lists:
-    bool m_entityChanged;
     std::map<uint32, SystemEntity *> m_entities;    //we own these, but they are also referenced in m_bubbles
 };
 
