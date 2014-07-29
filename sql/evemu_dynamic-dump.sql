@@ -30,10 +30,20 @@ CREATE TABLE `account` (
   `logonCount` int(10) unsigned NOT NULL DEFAULT '0',
   `lastLogin` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   `created` timestamp NOT NULL,
-  `logonMinutes` int(10) unsigned NOT NULL DEFAULT '0',
+  `logonSeconds` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`accountID`),
   UNIQUE KEY `accountName` (`accountName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for `logonHistory`
+-- ----------------------------
+DROP TABLE IF EXISTS `logonHistory`;
+CREATE TABLE `logonHistory` (
+  `accountID` int(10) unsigned NOT NULL,
+  `online` tinyint(1) NOT NULL DEFAULT '0',
+  `time` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `account` */
 

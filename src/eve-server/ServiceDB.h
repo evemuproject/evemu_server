@@ -86,6 +86,8 @@ public:
     void SetAccountOnlineStatus(uint32 accountID, bool onoff_status);
     void SetAccountBanStatus(uint32 accountID, bool onoff_status);
 
+    void RecordLogonHistory(uint32 accountID, bool onoff_status, uint64 logonTime);
+
 protected:
     void ProcessStringChange(const char * key, const std::string & oldValue, const std::string & newValue, PyDict * notif, std::vector<std::string> & dbQ);
     void ProcessRealChange(const char * key, double oldValue, double newValue, PyDict * notif, std::vector<std::string> & dbQ);

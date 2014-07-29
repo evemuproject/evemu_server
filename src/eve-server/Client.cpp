@@ -99,7 +99,8 @@ Client::~Client() {
 
     if(GetAccountID() != 0) { // this is not very good ....
         sManager.serviceDB().SetAccountOnlineStatus(GetAccountID(), false);
-    }
+        sManager.serviceDB().RecordLogonHistory( GetAccountID(), false, LogonTime);
+   }
 
     sManager.ClearBoundObjects(this);
 
@@ -1636,6 +1637,8 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
 
     /* update account information, increase login count, last login timestamp and mark account as online */
     sManager.serviceDB().UpdateAccountInformation( account_info.name.c_str(), true );
+    LogonTime = Win32TimeNow();
+    sManager.serviceDB().RecordLogonHistory( account_info.id, true, LogonTime );
 
     /* marshaled Python string "None" */
     static const uint8 handshakeFunc[] = { 0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65 };

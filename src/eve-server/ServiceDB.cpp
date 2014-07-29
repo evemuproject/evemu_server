@@ -531,6 +531,27 @@ void ServiceDB::SetAccountBanStatus(uint32 accountID, bool onoff_status) {
     }
 }
 
+void ServiceDB::RecordLogonHistory(uint32 accountID, bool onoff_status, uint64 logonTime) {
+    DBerror err;
 
+    _log(CLIENT__TRACE, "AccStatus: Recording Logon history %u %s.", accountID, onoff_status ? "Online" : "Offline");
 
+    if(!sDatabase.RunQuery(err,
+        "INSERT INTO logonHistory (accountID, online, time)"
+        " VALUES( %u, %d, CURRENT_TIMESTAMP )",
+        accountID, onoff_status ? 1 : 0))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+    }
+
+    if(onoff_status == false && logonTime != 0) {
+        uint64 time = Win32TimeNow() - logonTime;
+        uint32 sec = time / Win32Time_Second;
+        // logged off update online time.
+        if(!sDatabase.RunQuery(err, "UPDATE account SET logonSeconds=logonSeconds+%u where accountID=%u", sec, accountID)) {
+            sLog.Error( "AccountDB", "Unable to update account logon time for: %u.", accountID );
+            codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+        }
+    }
+}
 

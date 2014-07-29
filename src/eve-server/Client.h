@@ -329,6 +329,9 @@ private:
 
     bool DoDestinyUpdate();
     std::list<PyTuple*> mDogmaMessages;
+    
+    // logon time calculation.
+    uint64 LogonTime = 0;
 };
 
 #endif
