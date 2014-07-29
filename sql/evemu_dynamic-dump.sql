@@ -29,6 +29,8 @@ CREATE TABLE `account` (
   `banned` tinyint(1) NOT NULL DEFAULT '0',
   `logonCount` int(10) unsigned NOT NULL DEFAULT '0',
   `lastLogin` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `created` timestamp NOT NULL,
+  `logonMinutes` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`accountID`),
   UNIQUE KEY `accountName` (`accountName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
