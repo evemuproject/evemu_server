@@ -796,6 +796,21 @@ CREATE TABLE `accountApi` (
   PRIMARY KEY  (`userID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8;
 
+/*Table structure for table `accountApi2` version 2  */
+
+DROP TABLE IF EXISTS `accountApi2`;
+
+CREATE TABLE `accountApi2` (
+  `accountID` int(10) unsigned NOT NULL default '0',
+  `keyID` int(10) NOT NULL AUTO_INCREMENT,
+  `vCode` varchar(64) NOT NULL default '',
+  `apiType` varchar(16) NOT NULL default 'Character',
+  `mask` int(10) unsigned NOT NULL default '0',
+  `expires` datetime default null,
+  `characterID` int(10) unsigned default null,
+  PRIMARY KEY  (`keyID`)
+) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8;
+
 /*Table structure for table `crpStandings` */
 
 DROP TABLE IF EXISTS `crpStandings`;
