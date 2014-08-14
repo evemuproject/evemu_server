@@ -47,6 +47,7 @@ public:
 	void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
 	void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
     PyObject *GetCharPublicInfo(uint32 characterID);
+    PyObject *GetTopBounties();
     PyObject *GetCharPublicInfo3(uint32 characterID);
     //PyObject *GetAgentPublicInfo(uint32 agentID);
     PyObject *GetOwnerNoteLabels(uint32 charID);

@@ -130,17 +130,14 @@ PyResult CharMgrService::Handle_GetPublicInfo3(PyCallArgs &call) {
 
 PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
 {
-    sLog.Debug( "CharMgrService", "Called GetTopBounties stub." );
+    PyRep *result = m_db.GetTopBounties();
+    if(result == NULL) {
+        codelog(CLIENT__ERROR, "%s: Failed to find bounties", call.client->GetName());
+        return NULL;
+    }
 
-    util_Rowset rs;
-    rs.lines = new PyList;
+    return result;
 
-    rs.header.push_back( "characterID" );
-    rs.header.push_back( "ownerName" );
-    rs.header.push_back( "bounty" );
-    rs.header.push_back( "online" );
-
-    return rs.Encode();
 }
 
 PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
