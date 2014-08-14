@@ -318,6 +318,7 @@ PyObject *CharacterDB::GetTopBounties() {
             " WHERE characterID >= %u"
             " AND bounty > 0"
             " ORDER BY bounty"
+            " LIMIT 0,100"
             , EVEMU_MINIMUM_ID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
