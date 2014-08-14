@@ -317,7 +317,7 @@ PyObject *CharacterDB::GetTopBounties() {
             "  LEFT JOIN entity ON characterID = itemID"
             " WHERE characterID >= %u"
             " AND bounty > 0"
-            " ORDER BY bounty"
+            " ORDER BY bounty DESC"
             " LIMIT 0,100"
             , EVEMU_MINIMUM_ID))
     {
