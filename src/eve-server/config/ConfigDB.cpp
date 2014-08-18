@@ -41,6 +41,7 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
     DBQueryResult res;
     DBResultRow row;
 
+
 	//first we check to see if there is such ids in the entity tables
     if(!sDatabase.RunQuery(res,
         "SELECT "
@@ -66,7 +67,7 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
             " ownerID,ownerName,typeID,"
 			" 1 as gender,"
             " NULL as ownerNameID"
-            " FROM evestaticowners "
+            " FROM eveStaticOwners "
             " WHERE ownerID in (%s)", ids.c_str()))
         {
             codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());

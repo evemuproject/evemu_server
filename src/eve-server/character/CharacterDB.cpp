@@ -307,6 +307,74 @@ void CharacterDB::GetCharacterData(uint32 characterID, std::map<std::string, uin
     characterDataMap["locationID"] = row.GetUInt(12);
 }
 
+PyObject *CharacterDB::GetTopBounties() {
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,
+            "SELECT "
+            "characterID,itemName as ownerName,bounty, online"
+            " FROM character_"
+            "  LEFT JOIN entity ON characterID = itemID"
+            " WHERE characterID >= %u"
+            " AND bounty > 0"
+            " ORDER BY bounty DESC"
+            " LIMIT 0,100"
+            , EVEMU_MINIMUM_ID))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return DBResultToRowset(res);
+}
+
+
+
+PyObject *CharacterDB::GetTopBounties() {
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,
+            "SELECT "
+            "characterID,itemName as ownerName,bounty, online"
+            " FROM character_"
+            "  LEFT JOIN entity ON characterID = itemID"
+            " WHERE characterID >= %u"
+            " AND bounty > 0"
+            " ORDER BY bounty"
+            , EVEMU_MINIMUM_ID))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return DBResultToRowset(res);
+}
+
+
+
+PyObject *CharacterDB::GetTopBounties() {
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,
+            "SELECT "
+            "characterID,itemName as ownerName,bounty,online"
+            " FROM character_"
+            "  LEFT JOIN entity ON characterID = itemID"
+            " WHERE characterID >= %u"
+            " AND bounty > 0"
+            " ORDER BY bounty DESC"
+            " LIMIT 0,100"
+            , EVEMU_MINIMUM_ID))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return DBResultToRowset(res);
+}
+
+
+
 PyObject *CharacterDB::GetCharPublicInfo3(uint32 characterID) {
 
     DBQueryResult res;
