@@ -262,6 +262,14 @@ SET( mail_SOURCE
      "${TARGET_SOURCE_DIR}/mail/MailMgrService.cpp"
      "${TARGET_SOURCE_DIR}/mail/NotificationMgrService.cpp" )
 
+SET( search_INCLUDE
+     "${TARGET_INCLUDE_DIR}/search/SearchDB.h"
+     "${TARGET_INCLUDE_DIR}/search/SearchMgrService.h")
+
+SET( search_SOURCE
+     "${TARGET_INCLUDE_DIR}/search/SearchDB.cpp"
+     "${TARGET_INCLUDE_DIR}/search/SearchMgrService.cpp")
+
 SET( manufacturing_INCLUDE
      "${TARGET_INCLUDE_DIR}/manufacturing/Blueprint.h"
      "${TARGET_INCLUDE_DIR}/manufacturing/FactoryDB.h"
@@ -509,6 +517,7 @@ SOURCE_GROUP( "src\\mining"        FILES ${mining_INCLUDE} )
 SOURCE_GROUP( "src\\missions"      FILES ${missions_INCLUDE} )
 SOURCE_GROUP( "src\\npc"           FILES ${npc_INCLUDE} )
 SOURCE_GROUP( "src\\pos"           FILES ${pos_INCLUDE} )
+SOURCE_GROUP( "src\\search"        FILES ${search_INCLUDE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_INCLUDE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_INCLUDE} )
 SOURCE_GROUP( "src\\ship\\modules\\components" FILES ${ship_modules_components_INCLUDE} )
@@ -536,6 +545,7 @@ SOURCE_GROUP( "src\\mining"        FILES ${mining_SOURCE} )
 SOURCE_GROUP( "src\\missions"      FILES ${missions_SOURCE} )
 SOURCE_GROUP( "src\\npc"           FILES ${npc_SOURCE} )
 SOURCE_GROUP( "src\\pos"           FILES ${pos_SOURCE} )
+SOURCE_GROUP( "src\\search"           FILES ${search_SOURCE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_SOURCE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_SOURCE} )
 SOURCE_GROUP( "src\\ship\\modules\\components" FILES ${ship_modules_components_SOURCE} )
@@ -564,6 +574,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${missions_INCLUDE}       ${missions_SOURCE}
                 ${npc_INCLUDE}            ${npc_SOURCE}
                 ${pos_INCLUDE}            ${pos_SOURCE}
+                ${search_INCLUDE}            ${search_SOURCE}
                 ${ship_INCLUDE}           ${ship_SOURCE}
                 ${ship_modules_INCLUDE}   ${ship_modules_SOURCE}
                 ${ship_modules_components_INCLUDE} ${ship_modules_components_SOURCE}
