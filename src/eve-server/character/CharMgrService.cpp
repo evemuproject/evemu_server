@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,BB2k
 */
 
 #include "eve-server.h"
@@ -48,6 +48,7 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, GetSettingsInfo)
     PyCallable_REG_CALL(CharMgrService, GetCharacterDescription)
     PyCallable_REG_CALL(CharMgrService, SetCharacterDescription)
+    PyCallable_REG_CALL(CharMgrService, AddToBounty)
 }
 
 CharMgrService::~CharMgrService() {
@@ -221,4 +222,24 @@ PyResult CharMgrService::Handle_SetCharacterDescription(PyCallArgs &call)
     c->SetDescription(args.arg.c_str());
 
     return NULL;
+}
+
+
+PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
+	Call_TwoIntegerArgs args;
+	if( !args.Decode( &call.tuple ) ) {
+		codelog( SERVICE__ERROR, "Unable to decode arguments for CharMgrService::Handle_AddToBounty from '%s'", call.client->GetName() );
+		return NULL;
+	}
+
+
+        // No Bounty to yourself =)
+        if (call.client->GetCharacterID() == args.arg1){
+		codelog( SERVICE__ERROR, "You can't add bounty to yourself !" );
+                return NULL;
+        }
+
+        if(call.client->GetChar()->AlterBalance(-args.arg2))
+		m_db.addBounty(args.arg1, args.arg2);
+	return new PyNone;
 }

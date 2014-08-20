@@ -53,6 +53,7 @@ protected:
     PyCallable_DECL_CALL(GetSettingsInfo)
     PyCallable_DECL_CALL(GetCharacterDescription)
     PyCallable_DECL_CALL(SetCharacterDescription)
+    PyCallable_DECL_CALL(AddToBounty)
 };
 
 #endif

@@ -48,6 +48,9 @@ public:
 	void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
     PyObject *GetCharPublicInfo(uint32 characterID);
     PyObject *GetTopBounties();
+    uint32 GetBounty(uint32 charID);
+    void addBounty(uint32 charID, uint32 amount);
+  
     PyObject *GetCharPublicInfo3(uint32 characterID);
     //PyObject *GetAgentPublicInfo(uint32 agentID);
     PyObject *GetOwnerNoteLabels(uint32 charID);
