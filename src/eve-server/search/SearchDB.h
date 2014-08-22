@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        bb2k
+    Author:        BB2k,Allan
 */
 
 
@@ -35,7 +35,8 @@ class SearchDB
 : public ServiceDB
 {
 public:
-    PyObjectEx *LookupChars(const char *match, bool exact);
+    PyRep *QuickQuery(const char *match, std::vector<int> *type); 
+    PyRep *Query(const char *match, int32 searchID);
 };
 
 #endif

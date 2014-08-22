@@ -48,17 +48,6 @@ SearchMgrService::~SearchMgrService() {
 }
 
 
-//Objects Types are :
-// 1 : agent
-// 2 : character
-// 3 : corporation
-// 4 : alliance
-// 5 : faction
-// 6 : station
-// 7 : solar system
-// 8 : constellation
-// 9 : region
-
 PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
 
     // the first argument is the searchString
@@ -66,12 +55,17 @@ PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
     //  Only one for QuickQuery
 
     CallSearch args;
+
     if (!args.Decode(&call.tuple))
     {
         codelog(CLIENT__ERROR, "Failed to decode args for QuickQuery call");
         return NULL;
     }
-    return m_db.LookupChars(args.searchString.c_str(), false);
+
+    std::string str = args.searchString.c_str();
+    str.erase (std::remove(str.begin(), str.end(), '*'), str.end());
+
+    return m_db.QuickQuery(str.c_str(), &args.type);
 }
 
 
@@ -79,28 +73,21 @@ PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
 PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
 
 
-    // the first argument is the searchString
-    // the second is a list of object types
 
-    /*CallSearch args;
+    // the first argument is the searchString
+    // the second is the type of searched object
+    //  Only one for QuickQuery
+
+    CallSearch args;
+
+
     if (!args.Decode(&call.tuple))
     {
         codelog(CLIENT__ERROR, "Failed to decode args for Query call");
-        //return NULL;
-    }*/
+        return NULL;
+    }
 
-
-    sLog.Debug( "SearcMgrService", "Called Query stub." );
-
-    util_Rowset rs;
-    rs.lines = new PyList;
-
-    rs.header.push_back( "characterID" );
-    rs.header.push_back( "Name" );
-
-    return rs.Encode();
-
-    //return m_db.LookupChars(args.searchString.c_str(), false);
-
+   return  m_db.QuickQuery(args.searchString.c_str(), &args.type);
+ 
 }
 
