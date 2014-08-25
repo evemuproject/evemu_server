@@ -35,8 +35,8 @@ class SearchDB
 : public ServiceDB
 {
 public:
-    PyRep *QuickQuery(const char *match, std::vector<int> *type); 
-    PyRep *Query(const char *match, int32 searchID);
+    PyRep *QuickQuery(std::string match, std::vector<int> *type); 
+    PyRep *Query(std::string match, std::vector<int> *searchID);
 };
 
 #endif

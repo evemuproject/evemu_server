@@ -28,13 +28,13 @@
 #include "search/SearchDB.h"
 #include "search/SearchMgrService.h"
 
-PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
-
-    DBQueryResult res;
+PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
+    DBQueryResult res; 
     uint32 i, size;
     std::stringstream st;
     std::string supplement = "";
     std::string query = "";
+    std::string equal;
 
 
     // 1 : agent
@@ -48,10 +48,18 @@ PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
     // 9 : station
 
 
+    std::size_t found=match.find('*');
+    if (found!=std::string::npos) {
+      match.erase (std::remove(match.begin(), match.end(), '*'), match.end());
+      equal = " RLIKE ";
+    } else {
+      equal = " = ";
+    }
+
+
     int transform[9] = {1,1,2,32,19,4,5,3,15};
 
     size = type->size();
-
 
     if ((size == 1) && (type->at(0)) == 2)
         supplement = "AND itemId >= 140000000";
@@ -69,10 +77,8 @@ PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
             " WHERE invGroups.groupID IN (%s))"
             " ORDER BY itemName";
 
-
     std::string matchEsc;
-    sDatabase.DoEscapeString(matchEsc, match);
-
+    sDatabase.DoEscapeString(matchEsc, match.c_str());
 
     _log(SERVICE__MESSAGE, query.c_str(), matchEsc.c_str(), supplement.c_str() ,st.str().c_str());
 
@@ -81,7 +87,6 @@ PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
         _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
         return NULL;
     }
-
 
     PyList *result = new PyList();
     DBResultRow row;
@@ -95,99 +100,119 @@ PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
 }
 
 
-PyRep *SearchDB::Query(const char *match, int32 searchID) {
+PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
 
+    sLog.Warning("SearchDB::Query", "Search : String = %s, ID = %u", match.c_str(), searchID );
 
-   _log(SERVICE__ERROR, "SearchDB::Query", "Search : String = %s, ID = %u", match, searchID );
+    DBQueryResult res;
+    std::string id;
+    uint32 i,size;
+    std::string equal;
 
-   DBQueryResult res;
-
-   std::string string;
-   sDatabase.DoEscapeString(string, match);
-
-   std::string query = "";
-
-    switch (searchID) {
-      case 1:           //  agent
-      case 2:           //  char
-            query = "SELECT"
-                    "   itemID,"
-                    "   itemName,"
-                    "   locationID"
-                    " FROM entity"
-                    " WHERE itemName RLIKE '%s' ";
-            break;
-      case 3:           //  corp            AttributeError: Rowset instance has no attribute 'get'
-            query = "SELECT"
-                    "   corporationID,"
-                    "   corporationName,"
-                    "   stationID,"
-                    "   graphicID"
-                    " FROM corporation"
-                    " WHERE corporationName RLIKE '%s' ";
-            break;
-      case 4:           //  alliance
-            query = "SELECT"
-                    " FROM "
-                    " WHERE  = '%s' ";
-            break;
-      case 5:           //  faction
-            query = "SELECT"
-                    " FROM "
-                    " WHERE  = '%s' ";
-            break;
-      case 6:           //  constellation
-            query = "SELECT"
-                    "   regionID,"
-                    "   constellationID,"
-                    "   constellationName"
-                    " FROM mapConstellations"
-                    " WHERE constellationName RLIKE '%s' ";
-            break;
-      case 7:           //  solar system
-            query = "SELECT "
-                    "   regionID,"
-                    "   constellationID,"
-                    "   solarSystemID,"
-                    "   solarSystemName"
-                    " FROM mapSolarSystems "
-                    " WHERE solarSystemName RLIKE '%s' ";
-            break;
-      case 8:           //  region
-            query = "SELECT "
-                    "   regionID,"
-                    "   regionName"
-                    " FROM mapRegions"
-                    " WHERE regionName RLIKE '%s' ";
-            break;
-      case 9:           //  station
-            query = "SELECT "
-                     "   regionID,"
-                    "   constellationID,"
-                    "   solarSystemID,"
-                    "   stationID,"
-                    "   stationName"
-                    " FROM staStations "
-                    " WHERE stationName RLIKE '%s' ";
-            break;
-      default:
-            codelog(SERVICE__ERROR, "Invalid query '%s' on search %u for %u", query.c_str(), searchID);
-            return NULL;
-    }
-
-    if (!sDatabase.RunQuery(res, query.c_str(), string.c_str() )) {
-        codelog(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
-        return NULL;
-    }
-
-
-    DBResultRow row;
-    if(res.GetRow(row)) {
-            sLog.Success("SearchDB::Query", "res = %s", DBResultToRowset(res) );
-            return(DBResultToCIndexedRowset(res, "itemID"));
+    std::size_t found=match.find('*');
+    if (found!=std::string::npos) {
+      match.erase (std::remove(match.begin(), match.end(), '*'), match.end());
+      equal = " RLIKE ";
     } else {
-            sLog.Error("SearchDB::Query", "res = NULL : query = %s : string = %s", query.c_str(), string.c_str() );
-                return NULL;
+      equal = " = ";
     }
+
+    std::string matchEsc;
+    sDatabase.DoEscapeString(matchEsc, match.c_str());
+
+
+    PyDict *dict = new PyDict();
+    size = searchID->size();
+
+    for(i=0; i<size; i++){
+
+	switch(searchID->at(i)) {
+	  case 1:	//searchResultAgent = 1
+            sDatabase.RunQuery(res,
+	    "SELECT"
+            " itemID AS agentID"
+            " FROM entity"
+            " WHERE itemName %s '%s' "
+            " AND itemID BETWEEN 2999999 AND 4000000 "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 2:	//searchResultCharacter = 2
+            sDatabase.RunQuery(res,
+	    "SELECT"
+            " itemID"
+            " FROM entity"
+            " WHERE itemName %s '%s' "
+            " AND itemId >= 140000000"
+            " AND ownerID = 1",equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 3:	//searchResultCorporation = 3
+            sDatabase.RunQuery(res,
+	    "SELECT"
+            " corporationID"
+            " FROM corporation"
+            " WHERE corporationName %s '%s' "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 4:	//searchResultAlliance = 4
+            sDatabase.RunQuery(res,
+	    "SELECT allianceID"
+            " FROM alliance_ShortNames"
+            " WHERE shortName RLIKE '%s' "
+            " LIMIT 0, 10", match.c_str() );
+            break;
+	  case 5:	//searchResultFaction = 5
+            sDatabase.RunQuery(res,
+	    "SELECT factionID"
+            " FROM chrFactions"
+            " WHERE factionName %S '%s' "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 6:	//searchResultConstellation = 6
+            sDatabase.RunQuery(res,
+	    "SELECT"
+            " constellationID"
+            " FROM mapConstellations"
+            " WHERE constellationName %s '%s' "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+          
+	  case 7:	//searchResultSolarSystem = 7
+
+            sDatabase.RunQuery(res,
+	    "SELECT "
+            " solarSystemID"
+            " FROM mapSolarSystems"
+            " WHERE solarSystemName %s '%s' "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 8:	//searchResultRegion = 8
+            sDatabase.RunQuery(res,
+      	    "SELECT "
+            " regionID"
+            " FROM mapRegions"
+            " WHERE regionName %s '%s' "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 9:	//searchResultStation = 9
+            sDatabase.RunQuery(res,
+	    "SELECT "
+            " stationID"
+            " FROM staStations "
+            " WHERE stationName %s '%s' "
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
+            break;
+	  case 10:	//searchResultInventoryType = 10
+	    sDatabase.RunQuery(res,
+	    "SELECT"
+            "   typeID"
+            " FROM entity"
+            " WHERE itemName %s '%s'", equal.c_str(), matchEsc.c_str() );
+            break;
+	}
+    
+        dict->SetItem(new PyInt(searchID->at(i)),DBResultToIntIntDict(res));
+    }
+
+    return dict;
 }
 

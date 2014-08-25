@@ -62,10 +62,7 @@ PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
         return NULL;
     }
 
-    std::string str = args.searchString.c_str();
-    str.erase (std::remove(str.begin(), str.end(), '*'), str.end());
-
-    return m_db.QuickQuery(str.c_str(), &args.type);
+    return m_db.QuickQuery( args.searchString.c_str(), &args.type);
 }
 
 
@@ -87,7 +84,10 @@ PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
         return NULL;
     }
 
-   return  m_db.QuickQuery(args.searchString.c_str(), &args.type);
- 
+    //std::string str = args.searchString.c_str();
+    //str.erase (std::remove(str.begin(), str.end(), '*'), str.end());
+
+   return m_db.Query(args.searchString.c_str(), &args.type);
+
 }
 
