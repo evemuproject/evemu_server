@@ -29,7 +29,8 @@
 #include "search/SearchMgrService.h"
 
 PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
-    DBQueryResult res; 
+
+    DBQueryResult res;
     uint32 i, size;
     std::stringstream st;
     std::string supplement = "";
@@ -62,28 +63,35 @@ PyRep *SearchDB::QuickQuery(const char *match, std::vector<int> *type) {
             st << ", ";
     }
 
-
-    query = "SELECT itemID,itemName,typeID,ownerID FROM entity"
+    query = "SELECT itemID,itemName FROM entity"
             " WHERE itemName RLIKE '%s' %s"
             " AND typeID in (SELECT typeID FROM invTypes LEFT JOIN invGroups ON invTypes.groupid = invGroups.groupID"
-            " WHERE invGroups.groupID IN (%s))";
+            " WHERE invGroups.groupID IN (%s))"
+            " ORDER BY itemName";
 
 
     std::string matchEsc;
     sDatabase.DoEscapeString(matchEsc, match);
 
 
-    _log(SERVICE__ERROR, query.c_str(), matchEsc.c_str(), supplement.c_str() ,st.str().c_str());
+    _log(SERVICE__MESSAGE, query.c_str(), matchEsc.c_str(), supplement.c_str() ,st.str().c_str());
 
-        if(!sDatabase.RunQuery(res,query.c_str(), matchEsc.c_str(), supplement.c_str() , st.str().c_str() ))
-        {
-            _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
-            return NULL;
-        }
+    if(!sDatabase.RunQuery(res,query.c_str(), matchEsc.c_str(), supplement.c_str() , st.str().c_str() ))
+    {
+        _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
+        return NULL;
+    }
 
-    //return(DBResultToCIndexedRowset(res, "itemID"));
-    //return(DBResultToIndexRowset(res, "itemID"));
-    return DBResultToPackedRowDict(res,"itemID");
+
+    PyList *result = new PyList();
+    DBResultRow row;
+    while( res.GetRow( row ) ){
+        result->AddItem( new PyInt(row.GetUInt(0) ));
+    }
+
+     return result;
+
+
 }
 
 
