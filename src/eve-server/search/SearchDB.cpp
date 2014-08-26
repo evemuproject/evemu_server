@@ -47,6 +47,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
     // 8 : region
     // 9 : station
 
+    _log(SERVICE__MESSAGE,"1");
 
     std::size_t found=match.find('*');
     if (found!=std::string::npos) {
@@ -57,13 +58,16 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
     }
 
 
+    _log(SERVICE__MESSAGE,"2");
     int transform[9] = {1,1,2,32,19,4,5,3,15};
 
     size = type->size();
 
+ _log(SERVICE__MESSAGE,"3");
     if ((size == 1) && (type->at(0)) == 2)
         supplement = "AND itemId >= 140000000";
 
+ _log(SERVICE__MESSAGE,"4");
     for(i=0; i<size; i++)
     {
         st << transform[type->at(i)-1];
@@ -71,14 +75,17 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
             st << ", ";
     }
 
+ _log(SERVICE__MESSAGE,"5");
     query = "SELECT itemID,itemName FROM entity"
             " WHERE itemName RLIKE '%s' %s"
             " AND typeID in (SELECT typeID FROM invTypes LEFT JOIN invGroups ON invTypes.groupid = invGroups.groupID"
             " WHERE invGroups.groupID IN (%s))"
             " ORDER BY itemName";
 
+ _log(SERVICE__MESSAGE,"6");
     std::string matchEsc;
     sDatabase.DoEscapeString(matchEsc, match.c_str());
+ _log(SERVICE__MESSAGE,"7");
 
     _log(SERVICE__MESSAGE, query.c_str(), matchEsc.c_str(), supplement.c_str() ,st.str().c_str());
 
@@ -87,6 +94,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
         _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
         return NULL;
     }
+ _log(SERVICE__MESSAGE,"8");
 
     PyList *result = new PyList();
     DBResultRow row;
@@ -157,8 +165,8 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             sDatabase.RunQuery(res,
 	    "SELECT allianceID"
             " FROM alliance_ShortNames"
-            " WHERE shortName RLIKE '%s' "
-            " LIMIT 0, 10", match.c_str() );
+            " WHERE shortName %s '%s'"
+            " LIMIT 0, 10", equal.c_str(), matchEsc.c_str()  );
             break;
 	  case 5:	//searchResultFaction = 5
             sDatabase.RunQuery(res,
