@@ -52,7 +52,6 @@ PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
 
     // the first argument is the searchString
     // the second is the type of searched object
-    //  Only one for QuickQuery
 
     CallSearch args;
 
@@ -61,19 +60,14 @@ PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
         codelog(CLIENT__ERROR, "Failed to decode args for QuickQuery call");
         return NULL;
     }
-
     return m_db.QuickQuery( args.searchString.c_str(), &args.type);
 }
 
 
-
 PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
 
-
-
     // the first argument is the searchString
-    // the second is the type of searched object
-    //  Only one for QuickQuery
+    // the is a list of searched objects
 
     CallSearch args;
 
@@ -83,11 +77,5 @@ PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
         codelog(CLIENT__ERROR, "Failed to decode args for Query call");
         return NULL;
     }
-
-    //std::string str = args.searchString.c_str();
-    //str.erase (std::remove(str.begin(), str.end(), '*'), str.end());
-
-   return m_db.Query(args.searchString.c_str(), &args.type);
-
+    return m_db.Query(args.searchString.c_str(), &args.type);
 }
-

@@ -28,15 +28,17 @@
 #include "search/SearchDB.h"
 #include "search/SearchMgrService.h"
 
-PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
-    DBQueryResult res; 
-    uint32 i, size;
+PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *SearchID) {
+    DBQueryResult     res; 
+    DBResultRow       row;
+    uint32            i, size;
     std::stringstream st;
-    std::string supplement = "";
-    std::string query = "";
-    std::string equal;
+    std::stringstream supplement;
+    std::string       query      = "";
+    std::string       equal      = "";
+    std::string       matchEsc   = "";
 
-
+    //SearchIDs are :
     // 1 : agent
     // 2 : character
     // 3 : corporation
@@ -47,7 +49,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
     // 8 : region
     // 9 : station
 
-
+    // Find out if search is exact or not and remove the trailing '*'
     std::size_t found=match.find('*');
     if (found!=std::string::npos) {
       match.erase (std::remove(match.begin(), match.end(), '*'), match.end());
@@ -57,44 +59,47 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
     }
 
 
+    // If the SearchID is for character we must filter out agents
+    size = SearchID->size();
+    if ((size == 1) && (SearchID->at(0)) == 2)
+        supplement << "AND itemId >= ";
+        supplement << EVEMU_MINIMUM_ID;
+
+    // Transform SearchId in groupID to search the rights typeIDs
     int transform[9] = {1,1,2,32,19,4,5,3,15};
-
-    size = type->size();
-
-    if ((size == 1) && (type->at(0)) == 2)
-        supplement = "AND itemId >= 140000000";
-
     for(i=0; i<size; i++)
     {
-        st << transform[type->at(i)-1];
+        st << transform[SearchID->at(i)-1];
         if (i<(size-1))
             st << ", ";
     }
+    
+    // Escape the match string
+    sDatabase.DoEscapeString(matchEsc, match.c_str());
 
+    //Form the query and execute it
     query = "SELECT itemID,itemName FROM entity"
             " WHERE itemName RLIKE '%s' %s"
             " AND typeID in (SELECT typeID FROM invTypes LEFT JOIN invGroups ON invTypes.groupid = invGroups.groupID"
             " WHERE invGroups.groupID IN (%s))"
             " ORDER BY itemName";
 
-    std::string matchEsc;
-    sDatabase.DoEscapeString(matchEsc, match.c_str());
 
-    _log(SERVICE__MESSAGE, query.c_str(), matchEsc.c_str(), supplement.c_str() ,st.str().c_str());
+    _log(SERVICE__MESSAGE, query.c_str(), matchEsc.c_str(), supplement.str().c_str() ,st.str().c_str());
 
-    if(!sDatabase.RunQuery(res,query.c_str(), matchEsc.c_str(), supplement.c_str() , st.str().c_str() ))
+    if(!sDatabase.RunQuery(res,query.c_str(), matchEsc.c_str(), supplement.str().c_str() , st.str().c_str() ))
     {
         _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
         return NULL;
     }
 
+    // The cliant wants a List if Ids in return
     PyList *result = new PyList();
-    DBResultRow row;
     while( res.GetRow( row ) ){
         result->AddItem( new PyInt(row.GetUInt(0) ));
     }
 
-     return result;
+    return result;
 
 
 }
@@ -102,13 +107,14 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *type) {
 
 PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
 
-    sLog.Warning("SearchDB::Query", "Search : String = %s, ID = %u", match.c_str(), searchID );
-
     DBQueryResult res;
-    std::string id;
-    uint32 i,size;
-    std::string equal;
+    DBResultRow   row;
+    std::string   id;
+    uint32        i,size;
+    std::string   equal    = "";
+    std::string   matchEsc = "";
 
+    // Find out if search is exact or not and remove the trailing '*'
     std::size_t found=match.find('*');
     if (found!=std::string::npos) {
       match.erase (std::remove(match.begin(), match.end(), '*'), match.end());
@@ -117,9 +123,12 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
       equal = " = ";
     }
 
-    std::string matchEsc;
+    // Escape the searchString
     sDatabase.DoEscapeString(matchEsc, match.c_str());
 
+
+    // The client wants a dict in return
+    // [searchID][Results]
 
     PyDict *dict = new PyDict();
     size = searchID->size();
@@ -142,8 +151,8 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " itemID"
             " FROM entity"
             " WHERE itemName %s '%s' "
-            " AND itemId >= 140000000"
-            " AND ownerID = 1",equal.c_str(), matchEsc.c_str() );
+            " AND itemId >= %u"
+            " AND ownerID = 1",equal.c_str(), matchEsc.c_str(),EVEMU_MINIMUM_ID );
             break;
 	  case 3:	//searchResultCorporation = 3
             sDatabase.RunQuery(res,
@@ -177,7 +186,6 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             break;
           
 	  case 7:	//searchResultSolarSystem = 7
-
             sDatabase.RunQuery(res,
 	    "SELECT "
             " solarSystemID"
@@ -209,8 +217,9 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " WHERE itemName %s '%s'", equal.c_str(), matchEsc.c_str() );
             break;
 	}
-    
-        dict->SetItem(new PyInt(searchID->at(i)),DBResultToIntIntDict(res));
+
+	dict->SetItem(new PyInt(searchID->at(i)),DBResultToIntIntDict(res));
+        res.Reset();
     }
 
     return dict;
