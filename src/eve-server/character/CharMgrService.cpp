@@ -38,7 +38,6 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
 
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo)
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo3)
-    PyCallable_REG_CALL(CharMgrService, GetTopBounties)
     PyCallable_REG_CALL(CharMgrService, GetOwnerNoteLabels)
     PyCallable_REG_CALL(CharMgrService, GetContactList)
     PyCallable_REG_CALL(CharMgrService, GetCloneTypeID)
@@ -48,6 +47,7 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, GetSettingsInfo)
     PyCallable_REG_CALL(CharMgrService, GetCharacterDescription)
     PyCallable_REG_CALL(CharMgrService, SetCharacterDescription)
+    PyCallable_REG_CALL(CharMgrService, GetTopBounties)
     PyCallable_REG_CALL(CharMgrService, AddToBounty)
 }
 
@@ -127,18 +127,6 @@ PyResult CharMgrService::Handle_GetPublicInfo3(PyCallArgs &call) {
     }
 
     return result;
-}
-
-PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
-{
-    PyRep *result = m_db.GetTopBounties();
-    if(result == NULL) {
-        codelog(CLIENT__ERROR, "%s: Failed to find bounties", call.client->GetName());
-        return NULL;
-    }
-
-    return result;
-
 }
 
 PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
@@ -224,6 +212,19 @@ PyResult CharMgrService::Handle_SetCharacterDescription(PyCallArgs &call)
     return NULL;
 }
 
+PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
+{
+    PyRep *result = m_db.GetTopBounties();
+    if(result == NULL) {
+        codelog(CLIENT__ERROR, "%s: Failed to find bounties", call.client->GetName());
+        return NULL;
+    }
+
+    return result;
+
+}
+
+
 
 PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
 	Call_TwoIntegerArgs args;
@@ -231,7 +232,6 @@ PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
 		codelog( SERVICE__ERROR, "Unable to decode arguments for CharMgrService::Handle_AddToBounty from '%s'", call.client->GetName() );
 		return NULL;
 	}
-
 
         // No Bounty to yourself =)
         if (call.client->GetCharacterID() == args.arg1){

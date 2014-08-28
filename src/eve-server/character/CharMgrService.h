@@ -43,7 +43,6 @@ protected:
 
     PyCallable_DECL_CALL(GetPublicInfo)
     PyCallable_DECL_CALL(GetPublicInfo3)
-    PyCallable_DECL_CALL(GetTopBounties)
     PyCallable_DECL_CALL(GetOwnerNoteLabels)
     PyCallable_DECL_CALL(GetContactList)
     PyCallable_DECL_CALL(GetCloneTypeID)
@@ -53,6 +52,7 @@ protected:
     PyCallable_DECL_CALL(GetSettingsInfo)
     PyCallable_DECL_CALL(GetCharacterDescription)
     PyCallable_DECL_CALL(SetCharacterDescription)
+    PyCallable_DECL_CALL(GetTopBounties)
     PyCallable_DECL_CALL(AddToBounty)
 };
 

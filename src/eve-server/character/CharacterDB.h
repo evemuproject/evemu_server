@@ -42,15 +42,11 @@ public:
 
     PyRep *GetCharacterList(uint32 accountID);
     PyRep *GetCharSelectInfo(uint32 characterID);
-	void SetAvatar(uint32 charID, PyRep* hairDarkness);
-	void SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNameA, uint32 colorNameBC, double weight, double gloss);
-	void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
-	void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
+    void SetAvatar(uint32 charID, PyRep* hairDarkness);
+    void SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNameA, uint32 colorNameBC, double weight, double gloss);
+    void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
+    void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
     PyObject *GetCharPublicInfo(uint32 characterID);
-    PyObject *GetTopBounties();
-    uint32 GetBounty(uint32 charID);
-    void addBounty(uint32 charID, uint32 amount);
-  
     PyObject *GetCharPublicInfo3(uint32 characterID);
     //PyObject *GetAgentPublicInfo(uint32 agentID);
     PyObject *GetOwnerNoteLabels(uint32 charID);
@@ -60,7 +56,7 @@ public:
     bool GetActiveClone(uint32 characterID, uint32 &itemID);
     bool GetActiveCloneType(uint32 characterID, uint32 &typeID);
     void GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap);
-	bool GetCharHomeStation(uint32 characterID, uint32 &stationID);
+    bool GetCharHomeStation(uint32 characterID, uint32 &stationID);
 
     bool ValidateCharName(const char *name);
     /**
@@ -145,6 +141,12 @@ public:
 
     bool ReportRespec(uint32 characterId);
     bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
+
+    // Bounty
+    PyObject *GetTopBounties();
+    uint32 GetBounty(uint32 charID);
+    void addBounty(uint32 charID, uint32 amount);
+
 
 private:
     /**
