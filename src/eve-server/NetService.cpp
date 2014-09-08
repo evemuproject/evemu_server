@@ -142,6 +142,7 @@ PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {
 		dict->SetItemString("petitioner", new PyNone());
 		dict->SetItemString("planetMgr", new PyNone());
 		dict->SetItemString("sessionMgr", new PyNone());
+                dict->SetItemString("search", new PyNone());
 		dict->SetItemString("ship", new PyNone());
 		dict->SetItemString("skillMgr", new PyNone());
 		dict->SetItemString("sovMgr", new PyNone());

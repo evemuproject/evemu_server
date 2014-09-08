@@ -20,58 +20,22 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        BB2k
 */
 
 #include "eve-server.h"
 
-#include "PyServiceCD.h"
-#include "chat/OnlineStatusService.h"
 #include "chat/OnlineStatusDB.h"
+#include "chat/OnlineStatusService.h"
 
-PyCallable_Make_InnerDispatcher(OnlineStatusService)
+PyRep *OnlineStatusDB::GetOnlineStatus(uint32 itemID) {
+    DBQueryResult     res; 
 
-OnlineStatusService::OnlineStatusService(PyServiceMgr *mgr)
-: PyService(mgr, "onlineStatus"),
-m_dispatch(new Dispatcher(this))
-{
-    _SetCallDispatcher(m_dispatch);
-
-    PyCallable_REG_CALL(OnlineStatusService, GetInitialState);
-    PyCallable_REG_CALL(OnlineStatusService, GetOnlineStatus);
-}
-
-OnlineStatusService::~OnlineStatusService() {
-    delete m_dispatch;
-}
-
-PyResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {
-
-    // this is used to query the initial online state of all friends. dummy.
-
-    DBRowDescriptor *header = new DBRowDescriptor();
-    header->AddColumn("contactID", DBTYPE_I4);
-    header->AddColumn("online", DBTYPE_I4);
-    CRowSet *rowset = new CRowSet( &header );
-    return rowset;
-}
-
-
-PyResult OnlineStatusService::Handle_GetOnlineStatus(PyCallArgs &call) {
-    PyRep *result ;
-
-    Call_SingleIntegerArg args;
-    if(!args.Decode(&call.tuple)) {
-        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+    if(!sDatabase.RunQuery(res,"SELECT online FROM entity where itemID=%u", itemID ))
+    {
+        _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
         return NULL;
     }
 
-    result = m_db.GetOnlineStatus(args.arg);
-
-    if(result == NULL) {
-        codelog(CLIENT__ERROR, "%s: Failed to find char %u", call.client->GetName(), args.arg);
-        return NULL;
-    }
-
-    return result;
+    DBResultToRowset(res);
 }

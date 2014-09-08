@@ -20,58 +20,62 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author: BB2k       
 */
 
 #include "eve-server.h"
 
 #include "PyServiceCD.h"
-#include "chat/OnlineStatusService.h"
-#include "chat/OnlineStatusDB.h"
+#include "search/SearchMgrService.h"
+#include "search/SearchDB.h"
 
-PyCallable_Make_InnerDispatcher(OnlineStatusService)
+PyCallable_Make_InnerDispatcher(SearchMgrService)
 
-OnlineStatusService::OnlineStatusService(PyServiceMgr *mgr)
-: PyService(mgr, "onlineStatus"),
-m_dispatch(new Dispatcher(this))
+SearchMgrService::SearchMgrService(PyServiceMgr *mgr)
+: PyService(mgr, "search"),
+  m_dispatch(new Dispatcher(this))
 {
+
     _SetCallDispatcher(m_dispatch);
 
-    PyCallable_REG_CALL(OnlineStatusService, GetInitialState);
-    PyCallable_REG_CALL(OnlineStatusService, GetOnlineStatus);
+    PyCallable_REG_CALL(SearchMgrService, QuickQuery);
+    PyCallable_REG_CALL(SearchMgrService, Query);
+    
 }
 
-OnlineStatusService::~OnlineStatusService() {
+SearchMgrService::~SearchMgrService() {
     delete m_dispatch;
 }
 
-PyResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {
 
-    // this is used to query the initial online state of all friends. dummy.
+PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
 
-    DBRowDescriptor *header = new DBRowDescriptor();
-    header->AddColumn("contactID", DBTYPE_I4);
-    header->AddColumn("online", DBTYPE_I4);
-    CRowSet *rowset = new CRowSet( &header );
-    return rowset;
+    // the first argument is the searchString
+    // the second is the type of searched object
+
+    CallSearch args;
+
+    if (!args.Decode(&call.tuple))
+    {
+        codelog(CLIENT__ERROR, "Failed to decode args for QuickQuery call");
+        return NULL;
+    }
+    return m_db.QuickQuery( args.searchString.c_str(), &args.type);
 }
 
 
-PyResult OnlineStatusService::Handle_GetOnlineStatus(PyCallArgs &call) {
-    PyRep *result ;
+PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
 
-    Call_SingleIntegerArg args;
-    if(!args.Decode(&call.tuple)) {
-        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+    // the first argument is the searchString
+    // the is a list of searched objects
+
+    CallSearch args;
+
+
+    if (!args.Decode(&call.tuple))
+    {
+        codelog(CLIENT__ERROR, "Failed to decode args for Query call");
         return NULL;
     }
-
-    result = m_db.GetOnlineStatus(args.arg);
-
-    if(result == NULL) {
-        codelog(CLIENT__ERROR, "%s: Failed to find char %u", call.client->GetName(), args.arg);
-        return NULL;
-    }
-
-    return result;
+    return m_db.Query(args.searchString.c_str(), &args.type);
 }

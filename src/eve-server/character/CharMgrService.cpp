@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,BB2k
 */
 
 #include "eve-server.h"
@@ -38,9 +38,14 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
 
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo)
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo3)
-    PyCallable_REG_CALL(CharMgrService, GetTopBounties)
     PyCallable_REG_CALL(CharMgrService, GetOwnerNoteLabels)
+    PyCallable_REG_CALL(CharMgrService, GetLabels)
+    PyCallable_REG_CALL(CharMgrService, GetNote)
+    PyCallable_REG_CALL(CharMgrService, SetNote)
     PyCallable_REG_CALL(CharMgrService, GetContactList)
+    PyCallable_REG_CALL(CharMgrService, AddContact)
+    PyCallable_REG_CALL(CharMgrService, EditContact)
+    PyCallable_REG_CALL(CharMgrService, DeleteContacts)
     PyCallable_REG_CALL(CharMgrService, GetCloneTypeID)
     PyCallable_REG_CALL(CharMgrService, GetHomeStation)
     PyCallable_REG_CALL(CharMgrService, GetFactions)
@@ -48,6 +53,8 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, GetSettingsInfo)
     PyCallable_REG_CALL(CharMgrService, GetCharacterDescription)
     PyCallable_REG_CALL(CharMgrService, SetCharacterDescription)
+    PyCallable_REG_CALL(CharMgrService, GetTopBounties)
+    PyCallable_REG_CALL(CharMgrService, AddToBounty)
 }
 
 CharMgrService::~CharMgrService() {
@@ -56,21 +63,60 @@ CharMgrService::~CharMgrService() {
 
 PyResult CharMgrService::Handle_GetContactList(PyCallArgs &call)
 {
-    // another dummy
     DBRowDescriptor *header = new DBRowDescriptor();
     header->AddColumn("contactID", DBTYPE_I4);
     header->AddColumn("inWatchList", DBTYPE_BOOL);
     header->AddColumn("relationshipID", DBTYPE_R8);
     header->AddColumn("labelMask", DBTYPE_I8);
-    CRowSet *rowset = new CRowSet( &header );
+    CRowSet *rowset2 = new CRowSet( &header );
 
     PyDict* dict = new PyDict();
-    dict->SetItemString("addresses", rowset);
-    dict->SetItemString("blocked", rowset);
+    dict->SetItemString("addresses", m_db.GetContactList(call.client->GetCharacterID()));
+    dict->SetItemString("blocked", rowset2);
+
     PyObject *keyVal = new PyObject( "util.KeyVal", dict);
 
-    return keyVal;
+    return  keyVal;
 }
+
+PyResult CharMgrService::Handle_AddContact(PyCallArgs &call)
+{
+
+    Call_AddContact args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+
+
+    uint32 created = Win32TimeNow();
+    m_db.AddContact(call.client->GetCharacterID(),args.charID,1376,args.inWatchlist,call.client->GetCharacterName(),created,args.note,args.standing);
+
+    return new PyNone;
+}
+
+PyResult CharMgrService::Handle_EditContact(PyCallArgs &call)
+{
+    Call_AddContact args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+    return new PyBool(m_db.EditContact(call.client->GetCharacterID(),args.charID,args.inWatchlist,args.note,args.standing));	
+
+}
+
+
+PyResult CharMgrService::Handle_DeleteContacts(PyCallArgs &call)
+{
+    if ( ! call.tuple->GetItem( 0 )->IsList() ){
+        codelog(SERVICE__ERROR, "%s Service: invalid bind argument type ", GetName());	
+        return new PyNone;
+    }
+    return  new PyBool(m_db.DeleteContacts(call.client->GetCharacterID(),call.tuple->GetItem( 0 )->AsList()));
+}	
 
 PyResult CharMgrService::Handle_GetOwnerNoteLabels(PyCallArgs &call)
 {
@@ -82,6 +128,41 @@ PyResult CharMgrService::Handle_GetOwnerNoteLabels(PyCallArgs &call)
 
     return rowset;
 }
+
+PyResult CharMgrService::Handle_GetLabels(PyCallArgs &call)
+{
+    // just a dummy for now
+    PyDict* dict = new PyDict();
+
+    return dict;
+}
+
+
+
+PyResult CharMgrService::Handle_GetNote(PyCallArgs &call)
+{
+    Call_SingleIntegerArg args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+    return  m_db.GetNote(args.arg,call.client->GetCharacterID());
+}
+
+
+PyResult CharMgrService::Handle_SetNote(PyCallArgs &call)
+{
+    Call_IntWStringArg args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "Invalid arguments");
+        return NULL;
+    }
+
+    return  new PyBool(m_db.SetNote(args.arg1,call.client->GetCharacterID(),args.arg2.c_str()));
+}
+
+
 
 PyResult CharMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
     //takes a single int arg: char id
@@ -126,21 +207,6 @@ PyResult CharMgrService::Handle_GetPublicInfo3(PyCallArgs &call) {
     }
 
     return result;
-}
-
-PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
-{
-    sLog.Debug( "CharMgrService", "Called GetTopBounties stub." );
-
-    util_Rowset rs;
-    rs.lines = new PyList;
-
-    rs.header.push_back( "characterID" );
-    rs.header.push_back( "ownerName" );
-    rs.header.push_back( "bounty" );
-    rs.header.push_back( "online" );
-
-    return rs.Encode();
 }
 
 PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
@@ -224,4 +290,35 @@ PyResult CharMgrService::Handle_SetCharacterDescription(PyCallArgs &call)
     c->SetDescription(args.arg.c_str());
 
     return NULL;
+}
+
+
+PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
+{
+    PyRep *result = m_db.GetTopBounties();
+    if(result == NULL) {
+        codelog(CLIENT__ERROR, "%s: Failed to find bounties", call.client->GetName());
+        return NULL;
+    }
+
+    return result;
+}
+
+
+PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
+    Call_TwoIntegerArgs args;
+    if( !args.Decode( &call.tuple ) ) {
+        codelog( SERVICE__ERROR, "Unable to decode arguments for CharMgrService::Handle_AddToBounty from '%s'", call.client->GetName() );
+	return NULL;
+    }
+
+    // No Bounty to yourself =)
+    if (call.client->GetCharacterID() == args.arg1){
+	codelog( SERVICE__ERROR, "You can't add bounty to yourself !" );
+        return NULL;
+    }
+
+    if(call.client->GetChar()->AlterBalance(-args.arg2))
+	m_db.addBounty(args.arg1, args.arg2);
+    return new PyNone;
 }

@@ -32,6 +32,7 @@
 PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
     DBQueryResult res;
 
+    // Get all bookmarks but removes character ones
     if(!sDatabase.RunQuery(res,
         "SELECT"
         " bookmarkID,"
@@ -46,7 +47,8 @@ PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
         " creatorID,"
         " folderID"
         " FROM bookmarks"
-        " WHERE ownerID = %u",
+        " WHERE ownerID = %u"
+	" AND `typeID` not in (select typeid from invTypes where groupid =1)",
         ownerID))
     {
         sLog.Error( "BookmarkDB::GetBookmarks()", "Failed to query bookmarks for owner %u: %s.", ownerID, res.error.c_str() );

@@ -84,6 +84,8 @@
 #include "mail/MailMgrService.h"
 #include "mail/MailingListMgrService.h"
 #include "mail/NotificationMgrService.h"
+//Search Service
+#include "search/SearchMgrService.h"
 // manufacturing services
 #include "manufacturing/FactoryService.h"
 #include "manufacturing/RamProxyService.h"
@@ -312,6 +314,7 @@ int main( int argc, char* argv[] )
     services.RegisterService(new RamProxyService(&services));
     services.RegisterService(new RepairService(&services));
     services.RegisterService(new ReprocessingService(&services));
+    services.RegisterService(new SearchMgrService(&services));
     services.RegisterService(new ShipService(&services));
     services.RegisterService(new SkillMgrService(&services));
     services.RegisterService(new SlashService(&services, &command_dispatcher));

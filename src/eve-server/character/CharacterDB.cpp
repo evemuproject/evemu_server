@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,bb2k
 */
 
 #include "eve-server.h"
@@ -804,7 +804,7 @@ bool CharacterDB::SetNote(uint32 ownerID, uint32 itemID, const char *str) {
         // str is empty
         if (!sDatabase.RunQuery(err,
             "DELETE FROM `chrNotes` "
-            " WHERE itemID = %u AND ownerID = %u LIMIT 1",
+            " WHERE ownerID = %u AND itemID = %u LIMIT 1",
             ownerID, itemID)
             )
         {
@@ -819,7 +819,7 @@ bool CharacterDB::SetNote(uint32 ownerID, uint32 itemID, const char *str) {
         if (!sDatabase.RunQuery(err,
             "REPLACE INTO `chrNotes` (itemID, ownerID, note)    "
             "VALUES (%u, %u, '%s')",
-            ownerID, itemID, escaped.c_str())
+            itemID, ownerID, escaped.c_str())
             )
         {
             codelog(CLIENT__ERROR, "Error on query: %s", err.c_str());
@@ -839,7 +839,7 @@ uint32 CharacterDB::AddOwnerNote(uint32 charID, const std::string & label, const
 
     std::string contS;
     sDatabase.DoEscapeString(contS, content);
-
+ 
     if (!sDatabase.RunQueryLID(err, id,
         "INSERT INTO chrOwnerNote (ownerID, label, note) VALUES (%u, '%s', '%s');",
         charID, lblS.c_str(), contS.c_str()))
@@ -982,3 +982,143 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
         return false;
     }
 }
+
+PyObject *CharacterDB::GetTopBounties() {
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,
+            "SELECT "
+            "characterID,itemName as ownerName,bounty,online"
+            " FROM character_"
+            "  LEFT JOIN entity ON characterID = itemID"
+            " WHERE characterID >= %u"
+            " AND bounty > 0"
+            " ORDER BY bounty DESC"
+            " LIMIT 0,100"
+            , EVEMU_MINIMUM_ID))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return DBResultToRowset(res);
+}
+
+
+uint32 CharacterDB::GetBounty(uint32 charID) {
+        DBQueryResult res;
+        DBResultRow row;
+
+        if(!sDatabase.RunQuery(res, "SELECT bounty FROM character_ WHERE characterID=%u",charID))
+        {
+                codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+                return NULL;
+        }
+
+
+        if(!res.GetRow(row))
+        {
+            return 0;
+        }else {
+            codelog(SERVICE__ERROR, "Retour %u", row.GetUInt(0));
+            return row.GetUInt(0);
+        }
+
+}
+
+
+void CharacterDB::addBounty(uint32 charID, uint32 amount) {
+        DBQueryResult res;
+        uint32 total;
+
+
+        total = GetBounty(charID) + amount;
+
+        sDatabase.RunQuery(res,
+                "UPDATE character_ SET bounty = %u WHERE characterID = %u", total, charID);
+}
+
+
+PyObjectEx *CharacterDB::GetContactList(uint32 charID) {
+    DBQueryResult res;
+ 
+
+    if(!sDatabase.RunQuery(res,"SELECT `itemID` as `contactID`, `flag` as `inWatchlist`, 0  as labelMask, 0 as relationshipID"
+			       " FROM `bookmarks`"
+ 			       " LEFT JOIN chrStandings on ownerID = CharacterID and itemID = toID"
+			       " WHERE `ownerID`= %u"
+    			       " AND `typeID` in (select typeid from invTypes where groupid =1)"
+			    ,charID))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return DBResultToCRowset(res);
+}
+
+bool CharacterDB::AddContact(uint32 ownerID,uint32 charID,uint32 typeID,int inWatchlist,std::string memo,uint32 created,std::string note, int standing) {
+	DBerror err;
+
+
+	if(!sDatabase.RunQuery(err,"INSERT INTO bookmarks (ownerID,itemID,typeID,flag,memo,created,note) "
+				   "VALUES (%u,%u,%u,%d,'%s',%u,'%s')", ownerID, charID, typeID, inWatchlist, memo.c_str(), created, note.c_str() 
+			      )){
+                codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+		return false;
+	}
+
+	if(!sDatabase.RunQuery(err,"INSERT INTO chrStandings (characterID,toID, standing) values (%u,%u,%d)", ownerID, charID, standing )){
+                codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+                return false;
+	}
+        return true;
+}
+
+
+bool CharacterDB::EditContact(uint32 ownerID,uint32 charID,int inWatchlist,std::string note, int standing) {
+        DBerror err;
+
+        // We put inWatchList into flag field. But it should be a mask with other values like 'blocked' status.
+
+        if(!sDatabase.RunQuery(err,"UPDATE bookmarks SET flag=%d, note='%s' WHERE ownerID = %u AND itemID = %u "
+                                   , inWatchlist, note.c_str(), ownerID, charID
+                              )){
+                codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+                return false;
+        }
+
+        if(!sDatabase.RunQuery(err,"UPDATE chrStandings SET standing=%d  WHERE characterID = %u AND toID = %u", standing, ownerID, charID )){
+                codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+                return false;
+        }
+        return true;
+}
+
+bool CharacterDB::DeleteContacts(uint32 ownerID,PyList *charIDs) {
+    DBerror err;
+    std::stringstream st;
+    uint32 size,i;
+
+    size = charIDs->size();
+
+    for(i=0; i<size; i++)
+    {
+        st << charIDs->GetItem(i)->AsInt()->value();
+        if (i<(size-1))
+            st << ", ";
+    }
+
+    if(!sDatabase.RunQuery(err,"DELETE FROM bookmarks WHERE ownerID=%u AND itemID in (%s)", ownerID, st.str().c_str())){
+        codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+        return false;
+    }
+
+    if(!sDatabase.RunQuery(err,"DELETE FROM chrStandings WHERE characterID=%u AND toID in (%s)", ownerID, st.str().c_str())){
+        codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+        return false;
+    }
+
+    return true;
+}
+
