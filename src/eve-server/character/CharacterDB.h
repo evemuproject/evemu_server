@@ -56,7 +56,7 @@ public:
     bool GetActiveClone(uint32 characterID, uint32 &itemID);
     bool GetActiveCloneType(uint32 characterID, uint32 &typeID);
     void GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap);
-    bool GetCharHomeStation(uint32 characterID, uint32 &stationID);
+	bool GetCharHomeStation(uint32 characterID, uint32 &stationID);
 
     bool ValidateCharName(const char *name);
     /**
@@ -142,12 +142,16 @@ public:
     bool ReportRespec(uint32 characterId);
     bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
 
-    // Bounty
+    // Bounties
     PyObject *GetTopBounties();
     uint32 GetBounty(uint32 charID);
     void addBounty(uint32 charID, uint32 amount);
 
-
+     // Contacts
+     PyObjectEx *GetContactList(uint32 charID);
+     bool AddContact(uint32 ownerID,uint32 charID,uint32 typeID,int inWatchlist,std::string memo,uint32 created,std::string note,int standing);
+     bool EditContact(uint32 ownerID,uint32 charID,int inWatchlist,std::string note,int standing);
+     bool DeleteContacts(uint32 ownerID,PyList *charIDs);
 private:
     /**
      * djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified

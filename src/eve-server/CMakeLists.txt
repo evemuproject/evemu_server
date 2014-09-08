@@ -166,6 +166,7 @@ SET( chat_INCLUDE
      "${TARGET_INCLUDE_DIR}/chat/LSCChannel.h"
      "${TARGET_INCLUDE_DIR}/chat/LSCService.h"
      "${TARGET_INCLUDE_DIR}/chat/OnlineStatusService.h"
+     "${TARGET_INCLUDE_DIR}/chat/OnlineStatusDB.h"
      "${TARGET_INCLUDE_DIR}/chat/VoiceMgrService.h" )
 SET( chat_SOURCE
      "${TARGET_SOURCE_DIR}/chat/kenny.cpp"
@@ -174,6 +175,7 @@ SET( chat_SOURCE
      "${TARGET_SOURCE_DIR}/chat/LSCChannel.cpp"
      "${TARGET_SOURCE_DIR}/chat/LSCService.cpp"
      "${TARGET_SOURCE_DIR}/chat/OnlineStatusService.cpp"
+     "${TARGET_SOURCE_DIR}/chat/OnlineStatusDB.cpp"
      "${TARGET_SOURCE_DIR}/chat/VoiceMgrService.cpp" )
 
 SET( config_INCLUDE

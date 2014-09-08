@@ -176,6 +176,17 @@
     </tupleInline>
   </elementDef>
 
+  <elementDef name="Call_AddContact">
+    <tupleInline>
+      <int name="charID" />
+      <int name="standing" />
+      <int name="inWatchlist" />
+      <int name="notify" />
+      <wstring name="note" soft="true" />
+    </tupleInline>
+  </elementDef>
+
+
   <elementDef name="Call_BatchCertificateUpdate">
     <tupleInline>
       <dictRaw name="update" key="uint32" pykey="Int" value="uint32" pyvalue="Int" />
