@@ -61,9 +61,10 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *SearchID) {
 
     // If the SearchID is for character we must filter out agents
     size = SearchID->size();
-    if ((size == 1) && (SearchID->at(0)) == 2)
+    if ((size == 1) && (SearchID->at(0)) == 2){
         supplement << "AND itemId >= ";
         supplement << EVEMU_MINIMUM_ID;
+    }
 
     // Transform SearchId in groupID to search the rights typeIDs
     int transform[9] = {1,1,2,32,19,4,5,3,15};
