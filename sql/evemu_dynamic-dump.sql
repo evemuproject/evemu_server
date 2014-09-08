@@ -306,7 +306,7 @@ DROP TABLE IF EXISTS `chrNotes`;
 CREATE TABLE `chrNotes` (
   `itemID` int(10) unsigned NOT NULL default '0',
   `ownerID` int(10) unsigned default NULL,
-  `note` text
+  `note` text,
   PRIMARY KEY (`itemID`,`ownerID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
