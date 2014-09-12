@@ -28,6 +28,7 @@
 #define __ONLINESTATUS_SERVICE_H_INCL__
 
 #include "PyService.h"
+#include "OnlineStatusDB.h"
 
 class OnlineStatusService : public PyService {
 public:
@@ -37,13 +38,11 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
+    OnlineStatusDB m_db;
 
     PyCallable_DECL_CALL(GetInitialState)
+    PyCallable_DECL_CALL(GetOnlineStatus)
 };
-
-
-
-
 
 #endif
 

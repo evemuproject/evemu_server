@@ -92,7 +92,7 @@ CREATE TABLE `billsReceivable` (
 DROP TABLE IF EXISTS `bookmarks`;
 
 CREATE TABLE `bookmarks` (
-  `bookmarkID` int(10) unsigned NOT NULL default '0',
+  `bookmarkID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ownerID` int(10) unsigned NOT NULL default '0',
   `itemID` bigint(20) unsigned NOT NULL default '0',
   `typeID` int(10) unsigned NOT NULL default '0',
@@ -306,7 +306,8 @@ DROP TABLE IF EXISTS `chrNotes`;
 CREATE TABLE `chrNotes` (
   `itemID` int(10) unsigned NOT NULL default '0',
   `ownerID` int(10) unsigned default NULL,
-  `note` text
+  `note` text,
+  PRIMARY KEY (`itemID`,`ownerID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `chrNotes` */

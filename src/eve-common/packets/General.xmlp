@@ -505,6 +505,12 @@
     </tupleInline>
   </elementDef>
 
+  <elementDef name="Call_IntWStringArg">
+    <tupleInline>
+      <int name="arg1" />
+      <wstring name="arg2" />
+    </tupleInline>
+  </elementDef>
 
   <elementDef name="CallAlignTo">
     <tupleInline>

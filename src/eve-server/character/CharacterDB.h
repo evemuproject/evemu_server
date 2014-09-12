@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur,BB2k
+    Author:        Zhur
 */
 
 #ifndef __CHARACTERDB_H_INCL__
@@ -42,10 +42,10 @@ public:
 
     PyRep *GetCharacterList(uint32 accountID);
     PyRep *GetCharSelectInfo(uint32 characterID);
-	void SetAvatar(uint32 charID, PyRep* hairDarkness);
-	void SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNameA, uint32 colorNameBC, double weight, double gloss);
-	void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
-	void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
+    void SetAvatar(uint32 charID, PyRep* hairDarkness);
+    void SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNameA, uint32 colorNameBC, double weight, double gloss);
+    void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
+    void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
     PyObject *GetCharPublicInfo(uint32 characterID);
     PyObject *GetCharPublicInfo3(uint32 characterID);
     //PyObject *GetAgentPublicInfo(uint32 agentID);
@@ -144,9 +144,14 @@ public:
 
     // Bounties
     PyObject *GetTopBounties();
-    uint32    GetBounty(uint32 charID);
-    void      addBounty(uint32 charID, uint32 amount);
+    uint32 GetBounty(uint32 charID);
+    void addBounty(uint32 charID, uint32 amount);
 
+     // Contacts
+     PyObjectEx *GetContactList(uint32 charID);
+     bool AddContact(uint32 ownerID,uint32 charID,uint32 typeID,int inWatchlist,std::string memo,uint32 created,std::string note,int standing);
+     bool EditContact(uint32 ownerID,uint32 charID,int inWatchlist,std::string note,int standing);
+     bool DeleteContacts(uint32 ownerID,PyList *charIDs);
 private:
     /**
      * djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
