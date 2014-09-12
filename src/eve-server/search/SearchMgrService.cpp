@@ -20,41 +20,62 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur,BB2k
+    Author: BB2k       
 */
 
+#include "eve-server.h"
 
-#ifndef __CHARMGR_SERVICE_H_INCL__
-#define __CHARMGR_SERVICE_H_INCL__
+#include "PyServiceCD.h"
+#include "search/SearchMgrService.h"
+#include "search/SearchDB.h"
 
-#include "character/CharacterDB.h"
-#include "PyService.h"
+PyCallable_Make_InnerDispatcher(SearchMgrService)
 
-class CharMgrService : public PyService {
-public:
-    CharMgrService(PyServiceMgr *mgr);
-    virtual ~CharMgrService();
+SearchMgrService::SearchMgrService(PyServiceMgr *mgr)
+: PyService(mgr, "search"),
+  m_dispatch(new Dispatcher(this))
+{
 
-protected:
-    class Dispatcher;
-    Dispatcher *const m_dispatch;
+    _SetCallDispatcher(m_dispatch);
 
-    CharacterDB m_db;    //using this for now until we decide if we need to split them. Might be bad since we actually have two instances of it, but so far it has no member data.
+    PyCallable_REG_CALL(SearchMgrService, QuickQuery);
+    PyCallable_REG_CALL(SearchMgrService, Query);
+    
+}
 
-    PyCallable_DECL_CALL(GetPublicInfo)
-    PyCallable_DECL_CALL(GetPublicInfo3)
-    PyCallable_DECL_CALL(GetTopBounties)
-    PyCallable_DECL_CALL(GetOwnerNoteLabels)
-    PyCallable_DECL_CALL(GetContactList)
-    PyCallable_DECL_CALL(GetCloneTypeID)
-    PyCallable_DECL_CALL(GetHomeStation)
-    PyCallable_DECL_CALL(GetFactions)
-    PyCallable_DECL_CALL(SetActivityStatus)
-    PyCallable_DECL_CALL(GetSettingsInfo)
-    PyCallable_DECL_CALL(GetCharacterDescription)
-    PyCallable_DECL_CALL(SetCharacterDescription)
-    PyCallable_DECL_CALL(GetTopBounties)
-    PyCallable_DECL_CALL(AddToBounty)
-};
+SearchMgrService::~SearchMgrService() {
+    delete m_dispatch;
+}
 
-#endif
+
+PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
+
+    // the first argument is the searchString
+    // the second is the type of searched object
+
+    CallSearch args;
+
+    if (!args.Decode(&call.tuple))
+    {
+        codelog(CLIENT__ERROR, "Failed to decode args for QuickQuery call");
+        return NULL;
+    }
+    return m_db.QuickQuery( args.searchString.c_str(), &args.type);
+}
+
+
+PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
+
+    // the first argument is the searchString
+    // the is a list of searched objects
+
+    CallSearch args;
+
+
+    if (!args.Decode(&call.tuple))
+    {
+        codelog(CLIENT__ERROR, "Failed to decode args for Query call");
+        return NULL;
+    }
+    return m_db.Query(args.searchString.c_str(), &args.type);
+}
