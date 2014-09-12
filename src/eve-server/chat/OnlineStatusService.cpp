@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "chat/OnlineStatusService.h"
+#include "chat/OnlineStatusDB.h"
 
 PyCallable_Make_InnerDispatcher(OnlineStatusService)
 
@@ -37,6 +38,7 @@ m_dispatch(new Dispatcher(this))
     _SetCallDispatcher(m_dispatch);
 
     PyCallable_REG_CALL(OnlineStatusService, GetInitialState)
+    PyCallable_REG_CALL(OnlineStatusService, GetOnlineStatus)
 }
 
 OnlineStatusService::~OnlineStatusService() {
@@ -52,4 +54,23 @@ PyResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {
     header->AddColumn("online", DBTYPE_I4);
     CRowSet *rowset = new CRowSet( &header );
     return rowset;
+}
+
+PyResult OnlineStatusService::Handle_GetOnlineStatus(PyCallArgs &call) {
+    PyRep *result ;
+
+    Call_SingleIntegerArg args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+    result = m_db.GetOnlineStatus(args.arg);
+
+    if(result == NULL) {
+        codelog(CLIENT__ERROR, "%s: Failed to find char %u", call.client->GetName(), args.arg);
+        return NULL;
+    }
+
+    return result;
 }

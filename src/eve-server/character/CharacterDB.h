@@ -142,6 +142,12 @@ public:
     bool ReportRespec(uint32 characterId);
     bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
 
+    // Contacts
+    PyObjectEx *GetContactList(uint32 charID);
+    bool AddContact(uint32 ownerID,uint32 charID,uint32 typeID,int inWatchlist,std::string memo,uint32 created,std::string note,int standing);
+    bool EditContact(uint32 ownerID,uint32 charID,int inWatchlist,std::string note,int standing);
+    bool DeleteContacts(uint32 ownerID,PyList *charIDs);
+
 private:
     /**
      * djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified

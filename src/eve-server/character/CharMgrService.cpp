@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,BB2k
 */
 
 #include "eve-server.h"
@@ -40,7 +40,13 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo3)
     PyCallable_REG_CALL(CharMgrService, GetTopBounties)
     PyCallable_REG_CALL(CharMgrService, GetOwnerNoteLabels)
+    PyCallable_REG_CALL(CharMgrService, GetLabels)
+    PyCallable_REG_CALL(CharMgrService, GetNote)
+    PyCallable_REG_CALL(CharMgrService, SetNote)
     PyCallable_REG_CALL(CharMgrService, GetContactList)
+    PyCallable_REG_CALL(CharMgrService, AddContact)
+    PyCallable_REG_CALL(CharMgrService, EditContact)
+    PyCallable_REG_CALL(CharMgrService, DeleteContacts)
     PyCallable_REG_CALL(CharMgrService, GetCloneTypeID)
     PyCallable_REG_CALL(CharMgrService, GetHomeStation)
     PyCallable_REG_CALL(CharMgrService, GetFactions)
@@ -56,7 +62,6 @@ CharMgrService::~CharMgrService() {
 
 PyResult CharMgrService::Handle_GetContactList(PyCallArgs &call)
 {
-    // another dummy
     DBRowDescriptor *header = new DBRowDescriptor();
     header->AddColumn("contactID", DBTYPE_I4);
     header->AddColumn("inWatchList", DBTYPE_BOOL);
@@ -65,12 +70,49 @@ PyResult CharMgrService::Handle_GetContactList(PyCallArgs &call)
     CRowSet *rowset = new CRowSet( &header );
 
     PyDict* dict = new PyDict();
-    dict->SetItemString("addresses", rowset);
+    dict->SetItemString("addresses", m_db.GetContactList(call.client->GetCharacterID()));
     dict->SetItemString("blocked", rowset);
+
     PyObject *keyVal = new PyObject( "util.KeyVal", dict);
 
     return keyVal;
 }
+
+PyResult CharMgrService::Handle_AddContact(PyCallArgs &call)
+{
+
+    Call_AddContact args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+    uint32 created = Win32TimeNow();
+    m_db.AddContact(call.client->GetCharacterID(),args.charID,1376,args.inWatchlist,call.client->GetCharacterName(),created,args.note,args.standing);
+
+    return new PyNone;
+}
+
+PyResult CharMgrService::Handle_EditContact(PyCallArgs &call)
+{
+    Call_AddContact args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+    return new PyBool(m_db.EditContact(call.client->GetCharacterID(),args.charID,args.inWatchlist,args.note,args.standing));	
+}
+ 
+
+PyResult CharMgrService::Handle_DeleteContacts(PyCallArgs &call)
+{
+    if ( ! call.tuple->GetItem( 0 )->IsList() ){
+        codelog(SERVICE__ERROR, "%s Service: invalid bind argument type ", GetName());	
+        return new PyNone;
+    }
+    return  new PyBool(m_db.DeleteContacts(call.client->GetCharacterID(),call.tuple->GetItem( 0 )->AsList()));
+}	
 
 PyResult CharMgrService::Handle_GetOwnerNoteLabels(PyCallArgs &call)
 {
@@ -82,6 +124,40 @@ PyResult CharMgrService::Handle_GetOwnerNoteLabels(PyCallArgs &call)
 
     return rowset;
 }
+
+PyResult CharMgrService::Handle_GetLabels(PyCallArgs &call)
+{
+    // just a dummy for now
+    PyDict* dict = new PyDict();
+
+    return dict;
+}
+
+
+
+PyResult CharMgrService::Handle_GetNote(PyCallArgs &call)
+{
+    Call_SingleIntegerArg args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "%s: Failed to decode arguments.", call.client->GetName());
+        return NULL;
+    }
+
+    return  m_db.GetNote(args.arg,call.client->GetCharacterID());
+}
+
+
+PyResult CharMgrService::Handle_SetNote(PyCallArgs &call)
+{
+    Call_IntWStringArg args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "Invalid arguments");
+        return NULL;
+    }
+
+    return  new PyBool(m_db.SetNote(args.arg1,call.client->GetCharacterID(),args.arg2.c_str()));
+}
+
 
 PyResult CharMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
     //takes a single int arg: char id
