@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,BB2k
 */
 
 #include "eve-server.h"
@@ -981,4 +981,60 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
         printf("CharacterDB::del_name_validation_set: unable to remove: %s as its not in the set", name);
         return false;
     }
+}
+
+/// Bounties
+
+PyObject *CharacterDB::GetTopBounties() {
+    DBQueryResult res;
+
+    if(!sDatabase.RunQuery(res,
+            "SELECT "
+            "characterID,itemName as ownerName,bounty, online"
+            " FROM character_"
+            "  LEFT JOIN entity ON characterID = itemID"
+            " WHERE characterID >= %u"
+            " AND bounty > 0"
+            " ORDER BY bounty DESC"
+            " LIMIT 0,100"
+            , EVEMU_MINIMUM_ID))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+        return NULL;
+    }
+
+    return DBResultToRowset(res);
+}
+
+
+uint32 CharacterDB::GetBounty(uint32 charID) {
+	DBQueryResult res;
+        DBResultRow row;
+  
+	if(!sDatabase.RunQuery(res, "SELECT bounty FROM character_ WHERE characterID=%u",charID))
+	{
+        	codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
+	        return NULL;
+    	}
+
+
+        if(!res.GetRow(row))
+	{
+	    return 0;
+	}else {
+            codelog(SERVICE__ERROR, "Retour %u", row.GetUInt(0));
+	    return row.GetUInt(0);
+	}
+
+}
+
+
+void CharacterDB::addBounty(uint32 charID, uint32 amount) {
+        DBQueryResult res;
+        uint32 total;
+
+
+        total = GetBounty(charID) + amount;
+	sDatabase.RunQuery(res,
+   		"UPDATE character_ SET bounty = %u WHERE characterID = %u", total, charID);
 }
