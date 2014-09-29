@@ -39,9 +39,7 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo)
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo3)
     PyCallable_REG_CALL(CharMgrService, GetOwnerNoteLabels)
-    PyCallable_REG_CALL(CharMgrService, GetLabels)
-    PyCallable_REG_CALL(CharMgrService, GetNote)
-    PyCallable_REG_CALL(CharMgrService, SetNote)
+    PyCallable_REG_CALL(CharMgrService, AddOwnerNote)
     PyCallable_REG_CALL(CharMgrService, GetContactList)
     PyCallable_REG_CALL(CharMgrService, AddContact)
     PyCallable_REG_CALL(CharMgrService, EditContact)
@@ -51,10 +49,20 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, GetFactions)
     PyCallable_REG_CALL(CharMgrService, SetActivityStatus)
     PyCallable_REG_CALL(CharMgrService, GetSettingsInfo)
+    PyCallable_REG_CALL(CharMgrService, LogSettings)
     PyCallable_REG_CALL(CharMgrService, GetCharacterDescription)
     PyCallable_REG_CALL(CharMgrService, SetCharacterDescription)
     PyCallable_REG_CALL(CharMgrService, GetTopBounties)
     PyCallable_REG_CALL(CharMgrService, AddToBounty)
+    PyCallable_REG_CALL(CharMgrService, GetNote)
+    PyCallable_REG_CALL(CharMgrService, SetNote)
+    PyCallable_REG_CALL(CharMgrService, AddContact)
+    PyCallable_REG_CALL(CharMgrService, EditContact)
+    PyCallable_REG_CALL(CharMgrService, GetRecentShipKillsAndLosses)
+
+    //these 2 are for labels in PnP window
+    PyCallable_REG_CALL(CharMgrService, GetLabels)
+    PyCallable_REG_CALL(CharMgrService, CreateLabel)
 }
 
 CharMgrService::~CharMgrService() {
@@ -107,7 +115,6 @@ PyResult CharMgrService::Handle_EditContact(PyCallArgs &call)
     return new PyBool(m_db.EditContact(call.client->GetCharacterID(),args.charID,args.inWatchlist,args.note,args.standing));	
 
 }
-
 
 PyResult CharMgrService::Handle_DeleteContacts(PyCallArgs &call)
 {
@@ -249,9 +256,22 @@ PyResult CharMgrService::Handle_SetActivityStatus( PyCallArgs& call )
 
 PyResult CharMgrService::Handle_GetSettingsInfo( PyCallArgs& call )
 {
-    sLog.Debug( "CharMgrService", "Called GetSettingsInfo stub." );
+ PyTuple* res = new PyTuple( 2 );
+ // type code? unknown what the value should be!
+ res->items[ 0 ] = new PyInt( 0 );
 
-    return NULL;
+ // error code? 0 = no error
+ // if called with any value other than zero the exception output will show 'Verified = False'
+ // if called with zero 'Verified = True'
+ res->items[ 1 ] = new PyInt( 0 );
+ return res;
+}
+
+//  this is a return call from client after GetSettingsInfo
+PyResult CharMgrService::Handle_LogSettings( PyCallArgs& call ) {
+  /*
+    */
+ return NULL;
 }
 
 PyResult CharMgrService::Handle_GetCharacterDescription(PyCallArgs &call)
@@ -321,4 +341,61 @@ PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
     if(call.client->GetChar()->AlterBalance(-args.arg2))
 	m_db.addBounty(args.arg1, args.arg2);
     return new PyNone;
+
+PyResult CharMgrService::Handle_GetNote( PyCallArgs& call )
+{/*
+    //  will add this completed code at a later date  -allan 25Jul14
+    uint32 ownerID = call.client->GetCharacterID();
+    uint32 itemID = call.tuple->GetItem(0)->AsInt()->value();
+
+	PyString *str = m_db.GetNote(ownerID, itemID);
+    if(!str)
+        str = new PyString("");
+
+    return str;
+	*/
+	return new PyNone;
+}
+
+PyResult CharMgrService::Handle_SetNote(PyCallArgs &call)
+{/*
+    //  will add this completed code at a later date  -allan 25Jul14
+    Call_SetNote args;
+    if(!args.Decode(&call.tuple)) {
+        codelog(CLIENT__ERROR, "Invalid arguments");
+        return NULL;
+    }
+
+    m_db.SetNote(call.client->GetCharacterID(), args.itemID, args.note.c_str());
+*/
+    return new PyNone;
+}
+
+PyResult CharMgrService::Handle_AddContact( PyCallArgs& call )
+{
+    //  will add this completed code at a later date  -allan 25Jul14
+  return NULL;
+}
+
+PyResult CharMgrService::Handle_EditContact( PyCallArgs& call )
+{
+    //  will add this completed code at a later date  -allan 25Jul14
+  return NULL;
+}
+
+PyResult CharMgrService::Handle_GetRecentShipKillsAndLosses( PyCallArgs& call )
+{
+  return NULL;
+}
+
+PyResult CharMgrService::Handle_GetLabels( PyCallArgs& call )
+{
+    //  will add this completed code at a later date  -allan 25Jul14
+  return NULL;
+}
+
+PyResult CharMgrService::Handle_CreateLabel( PyCallArgs& call )
+{
+    //  will add this completed code at a later date  -allan 25Jul14
+  return NULL;
 }
