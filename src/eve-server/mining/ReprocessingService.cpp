@@ -237,10 +237,10 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         if( !item )
             continue;
 
-        if(item->ownerID() != (uint32)call_args.ownerID) {
-            _log(SERVICE__ERROR, "Character %u tried to reprocess item %u of character %u. Skipping.", call.client->GetCharacterID(), item->itemID(), item->ownerID());
-            continue;
-        }
+        //if(item->ownerID() != (uint32)call_args.ownerID) {
+        //    _log(SERVICE__ERROR, "Character %u tried to reprocess item %u of character %u. Skipping.", call.client->GetCharacterID(), item->itemID(), item->ownerID());
+        //    continue;
+        //}
 
         // this should never happen, but for sure ...
         if(item->type().portionSize() > item->quantity()) {
