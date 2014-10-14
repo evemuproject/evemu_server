@@ -356,6 +356,7 @@
           <listInt name="items" />
           <int name="ownerID" none_marker="0" />
           <int name="flag" none_marker="0" />
+          <none />
           <bool name="unknown" />
           <listStr name="skipChecks" />
       </tupleInline>
@@ -364,6 +365,7 @@
   <elementDef name="Call_GetQuotes">
       <tupleInline>
           <listInt name="itemIDs" />
+          <int name="locationID" />
       </tupleInline>
   </elementDef>
 

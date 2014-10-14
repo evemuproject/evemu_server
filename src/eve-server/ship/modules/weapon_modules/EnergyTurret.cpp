@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Reve
+    Author:        Reve, AknorJaden
 */
 
 #include "eve-server.h"
@@ -91,6 +91,8 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 
 		// Activate active processing component timer:
 		m_ActiveModuleProc->ActivateCycle();
+		m_ModuleState = MOD_ACTIVATED;
+		_ShowCycle();
 	}
 	else
 	{
@@ -100,6 +102,12 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 }
 
 void EnergyTurret::Deactivate() 
+{
+	m_ModuleState = MOD_DEACTIVATING;
+	m_ActiveModuleProc->DeactivateCycle();
+}
+
+void EnergyTurret::StopCycle()
 {
 	Notify_OnGodmaShipEffect shipEff;
 	shipEff.itemID = m_Item->itemID();
@@ -119,7 +127,7 @@ void EnergyTurret::Deactivate()
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -134,6 +142,22 @@ void EnergyTurret::Deactivate()
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
+	// Create Special Effect:
+	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
+	(
+		m_Ship,
+		m_Item->itemID(),
+		m_Item->typeID(),
+		m_targetID,
+		m_chargeRef->itemID(),
+		"effects.Laser",
+		1,
+		0,
+		0,
+		1.0,
+		0
+	);
+
 	m_ActiveModuleProc->DeactivateCycle();
 }
 
@@ -142,80 +166,23 @@ void EnergyTurret::DoCycle()
 	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
 	{
 		// Check to see if our target is still in this bubble or has left or been destroyed:
-		if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
+		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
 		{
 			// Target has left our bubble or been destroyed, deactivate this module:
 			Deactivate();
 			return;
 		}
+		else
+		{
+			if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
+			{
+				// Target has left our bubble or been destroyed, deactivate this module:
+				Deactivate();
+				return;
+			}
+		}
 
-		// Create Destiny Updates:
-		DoDestiny_OnDamageStateChange dmgChange;
-		dmgChange.entityID = m_targetEntity->GetID();
-
-		PyList *states = new PyList;
-		states->AddItem(new PyFloat(0));
-		states->AddItem(new PyFloat(0));
-		states->AddItem(new PyFloat(0.99));
-		dmgChange.state = states;
-
-		Notify_OnDamageMessage dmgMsg;
-		dmgMsg.messageID = "";		// Can be left blank as Damage.cpp fills this in.  This can be one in this set {"AttackHit1", "AttackHit2", "AttackHit3", "AttackHit4", "AttackHit5", "AttackHit6"}
-		dmgMsg.weapon = m_Item->itemID();
-		dmgMsg.splash = "";
-		dmgMsg.target = m_targetEntity->GetID();
-		dmgMsg.damage = (m_Item->GetAttribute(AttrDamageMultiplier).get_float() * 48.0);
-
-		Notify_OnGodmaShipEffect shipEff;
-		shipEff.itemID = m_Item->itemID();
-		shipEff.effectID = effectTargetAttack;		// From EVEEffectID::
-		shipEff.when = Win32TimeNow();
-		shipEff.start = 1;
-		shipEff.active = 1;
-
-		PyList* env = new PyList;
-		env->AddItem(new PyInt(shipEff.itemID));
-		env->AddItem(new PyInt(m_Ship->ownerID()));
-		env->AddItem(new PyInt(m_Ship->itemID()));
-		env->AddItem(new PyInt(m_targetEntity->GetID()));
-		env->AddItem(new PyNone);
-		env->AddItem(new PyNone);
-		env->AddItem(new PyInt(10));
-
-		shipEff.environment = env;
-		shipEff.startTime = shipEff.when;
-		shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
-		shipEff.repeat = new PyInt(1000);
-		shipEff.randomSeed = new PyNone;
-		shipEff.error = new PyNone;
-
-		PyTuple* tmp = new PyTuple(3);
-		tmp->SetItem(1, dmgMsg.Encode());
-		tmp->SetItem(2, shipEff.Encode());
-
-		std::vector<PyTuple*> events;
-		events.push_back(dmgMsg.Encode());
-		events.push_back(shipEff.Encode());
-
-		std::vector<PyTuple*> updates;
-		updates.push_back(dmgChange.Encode());
-
-		m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
-
-		// Create Special Effect:
-		m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-		(
-			m_Ship,
-			m_Item->itemID(),
-			m_Item->typeID(),
-			m_targetID,
-			m_chargeRef->itemID(),
-			"effects.Laser",
-			1,
-			1,
-			m_Item->GetAttribute(AttrSpeed).get_float(),
-			1
-		);
+		_ShowCycle();
 
 		// Create Damage action:
 		//Damage( SystemEntity *_source,
@@ -254,4 +221,60 @@ void EnergyTurret::DoCycle()
 		
 		m_targetEntity->ApplyDamage( damageDealt );
 	}
+}
+
+void EnergyTurret::_ShowCycle()
+{
+	// Create Destiny Updates:
+	Notify_OnGodmaShipEffect shipEff;
+	shipEff.itemID = m_Item->itemID();
+	shipEff.effectID = effectTargetAttack;		// From EVEEffectID::
+	shipEff.when = Win32TimeNow();
+	shipEff.start = 1;
+	shipEff.active = 1;
+
+	PyList* env = new PyList;
+	env->AddItem(new PyInt(shipEff.itemID));
+	env->AddItem(new PyInt(m_Ship->ownerID()));
+	env->AddItem(new PyInt(m_Ship->itemID()));
+	env->AddItem(new PyInt(m_targetEntity->GetID()));
+	env->AddItem(new PyNone);
+	env->AddItem(new PyNone);
+	env->AddItem(new PyInt(10));
+
+	shipEff.environment = env;
+	shipEff.startTime = shipEff.when;
+	shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
+	shipEff.repeat = new PyInt(1000);
+	shipEff.randomSeed = new PyNone;
+	shipEff.error = new PyNone;
+
+	PyTuple* tmp = new PyTuple(3);
+	//tmp->SetItem(1, dmgMsg.Encode());
+	tmp->SetItem(2, shipEff.Encode());
+
+	std::vector<PyTuple*> events;
+	//events.push_back(dmgMsg.Encode());
+	events.push_back(shipEff.Encode());
+
+	std::vector<PyTuple*> updates;
+	//updates.push_back(dmgChange.Encode());
+
+	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, true);
+
+	// Create Special Effect:
+	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
+	(
+		m_Ship,
+		m_Item->itemID(),
+		m_Item->typeID(),
+		m_targetID,
+		m_chargeRef->typeID(),
+		"effects.Laser",
+		1,
+		1,
+		1,
+		m_Item->GetAttribute(AttrSpeed).get_float(),
+		1
+	);
 }

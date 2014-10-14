@@ -28,6 +28,12 @@
 
 #include "ship/modules/ActiveModules.h"
 
+ActiveModule::ActiveModule()
+{
+	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
+	m_chargeLoaded = false;
+}
+
 ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
 {
     m_Item = item;

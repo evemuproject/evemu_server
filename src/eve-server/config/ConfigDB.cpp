@@ -287,23 +287,25 @@ PyObject *ConfigDB::GetMap(uint32 solarSystemID) {
     //how in the world do they get a list in the freakin rowset for destinations???
     if(!sDatabase.RunQuery(res,
         "SELECT "
-        "   itemID,"
-        "   itemName,"
-        "   typeID,"
-        "   groupID,"
-        "   solarSystemID AS locationID,"
-        "   x,y,z,"
-        "   NULL AS orbitID,"
-        "   NULL AS destinations,"
-        "   NULL AS xMin,"
-        "   NULL AS xMax,"
-        "   NULL AS yMin,"
-        "   NULL AS yMax,"
-        "   NULL AS zMin,"
-        "   NULL AS zMax,"
-        "   NULL AS luminosity"
-        " FROM mapDenormalize"
-        " WHERE solarSystemID=%u", solarSystemID
+        "   s.solarSystemID AS locationID,"
+        "   s.xMin AS xMin,"
+        "   s.xMax AS xMax,"
+        "   s.yMin AS yMin,"
+        "   s.yMax AS yMax,"
+        "   s.zMin AS zMin,"
+        "   s.zMax AS zMax,"
+        "   s.luminosity AS luminosity,"
+        "   d.x AS x, d.y AS y, d.z AS z,"
+        "   d.itemID,"
+        "   d.itemName,"
+        "   d.typeID,"
+        "   d.groupID,"
+        "   d.orbitID AS orbitID,"
+        "   j.celestialID AS destinations"
+        " FROM mapSolarSystems AS s"
+        "  LEFT JOIN mapDenormalize AS d USING (solarSystemID)"
+        "  LEFT JOIN mapJumps AS j ON j.stargateID = d.itemID"
+		" WHERE solarSystemID=%u", solarSystemID
     ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -377,7 +379,7 @@ PyRep *ConfigDB::GetCelestialStatistic(uint32 celestialID) {
     if (!sDatabase.RunQuery(res,
         " SELECT "
         " groupID "
-        " FROM evenames "
+        " FROM mapDenormalize "
         " WHERE itemID = %u ", celestialID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -467,7 +469,7 @@ PyRep *ConfigDB::GetDynamicCelestials(uint32 solarSystemID) {
                               "     `invTypes`.`groupID`, "
                               "     `itemName`, "
                               "     0, " // This field refers to the orbitID of the dynamic celestial and needs to be implemented
-                              "     0, " // This field refers to the boolean value of isConnector.  It may signify some sort of mission jump bridge
+                              "     0, " // This field refers to the boolean value of isConnector. It may signify some sort of mission jump bridge
                               "     `x`, "
                               "     `y`, "
                               "     `z` "
@@ -498,4 +500,3 @@ PyRep *ConfigDB::GetTextsForGroup(const std::string & langID, uint32 textgroup) 
 
     return DBResultToRowset(res);
 }
-

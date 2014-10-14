@@ -6,11 +6,11 @@
 x
     THIS SHOULD TAKE COMMAND LINE ARGS FOR THESE:igh ghf hgh
 
-host="localhost"	#Database Host
-port="3306"		#Database Port
-user="root"		#Database Username
-pass="Alexandru2007"		#Database Password
-database="evemu"	#Database name
+host="localhost"    #Database Host
+port="3306"        #Database Port
+user="evemu"        #Database Username
+pass="changeme"        #Database Password
+database="evemu"    #Database name
 
 #######################
 # Dont Edit Past Here #
@@ -30,10 +30,12 @@ until [ "${option}" = "x" ]; do
     read -p " Enter option:  " option
 
     if [ "${option}" = "i" ]; then
+        echo "UNZIP ALL .ZIP archives in /ofic-updates directory,"
+        read -p "then press any key to continue..."
         echo "[+] Entering database setup.."
-	echo "[+] Searching for base database files.."
+        echo "[+] Searching for base database files.."
 
-	filearray=(`find . -name "*mysql5-v1.sql"`)
+        filearray=(`find . -name "*mysql5-v1.sql"`)
 
         if [ ${#filearray[@]} -gt 0 ]; then
 	    echo
@@ -101,7 +103,7 @@ until [ "${option}" = "x" ]; do
 
     if [ "${option}" != "x" ]; then
         echo
-	read -p " Press any key to continue..."
-	echo
+    read -p " Press any key to continue..."
+    echo
     fi
 done

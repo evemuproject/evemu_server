@@ -87,7 +87,10 @@ PyResult Command_create( Client* who, CommandDB* db, PyServiceMgr* services, con
         throw PyException( MakeCustomError( "Unable to create item of type %s.", args.arg( 1 ).c_str() ) );
 
     //Move to location
-    i->Move( locationID, flag, true );
+	if( who->IsInSpace() )
+		who->GetShip()->AddItem(flag, i);
+	else
+		i->Move( locationID, flag, true );
 
     return new PyString( "Creation successful." );
 }
@@ -351,7 +354,7 @@ PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const S
 	p_targetClient->MoveToLocation(solarSystemID, destinationPoint);
 	p_targetClient->Destiny()->SendJumpInEffect("effects.JumpIn");
 
-/*	
+/*
 	uint32 loc = atoi( args.arg( 2 ).c_str() );
 
     sLog.Log( "Command", "Translocate to %u.", loc );
@@ -679,6 +682,15 @@ PyResult Command_spawn( Client* who, CommandDB* db, PyServiceMgr* services, cons
 			((DroneEntity *)(who->System()->get( entity.itemID )))->Destiny()->SetSpeedFraction( 1.0, true );
 			((DroneEntity *)(who->System()->get( entity.itemID )))->Destiny()->Orbit( who, 1000.0, true );
 		}
+
+		// TEST FOR FUN:  If this is a missile, torpedo, bomb, etc, then make its destiny manager Approach a target of the entity spawning it...
+		uint32 groupID = item->groupID();
+		if( groupID == 84 || groupID == 88 || groupID == 89 || groupID == 90 || groupID == 384 || groupID == 385 ||
+			groupID == 386 || groupID == 387 || groupID == 395 || groupID == 396 || groupID == 476 || groupID == 648 ||
+			groupID == 653 || groupID == 654 || groupID == 655 || groupID == 656 || groupID == 657 || groupID == 772 || groupID == 1019)
+		{
+			// This is NOT even going to make it here since Missiles/Torpedos/Bombs/etc are not supported yet by SystemManager::BuildDynamicEntity()
+		}
 	}
 
 	sLog.Log( "Command", "%s: Spawned %u in space, %u times", who->GetName(), typeID, spawnCount );
@@ -818,7 +830,7 @@ PyResult Command_setattr( Client* who, CommandDB* db, PyServiceMgr* services, co
         target = args.arg( 1 );
         if( target != "myship" )
             throw PyException( MakeCustomError( "1st argument should be an entity ID ('myship'=current ship) (got %s).", args.arg( 1 ).c_str() ) );
-        
+
         itemID = who->GetShipID();
     }
     else
@@ -960,7 +972,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
     SkillRef skill;
 
     // Make sure character reference is not NULL before trying to use it:
-    if( character != NULL )
+    if( character.get() != NULL )
     {
 		// Query Database to get list of ALL skills, then LOOP through each one, checking character for skill, setting level to 5:
 		// QUERY DB FOR LIST OF ALL SKILLS:
@@ -1011,8 +1023,6 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
 		}
 		// END LOOP
     }
-	else
-		throw PyException( MakeCustomError( "ERROR: Unable to validate character object, it was found to be NULL!" ) );
 
     return new PyString ("Skill Gifting Failure");
 }
@@ -1029,13 +1039,9 @@ PyResult Command_giveskills( Client* who, CommandDB* db, PyServiceMgr* services,
 PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, const Seperator& args )
 {
 
-    uint32 typeID;
-    uint8 level;
+    EvilNumber typeID;
+    int level;
     CharacterRef character;
-    EVEItemFlags flag;
-    uint32 gty = 1;
-    //uint8 oldSkillLevel = 0;
-    EvilNumber oldSkillLevel(0);
     uint32 ownerID = 0;
 
     if( args.argCount() == 4 )
@@ -1079,47 +1085,54 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
             level = 5;
     } else
         throw PyException( MakeCustomError("Correct Usage: /giveskill [Character Name or ID] [skillID] [desired level]") );
-
-    SkillRef skill;
-
     // Make sure Character reference is not NULL before trying to use it:
     if(character.get() != NULL)
     {
-        if(character->HasSkill( typeID ) )
+        SkillRef skill;
+        uint8 skillLevel;
+        if(character->HasSkill( typeID.get_int() ) )
         {
             // Character already has this skill, so let's get the current level and check to see
             // if we need to update its level to what's required:
-            SkillRef oldSkill = character->GetSkill( typeID );
-            oldSkillLevel = oldSkill->GetAttribute( AttrSkillLevel );
-
-            // Now check the current level to the required level and update it
-            if( oldSkillLevel < level )
+            skill = character->GetSkill( typeID.get_int() );
+            skillLevel = skill->GetAttribute(AttrSkillLevel).get_int();
+            if( skillLevel >= level )
             {
-                character->InjectSkillIntoBrain( oldSkill, level);
-                return new PyString ( "Gifting skills complete" );
+                return new PyNone;
             }
-			skill = oldSkill;
+            else
+            {
+                EvilNumber tmp = EVIL_SKILL_BASE_POINTS * skill->GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
+                skill->SetAttribute(AttrSkillLevel, level);
+                skill->SetAttribute(AttrSkillPoints, tmp);
+            }
         }
         else
         {
             // Character DOES NOT have this skill, so spawn a new one and then add this
             // to the character with required level and skill points:
             ItemData idata(
-                typeID,
+                typeID.get_int(),
                 ownerID,
-                0, //temp location
-                flag = (EVEItemFlags)flagSkill,
-                gty
+                ownerID,
+                flagSkill,
+                1
             );
 
             InventoryItemRef item = services->item_factory.SpawnItem( idata );
-            skill = SkillRef::StaticCast( item );
 
             if( !item )
+            {
                 throw PyException( MakeCustomError( "Unable to create item of type %s.", item->typeID() ) );
-
-            character->InjectSkillIntoBrain( skill, level);
-            return new PyString ( "Gifting skills complete" );
+                return new PyString ("Skill Gifting Failure - Unable to create new skill %s.", item->typeID() );
+            }
+            else
+            {
+                skill = SkillRef::StaticCast( item );
+                EvilNumber tmp = EVIL_SKILL_BASE_POINTS * skill->GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
+                skill->SetAttribute(AttrSkillLevel, level);
+                skill->SetAttribute(AttrSkillPoints, tmp);
+            }
         }
 
 		// Either way, this character now has this skill trained to the specified level, so inform client:
@@ -1135,8 +1148,9 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
             who->UpdateSkillTraining();
         }
     }
-
-    return new PyString ("Skill Gifting Failure");
+    /** commented out to prevent function cease on error.  seems to work correctly without this msg  -allan 10Jul14 */
+    //throw PyException( MakeCustomError( "ERROR: Unable to validate character object, it was found to be NULL!" ) );
+    return new PyString ("Skill Gifting Failure - Character Ref = NULL");
 }
 
 

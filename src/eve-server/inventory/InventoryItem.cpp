@@ -210,9 +210,9 @@ RefPtr<_Ty> InventoryItem::_LoadItem(ItemFactory &factory, uint32 itemID,
                 return CargoContainerRef( new CargoContainer( factory, itemID, type, data ) );
             else
 				if( (type.groupID() >= EVEDB::invGroups::Asteroid_Angel_Cartel_Frigate
-							&& type.groupID() <= EVEDB::invGroups::Deadspace_Serpentis_Frigate) 
+							&& type.groupID() <= EVEDB::invGroups::Deadspace_Serpentis_Frigate)
 							|| (type.groupID() >= 755 /* Asteroid Rogue Drone BattleCruiser */
-							&& type.groupID() <= 761 /* Asteroid Rogue Drone Swarm */) 
+							&& type.groupID() <= 761 /* Asteroid Rogue Drone Swarm */)
 							|| (type.groupID() >= 789 /* Asteroid Angel Cartel Commander Frigate */
 							&& type.groupID() <= 814 /* Asteroid Serpentis Commander Frigate */)
 							|| (type.groupID() >= 843 /* Asteroid Rogue Drone Commander BattleCruiser */
@@ -280,6 +280,9 @@ bool InventoryItem::_Load()
     mAttributeMap.Load();
 	mDefaultAttributeMap.Load();
 
+	// fill basic cargo hold data:
+	m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold,mAttributeMap.GetAttribute(AttrCapacity).get_float()));
+
     // update inventory
     Inventory *inventory = m_factory.GetInventory( locationID(), false );
     if( inventory != NULL )
@@ -314,10 +317,14 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         ///////////////////////////////////////
         case EVEDB::invCategories::Entity: {
 			// Spawn generic item for Entities at this time:
-			uint32 itemID = InventoryItem::_SpawnEntity( factory, data );
+			// (commented lines for _SpawnEntity and LoadEntity can be used alternatively to prevent Entities from being created and saved to the DB,
+			//  however, this may be causing the weird and bad targetting of NPC ships when they enter the bubble and your ship is already in it)
+			//uint32 itemID = InventoryItem::_SpawnEntity( factory, data );		// Use this to prevent Asteroids from being stored in DB
+			uint32 itemID = InventoryItem::_Spawn( factory, data );
 			if( itemID == 0 )
 				return InventoryItemRef();
-			InventoryItemRef itemRef = InventoryItem::LoadEntity( factory, itemID, data );
+			//InventoryItemRef itemRef = InventoryItem::LoadEntity( factory, itemID, data );		// Use this to prevent Asteroids from being stored in DB
+			InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
 			return itemRef;
 		}
 
@@ -411,7 +418,7 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         }
 
         ///////////////////////////////////////
-        // Module:
+        // Charge:
         ///////////////////////////////////////
         case EVEDB::invCategories::Charge:
 		{
@@ -520,18 +527,23 @@ InventoryItemRef InventoryItem::Spawn(ItemFactory &factory, ItemData &data)
         case EVEDB::invCategories::Asteroid:
         {
             // Spawn generic item:
+			// (commented lines for _SpawnEntity and LoadEntity can be used alternatively to prevent asteroids from being created and saved to the DB,
+			//  however, initial testing of this throws a client exception when attempting to show brackets for these asteroid space objects when using
+			//  these alternative functions.  more investigation into that is required before they can be used with Asteroids)
             uint32 itemID = InventoryItem::_Spawn( factory, data );
+            //uint32 itemID = InventoryItem::_SpawnEntity( factory, data );		// Use this to prevent Asteroids from being stored in DB
             if( itemID == 0 )
                 return InventoryItemRef();
 
             InventoryItemRef itemRef = InventoryItem::Load( factory, itemID );
+            //InventoryItemRef itemRef = InventoryItem::LoadEntity( factory, itemID, data );		// Use this to prevent Asteroids from being stored in DB
 
             // THESE SHOULD BE MOVED INTO AN Asteroid::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->SetAttribute(AttrRadius, 500.0);       // Radius
             itemRef.get()->SetAttribute(AttrMass,   1000000.0);    // Mass
-            itemRef.get()->SetAttribute(AttrVolume, 8000.0);       // Volume
-            itemRef.get()->SetAttribute(AttrQuantity, 1000.0);      // Quantity
+			itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type().attributes.volume());       // Volume
+            itemRef.get()->SetAttribute(AttrQuantity, 5000.0);      // Quantity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -762,6 +774,7 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result )
         es.env_shipID = locationID();
         es.env_target = locationID();   //this is what they do.
         es.env_other = new PyNone;
+		es.env_area = new PyNone;
         es.env_effectID = effectOnline;
         es.startTime = Win32TimeNow() - Win32Time_Hour; //act like it happened an hour ago
         es.duration = INT_MAX;
@@ -886,12 +899,12 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 bool InventoryItem::SetFlag(EVEItemFlags new_flag, bool notify) {
     EVEItemFlags old_flag = m_flag;
     m_flag = new_flag;
-    
+
     SaveItem();
-    
+
     if(notify) {
         std::map<int32, PyRep *> changes;
-	
+
 	//send the notify to the new owner.
 	changes[ixFlag] = new PyInt(new_flag);
 	SendItemChange(m_ownerID, changes); //changes is consumed
@@ -1075,7 +1088,7 @@ void InventoryItem::SetOnline(bool online) {
 	environment->AddItem(new PyNone);
 	environment->AddItem(new PyNone);
 	environment->AddItem(new PyInt(ogf.effectID));
-	
+
 	ogf.environment = environment;
 	ogf.startTime = ogf.when;
 	ogf.duration = 10000;
@@ -1228,7 +1241,7 @@ EvilNumber InventoryItem::GetDefaultAttribute( const uint32 attributeID ) const
      return mDefaultAttributeMap.GetAttribute(attributeID);
 }
 
-bool InventoryItem::HasAttribute(uint32 attributeID)
+bool InventoryItem::HasAttribute(uint32 attributeID) const
 {
     return mAttributeMap.HasAttribute(attributeID);
 }
