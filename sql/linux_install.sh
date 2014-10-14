@@ -38,61 +38,67 @@ until [ "${option}" = "x" ]; do
         filearray=(`find . -name "*mysql5-v1.sql"`)
 
         if [ ${#filearray[@]} -gt 0 ]; then
-        echo
-        echo "[+] Select the base database to use"
-        for index in ${!filearray[*]}
-        do
-        printf "%4d: %s\n" $index ${filearray[$index]}
-        done
-        read -p " Enter option:  " basefile
+	    echo
+	    echo "[+] Select the base database to use"
+	    for index in ${!filearray[*]}
+	    do
+	    printf "%4d: %s\n" $index ${filearray[$index]}
+	    done
+	    read -p " Enter option:  " basefile
 
-        if [ ${#filearray[@]} -gt ${basefile} ]; then
-            echo 
-        echo "[+] [1] Importing base database (${filearray[$basefile]}) please wait.."
-        
-        #TODO Add a check for gzip
+	    if [ ${#filearray[@]} -gt ${basefile} ]; then
+	   
+		
+	        echo "Droping database 'evemu'..."
+		mysql -h ${host} --user=${user} --password=${pass} -v -e "drop database ${database};"
+		echo "Creating database 'evemu'..."
+		mysql -h ${host} --user=${user} --password=${pass} -v -e "create database ${database};"
 
-        mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "${filearray[$basefile]}"
+		echo "[+] [1] Importing base database (${filearray[$basefile]}) please wait.."
+		
+		#TODO Add a check for gzip
 
-        echo "[+] [1] Base database complete"
-        
-        echo "[+] [2] Importing dynamic dump"
-        mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "evemu_dynamic-dump.sql"
-        echo "[+] [2] Importing dynamic dump Complete"
+		mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "${filearray[$basefile]}"
 
-        echo "[+] [3] Importing static dump"
-        mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "evemu_static-dump.sql"
-        echo "[+] [3] Importing static dump Complete"
+		echo "[+] [1] Base database complete"
+		
+		echo "[+] [2] Importing dynamic dump"
+		mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "evemu_dynamic-dump.sql"
+		echo "[+] [2] Importing dynamic dump Complete"
 
-        echo "[+] [4] Importing ofic dump"
-        oficarray=(`find ofic-updates/. -name "*.sql"`)
-        for index in ${!oficarray[*]}
-        do
-            echo "[+] [4] Ofic Dumps ($(($index+1))/${#oficarray[@]}) - ${oficarray[$index]}"
-            mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "${oficarray[$index]}"
-        done
+		echo "[+] [3] Importing static dump"
+		mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "evemu_static-dump.sql"
+		echo "[+] [3] Importing static dump Complete"
 
-        echo "[+] [4] Importing ofic dump Complete"
+		echo "[+] [4] Importing ofic dump"
+		oficarray=(`find ofic-updates/. -name "*.sql"`)
+		for index in ${!oficarray[*]}
+		do
+		    echo "[+] [4] Ofic Dumps ($(($index+1))/${#oficarray[@]}) - ${oficarray[$index]}"
+		    mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "${oficarray[$index]}"
+		done
 
-        echo "[+] [5] Primeing Database"
-        mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "prime_db.sql"
-        echo "[+] [5] Primeing Database Complete"
+		echo "[+] [4] Importing ofic dump Complete"
 
-        echo "[+] [5] Live updates Database"
-        mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "liveupdates.sql"
-        echo "[+] [5] Live updates Database Complete"
+		echo "[+] [5] Primeing Database"
+		mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "prime_db.sql"
+		echo "[+] [5] Primeing Database Complete"
 
-        else
-            echo 
-            echo "[-] The number you selected was not found"
-            echo 
-        fi
+		echo "[+] [5] Live updates Database"
+		mysql -h ${host} --user=${user} --port=${port} --password=${pass} ${database} < "liveupdates.sql"
+		echo "[+] [5] Live updates Database Complete"
 
-    else
-        echo
-        echo "[-] Please download a base database"
-        echo
-    fi
+	    else
+	        echo 
+	        echo "[-] The number you selected was not found"
+	        echo 
+	    fi
+
+	else
+	    echo
+	    echo "[-] Please download a base database"
+	    echo
+	fi
     fi
 
     if [ "${option}" != "x" ]; then
