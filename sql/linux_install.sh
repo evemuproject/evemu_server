@@ -8,8 +8,8 @@ x
 
 host="localhost"	#Database Host
 port="3306"		#Database Port
-user="evemu"		#Database Username
-pass="changeme"		#Database Password
+user="root"		#Database Username
+pass="Alexandru2007"		#Database Password
 database="evemu"	#Database name
 
 #######################
@@ -45,7 +45,13 @@ until [ "${option}" = "x" ]; do
 	    read -p " Enter option:  " basefile
 
 	    if [ ${#filearray[@]} -gt ${basefile} ]; then
-	        echo 
+	   
+		
+	        echo "Droping database 'evemu'..."
+		mysql -h ${host} --user=${user} --password=${pass} -v -e "drop database ${database};"
+		echo "Creating database 'evemu'..."
+		mysql -h ${host} --user=${user} --password=${pass} -v -e "create database ${database};"
+
 		echo "[+] [1] Importing base database (${filearray[$basefile]}) please wait.."
 		
 		#TODO Add a check for gzip
