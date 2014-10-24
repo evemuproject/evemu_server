@@ -61,8 +61,6 @@ protected:
     PyCallable_DECL_CALL(AddToBounty)
     PyCallable_DECL_CALL(GetNote)
     PyCallable_DECL_CALL(SetNote)
-    PyCallable_DECL_CALL(AddContact)
-    PyCallable_DECL_CALL(EditContact)
     PyCallable_DECL_CALL(GetRecentShipKillsAndLosses)
     PyCallable_DECL_CALL(GetLabels)
     PyCallable_DECL_CALL(CreateLabel)

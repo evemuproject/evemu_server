@@ -56,8 +56,6 @@ CharMgrService::CharMgrService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(CharMgrService, AddToBounty)
     PyCallable_REG_CALL(CharMgrService, GetNote)
     PyCallable_REG_CALL(CharMgrService, SetNote)
-    PyCallable_REG_CALL(CharMgrService, AddContact)
-    PyCallable_REG_CALL(CharMgrService, EditContact)
     PyCallable_REG_CALL(CharMgrService, GetRecentShipKillsAndLosses)
 
     //these 2 are for labels in PnP window
@@ -371,17 +369,6 @@ PyResult CharMgrService::Handle_SetNote(PyCallArgs &call)
     return new PyNone;
 }
 
-PyResult CharMgrService::Handle_AddContact( PyCallArgs& call )
-{
-    //  will add this completed code at a later date  -allan 25Jul14
-  return NULL;
-}
-
-PyResult CharMgrService::Handle_EditContact( PyCallArgs& call )
-{
-    //  will add this completed code at a later date  -allan 25Jul14
-  return NULL;
-}
 
 PyResult CharMgrService::Handle_GetRecentShipKillsAndLosses( PyCallArgs& call )
 {
