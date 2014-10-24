@@ -235,10 +235,12 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         if( !item )
             continue;
 
-        if(item->ownerID() != (uint32)call_args.ownerID) {
-            _log(SERVICE__ERROR, "Character %u tried to reprocess item %u of character %u. Skipping.", call.client->GetCharacterID(), item->itemID(), item->ownerID());
-            continue;
-        }
+		// ownerID seems to now indicate stationID, not the character ID that supposedly owns the item to be reprocessed
+		// so, do NOT do this check anymore:
+		//if (item->ownerID() != (uint32)call_args.ownerID) {
+        //    _log(SERVICE__ERROR, "Character %u tried to reprocess item %u of character %u. Skipping.", call.client->GetCharacterID(), item->itemID(), item->ownerID());
+        //    continue;
+        //}
 
         // this should never happen, but for sure ...
         if(item->type().portionSize() > item->quantity()) {

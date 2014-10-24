@@ -20,24 +20,24 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Luck
+    Author:        AknorJaden
 */
 
-#ifndef __AFTERBURNER_H__
-#define __AFTERBURNER_H__
+#ifndef __SUPERWEAPON_H__
+#define __SUPERWEAPON_H__
 
 #include "ship/modules/ActiveModules.h"
 
-class Afterburner: public ActiveModule
+class SuperWeapon: public ActiveModule
 {
 public:
-    Afterburner( InventoryItemRef item, ShipRef ship );
-    ~Afterburner();
+    SuperWeapon( InventoryItemRef item, ShipRef ship );
+    ~SuperWeapon();
 
 	void Process();
 
-	// Module Action Methods:
-	void Load(InventoryItemRef charge);
+    // Module Action Methods:
+    void Load(InventoryItemRef charge);
     void Unload();
     void Repair();
     void Overload();
@@ -53,6 +53,10 @@ public:
 protected:
 	void _ProcessCycle() {}
 	void _ShowCycle();
+
+	uint32 m_effectID;
+	Timer m_buildUpTimer;
+	Timer m_effectDurationTimer;
 };
 
 #endif

@@ -28,9 +28,10 @@
 #include "EntityList.h"
 #include "system/SystemBubble.h"
 #include "system/Damage.h"
-#include "ship/modules/weapon_modules/HybridTurret.h"
+#include "ship/modules/weapon_modules/SuperWeapon.h"
 
-HybridTurret::HybridTurret( InventoryItemRef item, ShipRef ship )
+SuperWeapon::SuperWeapon( InventoryItemRef item, ShipRef ship )
+	: m_buildUpTimer(0), m_effectDurationTimer(0)
 {
     m_Item = item;
     m_Ship = ship;
@@ -40,86 +41,108 @@ HybridTurret::HybridTurret( InventoryItemRef item, ShipRef ship )
 
 	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
 	m_chargeLoaded = false;
-
-	m_ModuleState = MOD_UNFITTED;
-	m_ChargeState = MOD_UNLOADED;
+	m_effectID = 0;
 }
 
-HybridTurret::~HybridTurret()
+SuperWeapon::~SuperWeapon()
 {
 
 }
 
-void HybridTurret::Process()
+void SuperWeapon::Process()
 {
 	m_ActiveModuleProc->Process();
 }
 
-void HybridTurret::Load(InventoryItemRef charge)
-{
-	ActiveModule::Load(charge);
-	m_ChargeState = MOD_LOADED;
-}
-
-void HybridTurret::Unload()
-{
-	ActiveModule::Unload();
-	m_ChargeState = MOD_UNLOADED;
-}
-
-void HybridTurret::Repair()
+void SuperWeapon::Load(InventoryItemRef charge)
 {
 
 }
 
-void HybridTurret::Overload()
+void SuperWeapon::Unload()
 {
 
 }
 
-void HybridTurret::DeOverload()
+void SuperWeapon::Repair()
 {
 
 }
 
-void HybridTurret::DestroyRig()
+void SuperWeapon::Overload()
 {
 
 }
 
-void HybridTurret::Activate(SystemEntity * targetEntity)
+void SuperWeapon::DeOverload()
 {
-	if( this->m_chargeRef != NULL )
-	{
-		m_targetEntity = targetEntity;
-		m_targetID = targetEntity->Item()->itemID();
 
-		// Activate active processing component timer:
-		m_ActiveModuleProc->ActivateCycle();
-		m_ModuleState = MOD_ACTIVATED;
-		//_ShowCycle();
-		m_ActiveModuleProc->ProcessActiveCycle();
-	}
-	else
-	{
-		sLog.Error( "HybridTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
-		throw PyException( MakeCustomError( "ERROR!  Cannot find charge that is supposed to be loaded into this module!" ) );
-	}
 }
 
-void HybridTurret::Deactivate() 
+void SuperWeapon::DestroyRig()
+{
+
+}
+
+void SuperWeapon::Activate(SystemEntity * targetEntity)
+{
+	// TODO:
+	// 1. Prevent activation on certain targets: asteroids, NPC stations, ice, clouds...  Perhaps restrict to ships and structures.
+	// 2. Check for minimum qty of consumable materials needed according to the 'consumptionType' attribute value in appropriate cargo bay on board the ship
+
+	m_targetEntity = targetEntity;
+	m_targetID = targetEntity->Item()->itemID();
+
+	// Activate active processing component timer:
+	m_ActiveModuleProc->ActivateCycle();
+	m_ModuleState = MOD_ACTIVATED;
+	//_ShowCycle();
+	m_ActiveModuleProc->ProcessActiveCycle();
+}
+
+void SuperWeapon::Deactivate() 
 {
 	m_ModuleState = MOD_DEACTIVATING;
 	m_ActiveModuleProc->DeactivateCycle();
 }
 
-void HybridTurret::StopCycle(bool abort)
+void SuperWeapon::StopCycle(bool abort)
 {
-	//m_Item->SetActive(false, effectProjectileFired, 0.0, false);
+	// TODO:
+	// 1. Enable warping and jump drive
+
+	std::string effectString;
+	switch (m_Item->typeID())
+	{
+		case 24550:
+			effectString = "effects.SuperWeaponAmarr";
+			m_effectID = effectSuperWeaponAmarr;
+			break;
+
+		case 24552:
+			effectString = "effects.SuperWeaponCaldari";
+			m_effectID = effectSuperWeaponCaldari;
+			break;
+
+		case 24554:
+			effectString = "effects.SuperWeaponGallente";
+			m_effectID = effectSuperWeaponGallente;
+			break;
+
+		case 23674:
+			effectString = "effects.SuperWeaponMinmatar";
+			m_effectID = effectSuperWeaponMinmatar;
+			break;
+
+		default:
+			effectString = "";
+			m_effectID = 0;
+			break;
+	}
 
 	Notify_OnGodmaShipEffect shipEff;
 	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectProjectileFired;
+	shipEff.effectID = m_effectID;
 	shipEff.when = Win32TimeNow();
 	shipEff.start = 0;
 	shipEff.active = 0;
@@ -150,62 +173,56 @@ void HybridTurret::StopCycle(bool abort)
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
+	m_ActiveModuleProc->DeactivateCycle();
+
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
+		(
 		m_Ship,
 		m_Item->itemID(),
 		m_Item->typeID(),
 		m_targetID,
-		m_chargeRef->itemID(),
-		"effects.HybridFired",
+		0,
+		effectString,
 		1,
 		0,
 		0,
 		1.0,
 		0
-	);
-
-	m_ActiveModuleProc->DeactivateCycle();
+		);
 }
 
-void HybridTurret::DoCycle()
+void SuperWeapon::DoCycle()
 {
 	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
 	{
-		// Check to see if our target is still in this bubble or has left or been destroyed:
-		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
-		{
-			// Target has left our bubble or been destroyed, deactivate this module:
-			Deactivate();
-			return;
-		}
-		else
-		{
-			if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
-			{
-				// Target has left our bubble or been destroyed, deactivate this module:
-				Deactivate();
-				return;
-			}
-		}
-
-		if( m_chargeRef->quantity() == 0 )
-		{
-			Deactivate();
-			return;
-		}
-
 		_ShowCycle();
+
+		// Do massive, crazy damage to targets within a sphere of damage, screw CCP and their 'this can only target capital ships' junk ;)
+		// NOTE: due to the small bit of time to "build up" the weapon firing action, we need a timer to delay application of damage to the target(s)
+		// Avatar:  5 seconds to build after activation,  5 seconds duration, instant reach to target
+		// Erebus:  6 seconds to build after activation,  6 seconds duration, instant reach to target
+		// Leviathan:  range to target 124km,  6 seconds to launch after activation, 9 seconds flight time
+		// Ragnarok:  range to target 125km,  6 seconds to build after activation, 4 seconds duration, instant reach to target
+		//
+		// TODO:
+		// 0. Somehow disable warping and jump drive until deactivated
+		// 1. Set 'm_buildUpTimer' to the "build up time"
+		// 2. Set 'm_effectDurationTimer' to the "duration/flight time" of the super weapon effect
+		// 3. Move Damage action to SuperWeapon::Process() function and check for timer expirations before applying damage
+		// 4. Consider applying damage in increments, such as 5 stages of the 2 million hp (400,000 hp per stage, once per second)
+		// 5. Loop through all entities in the bubble, filtering on dynamic entities that are ships, drones, structures, cans
+		//    and calculate distance from target to calculate area-of-effect damage using some 1/x formula, where damage sustained
+		//    drops off the further away from the primary target.
 
 		// Create Damage action:
 		//Damage( SystemEntity *_source,
-        //    InventoryItemRef _weapon,
-        //    double _kinetic,
-        //    double _thermal,
-        //    double _em,
-        //    double _explosive,
-        //    EVEEffectID _effect );
+		//    InventoryItemRef _weapon,
+		//    double _kinetic,
+		//    double _thermal,
+		//    double _em,
+		//    double _explosive,
+		//    EVEEffectID _effect );
 		double kinetic_damage = 0.0;
 		double thermal_damage = 0.0;
 		double em_damage = 0.0;
@@ -213,41 +230,68 @@ void HybridTurret::DoCycle()
 
 		// This still somehow needs skill, ship, module, and implant bonuses to be applied:
 		// This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-		if( m_chargeRef->HasAttribute(AttrKineticDamage) )
-			kinetic_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrKineticDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrThermalDamage) )
-			thermal_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrThermalDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrEmDamage) )
-			em_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrEmDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrExplosiveDamage) )
-			explosive_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrExplosiveDamage)).get_float();
+		if (m_Item->HasAttribute(AttrKineticDamage))
+			kinetic_damage = (m_Item->GetAttribute(AttrKineticDamage)).get_float();
+		if (m_Item->HasAttribute(AttrThermalDamage))
+			thermal_damage = (m_Item->GetAttribute(AttrThermalDamage)).get_float();
+		if (m_Item->HasAttribute(AttrEmDamage))
+			em_damage = (m_Item->GetAttribute(AttrEmDamage)).get_float();
+		if (m_Item->HasAttribute(AttrExplosiveDamage))
+			explosive_damage = (m_Item->GetAttribute(AttrExplosiveDamage)).get_float();
 
 		Damage damageDealt
-		(
+			(
 			m_Ship->GetOperator()->GetSystemEntity(),
 			m_Item,
 			kinetic_damage,			// kinetic damage
 			thermal_damage,			// thermal damage
 			em_damage,				// em damage
 			explosive_damage,		// explosive damage
-			effectProjectileFired	// from EVEEffectID::
-		);
-		
-		m_targetEntity->ApplyDamage( damageDealt );
+			(EVEEffectID)(m_effectID)	// from EVEEffectID::
+			);
 
-		// Reduce ammo charge by 1 unit:
-		m_chargeRef->SetQuantity(m_chargeRef->quantity() - 1);
+		m_targetEntity->ApplyDamage(damageDealt);
+
+		// Reduce consumable in cargo:
+		// TODO
 	}
 }
 
-void HybridTurret::_ShowCycle()
+void SuperWeapon::_ShowCycle()
 {
-	//m_Item->SetActive(true, effectProjectileFired, m_Item->GetAttribute(AttrSpeed).get_float(), true);
+	std::string effectString;
+	switch (m_Item->typeID())
+	{
+	case 24550:
+		effectString = "effects.SuperWeaponAmarr";
+		m_effectID = effectSuperWeaponAmarr;
+		break;
+
+	case 24552:
+		effectString = "effects.SuperWeaponCaldari";
+		m_effectID = effectSuperWeaponCaldari;
+		break;
+
+	case 24554:
+		effectString = "effects.SuperWeaponGallente";
+		m_effectID = effectSuperWeaponGallente;
+		break;
+
+	case 23674:
+		effectString = "effects.SuperWeaponMinmatar";
+		m_effectID = effectSuperWeaponMinmatar;
+		break;
+
+	default:
+		effectString = "";
+		m_effectID = 0;
+		break;
+	}
 
 	// Create Destiny Updates:
 	Notify_OnGodmaShipEffect shipEff;
 	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectProjectileFired;		// From EVEEffectID::
+	shipEff.effectID = m_effectID;		// From EVEEffectID::
 	shipEff.when = Win32TimeNow();
 	shipEff.start = 1;
 	shipEff.active = 1;
@@ -263,7 +307,7 @@ void HybridTurret::_ShowCycle()
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
+	shipEff.duration = m_Item->GetAttribute(AttrDuration).get_float();
 	shipEff.repeat = new PyInt(1000);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -283,17 +327,17 @@ void HybridTurret::_ShowCycle()
 
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
+		(
 		m_Ship,
 		m_Item->itemID(),
 		m_Item->typeID(),
 		m_targetID,
-		m_chargeRef->typeID(),
-		"effects.HybridFired",
+		0,
+		effectString,
 		1,
 		1,
 		1,
-		m_Item->GetAttribute(AttrSpeed).get_float(),
+		m_Item->GetAttribute(AttrDuration).get_float(),
 		1000
-	);
+		);
 }

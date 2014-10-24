@@ -28,9 +28,9 @@
 #include "EntityList.h"
 #include "system/SystemBubble.h"
 #include "system/Damage.h"
-#include "ship/modules/weapon_modules/HybridTurret.h"
+#include "ship/modules/electronics_modules/TractorBeam.h"
 
-HybridTurret::HybridTurret( InventoryItemRef item, ShipRef ship )
+TractorBeam::TractorBeam( InventoryItemRef item, ShipRef ship )
 {
     m_Item = item;
     m_Ship = ship;
@@ -45,81 +45,98 @@ HybridTurret::HybridTurret( InventoryItemRef item, ShipRef ship )
 	m_ChargeState = MOD_UNLOADED;
 }
 
-HybridTurret::~HybridTurret()
+TractorBeam::~TractorBeam()
 {
 
 }
 
-void HybridTurret::Process()
+void TractorBeam::Process()
 {
 	m_ActiveModuleProc->Process();
 }
 
-void HybridTurret::Load(InventoryItemRef charge)
+void TractorBeam::Load(InventoryItemRef charge)
 {
 	ActiveModule::Load(charge);
 	m_ChargeState = MOD_LOADED;
 }
 
-void HybridTurret::Unload()
+void TractorBeam::Unload()
 {
 	ActiveModule::Unload();
 	m_ChargeState = MOD_UNLOADED;
 }
 
-void HybridTurret::Repair()
+void TractorBeam::Repair()
 {
 
 }
 
-void HybridTurret::Overload()
+void TractorBeam::Overload()
 {
 
 }
 
-void HybridTurret::DeOverload()
+void TractorBeam::DeOverload()
 {
 
 }
 
-void HybridTurret::DestroyRig()
+void TractorBeam::DestroyRig()
 {
 
 }
 
-void HybridTurret::Activate(SystemEntity * targetEntity)
+void TractorBeam::Activate(SystemEntity * targetEntity)
 {
-	if( this->m_chargeRef != NULL )
+	// Check to make sure target is NOT a static entity:
+	// TODO: Check for target = asteroid, ice, or gas cloud then only allow tractoring if ship = Orca
+	// TODO: DO NOT allow tractoring of Client-connected player ships
+	if (!(targetEntity->IsStaticEntity()))
 	{
-		m_targetEntity = targetEntity;
-		m_targetID = targetEntity->Item()->itemID();
+		if (
+		     (
+				(m_Ship->typeID() == 28606)		// Orca is the only ship allowed to tractor asteroids and ice chunks
+				&&
+				(
+				((getItem()->typeID() == 16278 || getItem()->typeID() == 22229) && (targetEntity->Item()->groupID() == EVEDB::invGroups::Ice))
+				||
+				(targetEntity->Item()->categoryID() == EVEDB::invCategories::Asteroid)
+				||
+				((targetEntity->Item()->groupID() == EVEDB::invGroups::Harvestable_Cloud) && (getItem()->groupID() == EVEDB::invGroups::Gas_Cloud_Harvester))
+				)
+				)
+				||
+				(targetEntity->Item()->groupID() == EVEDB::invGroups::Cargo_Container)
+				||
+				(targetEntity->Item()->groupID() == EVEDB::invGroups::Secure_Cargo_Container)
+				||
+				(targetEntity->Item()->groupID() == EVEDB::invGroups::Wreck)
+			)
+		{
+			m_targetEntity = targetEntity;
+			m_targetID = targetEntity->Item()->itemID();
 
-		// Activate active processing component timer:
-		m_ActiveModuleProc->ActivateCycle();
-		m_ModuleState = MOD_ACTIVATED;
-		//_ShowCycle();
-		m_ActiveModuleProc->ProcessActiveCycle();
-	}
-	else
-	{
-		sLog.Error( "HybridTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
-		throw PyException( MakeCustomError( "ERROR!  Cannot find charge that is supposed to be loaded into this module!" ) );
+			// Activate active processing component timer:
+			m_ActiveModuleProc->ActivateCycle();
+			m_ModuleState = MOD_ACTIVATED;
+			//_ShowCycle();
+			m_ActiveModuleProc->ProcessActiveCycle();
+		}
 	}
 }
 
-void HybridTurret::Deactivate() 
+void TractorBeam::Deactivate() 
 {
 	m_ModuleState = MOD_DEACTIVATING;
 	m_ActiveModuleProc->DeactivateCycle();
 }
 
-void HybridTurret::StopCycle(bool abort)
+void TractorBeam::StopCycle(bool abort)
 {
-	//m_Item->SetActive(false, effectProjectileFired, 0.0, false);
-
 	Notify_OnGodmaShipEffect shipEff;
 	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectProjectileFired;
+	shipEff.effectID = effectTractorBeam;		// From EVEEffectID::
 	shipEff.when = Win32TimeNow();
 	shipEff.start = 0;
 	shipEff.active = 0;
@@ -150,6 +167,8 @@ void HybridTurret::StopCycle(bool abort)
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
+	m_ActiveModuleProc->DeactivateCycle();
+
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
 	(
@@ -157,19 +176,17 @@ void HybridTurret::StopCycle(bool abort)
 		m_Item->itemID(),
 		m_Item->typeID(),
 		m_targetID,
-		m_chargeRef->itemID(),
-		"effects.HybridFired",
-		1,
+		0,
+		"effects.TractorBeam",
 		0,
 		0,
-		1.0,
+		0,
+		m_Item->GetAttribute(AttrDuration).get_float(),
 		0
 	);
-
-	m_ActiveModuleProc->DeactivateCycle();
 }
 
-void HybridTurret::DoCycle()
+void TractorBeam::DoCycle()
 {
 	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
 	{
@@ -190,64 +207,34 @@ void HybridTurret::DoCycle()
 			}
 		}
 
-		if( m_chargeRef->quantity() == 0 )
-		{
-			Deactivate();
-			return;
-		}
-
 		_ShowCycle();
 
-		// Create Damage action:
-		//Damage( SystemEntity *_source,
-        //    InventoryItemRef _weapon,
-        //    double _kinetic,
-        //    double _thermal,
-        //    double _em,
-        //    double _explosive,
-        //    EVEEffectID _effect );
-		double kinetic_damage = 0.0;
-		double thermal_damage = 0.0;
-		double em_damage = 0.0;
-		double explosive_damage = 0.0;
-
-		// This still somehow needs skill, ship, module, and implant bonuses to be applied:
-		// This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-		if( m_chargeRef->HasAttribute(AttrKineticDamage) )
-			kinetic_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrKineticDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrThermalDamage) )
-			thermal_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrThermalDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrEmDamage) )
-			em_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrEmDamage)).get_float();
-		if( m_chargeRef->HasAttribute(AttrExplosiveDamage) )
-			explosive_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrExplosiveDamage)).get_float();
-
-		Damage damageDealt
-		(
-			m_Ship->GetOperator()->GetSystemEntity(),
-			m_Item,
-			kinetic_damage,			// kinetic damage
-			thermal_damage,			// thermal damage
-			em_damage,				// em damage
-			explosive_damage,		// explosive damage
-			effectProjectileFired	// from EVEEffectID::
-		);
-		
-		m_targetEntity->ApplyDamage( damageDealt );
-
-		// Reduce ammo charge by 1 unit:
-		m_chargeRef->SetQuantity(m_chargeRef->quantity() - 1);
+		// Initiate continued Destiny Action to move tractored object toward ship
+		DynamicSystemEntity * targetEntity = static_cast<DynamicSystemEntity *>(m_targetEntity);
+		// Check for distance to target > 5000m + ship radius
+		GVector distanceToTarget(targetEntity->GetPosition(), m_Ship->position());
+		if (distanceToTarget.length() > (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()))
+		{
+			// Range higher?  Then start it moving toward ship @ 200m/s
+			targetEntity->Destiny()->SetMaxVelocity(1000.0);
+			targetEntity->Destiny()->SetSpeedFraction(1.0);
+			// Tractor objects at 1000m/s:
+			targetEntity->Destiny()->TractorBeamFollow(m_Ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()));
+		}
+		else
+		{
+			targetEntity->Destiny()->TractorBeamHalt();
+			Deactivate();
+		}
 	}
 }
 
-void HybridTurret::_ShowCycle()
+void TractorBeam::_ShowCycle()
 {
-	//m_Item->SetActive(true, effectProjectileFired, m_Item->GetAttribute(AttrSpeed).get_float(), true);
-
 	// Create Destiny Updates:
 	Notify_OnGodmaShipEffect shipEff;
 	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectProjectileFired;		// From EVEEffectID::
+	shipEff.effectID = effectTractorBeam;		// From EVEEffectID::
 	shipEff.when = Win32TimeNow();
 	shipEff.start = 1;
 	shipEff.active = 1;
@@ -263,7 +250,7 @@ void HybridTurret::_ShowCycle()
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
+	shipEff.duration = m_Item->GetAttribute(AttrDuration).get_float();
 	shipEff.repeat = new PyInt(1000);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -288,12 +275,12 @@ void HybridTurret::_ShowCycle()
 		m_Item->itemID(),
 		m_Item->typeID(),
 		m_targetID,
-		m_chargeRef->typeID(),
-		"effects.HybridFired",
+		0,
+		"effects.TractorBeam",
+		0,
 		1,
 		1,
-		1,
-		m_Item->GetAttribute(AttrSpeed).get_float(),
+		m_Item->GetAttribute(AttrDuration).get_float(),
 		1000
 	);
 }

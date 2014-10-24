@@ -20,24 +20,24 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Luck
+    Author:        AknorJaden
 */
 
-#ifndef __AFTERBURNER_H__
-#define __AFTERBURNER_H__
+#ifndef __TRACTORBEAM_H__
+#define __TRACTORBEAM_H__
 
 #include "ship/modules/ActiveModules.h"
 
-class Afterburner: public ActiveModule
+class TractorBeam: public ActiveModule
 {
 public:
-    Afterburner( InventoryItemRef item, ShipRef ship );
-    ~Afterburner();
+    TractorBeam( InventoryItemRef item, ShipRef ship );
+    ~TractorBeam();
 
 	void Process();
 
-	// Module Action Methods:
-	void Load(InventoryItemRef charge);
+    // Module Action Methods:
+    void Load(InventoryItemRef charge);
     void Unload();
     void Repair();
     void Overload();
@@ -48,7 +48,7 @@ public:
 
 	// Calls Reserved for components usage only!
 	void DoCycle();
-	void StopCycle(bool abort = false);
+	void StopCycle(bool abort=false);
 
 protected:
 	void _ProcessCycle() {}
