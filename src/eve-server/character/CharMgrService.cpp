@@ -123,6 +123,10 @@ PyResult CharMgrService::Handle_DeleteContacts(PyCallArgs &call)
     return  new PyBool(m_db.DeleteContacts(call.client->GetCharacterID(),call.tuple->GetItem( 0 )->AsList()));
 }	
 
+PyResult CharMgrService::Handle_AddOwnerNote(PyCallArgs &call){
+	  return new PyNone;
+}
+
 PyResult CharMgrService::Handle_GetOwnerNoteLabels(PyCallArgs &call)
 {
     // just a dummy for now
@@ -339,45 +343,11 @@ PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
     if(call.client->GetChar()->AlterBalance(-args.arg2))
 	m_db.addBounty(args.arg1, args.arg2);
     return new PyNone;
-
-PyResult CharMgrService::Handle_GetNote( PyCallArgs& call )
-{/*
-    //  will add this completed code at a later date  -allan 25Jul14
-    uint32 ownerID = call.client->GetCharacterID();
-    uint32 itemID = call.tuple->GetItem(0)->AsInt()->value();
-
-	PyString *str = m_db.GetNote(ownerID, itemID);
-    if(!str)
-        str = new PyString("");
-
-    return str;
-	*/
-	return new PyNone;
-}
-
-PyResult CharMgrService::Handle_SetNote(PyCallArgs &call)
-{/*
-    //  will add this completed code at a later date  -allan 25Jul14
-    Call_SetNote args;
-    if(!args.Decode(&call.tuple)) {
-        codelog(CLIENT__ERROR, "Invalid arguments");
-        return NULL;
-    }
-
-    m_db.SetNote(call.client->GetCharacterID(), args.itemID, args.note.c_str());
-*/
-    return new PyNone;
 }
 
 
 PyResult CharMgrService::Handle_GetRecentShipKillsAndLosses( PyCallArgs& call )
 {
-  return NULL;
-}
-
-PyResult CharMgrService::Handle_GetLabels( PyCallArgs& call )
-{
-    //  will add this completed code at a later date  -allan 25Jul14
   return NULL;
 }
 
