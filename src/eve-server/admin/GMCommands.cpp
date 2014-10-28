@@ -352,7 +352,7 @@ PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const S
 
 	p_targetClient->Destiny()->SendJumpOutEffect("effects.JumpOut", solarSystemID);
 	p_targetClient->MoveToLocation(solarSystemID, destinationPoint);
-	p_targetClient->Destiny()->SendJumpInEffect("effects.JumpIn");
+	//p_targetClient->Destiny()->SendJumpInEffect("effects.JumpIn");
 
 /*
 	uint32 loc = atoi( args.arg( 2 ).c_str() );

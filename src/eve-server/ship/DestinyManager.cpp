@@ -42,6 +42,8 @@ const double TIC_DURATION_IN_SECONDS = 1.0;    //straight from client. Do not ch
 static const double DESTINY_UPDATE_RANGE = 1.0e8;    //totally made up. a more complex spatial partitioning system is needed.
 static const double FOLLOW_BAND_WIDTH = 100.0f;    //totally made up
 
+static const double EULERS_NUMBER = 2.7182818284590452353;
+
 uint32 DestinyManager::m_stamp(40000);    //completely arbitrary starting point.
 Timer DestinyManager::m_stampTimer(static_cast<int32>(TIC_DURATION_IN_SECONDS * 1000), true);    //accurate timing is essential.
 
@@ -55,11 +57,11 @@ DestinyManager::DestinyManager(SystemEntity *self, SystemManager *system)
 //  m_direction(0, 0, 0),
 //  m_velocity(0),
   m_velocity(0, 0, 0),
-//  m_acceleration(0),
+  m_avgWarpAcceleration(0),
   m_maxVelocity(1.0),
   m_accelerationFactor(0.0),
   m_velocityAdjuster(0.0),
-//  m_maxAcceleration(1.0),
+  m_maxAcceleration(1.0),
   State(DSTBALL_STOP),
   m_userSpeedFraction(0),
   m_activeSpeedFraction(0.0),
@@ -69,7 +71,7 @@ DestinyManager::DestinyManager(SystemEntity *self, SystemManager *system)
   m_mass(1.0),
   m_maxShipVelocity(1.0),
   m_shipAgility(1.0),
-  m_shipInertia(1.0),
+  m_shipInertiaModifier(1.0),
   m_warpState(NULL)
 {
     //do not touch m_self here, it may not be fully constructed.
@@ -1140,38 +1142,96 @@ void DestinyManager::OrbitingCruise(SystemEntity *who, double distance, bool upd
 
 void DestinyManager::SetShipCapabilities(InventoryItemRef ship)
 {
-    double mass = ship->GetAttribute(AttrMass).get_float();
-    double radius = ship->GetAttribute(AttrRadius).get_float();
-    double Inertia = ship->GetAttribute(AttrInertia).get_float();
-    double agility = ship->GetAttribute(AttrAgility).get_float();
-    double maxVelocity = ship->GetAttribute(AttrMaxVelocity).get_float();
+  /* this now sets variables needed for correct warp math.
+   * noted modifiers to look into later, after everything is working
+   * skill bonuses to agility and velocity are now implemented.
+   */
 
-    //might need to care about turnAngle: Maximum turn angle of a ship in Radians, 0 to pi (3.14).
-    //might need newAgility: Maximum "Thrust angle" for an object in Radians, 0 to pi (3.14).
-    //speedBoostFactor is in newtons...
-    //speedBonus affects max velocity.
-    //warpSpeedMultiplier
+  m_radius = ship->GetAttribute(AttrRadius).get_float();
 
-/*
-#   pragma message( "need to feed inertia to physics model properly" )
+  m_mass = ship->GetAttribute(AttrMass).get_float();
+  /* AttrMass = 4,
+   * AttrMassLimit = 622,
+   * AttrMassAddition = 796,
+   * AttrMassMultiplier = 1471,
+   */
+  float massMKg = m_mass / 1000000;  //changes mass from Kg to MillionKg (10^-6)
 
-    //do we want to use radius here??? or just adjust CoG?
-    Ga::GaVec3 center_of_gravity = Ga::Parameter::VEC3_ZERO;
-    Ga::GaVec3 inertia_tensor = Ga::Parameter::VEC3_ONE;
-    m_body->setMassMatrix(mass, center_of_gravity, inertia_tensor);
-*/
+  double adjInertiaModifier = ship->GetAttribute(AttrAgility).get_float();
+  float adjShipMaxVelocity = ship->GetAttribute(AttrMaxVelocity).get_float();
 
-    m_radius = radius;
-    m_mass = mass;
-    m_maxShipVelocity = maxVelocity;
-    m_shipAgility = agility;
-    m_shipInertia = Inertia;
-//    m_maxShipAcceleration = maxShipAcceleration;
+  float warpSpeedMultiplier = 1.0f;
+  float shipBaseWarpSpeed = 3.0f;
 
-    _log(PHYSICS__TRACE, "Entity %u is using ship attributes: Radius=%f, Mass=%f, maxVelocity=%f, agility=%f, inertia=%f",
-        m_self->GetID(), m_radius, m_mass, m_maxShipVelocity, m_shipAgility, m_shipInertia);
+  // skill bonuses to agility and velocity
+  if( m_self->IsClient() ) {
+	bool IsCapShip = false;
+	// add check here for capital ships
+	Client *c = m_self->CastToClient();
+	adjInertiaModifier -= ( adjInertiaModifier * c->GetChar()->GetAgilitySkills(IsCapShip) );
+	adjShipMaxVelocity += ( adjShipMaxVelocity * ( 5 * (c->GetChar()->GetSkillLevel(skillNavigation, true)))/100);
+	shipBaseWarpSpeed = m_self->CastToClient()->GetShip()->GetAttribute(AttrBaseWarpSpeed).get_float();
+	warpSpeedMultiplier = m_self->CastToClient()->GetShip()->GetAttribute(AttrWarpSpeedMultiplier).get_float();
+  } else {
+	shipBaseWarpSpeed = m_self->Item()->GetAttribute(AttrBaseWarpSpeed).get_float();
+	warpSpeedMultiplier = m_self->Item()->GetAttribute(AttrWarpSpeedMultiplier).get_float();
+  }
 
-    _UpdateDerrived();
+  // TODO add module and rig bounses to inertia, agility, velocity here
+
+  m_maxShipVelocity = adjShipMaxVelocity;
+  m_shipInertiaModifier = adjInertiaModifier;
+
+  /* The product of Mass and the Inertia Modifier gives the ship's agility
+   * Agility = Mass x Inertia Modifier
+   */
+  m_shipAgility = massMKg * m_shipInertiaModifier;
+
+  /*   look into these, too...
+   * AttrWarpSBonus(624) [rigs]
+   * AttrWarpFactor(21)
+   * AttrWarpInhibitor(29)
+   */
+
+  //TODO  add module modifiers to warp speed here
+
+  m_shipWarpSpeed = ( warpSpeedMultiplier * shipBaseWarpSpeed );
+
+  /*  my research into warp formulas, i have used these sites, with a few exerpts from each...
+   *     https://wiki.eveonline.com/en/wiki/Acceleration
+   * 	   http://oldforums.eveonline.com/?a=topic&threadID=1251486
+   *     http://gaming.stackexchange.com/questions/115271/how-does-one-calculate-a-ships-agility
+   *     http://eve-search.com/thread/1514884-0
+   *     http://www.eve-search.com/thread/478431-0/page/1
+   *
+   * main formula for time taken to accelerate from v to V, from https://wiki.eveonline.com/en/wiki/Acceleration
+   * t=IM(10^-6) * -e(1-(v/V))
+   *
+   * t Time in seconds
+   * v Velocity after time t in m/s
+   * V Ship's maximum velocity in m/s
+   * I Ship's inertia modifier
+   * M Ship's mass in kg
+   * e Base of natural logarithms (EULERS_NUMBER)
+   *
+   */
+  uint64 warpSpeedInMeters = m_shipWarpSpeed * ONE_AU_IN_METERS;
+  double ln_speed = fabs (EULERS_NUMBER * (1 - ((m_maxShipVelocity * 0.75) / warpSpeedInMeters)));
+  double accel_time = (m_shipInertiaModifier * massMKg * ln_speed);
+
+  /* find average accel based on time to accel from entering warp (75% of max_velocity) to m_shipWarpSpeed.
+   * accel = final speed - initial speed / time
+   *   this will be used in _InitWarp
+   */
+
+  m_avgWarpAcceleration = (((m_maxShipVelocity * 0.75) / warpSpeedInMeters) / accel_time);
+
+  _log(PHYSICS__TRACE, "DestinyManager::SetShipCapabilities - Entity %s(%u) has set ship attributes:"
+  "Radius=%f, Mass=%f, maxVelocity=%f, agility=%f, inertia=%f, warpSpeed=%u, avgAccel=%f",
+  m_self->GetName(), m_self->GetID(), m_radius, m_mass, m_maxShipVelocity, m_shipAgility,
+	   m_shipInertiaModifier, m_shipWarpSpeed, m_avgWarpAcceleration);
+
+  _UpdateDerrived();
 }
 
 void DestinyManager::SetPosition(const GPoint &pt, bool update, bool isWarping, bool isPostWarp) {

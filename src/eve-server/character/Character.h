@@ -278,7 +278,7 @@ public:
    double weightUpDown;
    double weightLeftRight;
    double weightForwardBack;
-   
+
    void Build(uint32 ownerID, PyDict* data);
 
 private:
@@ -378,6 +378,22 @@ public:
      */
     SkillRef GetSkill(uint32 skillTypeID) const;
     /**
+     * Gets level of skill that is trained.
+     *
+     * @param[in] skillTypeID ID of skill type to be checked
+     * @param[in] zeroForNotInjected true if method should return 0 for un injected skills,
+     *  false if it should return -1
+     * @return value 0..5 - the level of skill trained, or, if it was not injected,
+     *  0 if zeroForNotInjected.is true, -1 otherwise
+     */
+    int GetSkillLevel(uint32, bool zeroForNotInjected=true) const;
+    /**
+     * get ship bonus' based on skills
+     *  used for agility and max speed
+     * @author allan
+     */
+    float GetAgilitySkills(bool cap=false);
+    /**
      * Returns skill currently in training.
      *
      * @param[in] newref Whether new reference should be returned.
@@ -439,7 +455,6 @@ public:
      * @author allan
      */
     void UpdateSkillQueueEndTime( const SkillQueue &queue);
-
     /* GrantCertificate( uint32 certificateID )
      *
      * This will add a certificate into the character
