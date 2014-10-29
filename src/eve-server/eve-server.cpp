@@ -125,6 +125,7 @@
 #include "system/DungeonService.h"
 #include "system/KeeperService.h"
 #include "system/ScenarioService.h"
+#include "system/WormholeMgr.h"
 #include "system/WrecksAndLoot.h"
 
 static void SetupSignals();
@@ -400,6 +401,7 @@ int main( int argc, char* argv[] )
         // do the stuff for thread sleeping
         if( MAIN_LOOP_DELAY > etime )
             Sleep( MAIN_LOOP_DELAY - etime );
+
     }
 
     sLog.Log("server shutdown", "Main loop stopped" );
