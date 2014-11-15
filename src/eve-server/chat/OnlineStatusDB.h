@@ -20,30 +20,23 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        BB2k,Allan
 */
 
 
-#ifndef __ONLINESTATUS_SERVICE_H_INCL__
-#define __ONLINESTATUS_SERVICE_H_INCL__
+#ifndef __ONLINESTATUSDBDB_H_INCL__
+#define __ONLINESTATUSDBDB_H_INCL__
 
-#include "PyService.h"
-#include "OnlineStatusDB.h"
+#include "ServiceDB.h"
 
-class OnlineStatusService : public PyService {
+class OnlineStatusService;
+
+class OnlineStatusDB
+: public ServiceDB
+{
 public:
-    OnlineStatusService(PyServiceMgr *mgr);
-    virtual ~OnlineStatusService();
-
-protected:
-    class Dispatcher;
-    Dispatcher *const m_dispatch;
-    OnlineStatusDB m_db;
-
-    PyCallable_DECL_CALL(GetInitialState)
-    PyCallable_DECL_CALL(GetOnlineStatus)
+    PyRep *GetOnlineStatus(uint32 itemID);
 };
-
 #endif
 
 
