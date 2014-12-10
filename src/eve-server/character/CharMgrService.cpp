@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,BB2k
 */
 
 #include "eve-server.h"
@@ -147,17 +147,34 @@ PyResult CharMgrService::Handle_GetPublicInfo3(PyCallArgs &call) {
 
 PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call )
 {
-    //  will add this completed code at a later date  -allan 25Jul14
-    //AddBounty(uint32 charID, uint32 ownerID, uint32 amount)
-    //m_db.AddBounty(args.arg1, call.client->GetCharacterID(), args.arg2);
+  Call_TwoIntegerArgs args;
+  if ( !args.Decode( &call.tuple ) ) {
+     codelog( SERVICE__ERROR, "Unable to decode arguments for CharMgrService::Handle_AddToBounty from '%s'", call.client->GetName() );
+     return NULL;
+  }
 
-    return new PyNone;
+  // No Bounty to yourself =)
+  if (call.client->GetCharacterID() == args.arg1){
+      codelog( SERVICE__ERROR, "You can't add bounty to yourself !" );
+      return NULL;
+  }
+
+  if(call.client->GetChar()->AlterBalance(-args.arg2))
+     m_db.addBounty(args.arg1, args.arg2);
+
+  return new PyNone;
 }
 
 PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call ) {
-    //  will add this completed code at a later date  -allan 25Jul14
-    return new PyNone; //(m_db.GetTopBounties());
+    PyRep *result = m_db.GetTopBounties();
+    if(result == NULL) {
+        codelog(CLIENT__ERROR, "%s: Failed to find bounties", call.client->GetName());
+        return NULL;
+    }
+
+    return result;
 }
+
 
 PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
 {
