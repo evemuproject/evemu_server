@@ -436,10 +436,6 @@ int main( int argc, char* argv[] )
                 std::vector<std::string> cmds;
                 boost::split(cmds, cmd, ::isspace);
                 std::string cmdName = cmds.at(0);
-//                int *args;
-//                if(cmds.size() > 1)
-//                    args = new int[cmds.size() -1];
-//                    sLog.Log("", "Command has: %u arguments", cmds.size()-1);
                 if(cmdName.compare("help") == 0 || cmdName.compare("h") == 0) {
                     sLog.Warning("EvEMu", "Current Console Commands and Descriptions:");
                     sLog.Log("help , h", "Prints this dialog");
@@ -467,7 +463,6 @@ int main( int argc, char* argv[] )
 #else /* HAVE_RESOURCE_H */
                     sLog.Log("Memory Usage RSS", "**NOT_AVAILABLE_NO_RESOURCE.H_HEADER** (*nix only)");
 #endif /* !HAVE_RESOURCE_H */
-
                     uint32 uptime = Timer::GetCurrentTime()/1000;
                     sLog.Log("Server Uptime","%u days, %u hours, %u minutes, %u Seconds", uptime/86400, uptime/3600%24, uptime/60%60, uptime%60);
                     //sLog.Log("Items","**NOT_IMPLEMENTED**");
@@ -476,40 +471,6 @@ int main( int argc, char* argv[] )
                     sLog.Log("Client Count", "%u", sEntityList.GetClientCount());
                 }
             }
-            /*
-            char cmd[255];
-            if(fgets(cmd, sizeof(cmd), stdin) != NULL) {
-                std::string cmdStr = std::string(cmd);
-                if(cmdStr.length() > 1) {
-                    if(cmdStr.compare(0, 1, "x") == 0) {
-                        RunLoops = false;
-                        sLog.Warning("EvEMu", "Console command: e(x)it");
-                        sLog.Log("STATUS", "Server is shutting down!");
-                    }else if(cmdStr.compare(0, 1, "c") == 0) {
-                        sLog.Warning("EvEMu", "Console command: (c)lients");
-                        sLog.Log("Connected Clients", "%u", sEntityList.GetClientCount());
-                    }else if(cmdStr.compare(0, 1, "i") == 0) {
-                        struct rusage r_usage;
-                        getrusage(RUSAGE_SELF, &r_usage);
-                        sLog.Warning("EvEMu", "Console command: (i)nformation");
-                        sLog.Log("Server Revision", EVEMU_VERSION);
-                        sLog.Log("Build Date Time", "%s %s", __DATE__, __TIME__);
-                        sLog.Log("This Source", "%s", EVEMU_REPOSITORY);
-                        sLog.Log("Client", "Codename: %s | Version: %g | Build: %u (macho: %u)", EVEProjectCodename, EVEVersionNumber, EVEBuildVersion, MachoNetVersion );
-                        sLog.Log("Database", "%s@%s:%u", sConfig.database.db.c_str(), sConfig.database.host.c_str(), sConfig.database.port);
-                        sLog.Log("Server Uptime","**NOT_IMPLEMENTED**");
-                        sLog.Log("Memory Usage RSS","GB: %ld, MB: %ld, KB: %ld", r_usage.ru_maxrss/1024/1024, r_usage.ru_maxrss/1024, r_usage.ru_maxrss);
-                        sLog.Log("Clients", "%u", sEntityList.GetClientCount());
-                    }if(cmdStr.compare(0, 1, "h") == 0) {
-                        sLog.Warning("EvEMu", "Current Console Commands and Descriptions:");
-                        sLog.Log("(h)elp", "Prints this dialog");
-                        sLog.Log("e(x)it", "Exits the server, saving all loaded items and logging out all connected clients");
-                        sLog.Log("(c)lients", "Prints the number of connected clients");
-                        sLog.Log("(i)nformation", "Prints the server information: version, uptime, clients, items, systems, bubbles");
-                    }
-                }
-                /
-            }*/
         }
 
         /* UPDATE */
