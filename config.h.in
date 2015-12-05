@@ -47,6 +47,10 @@
 // Define if winsock2.h is available.
 #cmakedefine HAVE_WINSOCK2_H 1
 
+// HAVE_RESOURCE_H
+// Define if resources.h is available.
+#cmakedefine HAVE_RESOURCE_H 1
+
 /*************************************************************************/
 /* Keyword defines                                                       */
 /*************************************************************************/
