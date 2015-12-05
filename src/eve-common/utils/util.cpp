@@ -834,3 +834,9 @@ long CurrentBlueTime() {
     long sec_since_epoch = time(0);
     return (sec_since_epoch*10000000L)+116444736000000000L;
 }
+
+std::string trim(std::string &str) {
+    str.erase(0, str.find_first_not_of(' '));
+    str.erase(str.find_last_not_of(' ')+1);
+    return str;
+}

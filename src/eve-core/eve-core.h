@@ -52,6 +52,10 @@
 #   define NOMINMAX
 #endif /* !HAVE_WINDOWS_H */
 
+#ifdef HAVE_RESOURCE_H
+    #include "sys/resource.h"
+#endif
+
 // Disable auto-linking of any Boost libraries
 #define BOOST_ALL_NO_LIB 1
 
@@ -154,6 +158,7 @@
 /************************************************************************/
 // Boost.Asio
 #include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
 // Gangsta
 #include <GaPreReqs.h>
 #include <GaMath.h>

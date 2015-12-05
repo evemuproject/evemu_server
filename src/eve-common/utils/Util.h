@@ -39,6 +39,9 @@
     bool CheckIPs(const char* szIPList);
     int get_tokens(const char* szInput, char** pOutput, int iMaxCount, char cSeperator);
     long CurrentBlueTime();
+    std::string trim(std::string &str);
+    std::string GetTimeStr(float seconds);
+
 
 #ifdef HAVE_WINDOWS_H
     typedef struct tagTHREADNAME_INFO
