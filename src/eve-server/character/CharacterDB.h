@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur,BB2k
 */
 
 #ifndef __CHARACTERDB_H_INCL__
@@ -142,6 +142,11 @@ public:
     bool ReportRespec(uint32 characterId);
     bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
 
+    // Bounties
+    PyObject *GetTopBounties();
+    uint32    GetBounty(uint32 charID);
+    void      addBounty(uint32 charID, uint32 amount);
+
 private:
     /**
      * djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
@@ -169,6 +174,7 @@ private:
     typedef std::map<uint32, std::string>    CharIdNameMap;
     typedef CharIdNameMap::iterator            CharIdNameMapItr;
     CharIdNameMap mIdNameContainer;
+
 };
 
 #endif
