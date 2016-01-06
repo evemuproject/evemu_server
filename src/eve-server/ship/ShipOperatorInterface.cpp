@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -171,7 +171,7 @@ uint32 ShipOperatorInterface::GetLocationID() const
     assert(false);
 
     // Hack to get rid of warning, code execution should never reach this point
-    return NULL;
+    return 0;
 }
 
 void ShipOperatorInterface::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)

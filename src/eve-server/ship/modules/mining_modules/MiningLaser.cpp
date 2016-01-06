@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -106,7 +106,7 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 			// Charged mining laser:
 			// + Modulated Strip Miner II
 			// + Modulated Deep Core Strip Miner II
-			if( m_chargeRef != NULL )
+			if( m_chargeRef )
 			{
 				m_targetEntity = targetEntity;
 				m_targetID = targetEntity->Item()->itemID();
@@ -248,7 +248,7 @@ void MiningLaser::_ProcessCycle()
 	// Calculate how many units of ore to pull from the asteroid on this cycle:
 	//oreUnitsToPull = asteroidRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
 	oreUnitsToPull = moduleRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
-	if( m_chargeRef != NULL )
+	if( m_chargeRef )
 	{
 		// Use mining crystal charge to multiply ore amount taken:
 		if( moduleRef->HasAttribute(AttrSpecialisationAsteroidYieldMultiplier) )

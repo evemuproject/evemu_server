@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -465,7 +465,7 @@ uint32 TargetManager::TimeToLock(ShipRef ship, SystemEntity *target) const {
     EvilNumber scanRes = ship->GetAttribute(AttrScanResolution);
     EvilNumber sigRad(500);
 
-	if( target->Item() != NULL )
+	if( target->Item().get() != NULL )
 		if( target->Item()->HasAttribute(AttrSignatureRadius) )
 			sigRad = target->Item()->GetAttribute(AttrSignatureRadius);
 

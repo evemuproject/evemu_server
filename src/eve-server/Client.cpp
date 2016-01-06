@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -1788,7 +1788,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
             sLog.Error("Client","Unable to find service to handle call to: %s", packet->dest.service.c_str());
             packet->dest.Dump(CLIENT__ERROR, "    ");
 
-#pragma message( "TODO: throw proper exception to client (exceptions.ServiceNotFound)." )
+            //TODO: throw proper exception to client (exceptions.ServiceNotFound).
             throw PyException( new PyNone );
         }
     }

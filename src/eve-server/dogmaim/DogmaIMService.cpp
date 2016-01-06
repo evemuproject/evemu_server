@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -265,7 +265,7 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	// Get Reference to Ship, Module, and Charge
 	ShipRef shipRef = call.client->GetShip();
 	InventoryItemRef moduleRef = shipRef->GetModule(args.moduleItemID);
-	if( moduleRef == NULL )
+	if( moduleRef.get() == NULL )
 	{
 		sLog.Error("DogmaIMBound::Handle_LoadAmmoToBank()", "ERROR: cannot find module into which charge should be loaded!  How did we get here!?!?!" );
 		return NULL;
@@ -555,7 +555,7 @@ PyResult DogmaIMBound::Handle_GetAllInfo( PyCallArgs& call )
 
     //Contains a dict of the ship and its modules
 
-    if(call.client->GetShip() == NULL) {
+    if( call.client->GetShip().get() == NULL ) {
         codelog(SERVICE__ERROR, "Unable to build ship status for ship %u", call.client->GetShipID());
         return NULL;
     }
