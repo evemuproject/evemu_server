@@ -36,19 +36,19 @@ int utils_EvilNumberTest( int argc, char* argv[] )
 	::printf( "\n\n========================================================================\n" );
 	::printf( " Testing Evilnumber unary operators:\n\n" );
     // UNARY:
-    ::printf( "before ival1++   ival1 = %s\n", ival1.to_str().c_str(), result.to_str().c_str() );
+    ::printf( "before ival1++   ival1 = %s\n", ival1.to_str().c_str() );
     result = ival1++;
-    ::printf( "ival1++ = %s\n\n", ival1.to_str().c_str(), result.to_str().c_str() );
+    ::printf( "ival1++ = %s\n\n", ival1.to_str().c_str() );
 
-    ::printf( "before ival2--   ival2 = %s\n", ival2.to_str().c_str(), result.to_str().c_str() );
+    ::printf( "before ival2--   ival2 = %s\n", ival2.to_str().c_str() );
     result = ival2--;
     ::printf( "ival2-- = %s-- = %s\n\n", ival2.to_str().c_str(), result.to_str().c_str() );
 
-    ::printf( "before fval1++   fval1 = %s\n", fval1.to_str().c_str(), result.to_str().c_str() );
+    ::printf( "before fval1++   fval1 = %s\n", fval1.to_str().c_str() );
     result = fval1++;
     ::printf( "fval1++ = %s++ = %s\n\n", fval1.to_str().c_str(), result.to_str().c_str() );
 
-    ::printf( "before fval2--   fval2 = %s\n", fval2.to_str().c_str(), result.to_str().c_str() );
+    ::printf( "before fval2--   fval2 = %s\n", fval2.to_str().c_str() );
     result = fval2--;
     ::printf( "fval2-- = %s-- = %s\n\n", fval2.to_str().c_str(), result.to_str().c_str() );
 
@@ -151,7 +151,7 @@ int utils_EvilNumberTest( int argc, char* argv[] )
 
 	::printf( "\n\n========================================================================\n" );
 	::printf( " Testing Evilnumber binary operators with mixed data types:\n\n" );
-	
+
 	EvilNumber three = 3.0;
 
 	result = three + 1;
