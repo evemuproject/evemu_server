@@ -232,12 +232,6 @@ ADD_SUBDIRECTORY( "src/eve-collector" )
 ADD_SUBDIRECTORY( "src/eve-tool" )
 ADD_SUBDIRECTORY( "src/eve-test" )
 
-IF( DOXYGEN_FOUND )
-  ADD_SUBDIRECTORY( "doc" )
-ELSE()
-  MESSAGE( WARNING "If you require generated documentation, please install Doxygen" )
-ENDIF( DOXYGEN_FOUND )
-
 ###############
 # CPack setup #
 ###############
