@@ -99,3 +99,32 @@ build/
 # DS_Store stuff
 .DS_Store
 ._.DS_Store
+
+# netbeans
+nbproject/
+nbproject/private/
+
+# CMake
+*.cmake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Generated files
+*.zip
+config.h
+src/eve-common/packets/
+src/eve-test/eve-test.cpp
+
+# executables
+src/eve-server/eve-server
+src/eve-test/eve-test
+src/eve-tool/eve-tool
+src/eve-xmlpktgen/eve-xmlpktgen
+
+#utf8
+utf8_v2_3_2/
