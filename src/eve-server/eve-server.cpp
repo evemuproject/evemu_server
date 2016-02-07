@@ -97,6 +97,7 @@
 #include "market/ContractMgrService.h"
 #include "market/ContractProxy.h"
 #include "market/MarketProxyService.h"
+#include "market/NPCMarket.h"
 // mining services
 #include "mining/ReprocessingService.h"
 // missions services
@@ -232,11 +233,11 @@ int main( int argc, char* argv[] )
 
     //make the item factory
     ItemFactory item_factory( sEntityList );
-	sLog.Log("Server Init", "starting item factory");
+  sLog.Log("Server Init", "starting item factory");
 
     //now, the service manager...
     PyServiceMgr services( 888444, sEntityList, item_factory );
-	sLog.Log("Server Init", "starting service manager");
+  sLog.Log("Server Init", "starting service manager");
 
     //setup the command dispatcher
     CommandDispatcher command_dispatcher( services );
@@ -248,7 +249,7 @@ int main( int argc, char* argv[] )
      */
     sLog.Log("Server Init", "Creating services.");
 
-    // Please keep the services list clean so it's easyier to find something
+    // Please keep the services list clean so it's easier to find something
 
     services.RegisterService(new AccountService(&services));
     services.RegisterService(new AgentMgrService(&services));
@@ -331,52 +332,55 @@ int main( int argc, char* argv[] )
 
     // start up the image server
     sImageServer.Run();
-	sLog.Log("Server Init", "started image server");
+  sLog.Log("Server Init", "started image server");
 
     // start up the api server
     sAPIServer.CreateServices( services );
     sAPIServer.Run();
-	sLog.Log("Server Init", "started API server");
+  sLog.Log("Server Init", "started API server");
 
     // start up the image server
-    sLog.Log("Server Init", "Loading Dynamic Database Table Objects...");
+  sLog.Log("Server Init", "Loading Dynamic Database Table Objects...");
 
-	// Create In-Memory Database Objects for Critical Systems, such as ModuleManager:
-	sLog.Log("Server Init", "---> sDGM_Effects_Table: Loading...");
-	sDGM_Effects_Table.Initialize();
-	sLog.Log("Server Init", "---> sDGM_Type_Effects_Table: Loading...");
-	sDGM_Type_Effects_Table.Initialize();
-	sLog.Log("Server Init", "---> sDGM_Skill_Bonus_Modifiers_Table: Loading...");
-	sDGM_Skill_Bonus_Modifiers_Table.Initialize();
-	//sLog.Log("Server Init", "---> sDGM_Ship_Bonus_Modifiers_Table: Loading...");
-	//sDGM_Ship_Bonus_Modifiers_Table.Initialize();
-	sLog.Log("Server Init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
-	sDGM_Types_to_Wrecks_Table.Initialize();
+  // Create In-Memory Database Objects for Critical Systems, such as ModuleManager:
+  sLog.Log("Server Init", "---> sDGM_Effects_Table: Loading...");
+  sDGM_Effects_Table.Initialize();
+  sLog.Log("Server Init", "---> sDGM_Type_Effects_Table: Loading...");
+  sDGM_Type_Effects_Table.Initialize();
+  sLog.Log("Server Init", "---> sDGM_Skill_Bonus_Modifiers_Table: Loading...");
+  sDGM_Skill_Bonus_Modifiers_Table.Initialize();
+  //sLog.Log("Server Init", "---> sDGM_Ship_Bonus_Modifiers_Table: Loading...");
+  //sDGM_Ship_Bonus_Modifiers_Table.Initialize();
+  sLog.Log("Server Init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
+  sDGM_Types_to_Wrecks_Table.Initialize();
 
 #ifdef HAVE_UNISTD_H
-	if(getuid() == 0){
-		sLog.Warning("Server Init", "Running as root. Attempting to drop root privileges.");
-		// uid:gid 99:99 is nobody:nobody on my system. seems standard across all my linux systems. (arch, centos, debian)
-		if (setgid(99) != 0) {
-			sLog.Error("Server Init", "setgid: Unable to drop group privileges: %s", strerror(errno));
-			RunLoops = false;
-		}
-		if (setuid(99) != 0) {
-			sLog.Error("Server Init", "setuid: Unable to drop user privileges: %S", strerror(errno));
-			RunLoops = false;
-		}
-		sLog.Success("Server Init", "Dropped root privileges successfully: %u", getuid());
-	}
+  if(getuid() == 0) {
+    sLog.Warning("Server Init", "Running as root. Attempting to drop root privileges.");
+    // uid:gid 99:99 is nobody:nobody on my system. seems standard across all my linux systems. (arch, centos, debian)
+    if(setgid(99) != 0) {
+      sLog.Error("Server Init", "setgid: Unable to drop group privileges: %s", strerror(errno));
+      RunLoops = false;
+    }
+    if(setuid(99) != 0) {
+      sLog.Error("Server Init", "setuid: Unable to drop user privileges: %S", strerror(errno));
+      RunLoops = false;
+    }
+    sLog.Success("Server Init", "Dropped root privileges successfully: %u", getuid());
+  }
 #endif /* HAVE_UNISTD_H */
+
+    // Seed NPC market.  This would probably be better in a GM command?
+    NPCMarket::CreateNPCMarketFromFile(EVEMU_ROOT "/etc/npcMarket.xml", false);
 
     sLog.Success("Server Init", "Initialisation finished");
 
-	/////////////////////////////////////////////////////////////////////////////////////
-	//     !!!  DO NOT PUT ANY INITIALIZATION CODE OR CALLS BELOW THIS LINE   !!!
-	/////////////////////////////////////////////////////////////////////////////////////
-	services.serviceDB().SetServerOnlineStatus(true);
-	sLog.Success("STATUS", "SERVER IS NOW [ONLINE]");
-	sLog.Log("INFO", "(press Ctrl+C to start controlled server shutdown)");
+  /////////////////////////////////////////////////////////////////////////////////////
+  //     !!!  DO NOT PUT ANY INITIALIZATION CODE OR CALLS BELOW THIS LINE   !!!
+  /////////////////////////////////////////////////////////////////////////////////////
+  services.serviceDB().SetServerOnlineStatus(true);
+  sLog.Success("STATUS", "SERVER IS NOW [ONLINE]");
+  sLog.Log("INFO", "(press Ctrl+C to start controlled server shutdown)");
 
     /*
      * THE MAIN LOOP
@@ -424,6 +428,9 @@ int main( int argc, char* argv[] )
     // Shutting down EVE Client TCP listener
     tcps.Close();
     sLog.Log("Server Shutdown", "TCP listener stopped." );
+
+    // Stop any running market seeder.
+    NPCMarket::StopSeeding();
 
     // Shutting down API Server:
     sAPIServer.Stop();
