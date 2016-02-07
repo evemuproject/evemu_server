@@ -194,10 +194,8 @@ public:
     bool SetAttribute(uint32 attributeID, double num, bool notify = true, bool shadow_copy_to_default_set = false);
     bool SetAttribute(uint32 attributeID, EvilNumber num, bool notify = true, bool shadow_copy_to_default_set = false);
 
-    EvilNumber GetAttribute(uint32 attributeID);
     EvilNumber GetAttribute(const uint32 attributeID) const;
 
-    EvilNumber GetDefaultAttribute(uint32 attributeID);
     EvilNumber GetDefaultAttribute(const uint32 attributeID) const;
 
     /*
@@ -207,7 +205,7 @@ public:
      *
      * @note this function should be used very infrequently and only for specific reasons
      */
-    bool HasAttribute(uint32 attributeID) const;
+    bool HasAttribute(const uint32 attributeID) const;
 
     /**
      * SaveAttributes
