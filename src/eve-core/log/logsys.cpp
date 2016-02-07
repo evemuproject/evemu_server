@@ -27,6 +27,9 @@
 
 #include "log/logsys.h"
 #include "utils/utils_hex.h"
+#include "threading/Mutex.h"
+
+Mutex mLogSys;
 
 FILE *logsys_log_file = NULL;
 
@@ -37,9 +40,9 @@ const char *log_category_names[NUMBER_OF_LOG_CATEGORIES] = {
 
 //this array is private to this file, only a const version of it is exposed
 #define LOG_TYPE(category, type, enabled, str) { enabled, LOG_ ##category, #category "__" #type, str },
-static LogTypeStatus real_log_type_info[NUMBER_OF_LOG_TYPES+1] =
-{
-    #include "log/logtypes.h"
+static LogTypeStatus real_log_type_info[NUMBER_OF_LOG_TYPES+1] ={
+#include "log/logtypes.h"
+#include "utils/Lock.h"
     { false, NUMBER_OF_LOG_CATEGORIES, "BAD TYPE", "Bad Name" } /* dummy trailing record */
 };
 
@@ -113,6 +116,8 @@ extern void log_messageVA( LogType type, uint32 iden, const char *fmt, va_list a
     log_msg[log_msg_index++] = '\n';
     log_msg[log_msg_index++] = '\0';
 
+    MutexLock lock(mLogSys);
+
     fputs(log_msg, stdout);
 
     //print into the logfile (if any)
@@ -122,6 +127,8 @@ extern void log_messageVA( LogType type, uint32 iden, const char *fmt, va_list a
         //keep the logfile updated
         fflush(logsys_log_file);
     }
+
+    lock.Unlock();
 
     free(log_msg);
 }
@@ -143,16 +150,21 @@ void log_toggle( LogType t )
 
 bool log_open_logfile( const char* filename )
 {
-    if( !log_close_logfile() )
-        return false;
+    MutexLock lock(mLogSys);
+    if (NULL == logsys_log_file)
+    {
+        if (!log_close_logfile())
+            return false;
+    }
 
-    logsys_log_file = fopen( filename, "w" );
-    return ( NULL != logsys_log_file );
+    logsys_log_file = fopen(filename, "w");
+    return ( NULL != logsys_log_file);
 }
 
 bool log_close_logfile()
 {
-    if( NULL == logsys_log_file )
+    MutexLock lock(mLogSys);
+    if( NULL == logsys_log_file)
         return true;
     return ( 0 == fclose( logsys_log_file ) );
 }
