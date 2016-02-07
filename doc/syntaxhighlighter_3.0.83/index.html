@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Hello SyntaxHighlighter</title>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushCSharp.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+</head>
+
+<body style="background: white; font-family: Helvetica">
+
+<h1>Hello SyntaxHighlighter</h1>
+<pre class="brush: csharp">
+using System;
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Mvc;
+using System.Linq;
+using System.Web.Routing;
+using AHSchedulingDataModel;
+
+namespace AHRSScheduling.Controllers
+{
+    [Authorize]
+    public class ScheduleController : Controller
+    {
+        private DataContext db = new DataContext();
+        //
+        // GET: /Schedule/
+
+        public ActionResult Index(Guid id)
+        {
+            var Org = db.Orginizaitons.Find(HttpContext.GetSessionOrg().Id);
+            if (Org != null)
+            {
+                ViewBag.Engineers = Org.Engineers.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList();
+                ViewBag.Area = Org.Areas.First(x => x.Id == id);
+
+                return View(Org);
+            }
+            
+            return RedirectToAction("Index", "Orginization", new RouteValueDictionary());
+
+            
+        }
+        public ActionResult Calendar()
+        {
+            return View();
+        }
+    }
+}
+
+</pre>
+
+</html>

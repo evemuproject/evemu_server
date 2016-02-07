@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>EVEmu Developer documentation</title>
+
+    <!-- jQuery & QUnit -->
+    <script type="text/javascript" src="js/jquery-1.4.2.js"></script>
+    <script type="text/javascript" src="js/qunit.js"></script>
+    <link type="text/css" rel="stylesheet" href="js/qunit.css"/>
+    <!-- SyntaxHighlighter -->
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushBash.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushCpp.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushDiff.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushPython.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushSql.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="../syntaxhighlighter_3.0.83/styles/shCoreDefault.css"/>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+    <h3>The Packet Dispatcher</h3>
+    The packet dispatcher is relativly simple.  The packet is checked to confirm what type it is then the appropriate virtual function is called.  In EVEPacketDispatcher these functions generate an error message and do nothing.  The derived entity must provide handlers for anything to be done.<br>
+      The packet types and their handlers are.<br>
+        AUTHENTICATION_REQ = Handle_AuthenticationReq<br>
+AUTHENTICATION_RSP = Handle_AuthenticationRsp<br>
+CALL_REQ = Handle_CallReq<br>
+CALL_RSP = Handle_CallRsp<br>
+NOTIFICATION = Handle_Notify<br>
+ERRORRESPONSE = Handle_ErrorResponse<br>
+SESSIONCHANGENOTIFICATION = Handle_SessionChange<br>
+PING_REQ = Handle_PingReq<br>
+PING_RSP = Handle_PingRsp<br>
+default = Handle_Other<br>
+    The only handlers that are implemented in the client object are Ping_Req and Ping_Rsp  These simply send and respond to pings.  And the Call_Req and Notification handlers.
+    <pre class="brush: cpp">
+bool EVEPacketDispatcher::DispatchPacket( PyPacket* packet )
+{
+    switch( packet->type )
+    {
+        default:
+        {
+            return Handle_Other( packet );
+        }
+    }
+}
+    </pre>
+  </body>
+</html>

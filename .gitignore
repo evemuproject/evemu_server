@@ -115,10 +115,10 @@ install_manifest.txt
 compile_commands.json
 
 # Generated files
-*.zip
 config.h
 src/eve-common/packets/
 src/eve-test/eve-test.cpp
+evemu_client_stack_trace.txt
 
 # executables
 src/eve-server/eve-server
@@ -127,4 +127,5 @@ src/eve-tool/eve-tool
 src/eve-xmlpktgen/eve-xmlpktgen
 
 #utf8
+utf8_v2_3_2.zip
 utf8_v2_3_2/
