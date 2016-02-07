@@ -116,15 +116,21 @@ compile_commands.json
 
 # Generated files
 config.h
-src/eve-common/packets/
+src/eve-common/packets/*.h
+src/eve-common/packets/*.cpp
 src/eve-test/eve-test.cpp
 evemu_client_stack_trace.txt
 
-# executables
+# executables - Linux
 src/eve-server/eve-server
 src/eve-test/eve-test
 src/eve-tool/eve-tool
 src/eve-xmlpktgen/eve-xmlpktgen
+# executables - Windows
+eve-server.exe
+eve-test.exe
+eve-tool.exe
+eve-xmlpktgen.exe
 
 #utf8
 utf8_v2_3_2.zip
