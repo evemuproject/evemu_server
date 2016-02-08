@@ -350,14 +350,36 @@ struct FileHeaderObj
 
 void StuffExtract( const Seperator& cmd )
 {
-    const char* cmdName = cmd.arg( 0 ).c_str();
+    const char* cmdName = cmd.arg(0).c_str();
+    int curArg = 1;
 
-    if( 2 != cmd.argCount() )
+    if (cmd.argCount() < 2)
     {
-        sLog.Error( cmdName, "Usage: %s [.stuff file]", cmdName );
+        sLog.Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
         return;
     }
-    const std::string& filename = cmd.arg( 1 );
+
+    std::string outPath = ".";
+    const std::string& pathCmd = cmd.arg(curArg);
+    if (pathCmd == "-O" || pathCmd == "-o")
+    {
+        curArg++;
+        if ((curArg + 2) != cmd.argCount())
+        {
+            sLog.Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
+            return;
+        }
+        outPath = cmd.arg(curArg);
+        curArg++;
+    }
+
+    if ((curArg + 1) != cmd.argCount())
+    {
+        sLog.Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
+        return;
+    }
+
+    const std::string& filename = cmd.arg(curArg);
 
     FILE* in = fopen( filename.c_str(), "rb" );
     if( NULL == in )
@@ -418,7 +440,7 @@ void StuffExtract( const Seperator& cmd )
         std::vector<std::string> components;
         SplitPath( cur->filename, components );
 
-        std::string pathname = ".";
+        std::string pathname = outPath;
 
         std::vector<std::string>::const_iterator curc, endc;
         curc = components.begin();
