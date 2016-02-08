@@ -28,7 +28,7 @@
 #include "Commands.h"
 
 const char* const CACHE_DIR =         EVEMU_ROOT "/cache";
-const char* const LOG_FILE =          EVEMU_ROOT "/log/eve-tool.log";
+const char* const LOG_FILE = EVEMU_ROOT "/log/eve-tool_";
 const char* const LOG_SETTINGS_FILE = EVEMU_ROOT "/etc/log.ini";
 
 int main( int argc, char* argv[] )
@@ -38,16 +38,12 @@ int main( int argc, char* argv[] )
     _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG ) );
 #endif /* defined( HAVE_CRTDBG_H ) && !defined( NDEBUG ) */
 
+    sLog.InitializeLogging(LOG_FILE);
     // Load server log settings ( will be removed )
     if( !load_log_settings( LOG_SETTINGS_FILE ) )
         sLog.Warning( "init", "Unable to read %s (this file is optional)", LOG_SETTINGS_FILE );
     else
         sLog.Success( "init", "Log settings loaded from %s", LOG_SETTINGS_FILE );
-
-    if( !log_open_logfile( LOG_FILE ) )
-        sLog.Warning( "init", "Unable to open log file '%s', only logging to the screen now.", LOG_FILE );
-    else
-        sLog.Success( "init", "Opened log file %s", LOG_FILE );
 
     //skip first argument (launch path), we don't need it
     --argc;
