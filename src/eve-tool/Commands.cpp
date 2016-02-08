@@ -462,17 +462,20 @@ void StuffExtract( const Seperator& cmd )
 
                 sLog.Log( cmdName, "Extracting file %s of length %u.", pathname.c_str(), cur->length );
 
-                Buffer buf( cur->length );
-                if( cur->length != fread( &buf[0], 1, cur->length, in ) )
+                if (cur->length > 0)
                 {
-                    sLog.Error( cmdName, "Unable to read file %s: %s.", cur->filename.c_str(), strerror( errno ) );
-                    break;
-                }
+                    Buffer buf(cur->length);
+                    if (cur->length != fread(&buf[0], 1, cur->length, in))
+                    {
+                        sLog.Error(cmdName, "Unable to read file %s: %s.", cur->filename.c_str(), strerror(errno));
+                        break;
+                    }
 
-                if( cur->length != fwrite( &buf[0], 1, cur->length, out ) )
-                {
-                    sLog.Error( cmdName, "Unable to write file %s: %s", pathname.c_str(), strerror( errno ) );
-                    break;
+                    if (cur->length != fwrite(&buf[0], 1, cur->length, out))
+                    {
+                        sLog.Error(cmdName, "Unable to write file %s: %s", pathname.c_str(), strerror(errno));
+                        break;
+                    }
                 }
 
                 fclose( out );
