@@ -163,7 +163,6 @@ protected:
 /**
  * DynamicSystemEntity which represents celestial object in space
  */
-class PyServiceMgr;
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
@@ -177,7 +176,6 @@ public:
         CelestialObjectRef celestial,
         //InventoryItemRef celestial,
         SystemManager *system,
-        PyServiceMgr &services,
         const GPoint &position);
 
     /*
@@ -234,7 +232,6 @@ protected:
      * Member fields:
      */
     SystemManager *const m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
     CelestialObjectRef _celestialRef;   // We don't own this
 //    InventoryItemRef _celestialRef;     // We don't own this
 

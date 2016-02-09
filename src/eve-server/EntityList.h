@@ -34,7 +34,6 @@ class PyAddress;
 class EVENotificationStream;
 class SystemManager;
 class PyTuple;
-class PyServiceMgr;
 
 typedef enum {
     NOTIF_DEST__LOCATION,
@@ -52,8 +51,6 @@ public:
 class EntityList
 {
 public:
-
-    static void UseServices(PyServiceMgr *svc);
 
     typedef std::set<uint32> character_set;
 

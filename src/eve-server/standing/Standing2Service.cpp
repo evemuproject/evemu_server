@@ -28,11 +28,12 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "standing/Standing2Service.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(Standing2Service)
 
-Standing2Service::Standing2Service(PyServiceMgr *mgr)
-: PyService(mgr, "standing2"),
+Standing2Service::Standing2Service()
+: PyService("standing2"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -99,17 +100,18 @@ PyResult Standing2Service::Handle_GetNPCNPCStandings(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetNPCNPCStandings");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetNPCStandings();
         if(result == NULL)
             result = new PyNone();
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -122,7 +124,7 @@ PyResult Standing2Service::Handle_GetSecurityRating(PyCallArgs &call) {
         return NULL;
     }
 
-    CharacterRef c = m_manager->item_factory.GetCharacter( arg.arg );
+    CharacterRef c = PyServiceMgr::item_factory->GetCharacter(arg.arg);
     if( !c ) {
         _log(SERVICE__ERROR, "Character %u not found.", arg.arg);
         return NULL;
@@ -146,24 +148,26 @@ PyResult Standing2Service::Handle_GetStandingTransactions(PyCallArgs &call) {
 PyResult Standing2Service::Handle_GetCharStandings(PyCallArgs &call) {
     ObjectCachedSessionMethodID method_id(GetName(), "GetCharStandings", call.client->GetCharacterID());
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyObjectEx *t = m_db.GetCharStandings(call.client->GetCharacterID());
 
-        m_manager->cache_service->GiveCache(method_id, (PyRep **)&t);
+        PyServiceMgr::cache_service->GiveCache(method_id, (PyRep **) & t);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedSessionMethodCallResult(method_id, "charID"));
+    return (PyServiceMgr::cache_service->MakeObjectCachedSessionMethodCallResult(method_id, "charID"));
 }
 PyResult Standing2Service::Handle_GetCorpStandings(PyCallArgs &call) {
     ObjectCachedSessionMethodID method_id(GetName(), "GetCorpStandings", call.client->GetCorporationID());
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyObjectEx *t = m_db.GetCorpStandings(call.client->GetCorporationID());
 
-        m_manager->cache_service->GiveCache(method_id, (PyRep **)&t);
+        PyServiceMgr::cache_service->GiveCache(method_id, (PyRep **) & t);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedSessionMethodCallResult(method_id, "corpID"));
+    return (PyServiceMgr::cache_service->MakeObjectCachedSessionMethodCallResult(method_id, "corpID"));
 }
 
 

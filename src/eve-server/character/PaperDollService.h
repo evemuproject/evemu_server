@@ -40,7 +40,7 @@
  */
 class PaperDollService : public PyService {
 public:
-    PaperDollService(PyServiceMgr* mgr);
+    PaperDollService();
     virtual ~PaperDollService();
 
 private:

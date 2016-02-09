@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(CharFittingMgrService)
 
-CharFittingMgrService::CharFittingMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "charFittingMgr"),
+CharFittingMgrService::CharFittingMgrService()
+: PyService("charFittingMgr"),
 m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

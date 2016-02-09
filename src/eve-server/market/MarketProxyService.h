@@ -33,7 +33,7 @@ class MarketProxyService
 : public PyService
 {
 public:
-    MarketProxyService(PyServiceMgr *mgr);
+    MarketProxyService();
     virtual ~MarketProxyService();
 
 protected:

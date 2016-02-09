@@ -31,7 +31,7 @@
 class TradeService : public PyService
 {
 public:
-    TradeService(PyServiceMgr *mgr);
+    TradeService();
     virtual ~TradeService();
 
 protected:

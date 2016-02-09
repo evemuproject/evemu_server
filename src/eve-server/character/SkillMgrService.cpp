@@ -27,12 +27,13 @@
 
 #include "PyServiceCD.h"
 #include "character/SkillMgrService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(SkillMgrService)
 PyCallable_Make_InnerDispatcher(SkillMgrBound)
 
-SkillMgrService::SkillMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "skillMgr"),
+SkillMgrService::SkillMgrService()
+: PyService("skillMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -46,11 +47,11 @@ PyBoundObject *SkillMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
     _log(CLIENT__MESSAGE, "SkillMgrService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new SkillMgrBound(m_manager, m_db));
+    return(new SkillMgrBound(m_db));
 }
 
-SkillMgrBound::SkillMgrBound(PyServiceMgr *mgr, CharacterDB &db)
-: PyBoundObject(mgr),
+SkillMgrBound::SkillMgrBound(CharacterDB &db)
+: PyBoundObject(),
   m_dispatch(new Dispatcher(this)),
   m_db(db)
 {
@@ -243,7 +244,7 @@ PyResult SkillMgrBound::Handle_RespecCharacter(PyCallArgs &call)
         codelog(CLIENT__ERROR, "Failed to decode RespecCharacter arguments");
         return NULL;
     }
-	
+
 	CharacterRef cref = call.client->GetChar();
 	if( cref->GetSkillInTraining() )
 		throw(PyException(MakeUserError("RespecSkillInTraining")));
@@ -315,7 +316,7 @@ PyResult SkillMgrBound::Handle_InjectSkillIntoBrain(PyCallArgs &call)
     end = args.skills.end();
     for(; cur != end; cur++)
     {
-        SkillRef skill = m_manager->item_factory.GetSkill( *cur );
+        SkillRef skill = PyServiceMgr::item_factory->GetSkill(*cur);
         if( !skill )
         {
             codelog( ITEM__ERROR, "%s: failed to load skill item %u for injection.", call.client->GetName(), *cur );

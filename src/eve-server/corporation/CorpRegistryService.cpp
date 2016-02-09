@@ -31,6 +31,7 @@
 #include "cache/ObjCacheService.h"
 #include "chat/LSCService.h"
 #include "corporation/CorpRegistryService.h"
+#include "PyServiceMgr.h"
 
 class CorpRegistryBound
 : public PyBoundObject
@@ -38,8 +39,8 @@ class CorpRegistryBound
 public:
     PyCallable_Make_Dispatcher(CorpRegistryBound)
 
-    CorpRegistryBound(PyServiceMgr *mgr, CorporationDB& db)
-    : PyBoundObject(mgr),
+    CorpRegistryBound(CorporationDB& db)
+    : PyBoundObject(),
       m_db(db),
       m_dispatch(new Dispatcher(this))
     {
@@ -130,8 +131,8 @@ public:
     // or CorpRegistryBound?
     PyCallable_Make_Dispatcher(SparseCorpOfficeListBound)
 
-    SparseCorpOfficeListBound(PyServiceMgr *mgr, CorporationDB& db)
-    : PyBoundObject(mgr),
+    SparseCorpOfficeListBound(CorporationDB& db)
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this)),
       m_db(db)
     {
@@ -159,8 +160,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(CorpRegistryService)
 
-CorpRegistryService::CorpRegistryService(PyServiceMgr *mgr)
-: PyService(mgr, "corpRegistry"),
+CorpRegistryService::CorpRegistryService()
+: PyService("corpRegistry"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -179,7 +180,7 @@ PyBoundObject* CorpRegistryService::_CreateBoundObject( Client* c, const PyRep* 
     _log( CLIENT__MESSAGE, "CorpRegistryService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new CorpRegistryBound( m_manager, m_db );
+    return new CorpRegistryBound( m_db );
 }
 
 
@@ -244,7 +245,7 @@ PyResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
     }
     //adding a corporation might affect eveStaticOwners, so we gotta invalidate the cache...
     PyString* cache_name = new PyString( "config.StaticOwners" );
-    m_manager->cache_service->InvalidateCache( cache_name );
+    PyServiceMgr::cache_service->InvalidateCache(cache_name);
     PySafeDecRef( cache_name );
 
     //take the money out of their wallet (sends wallet blink event)
@@ -422,7 +423,7 @@ PyResult CorpRegistryBound::Handle_GetOffices(PyCallArgs &call) {
     // First create the boundable object
 
     PyBoundObject *bObj;
-    bObj = new SparseCorpOfficeListBound(m_manager, m_db);
+    bObj = new SparseCorpOfficeListBound( m_db);
     if(bObj == NULL) {
         _log(SERVICE__ERROR, "%s: Unable to create bound object for:", call.client->GetName());
         return NULL;
@@ -442,9 +443,9 @@ PyResult CorpRegistryBound::Handle_GetOffices(PyCallArgs &call) {
     // But this one holds the real row number
     ret.officeNumber = officeN;
 
-    ret.bindedObject = m_manager->BindObject(call.client, bObj, &dict);
+    ret.bindedObject = PyServiceMgr::BindObject(call.client, bObj, &dict);
 
-    //call.client->temp_hack_officeLists[call.client->GetCorporationID()] = bindID; //m_manager->FindBoundObject(bObj);
+    //call.client->temp_hack_officeLists[call.client->GetCorporationID()] = bindID; //PyServiceMgr::FindBoundObject(bObj);
 
     PyObject * res = ret.Encode();
     return res;
@@ -518,7 +519,7 @@ PyResult CorpRegistryBound::Handle_InsertApplication(PyCallArgs &call) {
         body = res.message;
     std::vector<int32> recipients;
     recipients.push_back(m_db.GetCorporationCEO(res.corpID));
-    m_manager->lsc_service->SendMail(call.client->GetCharacterID(), recipients, subject, body);
+    PyServiceMgr::lsc_service->SendMail(call.client->GetCharacterID(), recipients, subject, body);
 
     /// Reply: ~\x00\x00\x00\x00\x01
     return NULL;

@@ -30,7 +30,7 @@
 
 class PhotoUploadService : public PyService {
 public:
-    PhotoUploadService(PyServiceMgr* mgr);
+    PhotoUploadService();
     virtual ~PhotoUploadService();
 
 private:

@@ -30,6 +30,7 @@
 #include "admin/CommandDispatcher.h"
 #include "admin/SlashService.h"
 #include "chat/LSCService.h"
+#include "PyServiceMgr.h"
 
 // Set the base (minimum) and maximum numbers for any user-created chat channel.
 const uint32 LSCService::BASE_CHANNEL_ID = 200000000;
@@ -37,8 +38,8 @@ const uint32 LSCService::MAX_CHANNEL_ID = 0xFFFFFFFF;
 
 PyCallable_Make_InnerDispatcher(LSCService)
 
-LSCService::LSCService(PyServiceMgr *mgr, CommandDispatcher* cd)
-: PyService(mgr, "LSC"),
+LSCService::LSCService(CommandDispatcher* cd)
+: PyService("LSC"),
   m_dispatch(new Dispatcher(this)),
   m_commandDispatch(cd)
 {
@@ -1028,8 +1029,8 @@ PyResult LSCService::Handle_SendMessage( PyCallArgs& call )
     {
         sLog.Debug( "LSCService::Handle_SendMessage()", "CALL to SlashService->SlashCmd() via LSC Service, baby!" );
 
-        if( m_manager->LookupService("slash") != NULL )
-            static_cast<SlashService *>(m_manager->LookupService("slash"))->SlashCommand( call.client, message );
+        if (PyServiceMgr::LookupService("slash") != NULL)
+            static_cast<SlashService *> (PyServiceMgr::LookupService("slash"))->SlashCommand(call.client, message);
 
         message = " ";      // Still transmit some message but minimal so that chat window is not "locked" by client for not getting a chat
     }
@@ -1265,7 +1266,7 @@ void Client::SelfEveMail( const char* subject, const char* fmt, ... )
 
     va_end( args );
 
-    m_services.lsc_service->SendMail( GetCharacterID(), GetCharacterID(), subject, str );
+    PyServiceMgr::lsc_service->SendMail(GetCharacterID(), GetCharacterID(), subject, str);
     SafeFree( str );
 }
 

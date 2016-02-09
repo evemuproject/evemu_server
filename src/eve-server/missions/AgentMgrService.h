@@ -35,7 +35,7 @@ class Agent;
 class AgentMgrService : public PyService
 {
 public:
-    AgentMgrService(PyServiceMgr *mgr);
+    AgentMgrService();
     virtual ~AgentMgrService();
 
 protected:

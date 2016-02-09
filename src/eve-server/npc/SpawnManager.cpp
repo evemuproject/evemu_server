@@ -75,9 +75,8 @@ SpawnEntry::SpawnEntry(
 	m_spawningNow = false;
 }
 
-SpawnManager::SpawnManager(SystemManager &mgr, PyServiceMgr &svc)
-: m_system(mgr),
-  m_services(svc)
+SpawnManager::SpawnManager(SystemManager &mgr)
+: m_system(mgr)
 {
 }
 
@@ -97,7 +96,7 @@ SpawnManager::~SpawnManager() {
     }
 }
 
-void SpawnEntry::Process(SystemManager &mgr, PyServiceMgr &svc) {
+void SpawnEntry::Process(SystemManager &mgr) {
     if((m_timer.Check(false)) && (m_spawningNow == false)) {
 		// Timer Expired - Process the Spawn!
 
@@ -156,14 +155,14 @@ void SpawnEntry::Process(SystemManager &mgr, PyServiceMgr &svc) {
 					// EXCELLENT!  We have a player ship and NONE of our NPC ships present in the bubble,
 					// DO THE SPAWN!
 					m_spawnedIDs.clear();
-					_DoSpawn(mgr, svc);
+					_DoSpawn(mgr);
 				}
 			}
 		}
     }
 }
 
-void SpawnEntry::_DoSpawn(SystemManager &mgr, PyServiceMgr &svc) {
+void SpawnEntry::_DoSpawn(SystemManager &mgr) {
     _log(SPAWN__POP, "Spawning spawn entry %u with group %u", m_id, m_group.id);
 
 	bool warpThisSpawnIn = false;
@@ -224,7 +223,7 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr, PyServiceMgr &svc) {
                 flagAutoFit
             );
 
-            InventoryItemRef i = svc.item_factory.SpawnItem(idata);
+            InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
             if( !i ) {
                 _log(SPAWN__ERROR, "Failed to spawn item with type %u for group %u.", cur->npcTypeID, cur->spawnGroupID);
                 continue;
@@ -234,7 +233,7 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr, PyServiceMgr &svc) {
 
             //create them all at the same point to start with...
             //we will move them before they get added to the system
-            NPC *npc = new NPC(&mgr, svc,
+            NPC *npc = new NPC(&mgr,
                 i, cur->corporationID, 0, spawn_point, this);    //TODO: add allianceID
             spawned.push_back(npc);
         }
@@ -266,7 +265,8 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr, PyServiceMgr &svc) {
     endn = spawned.end();
     for(; curn != endn; curn++) {
         //load up any NPC attributes...
-        if(!(*curn)->Load(svc.serviceDB())) {
+        if (!(*curn)->Load(PyServiceMgr::serviceDB()))
+        {
             _log(SPAWN__POP, "Failed to load NPC data for NPC %u with type %u, depoping.", (*curn)->GetID(), (*curn)->Item()->typeID());
             delete *curn;
             continue;
@@ -384,7 +384,7 @@ void SpawnManager::DoSpawnForBubble(SystemBubble &thisBubble)
 	{
 		// We have a spawn entry for this bubble, process it:
 		//thisSpawn->DoSpawnForBubble(m_system, thisBubble);
-		thisSpawn->Process(m_system, m_services);
+		thisSpawn->Process(m_system);
 	}
 }
 
@@ -408,10 +408,10 @@ bool SpawnManager::DoInitialSpawn() {
 
 		if( currentBubble != NULL )
 		{
-			// We found a bubble at our spawn!  Let's see if it has ships 
+			// We found a bubble at our spawn!  Let's see if it has ships
 			entitiesInBubble.clear();
 			currentBubble->GetEntities( entitiesInBubble );
-			
+
 			if( !(entitiesInBubble.empty()) )
 			{
 				// Bubble at our spawn has ships!  Let's see if one or more are from OUR spawn:
@@ -447,7 +447,7 @@ void SpawnManager::Process() {
     cur = m_spawns.begin();
     end = m_spawns.end();
     for(; cur != end; cur++) {
-        cur->second->Process(m_system, m_services);
+        cur->second->Process(m_system);
     }
 }
 

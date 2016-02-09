@@ -28,8 +28,8 @@
 #include "EntityList.h"
 #include "apiserver/APIServerManager.h"
 
-APIServerManager::APIServerManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIServerManager::APIServerManager()
+: APIServiceManager()
 {
 }
 

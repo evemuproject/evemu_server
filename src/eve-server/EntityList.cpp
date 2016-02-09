@@ -35,12 +35,6 @@ client_list m_clients;
 typedef std::map<uint32, SystemManager *> system_list;
 system_list m_systems;
 Mutex mMutex;
-PyServiceMgr *m_services = NULL; //we do not own this, only used for booting systems.
-
-void EntityList::UseServices(PyServiceMgr *svc)
-{
-    m_services = svc;
-}
 
 void EntityList::Add(Client **client)
 {
@@ -386,7 +380,7 @@ SystemManager *EntityList::FindOrBootSystem(uint32 systemID) {
         1
     );
 */
-    SystemManager *mgr = new SystemManager(systemID, *m_services);//, idata);
+    SystemManager *mgr = new SystemManager(systemID);//, idata);
     if(!mgr->BootSystem()) {
         delete mgr;
         return NULL;

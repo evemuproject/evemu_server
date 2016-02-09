@@ -35,8 +35,8 @@ class PosMgrServiceBound
 public:
     PyCallable_Make_Dispatcher(PosMgrServiceBound)
 
-    PosMgrServiceBound(PyServiceMgr *mgr)
-            : PyBoundObject(mgr),
+    PosMgrServiceBound()
+            : PyBoundObject(),
               m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -78,8 +78,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(PosMgrService)
 
-PosMgrService::PosMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "posMgr"),
+PosMgrService::PosMgrService()
+: PyService("posMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -103,7 +103,7 @@ PyBoundObject *PosMgrService::_CreateBoundObject(Client *c, const PyRep *bind_ar
         return NULL;
     }
     bind_args->Dump(stdout, "PosMgrService:CBO:    ");
-    return new PosMgrServiceBound(m_manager);
+    return new PosMgrServiceBound();
 }
 
 PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args) {

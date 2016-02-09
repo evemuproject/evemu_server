@@ -33,7 +33,7 @@ class FleetObject
  : public PyService
 {
 public:
-    FleetObject(PyServiceMgr *mgr);
+    FleetObject();
     ~FleetObject();
 
 protected:

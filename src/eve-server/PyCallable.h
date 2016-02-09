@@ -35,7 +35,6 @@ class PyRep;
 class PyTuple;
 class PyDict;
 
-class PyServiceMgr;
 class PyCallStream;
 
 class PyCallArgs

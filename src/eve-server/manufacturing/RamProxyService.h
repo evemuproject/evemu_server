@@ -33,7 +33,7 @@ static const uint32 ramProductionTimeLimit = 60*60*24*30;   //30 days
 
 class RamProxyService : public PyService {
 public:
-    RamProxyService(PyServiceMgr *mgr);
+    RamProxyService();
     virtual ~RamProxyService();
 
 private:

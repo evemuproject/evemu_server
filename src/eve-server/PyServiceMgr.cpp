@@ -30,18 +30,26 @@
 #include "PyServiceMgr.h"
 #include "PyBoundObject.h"
 
-PyServiceMgr::PyServiceMgr( uint32 nodeID, ItemFactory& ifactory )
-: item_factory( ifactory ),
-  lsc_service( NULL ),
-  cache_service( NULL ),
-  m_nextBindID( 100 ),
-  m_nodeID( nodeID ),
-  m_svcDB()
+ItemFactory *PyServiceMgr::item_factory; //here for anybody to use. we do not own this.
+//Area to access services by name. This isn't ideal, but it avoids casting.
+//these may be NULL during service init, but should never be after that.
+//we do not own these pointers (we do in their PyService * form though)
+LSCService *PyServiceMgr::lsc_service = NULL;
+ObjCacheService *PyServiceMgr::cache_service = NULL;
+std::set<PyService *> PyServiceMgr::m_services; //we own these pointers.
+uint32 PyServiceMgr::m_nextBindID = 100;
+PyServiceMgr::ObjectsBoundMap PyServiceMgr::m_boundObjects;
+uint32 PyServiceMgr::m_nodeID;
+ServiceDB PyServiceMgr::m_svcDB; //this is crap, get rid of this
+
+void PyServiceMgr::Init(uint32 nodeID, ItemFactory *ifactory)
 {
-    EntityList::UseServices(this);
+    item_factory = ifactory;
+    m_nodeID = nodeID;
 }
 
-PyServiceMgr::~PyServiceMgr() {
+void PyServiceMgr::Shutdown()
+{
     {
         std::set<PyService *>::iterator cur, end;
         cur = m_services.begin();

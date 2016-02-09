@@ -32,7 +32,7 @@ class CommandDispatcher;
 class SlashService
 : public PyService {
 public:
-    SlashService(PyServiceMgr *mgr, CommandDispatcher *cd);
+    SlashService(CommandDispatcher *cd);
     virtual ~SlashService();
 
     PyResult SlashCommand(Client * client, std::string command);

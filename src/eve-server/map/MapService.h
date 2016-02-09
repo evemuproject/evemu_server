@@ -33,7 +33,7 @@
 class MapService : public PyService
 {
 public:
-    MapService(PyServiceMgr *mgr);
+    MapService();
     virtual ~MapService();
 
 protected:

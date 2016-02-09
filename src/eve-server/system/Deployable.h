@@ -31,7 +31,6 @@
 /**
  * DynamicSystemEntity which represents structure object in space
  */
-class PyServiceMgr;
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
@@ -44,7 +43,6 @@ public:
     DeployableEntity(
         InventoryItemRef structure,
         SystemManager *system,
-        PyServiceMgr &services,
         const GPoint &position);
 
     /*
@@ -100,7 +98,6 @@ protected:
      * Member fields:
      */
     SystemManager *const m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
     InventoryItemRef _deployableRef;   // We don't own this
 
     /* Used to calculate the damages on NPCs

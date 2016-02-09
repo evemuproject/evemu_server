@@ -31,7 +31,7 @@
 
 class NetService : public PyService {
 public:
-    NetService(PyServiceMgr *mgr);
+    NetService();
     virtual ~NetService();
 
 protected:

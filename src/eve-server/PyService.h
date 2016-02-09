@@ -28,7 +28,6 @@
 #define __PYSERVICE_H_INCL__
 
 #include "PyCallable.h"
-#include "PyServiceMgr.h"
 
 class PyPacket;
 class PyRep;
@@ -45,7 +44,7 @@ class EntityList;
 
 class PyService : public PyCallable {
 public:
-    PyService(PyServiceMgr *mgr, const char *serviceName);
+    PyService(const char *serviceName);
     virtual ~PyService();
 
     //overload Callable for binding:
@@ -87,8 +86,6 @@ protected:
     //some service-level remote calls, need to be reworked:
     virtual PyResult Handle_MachoResolveObject(PyCallArgs &call);
     virtual PyResult Handle_MachoBindObject(PyCallArgs &call);
-
-    PyServiceMgr *const m_manager;
 
 private:
     std::string m_name;

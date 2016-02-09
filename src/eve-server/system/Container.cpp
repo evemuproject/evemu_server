@@ -177,11 +177,9 @@ using namespace Destiny;
 ContainerEntity::ContainerEntity(
     CargoContainerRef container,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), container),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _containerRef = container;
     m_destiny->SetPosition(position, false);

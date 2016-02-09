@@ -33,11 +33,9 @@ using namespace Destiny;
 AsteroidEntity::AsteroidEntity(
     InventoryItemRef asteroid,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), asteroid),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _asteroidRef = asteroid;
     m_destiny->SetPosition(position, false);

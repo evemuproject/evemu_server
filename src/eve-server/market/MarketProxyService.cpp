@@ -29,11 +29,12 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "market/MarketProxyService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(MarketProxyService)
 
-MarketProxyService::MarketProxyService(PyServiceMgr *mgr)
-: PyService(mgr, "marketProxy"),
+MarketProxyService::MarketProxyService()
+: PyService("marketProxy"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -134,19 +135,20 @@ PyResult MarketProxyService::Handle_GetMarketGroups(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetMarketGroups");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetMarketGroups();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -188,10 +190,10 @@ PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
     //TODO: temporary solution, make cache objects with arguments
 
     //TODO: need to check if cache is refreshed when marker orders change.
-//    m_manager->cache_service->InvalidateCache(method_id);
+    //    PyServiceMgr::cache_service->InvalidateCache(method_id);
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id))
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
         uint32 locid = call.client->GetSystemID();
@@ -213,12 +215,12 @@ PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -367,7 +369,7 @@ PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
         //sell order
 
         //verify that they actually have the item in the quantity specified...
-        InventoryItemRef item = m_manager->item_factory.GetItem( args.itemID );
+        InventoryItemRef item = PyServiceMgr::item_factory->GetItem(args.itemID);
         if( !item ) {
             codelog(MARKET__ERROR, "%s: Failed to find item %d for sell order.", call.client->GetName(), args.itemID);
             call.client->SendErrorMsg("Unable to find items %d to sell!", args.itemID);
@@ -550,7 +552,7 @@ PyResult MarketProxyService::Handle_CancelCharOrder(PyCallArgs &call) {
     }
     else
     {
-        InventoryItemRef new_item = m_manager->item_factory.SpawnItem(idata);
+        InventoryItemRef new_item = PyServiceMgr::item_factory->SpawnItem(idata);
         //use the owner change packet to alert the buyer of the new item
         new_item->ChangeOwner(call.client->GetCharacterID(), true);
     }
@@ -658,7 +660,7 @@ void MarketProxyService::_InvalidateOrdersCache(uint32 typeID)
     std::string method_name ("GetOrders_");
     method_name += itoa(typeID);
     ObjectCachedMethodID method_id(GetName(), method_name.c_str());
-    m_manager->cache_service->InvalidateCache( method_id );
+    PyServiceMgr::cache_service->InvalidateCache(method_id);
 }
 
 //NOTE: there are a lot of race conditions to deal with here if we ever
@@ -791,7 +793,7 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
         quantity
     );
 
-    InventoryItemRef new_item = m_manager->item_factory.SpawnItem(idata);
+    InventoryItemRef new_item = PyServiceMgr::item_factory->SpawnItem(idata);
     //use the owner change packet to alert the buyer of the new item
     new_item->ChangeOwner(buyer->GetCharacterID(), true);
 

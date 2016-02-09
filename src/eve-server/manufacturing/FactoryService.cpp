@@ -28,11 +28,12 @@
 #include "PyServiceCD.h"
 #include "manufacturing/Blueprint.h"
 #include "manufacturing/FactoryService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(FactoryService)
 
-FactoryService::FactoryService(PyServiceMgr *mgr)
-: PyService(mgr, "factory"),
+FactoryService::FactoryService()
+: PyService("factory"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -53,7 +54,7 @@ PyResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {
         return NULL;
     }
 
-    BlueprintRef b = m_manager->item_factory.GetBlueprint( arg.arg );
+    BlueprintRef b = PyServiceMgr::item_factory->GetBlueprint(arg.arg);
     if( !b )
         return NULL;
 

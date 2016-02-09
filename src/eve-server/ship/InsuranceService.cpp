@@ -35,8 +35,8 @@ class InsuranceBound
 public:
     PyCallable_Make_Dispatcher(InsuranceBound)
 
-    InsuranceBound(PyServiceMgr *mgr, ShipDB* db)
-    : PyBoundObject(mgr),
+    InsuranceBound(ShipDB* db)
+    : PyBoundObject(),
       m_db(db),
       m_dispatch(new Dispatcher(this))
     {
@@ -64,8 +64,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(InsuranceService)
 
-InsuranceService::InsuranceService(PyServiceMgr *mgr)
-: PyService(mgr, "insuranceSvc"),
+InsuranceService::InsuranceService()
+: PyService("insuranceSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -84,7 +84,7 @@ PyBoundObject* InsuranceService::_CreateBoundObject( Client* c, const PyRep* bin
     _log( CLIENT__MESSAGE, "InsuranceService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new InsuranceBound( m_manager, &m_db );
+    return new InsuranceBound( &m_db );
 }
 
 PyResult InsuranceBound::Handle_GetInsurancePrice( PyCallArgs& call )

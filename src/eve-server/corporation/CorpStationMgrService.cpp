@@ -29,6 +29,7 @@
 #include "PyServiceCD.h"
 #include "chat/LSCService.h"
 #include "corporation/CorpStationMgrService.h"
+#include "PyServiceMgr.h"
 
 class CorpStationMgrIMBound
 : public PyBoundObject
@@ -36,8 +37,8 @@ class CorpStationMgrIMBound
 public:
     PyCallable_Make_Dispatcher(CorpStationMgrIMBound)
 
-    CorpStationMgrIMBound(PyServiceMgr *mgr, CorporationDB& db, uint32 station_id)
-    : PyBoundObject(mgr),
+    CorpStationMgrIMBound(CorporationDB& db, uint32 station_id)
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this)),
       m_db(db),
       m_stationID(station_id)
@@ -87,8 +88,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(CorpStationMgrService)
 
-CorpStationMgrService::CorpStationMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "corpStationMgr"),
+CorpStationMgrService::CorpStationMgrService()
+: PyService("corpStationMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -106,7 +107,7 @@ PyBoundObject *CorpStationMgrService::_CreateBoundObject(Client *c, const PyRep 
         codelog(SERVICE__ERROR, "%s Service: invalid bind argument type %s", GetName(), bind_args->TypeString());
         return NULL;
     }
-    return new CorpStationMgrIMBound( m_manager, m_db, bind_args->AsInt()->value() );
+    return new CorpStationMgrIMBound( m_db, bind_args->AsInt()->value() );
 }
 
 
@@ -168,14 +169,14 @@ PyResult CorpStationMgrIMBound::Handle_GetCorporateStationInfo(PyCallArgs &call)
 
     return(l);
 
-/*
-#warning still using a hacked cache file here!
+    /*
+    #warning still using a hacked cache file here!
 
-    std::string abs_fname = "../data/cache/fgAAAAAsLBAOY29ycFN0YXRpb25NZ3IERJiTAxAXR2V0Q29ycG9yYXRlU3RhdGlvbkluZm8.cache";
+        std::string abs_fname = "../data/cache/fgAAAAAsLBAOY29ycFN0YXRpb25NZ3IERJiTAxAXR2V0Q29ycG9yYXRlU3RhdGlvbkluZm8.cache";
 
-    PySubStream *ss = new PySubStream();
+        PySubStream *ss = new PySubStream();
 
-    if(!m_manager->GetCache()->LoadCachedFile(abs_fname.c_str(), "GetCorporateStationInfo", ss)) {
+        if(!PyServiceMgr::GetCache()->LoadCachedFile(abs_fname.c_str(), "GetCorporateStationInfo", ss)) {
         _log(CLIENT__ERROR, "GetCorporateStationInfo Failed to load cache file '%s'", abs_fname.c_str());
         ss->decoded = new PyNone();
     } else {
@@ -400,7 +401,7 @@ PyResult CorpStationMgrIMBound::Handle_RentOffice(PyCallArgs &call) {
     // Who to send notification? corpRoleJuniorAccountant and equiv? atm it's enough to send it to the renter
     // TODO: get the correct evemail content from somewhere
     // TODO: send it to every corp member who's affected by it. corpRoleAccountant, corpRoleJuniorAccountant or equiv
-    m_manager->lsc_service->SendMail(
+    PyServiceMgr::lsc_service->SendMail(
         m_db.GetStationCorporationCEO(oInfo.stationID),
         call.client->GetCharacterID(),
         "Bill issued",

@@ -31,7 +31,7 @@
 class RepairService: public PyService {
 
 public:
-    RepairService(PyServiceMgr* mgr);
+    RepairService();
     virtual ~RepairService();
 
 protected:

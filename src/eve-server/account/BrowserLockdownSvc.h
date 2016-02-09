@@ -31,7 +31,7 @@
 class BrowserLockdownService : public PyService
 {
 public:
-    BrowserLockdownService(PyServiceMgr *mgr);
+    BrowserLockdownService();
     ~BrowserLockdownService();
 protected:
     class Dispatcher;

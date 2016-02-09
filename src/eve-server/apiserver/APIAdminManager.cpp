@@ -27,8 +27,8 @@
 
 #include "apiserver/APIAdminManager.h"
 
-APIAdminManager::APIAdminManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIAdminManager::APIAdminManager()
+: APIServiceManager()
 {
 }
 

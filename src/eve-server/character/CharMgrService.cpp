@@ -27,11 +27,12 @@
 
 #include "PyServiceCD.h"
 #include "character/CharMgrService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(CharMgrService)
 
-CharMgrService::CharMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "charMgr"),
+CharMgrService::CharMgrService()
+: PyService("charMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -237,8 +238,8 @@ PyResult CharMgrService::Handle_GetCharacterDescription(PyCallArgs &call)
         return NULL;
     }
 
-    m_manager->item_factory.SetUsingClient(call.client);
-    CharacterRef c = m_manager->item_factory.GetCharacter(args.arg);
+    PyServiceMgr::item_factory->SetUsingClient(call.client);
+    CharacterRef c = PyServiceMgr::item_factory->GetCharacter(args.arg);
     if( !c ) {
         _log(CLIENT__ERROR, "GetCharacterDescription failed to load character %u.", args.arg);
         return NULL;

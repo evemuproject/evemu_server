@@ -32,7 +32,7 @@ class ContractProxyService
 : public PyService
 {
 public:
-    ContractProxyService(PyServiceMgr *mgr);
+    ContractProxyService();
     ~ContractProxyService();
 
 protected:

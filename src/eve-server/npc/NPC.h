@@ -29,7 +29,6 @@
 
 #include "system/SystemEntity.h"
 
-class PyServiceMgr;
 class SpawnEntry;
 class InventoryItem;
 class DestinyManager;
@@ -44,7 +43,6 @@ class NPC
 public:
     NPC(
         SystemManager *system,
-        PyServiceMgr &services,
         InventoryItemRef self,
         uint32 corporationID,
         uint32 allianceID,
@@ -117,7 +115,6 @@ protected:
     void _DropLoot(SystemEntity *owner);
 
     SystemManager *const m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
     SpawnEntry * m_spawner;    //we do not own this, may be NULL
     uint32 m_corporationID;
     uint32 m_allianceID;

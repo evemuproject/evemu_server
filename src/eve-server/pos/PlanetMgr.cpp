@@ -31,7 +31,7 @@
 #include "PyServiceCD.h"
 #include "pos/PlanetMgr.h"
 #include "Colony.h"
-
+#include "PyServiceMgr.h"
 
 class PlanetMgrBound
 : public PyBoundObject
@@ -39,8 +39,8 @@ class PlanetMgrBound
 public:
     PyCallable_Make_Dispatcher(PlanetMgrBound)
 
-    PlanetMgrBound(PyServiceMgr *mgr, uint32 planetID, uint32 charID)
-    : PyBoundObject(mgr),
+    PlanetMgrBound(uint32 planetID, uint32 charID)
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this)), m_planetID(planetID)
     {
         _SetCallDispatcher(m_dispatch);
@@ -95,8 +95,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(PlanetMgrService)
 
-PlanetMgrService::PlanetMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "planetMgr"),
+PlanetMgrService::PlanetMgrService()
+: PyService("planetMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -114,7 +114,7 @@ PyBoundObject *PlanetMgrService::_CreateBoundObject(Client *c, const PyRep *bind
         codelog(SERVICE__ERROR, "%s Service: invalid bind argument type %s", GetName(), bind_args->TypeString());
         return NULL;
     }
-    return new PlanetMgrBound(m_manager, bind_args->AsInt()->value(), c->GetCharacterID());
+    return new PlanetMgrBound(bind_args->AsInt()->value(), c->GetCharacterID());
 }
 
 PyResult PlanetMgrService::Handle_GetPlanetsForChar(PyCallArgs &call) {
@@ -327,7 +327,7 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             case 1: //COMMAND_CREATEPIN
             {
                 uint32 typeID = uunc.command_data->GetItem(1)->AsInt()->value();
-                uint32 groupID = m_manager->item_factory.GetType(typeID)->groupID();
+                uint32 groupID = PyServiceMgr::item_factory->GetType(typeID)->groupID();
                 if(groupID == 1027) {
                     /* Command Pin
                      */

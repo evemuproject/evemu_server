@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(TutorialService)
 
-TutorialService::TutorialService(PyServiceMgr *mgr)
-: PyService(mgr, "tutorialSvc"),
+TutorialService::TutorialService()
+: PyService("tutorialSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

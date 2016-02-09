@@ -37,8 +37,8 @@ class FleetBound
 public:
     PyCallable_Make_Dispatcher(FleetBound)
 
-    FleetBound(PyServiceMgr *mgr, Client *c)
-    : PyBoundObject(mgr),
+    FleetBound(Client *c)
+    : PyBoundObject(),
     m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -62,8 +62,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(FleetObject)
 
-FleetObject::FleetObject(PyServiceMgr *mgr)
-: PyService(mgr, "fleetObjectHandler"),
+FleetObject::FleetObject()
+: PyService("fleetObjectHandler"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -93,7 +93,7 @@ PyBoundObject* FleetObject::_CreateBoundObject( Client* c, const PyRep* bind_arg
     _log( CLIENT__MESSAGE, "FleetObjectHandler bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new FleetBound( m_manager, c );
+    return new FleetBound( c );
 }
 
 PyResult FleetBound::Handle_Init(PyCallArgs &call) {

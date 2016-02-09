@@ -26,9 +26,9 @@
 #include "eve-server.h"
 
 #include "apiserver/APIServiceManager.h"
+#include "PyServiceMgr.h"
 
-APIServiceManager::APIServiceManager(const PyServiceMgr &services)
-: m_services(services)
+APIServiceManager::APIServiceManager()
 {
     _pXmlDocOuterTag = NULL;
     _pXmlElementStack = NULL;
@@ -143,8 +143,8 @@ bool APIServiceManager::_AuthenticateUserNamePassword(std::string username, std:
 {
     // Query account info
     AccountInfo account_info;
-    if( !services().serviceDB().GetAccountInformation(
-            username.c_str(), 
+    if (!PyServiceMgr::serviceDB().GetAccountInformation(
+            username.c_str(),
 			password.c_str(),
 			account_info ) )
         return false;

@@ -27,8 +27,8 @@
 
 #include "apiserver/APIMapManager.h"
 
-APIMapManager::APIMapManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIMapManager::APIMapManager()
+: APIServiceManager()
 {
 }
 

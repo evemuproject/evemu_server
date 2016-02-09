@@ -32,7 +32,7 @@
 
 class CharMgrService : public PyService {
 public:
-    CharMgrService(PyServiceMgr *mgr);
+    CharMgrService();
     virtual ~CharMgrService();
 
 protected:

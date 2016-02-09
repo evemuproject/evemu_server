@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(VoiceMgrService)
 
-VoiceMgrService::VoiceMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "voiceMgr"),
+VoiceMgrService::VoiceMgrService()
+: PyService("voiceMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

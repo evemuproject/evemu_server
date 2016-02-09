@@ -34,7 +34,7 @@
 class StationSvcService: public PyService
 {
 public:
-    StationSvcService(PyServiceMgr *mgr);
+    StationSvcService();
     virtual ~StationSvcService();
 
 protected:

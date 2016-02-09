@@ -35,8 +35,8 @@ class WarRegistryBound
 public:
     PyCallable_Make_Dispatcher(WarRegistryBound)
 
-    WarRegistryBound(PyServiceMgr *mgr, uint32 corporationID)
-    : PyBoundObject(mgr),
+    WarRegistryBound(uint32 corporationID)
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this)),
       m_corporationID(corporationID)
     {
@@ -66,8 +66,8 @@ private:
 
 PyCallable_Make_InnerDispatcher(WarRegistryService)
 
-WarRegistryService::WarRegistryService(PyServiceMgr *mgr)
-: PyService(mgr, "warRegistry"),
+WarRegistryService::WarRegistryService()
+: PyService("warRegistry"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -88,7 +88,7 @@ PyBoundObject *WarRegistryService::_CreateBoundObject(Client *c, const PyRep *bi
     }
     //arg1 = corporationID
     //arg2 = ???
-    return new WarRegistryBound(m_manager, args.arg1);
+    return new WarRegistryBound(args.arg1);
 }
 
 PyResult WarRegistryBound::Handle_GetWars( PyCallArgs& call )

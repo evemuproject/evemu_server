@@ -27,9 +27,8 @@
 
 #include "PyBoundObject.h"
 
-PyBoundObject::PyBoundObject(PyServiceMgr *mgr)
-: m_manager(mgr),
-  m_nodeID(0),
+PyBoundObject::PyBoundObject()
+: m_nodeID(0),
   m_bindID(0)
 {
     m_strBoundObjectName = "PyBoundObject";

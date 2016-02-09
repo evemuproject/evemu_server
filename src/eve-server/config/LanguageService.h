@@ -32,7 +32,7 @@ class LanguageService
 : public PyService
 {
 public:
-    LanguageService(PyServiceMgr *mgr);
+    LanguageService();
     virtual ~LanguageService();
 
 protected:

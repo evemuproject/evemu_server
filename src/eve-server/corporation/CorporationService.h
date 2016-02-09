@@ -33,7 +33,7 @@
 class CorporationService : public PyService
 {
 public:
-    CorporationService(PyServiceMgr *mgr);
+    CorporationService();
     virtual ~CorporationService();
 
 protected:

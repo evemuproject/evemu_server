@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(OnlineStatusService)
 
-OnlineStatusService::OnlineStatusService(PyServiceMgr *mgr)
-: PyService(mgr, "onlineStatus"),
+OnlineStatusService::OnlineStatusService()
+: PyService("onlineStatus"),
 m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

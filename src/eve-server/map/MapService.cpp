@@ -28,11 +28,12 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "map/MapService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(MapService)
 
-MapService::MapService(PyServiceMgr *mgr)
-: PyService(mgr, "map"),
+MapService::MapService()
+: PyService("map"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -77,7 +78,8 @@ PyResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetStationExtraInfo");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
 
         PyTuple *resultt = new PyTuple(3);
@@ -101,12 +103,12 @@ PyResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {
         }
 
         result = resultt;
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -118,17 +120,18 @@ PyResult MapService::Handle_GetSolarSystemPseudoSecurities(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetSolarSystemPseudoSecurities");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetPseudoSecurities();
         if(result == NULL)
             result = new PyNone();
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }

@@ -31,6 +31,7 @@
 #include "dogmaim/DogmaIMService.h"
 #include "ship/modules/Modules.h"
 #include "system/SystemManager.h"
+#include "PyServiceMgr.h"
 
 class DogmaIMBound
 : public PyBoundObject
@@ -38,8 +39,8 @@ class DogmaIMBound
 public:
     PyCallable_Make_Dispatcher(DogmaIMBound)
 
-    DogmaIMBound(PyServiceMgr *mgr)
-    : PyBoundObject(mgr),
+    DogmaIMBound()
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -102,8 +103,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(DogmaIMService)
 
-DogmaIMService::DogmaIMService(PyServiceMgr *mgr)
-: PyService(mgr, "dogmaIM"),
+DogmaIMService::DogmaIMService()
+: PyService("dogmaIM"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -119,12 +120,12 @@ PyBoundObject *DogmaIMService::_CreateBoundObject(Client *c, const PyRep *bind_a
     _log(CLIENT__MESSAGE, "DogmaIMService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new DogmaIMBound(m_manager));
+    return(new DogmaIMBound());
 }
 
 PyResult DogmaIMService::Handle_GetAttributeTypes(PyCallArgs &call) {
     PyString* str = new PyString( "dogmaIM.attributesByName" );
-    PyRep* result = m_manager->cache_service->GetCacheHint( str );
+    PyRep* result = PyServiceMgr::cache_service->GetCacheHint(str);
     PyDecRef( str );
 
     return result;
@@ -172,7 +173,7 @@ PyResult DogmaIMBound::Handle_ItemGetInfo(PyCallArgs &call) {
         return NULL;
     }
 
-    InventoryItemRef item = m_manager->item_factory.GetItem( args.arg );
+    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(args.arg);
     if( !item ) {
         codelog(SERVICE__ERROR, "Unable to load item %u", args.arg);
         return NULL;
@@ -273,8 +274,8 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	EVEItemFlags moduleFlag = moduleRef->flag();
 	InventoryItemRef chargeRef;
 
-	if( !(args.chargeList.empty()) )
-		chargeRef = m_manager->item_factory.GetItem(args.chargeList.at(0));
+	if( !(args.chargeList.empty()))
+        chargeRef = PyServiceMgr::item_factory->GetItem(args.chargeList.at(0));
 
 	// Move Charge into Ship's Inventory and change the Charge's flag to match flag of Module
 	uint32 loadedChargeID = shipRef->AddItem( moduleFlag, chargeRef );
@@ -329,16 +330,16 @@ PyResult DogmaIMBound::Handle_Activate( PyCallArgs& call )
                 switch( effect )
                 {
                     case 649:
-                        //call.client->Destiny()->SendContainerUnanchor( call.client->services().item_factory.GetCargoContainer( itemID ) );
+                        //call.client->Destiny()->SendContainerUnanchor( call.client->services().item_factory->GetCargoContainer( itemID ) );
                         break;
                     case 1022:
-                        //call.client->Destiny()->SendStructureUnanchor( call.client->services().item_factory.GetStructure( itemID ) );
+                        //call.client->Destiny()->SendStructureUnanchor( call.client->services().item_factory->GetStructure( itemID ) );
                         break;
                     case 650:
-                        //call.client->Destiny()->SendContainerAnchor( call.client->services().item_factory.GetCargoContainer( itemID ) );
+                        //call.client->Destiny()->SendContainerAnchor( call.client->services().item_factory->GetCargoContainer( itemID ) );
                         break;
                     case 1023:
-                        //call.client->Destiny()->SendStructureAnchor( call.client->services().item_factory.GetStructure( itemID ) );
+                        //call.client->Destiny()->SendStructureAnchor( call.client->services().item_factory->GetStructure( itemID ) );
                         break;
                     default:
                         break;

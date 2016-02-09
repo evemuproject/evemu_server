@@ -34,7 +34,7 @@ class ShipService
 : public PyService
 {
 public:
-    ShipService(PyServiceMgr *mgr);
+    ShipService();
     virtual ~ShipService();
 
 protected:

@@ -33,6 +33,7 @@
 #include "system/BookmarkService.h"
 #include "system/SystemEntities.h"
 #include "system/SystemManager.h"
+#include "PyServiceMgr.h"
 
 class BeyonceBound
 : public PyBoundObject
@@ -40,8 +41,8 @@ class BeyonceBound
 public:
     PyCallable_Make_Dispatcher(BeyonceBound)
 
-    BeyonceBound(PyServiceMgr *mgr, Client *c)
-    : PyBoundObject(mgr),
+    BeyonceBound(Client *c)
+    : PyBoundObject(),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -89,8 +90,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(BeyonceService)
 
-BeyonceService::BeyonceService(PyServiceMgr *mgr)
-: PyService(mgr, "beyonce"),
+BeyonceService::BeyonceService()
+: PyService("beyonce"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -109,7 +110,7 @@ PyBoundObject* BeyonceService::_CreateBoundObject( Client* c, const PyRep* bind_
     _log( CLIENT__MESSAGE, "BeyonceService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new BeyonceBound( m_manager, c );
+    return new BeyonceBound( c );
 }
 
 
@@ -117,7 +118,8 @@ PyResult BeyonceService::Handle_GetFormations(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetFormations");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         PyRep *res = m_db.GetFormations();
         if(res == NULL) {
@@ -125,12 +127,12 @@ PyResult BeyonceService::Handle_GetFormations(PyCallArgs &call) {
             res = new PyNone();
         }
 
-        m_manager->cache_service->GiveCache(method_id, &res);
+        PyServiceMgr::cache_service->GiveCache(method_id, &res);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    //return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    //return(PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id));
     return new PyTuple(0);
 }
 
@@ -275,11 +277,11 @@ PyResult BeyonceBound::Handle_CmdGotoBookmark(PyCallArgs &call) {
     uint32 typeID;
     GPoint bookmarkPosition;
 
-    BookmarkService *bkSrvc = (BookmarkService *)(call.client->services().LookupService( "bookmark" ));
+    BookmarkService *bkSrvc = (BookmarkService *) (PyServiceMgr::LookupService("bookmark"));
 
     if( bkSrvc == NULL )
     {
-        sLog.Error( "BeyonceService::Handle_GotoBookmark()", "Attempt to access BookmarkService via (BookmarkService *)(call.client->services().LookupService(\"bookmark\")) returned NULL pointer." );
+        sLog.Error( "BeyonceService::Handle_GotoBookmark()", "Attempt to access BookmarkService via (BookmarkService *)(LookupService(\"bookmark\")) returned NULL pointer." );
         return NULL;
     }
     else
@@ -493,11 +495,11 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
         uint32 typeID;
         GPoint bookmarkPosition;
 
-        BookmarkService *bkSrvc = (BookmarkService *)(call.client->services().LookupService( "bookmark" ));
+        BookmarkService *bkSrvc = (BookmarkService *) (PyServiceMgr::LookupService("bookmark"));
 
         if( bkSrvc == NULL )
         {
-            sLog.Error( "BeyonceService::Handle_WarpToStuff()", "Attempt to access BookmarkService via (BookmarkService *)(call.client->services().LookupService(\"bookmark\")) returned NULL pointer." );
+            sLog.Error( "BeyonceService::Handle_WarpToStuff()", "Attempt to access BookmarkService via (BookmarkService *)(LookupService(\"bookmark\")) returned NULL pointer." );
             return NULL;
         }
         else

@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(SovereigntyMgrService)
 
-SovereigntyMgrService::SovereigntyMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "sovMgr"),
+SovereigntyMgrService::SovereigntyMgrService()
+: PyService("sovMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

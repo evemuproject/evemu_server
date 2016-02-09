@@ -33,7 +33,7 @@ class FleetProxyService
  : public PyService
 {
   public:
-    FleetProxyService(PyServiceMgr *mgr);
+    FleetProxyService();
     ~FleetProxyService();
 
   protected:

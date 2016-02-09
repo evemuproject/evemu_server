@@ -32,8 +32,8 @@
 
 PyCallable_Make_InnerDispatcher(FleetManager)
 
-FleetManager::FleetManager(PyServiceMgr *mgr)
-: PyService(mgr, "fleetMgr"),
+FleetManager::FleetManager()
+: PyService("fleetMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

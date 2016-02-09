@@ -41,6 +41,7 @@
 #include "cache/ObjCacheService.h"
 #include "missions/Agent.h"
 #include "missions/AgentMgrService.h"
+#include "PyServiceMgr.h"
 
 class AgentMgrBound
 : public PyBoundObject {
@@ -48,8 +49,8 @@ public:
 
     PyCallable_Make_Dispatcher(AgentMgrBound)
 
-    AgentMgrBound(PyServiceMgr *mgr, MissionDB *db, Agent *agt)
-    : PyBoundObject(mgr),
+    AgentMgrBound(MissionDB *db, Agent *agt)
+    : PyBoundObject(),
       m_db(db),
       m_dispatch(new Dispatcher(this)),
       m_agent(agt)
@@ -86,8 +87,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(AgentMgrService)
 
-AgentMgrService::AgentMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "agentMgr"),
+AgentMgrService::AgentMgrService()
+: PyService("agentMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -139,7 +140,7 @@ PyBoundObject *AgentMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
         return NULL;
     }
 
-    return(new AgentMgrBound(m_manager, &m_db, agent));
+    return(new AgentMgrBound(&m_db, agent));
 }
 
 
@@ -149,19 +150,20 @@ PyResult AgentMgrService::Handle_GetAgents(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetAgents");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetAgents();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }

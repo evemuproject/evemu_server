@@ -35,7 +35,7 @@ class InvBrokerService
 : public PyService
 {
 public:
-    InvBrokerService(PyServiceMgr *mgr);
+    InvBrokerService();
     virtual ~InvBrokerService();
 
 protected:

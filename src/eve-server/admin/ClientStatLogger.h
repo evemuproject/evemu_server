@@ -31,7 +31,7 @@
 class ClientStatLogger: public PyService
 {
 public:
-    ClientStatLogger(PyServiceMgr *mgr);
+    ClientStatLogger();
     virtual ~ClientStatLogger();
 
 protected:

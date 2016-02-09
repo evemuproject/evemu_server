@@ -28,11 +28,12 @@
 #include "NetService.h"
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(NetService)
 
-NetService::NetService(PyServiceMgr *mgr)
-: PyService(mgr, "machoNet"),
+NetService::NetService()
+: PyService("machoNet"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -48,7 +49,7 @@ NetService::~NetService() {
 PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {
     PyString* str = new PyString( "machoNet.serviceInfo" );
 
-    if(!m_manager->cache_service->IsCacheLoaded(str))
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(str))
     {
         PyDict *dict = new PyDict;
         /* ServiceCallGPCS.py:197
@@ -154,12 +155,12 @@ PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {
         dict->SetItemString("warRegistry", new PyNone());
         dict->SetItemString("watchdog", new PyNone());
         dict->SetItemString("zsystem", new PyNone());
-        
+
         //register it
-        m_manager->cache_service->GiveCache(str, (PyRep **)&dict);
+        PyServiceMgr::cache_service->GiveCache(str, (PyRep **) & dict);
     }
 
-    PyRep* serverinfo = m_manager->cache_service->GetCacheHint(str);
+    PyRep* serverinfo = PyServiceMgr::cache_service->GetCacheHint(str);
     PyDecRef( str );
 
     PyDict* initvals = new PyDict();

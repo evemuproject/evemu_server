@@ -29,11 +29,12 @@
 #include "PyServiceCD.h"
 #include "account/AccountService.h"
 #include "cache/ObjCacheService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(AccountService)
 
-AccountService::AccountService(PyServiceMgr *mgr)
-: PyService(mgr, "account"),
+AccountService::AccountService()
+: PyService("account"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -109,19 +110,20 @@ PyResult AccountService::Handle_GetEntryTypes(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetEntryTypes");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetEntryTypes();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }
@@ -132,19 +134,20 @@ PyResult AccountService::Handle_GetKeyMap(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetKeyMap");
 
     //check to see if this method is in the cache already.
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         //this method is not in cache yet, load up the contents and cache it.
         result = m_db.GetKeyMap();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &result);
+        PyServiceMgr::cache_service->GiveCache(method_id, &result);
     }
 
     //now we know its in the cache one way or the other, so build a
     //cached object cached method call result.
-    result = m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id);
+    result = PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 
     return result;
 }

@@ -31,7 +31,7 @@
 class BulkMgrService : public PyService
 {
 public:
-    BulkMgrService(PyServiceMgr *mgr);
+    BulkMgrService();
     virtual ~BulkMgrService();
 
 private:

@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(HoloscreenMgrService)
 
-HoloscreenMgrService::HoloscreenMgrService(PyServiceMgr* mgr)
-: PyService(mgr, "holoscreenMgr"),
+HoloscreenMgrService::HoloscreenMgrService()
+: PyService("holoscreenMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

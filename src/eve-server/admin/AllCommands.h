@@ -29,7 +29,6 @@
 //doing this to make the implementation files need less includes
 #include "admin/CommandDB.h"
 #include "mining/Asteroid.h"
-#include "PyServiceMgr.h"
 #include "PyCallable.h"
 #include "Client.h"
 #include "EntityList.h"
@@ -44,7 +43,7 @@ class CommandDispatcher;
  */
 
 #define COMMAND(name, role, description) \
-    PyResult Command_##name(Client *who, CommandDB *db, PyServiceMgr *services, const Seperator &args);
+    PyResult Command_##name(Client *who, CommandDB *db, const Seperator &args);
 #include "admin/AllCommandsList.h"
 
 extern void RegisterAllCommands(CommandDispatcher &into);

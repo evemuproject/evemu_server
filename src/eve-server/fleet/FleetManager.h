@@ -32,7 +32,7 @@
 class FleetManager: public PyService
 {
 public:
-    FleetManager(PyServiceMgr *mgr);
+    FleetManager();
     ~FleetManager();
 
 protected:

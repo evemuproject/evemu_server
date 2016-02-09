@@ -512,7 +512,7 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
 					throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
 				if(module->GetAttribute(AttrChargeGroup1) != item->groupID())
 					throw PyException( MakeCustomError( "Incorrect charge type for this module.") );
-				
+
 				// NOTE: Module Manager will check for actual room to load charges and make stack splits, or reject loading altogether
 			}
 			else
@@ -1145,11 +1145,9 @@ using namespace Destiny;
 ShipEntity::ShipEntity(
     ShipRef ship,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), ship),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _shipRef = ship;
     m_destiny->SetPosition(position, false);

@@ -28,11 +28,12 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "character/CertificateMgrService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(CertificateMgrService)
 
-CertificateMgrService::CertificateMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "certificateMgr"),
+CertificateMgrService::CertificateMgrService()
+: PyService("certificateMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -81,46 +82,49 @@ PyResult CertificateMgrService::Handle_GetMyCertificates(PyCallArgs &call) {
 PyResult CertificateMgrService::Handle_GetCertificateCategories(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetCertificateCategories");
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyRep *res = m_db.GetCertificateCategories();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &res);
+        PyServiceMgr::cache_service->GiveCache(method_id, &res);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    return (PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id));
 }
 
 PyResult CertificateMgrService::Handle_GetAllShipCertificateRecommendations(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetAllShipCertificateRecommendations");
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyRep *res = m_db.GetAllShipCertificateRecommendations();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &res);
+        PyServiceMgr::cache_service->GiveCache(method_id, &res);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    return (PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id));
 }
 
 PyResult CertificateMgrService::Handle_GetCertificateClasses(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetCertificateClasses");
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyRep *res = m_db.GetCertificateClasses();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();
         }
-        m_manager->cache_service->GiveCache(method_id, &res);
+        PyServiceMgr::cache_service->GiveCache(method_id, &res);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    return (PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id));
 }
 
 PyResult CertificateMgrService::Handle_GrantCertificate(PyCallArgs &call) {
@@ -183,7 +187,7 @@ PyResult CertificateMgrService::Handle_GetCertificatesByCharacter( PyCallArgs& c
         return NULL;
     }
 
-    CharacterRef ch = m_manager->item_factory.GetCharacter( arg.arg );
+    CharacterRef ch = PyServiceMgr::item_factory->GetCharacter(arg.arg);
     Character::Certificates crt;
     ch->GetCertificates( crt );
 

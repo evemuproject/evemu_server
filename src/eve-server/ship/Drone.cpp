@@ -34,11 +34,9 @@ using namespace Destiny;
 DroneEntity::DroneEntity(
     InventoryItemRef drone,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), drone),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _droneRef = drone;
     m_destiny->SetPosition(position, false);

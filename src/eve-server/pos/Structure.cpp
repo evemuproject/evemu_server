@@ -186,11 +186,9 @@ using namespace Destiny;
 StructureEntity::StructureEntity(
     StructureRef structure,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), structure),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _structureRef = structure;
     m_destiny->SetPosition(position, false);

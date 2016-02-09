@@ -47,38 +47,49 @@ class LSCService;
 class PyServiceMgr
 {
 public:
-    PyServiceMgr( uint32 nodeID, ItemFactory& ifactory );
-    ~PyServiceMgr();
+    static void Init(uint32 nodeID, ItemFactory *ifactory);
+    static void Shutdown();
 
-    void Process();
+    static void Process();
 
-    void RegisterService( PyService* d );
-    PyService* LookupService( const std::string& name );
+    static void RegisterService(PyService* d);
+    static PyService* LookupService(const std::string& name);
 
-    uint32 GetNodeID() const { return(m_nodeID); }
+    static uint32 GetNodeID()
+    {
+        return (m_nodeID);
+    }
 
     //object binding, not fully understood yet.
-    PySubStruct *BindObject(Client *who, PyBoundObject *obj, PyDict **dict = NULL);
-    PyBoundObject *FindBoundObject(uint32 bindID);
-    void ClearBoundObject(uint32 bindID);
-    void ClearBoundObjects(Client *who);
+    static PySubStruct *BindObject(Client *who, PyBoundObject *obj, PyDict **dict = NULL);
+    static PyBoundObject *FindBoundObject(uint32 bindID);
+    static void ClearBoundObject(uint32 bindID);
+    static void ClearBoundObjects(Client *who);
 
     //this is a hack and needs to die:
-    ServiceDB &serviceDB() { return(m_svcDB); }
 
-    ItemFactory &item_factory;    //here for anybody to use. we do not own this.
+    static ServiceDB &serviceDB()
+    {
+        return (m_svcDB);
+    }
+
+    static ItemFactory *item_factory; //here for anybody to use. we do not own this.
 
     //Area to access services by name. This isn't ideal, but it avoids casting.
     //these may be NULL during service init, but should never be after that.
     //we do not own these pointers (we do in their PyService * form though)
-    LSCService *lsc_service;
-    ObjCacheService *cache_service;
+    static LSCService *lsc_service;
+    static ObjCacheService *cache_service;
 
 protected:
-    std::set<PyService *> m_services;    //we own these pointers.
+    static std::set<PyService *> m_services; //we own these pointers.
 
-    uint32 m_nextBindID;
-    uint32 _GetBindID() { return(m_nextBindID++); }
+    static uint32 m_nextBindID;
+
+    static uint32 _GetBindID()
+    {
+        return (m_nextBindID++);
+    }
 
     struct BoundObject
     {
@@ -88,10 +99,10 @@ protected:
 
     typedef std::map<uint32, BoundObject>   ObjectsBoundMap;
     typedef ObjectsBoundMap::iterator       ObjectsBoundMapItr;
-    ObjectsBoundMap m_boundObjects;
+    static ObjectsBoundMap m_boundObjects;
 
-    uint32 m_nodeID;
-    ServiceDB m_svcDB;    //this is crap, get rid of this
+    static uint32 m_nodeID;
+    static ServiceDB m_svcDB; //this is crap, get rid of this
 };
 
 #endif

@@ -33,7 +33,7 @@
 class SearchMgrService : public PyService
 {
 public:
-    SearchMgrService(PyServiceMgr *mgr);
+    SearchMgrService();
     virtual ~SearchMgrService();
 
 protected:

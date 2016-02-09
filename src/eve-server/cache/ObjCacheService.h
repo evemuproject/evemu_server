@@ -50,7 +50,7 @@ public:
 
 class ObjCacheService : public PyService {
 public:
-    ObjCacheService(PyServiceMgr *mgr, const char *cacheDir);
+    ObjCacheService(const char *cacheDir);
     virtual ~ObjCacheService();
 
     void PrimeCache();

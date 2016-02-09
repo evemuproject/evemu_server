@@ -33,7 +33,7 @@
 class StationService : public PyService
 {
 public:
-    StationService(PyServiceMgr *mgr);
+    StationService();
     virtual ~StationService();
 
 protected:

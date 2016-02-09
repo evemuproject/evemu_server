@@ -35,7 +35,7 @@ class DogmaIMService
 : public PyService
 {
 public:
-    DogmaIMService(PyServiceMgr *mgr);
+    DogmaIMService();
     virtual ~DogmaIMService();
 
 protected:

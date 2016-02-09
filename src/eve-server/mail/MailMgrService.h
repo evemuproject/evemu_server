@@ -33,7 +33,7 @@ class MailDB;
 class MailMgrService : public PyService
 {
 public:
-    MailMgrService(PyServiceMgr *mgr);
+    MailMgrService();
     virtual ~MailMgrService();
 
 protected:

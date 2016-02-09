@@ -32,7 +32,7 @@ class MailingListMgrService
 : public PyService
 {
 public:
-    MailingListMgrService(PyServiceMgr *mgr);
+    MailingListMgrService();
     virtual ~MailingListMgrService();
 
 protected:

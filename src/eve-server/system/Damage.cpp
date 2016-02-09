@@ -133,7 +133,7 @@ Damage::Damage(
 		explosive = (_charge->GetAttribute(AttrExplosiveDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
 	else
 		explosive = 0.0;
-	
+
 	weapon = _weapon;
 
 }
@@ -743,7 +743,7 @@ void NPC::_SendDamageStateChanged() const
 	states->AddItem(new PyFloat(armorHealth));				// this is current armor health (1 is 100%, 0 is 0%)
 	states->AddItem(new PyFloat(hullHealth));				// this is current hull health (1 is 100%, 0 is 0%)
 	dmgChange.state = states;
-	
+
 	//dmgChange.state = state.Encode();
 
     PyTuple *up;
@@ -772,7 +772,7 @@ void ItemSystemEntity::_SendDamageStateChanged() const {
 	states->AddItem(new PyFloat(armorHealth));				// this is current armor health (1 is 100%, 0 is 0%)
 	states->AddItem(new PyFloat(hullHealth));				// this is current hull health (1 is 100%, 0 is 0%)
 	dmgChange.state = states;
-	
+
 	//dmgChange.state = state.Encode();
 
     PyTuple *up;
@@ -837,7 +837,7 @@ void Client::Killed(Damage &fatal_blow) {
 			""
 		);
 
-        ShipRef capsuleRef = m_services.item_factory.SpawnShip( capsuleItemData );
+        ShipRef capsuleRef = PyServiceMgr::item_factory->SpawnShip(capsuleItemData);
 		if( !capsuleRef )
 		{
 			sLog.Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
@@ -850,7 +850,7 @@ void Client::Killed(Damage &fatal_blow) {
 
 	    capsuleRef->Move(GetLocationID(), (EVEItemFlags)flagHangar, true);
 
-	    ShipRef updatedCapsuleRef = m_services.item_factory.GetShip( capsuleRef->itemID() );
+        ShipRef updatedCapsuleRef = PyServiceMgr::item_factory->GetShip(capsuleRef->itemID());
 
 		System()->bubbles.Remove( this, true );
 
@@ -870,7 +870,7 @@ void Client::Killed(Damage &fatal_blow) {
 			deadPodPosition
 		);
 
-		corpseItemRef = m_services.item_factory.SpawnItem( corpseItemData );
+        corpseItemRef = PyServiceMgr::item_factory->SpawnItem(corpseItemData);
 		if( !corpseItemRef )
 			throw PyException( MakeCustomError( "Unable to spawn item of type %u.", corpseTypeID ) );
 
@@ -941,7 +941,7 @@ void Client::Killed(Damage &fatal_blow) {
 			""
 		);
 
-        ShipRef capsuleRef = m_services.item_factory.SpawnShip( capsuleItemData );
+        ShipRef capsuleRef = PyServiceMgr::item_factory->SpawnShip(capsuleItemData);
 		if( !capsuleRef )
 		{
 			sLog.Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
@@ -955,7 +955,7 @@ void Client::Killed(Damage &fatal_blow) {
         //put the capsule where the ship was
 	    capsuleRef->Move(GetLocationID(), (EVEItemFlags)flagCapsule, true);
 
-	    ShipRef updatedCapsuleRef = m_services.item_factory.GetShip( capsuleRef->itemID() );
+        ShipRef updatedCapsuleRef = PyServiceMgr::item_factory->GetShip(capsuleRef->itemID());
 
 		System()->bubbles.Remove( this, true );
 
@@ -972,7 +972,7 @@ void Client::Killed(Damage &fatal_blow) {
 
         // === Kill off the old ship ===
 		// Create new ShipEntity for dead ship and add it to the SystemManager, before we explode it:
-		ShipEntity * deadShipObj = new ShipEntity( deadShipRef, System(), *(System()->GetServiceMgr()), deadShipPosition );
+		ShipEntity * deadShipObj = new ShipEntity( deadShipRef, System(), deadShipPosition );
 		System()->AddEntity( deadShipObj );
 
 		// Add ball to bubble manager for this client's character's system for the dead pilot-less ship:
@@ -997,7 +997,7 @@ void Client::Killed(Damage &fatal_blow) {
 			deadShipPosition
 		);
 
-		wreckItemRef = m_services.item_factory.SpawnItem( wreckItemData );
+        wreckItemRef = PyServiceMgr::item_factory->SpawnItem(wreckItemData);
 		if( !wreckItemRef )
 			throw PyException( MakeCustomError( "Unable to spawn item of type %u.", wreckTypeID ) );
 
@@ -1085,7 +1085,7 @@ void NPC::Killed(Damage &fatal_blow)
 		deadNPCPosition
 	);
 
-	wreckItemRef = System()->GetServiceMgr()->item_factory.SpawnItem( wreckItemData );
+    wreckItemRef = PyServiceMgr::item_factory->SpawnItem(wreckItemData);
 	if( !wreckItemRef )
 		throw PyException( MakeCustomError( "Unable to spawn item of type %u.", wreckTypeID ) );
 
@@ -1170,7 +1170,7 @@ void NPC::_AwardBounty(SystemEntity *who) {
 
     std::string reason = "Bounty";    //TODO: improve this.
 
-    if(!m_services.serviceDB().GiveCash(
+    if (!PyServiceMgr::serviceDB().GiveCash(
             killer->GetID(),
             RefType_playerDonation,    //TODO: find the proper type
             m_self->itemID(),    //probably actually a special concord item ID or something.
@@ -1248,7 +1248,7 @@ void ShipEntity::Killed(Damage &fatal_blow)
 		wreckPosition
 	);
 
-	wreckItemRef = System()->GetServiceMgr()->item_factory.SpawnItem( wreckItemData );
+    wreckItemRef = PyServiceMgr::item_factory->SpawnItem(wreckItemData);
 	if( !wreckItemRef )
 		throw PyException( MakeCustomError( "Unable to spawn item of type %u.", wreckTypeID ) );
 

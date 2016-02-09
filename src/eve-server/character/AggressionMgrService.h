@@ -31,7 +31,7 @@
 class AggressionMgrService : public PyService
 {
 public:
-    AggressionMgrService(PyServiceMgr *mgr);
+    AggressionMgrService();
     virtual ~AggressionMgrService();
 
 protected:

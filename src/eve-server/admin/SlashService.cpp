@@ -39,7 +39,7 @@ public:
 
     PyCallable_Make_Dispatcher(SlashBound)
 
-    SlashBound(PyServiceMgr *mgr, SlashDB *db)
+    SlashBound(SlashDB *db)
     : PyBoundObject(mgr, "SlashBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -66,8 +66,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(SlashService)
 
-SlashService::SlashService(PyServiceMgr *mgr, CommandDispatcher *cd)
-: PyService(mgr, "slash"),
+SlashService::SlashService(CommandDispatcher *cd)
+: PyService("slash"),
   m_dispatch(new Dispatcher(this)),
   m_commandDispatch(cd)
 {

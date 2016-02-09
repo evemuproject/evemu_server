@@ -35,13 +35,13 @@
 #include "ship/ShipOperatorInterface.h"
 #include "system/SystemManager.h"
 #include "character/CharUnboundMgrService.h"
+#include "PyServiceMgr.h"
 
 static const uint32 PING_INTERVAL_US = 60000;
 
-Client::Client(PyServiceMgr &services, EVETCPConnection** con)
+Client::Client( EVETCPConnection** con)
 : DynamicSystemEntity(NULL),
   EVEClientSession( con ),
-  m_services(services),
   m_pingTimer(PING_INTERVAL_US),
   m_system(NULL),
 //  m_destinyTimer(1000, true), //accurate timing is essential
@@ -74,7 +74,7 @@ Client::~Client() {
         // we have valid character
 
         // LSC logout
-        m_services.lsc_service->CharacterLogout(GetCharacterID(), LSCChannel::_MakeSenderInfo(this));
+        PyServiceMgr::lsc_service->CharacterLogout(GetCharacterID(), LSCChannel::_MakeSenderInfo(this));
 
         //before we remove ourself from the system, store our last location.
         SavePosition();
@@ -95,14 +95,14 @@ Client::~Client() {
 
         //johnsus - characterOnline mod
         // switch character online flag to 0
-        m_services.serviceDB().SetCharacterOnlineStatus(GetCharacterID(), false);
+        PyServiceMgr::serviceDB().SetCharacterOnlineStatus(GetCharacterID(), false);
     }
 
     if(GetAccountID() != 0) { // this is not very good ....
-        m_services.serviceDB().SetAccountOnlineStatus(GetAccountID(), false);
+        PyServiceMgr::serviceDB().SetAccountOnlineStatus(GetAccountID(), false);
     }
 
-    m_services.ClearBoundObjects(this);
+    PyServiceMgr::ClearBoundObjects(this);
 
     targets.DoDestruction();
 
@@ -444,7 +444,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         // Entering station
         stationID = location;
 
-        m_services.serviceDB().GetStationInfo(
+        PyServiceMgr::serviceDB().GetStationInfo(
             stationID,
             &solarSystemID, &constellationID, &regionID,
             NULL, NULL, NULL
@@ -460,7 +460,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         stationID = 0;
         solarSystemID = location;
 
-        m_services.serviceDB().GetSystemInfo(
+        PyServiceMgr::serviceDB().GetSystemInfo(
             solarSystemID,
             &constellationID, &regionID,
             NULL, NULL
@@ -496,8 +496,8 @@ void Client::MoveToPosition(const GPoint &pt) {
 
 void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
 {
-    m_services.item_factory.SetUsingClient( this );
-    InventoryItemRef item = m_services.item_factory.GetItem( itemID );
+    PyServiceMgr::item_factory->SetUsingClient(this);
+    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
     if( !item ) {
         sLog.Error("Client","%s: Unable to load item %u", GetName(), itemID);
         return;
@@ -514,7 +514,7 @@ void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
     }
 
     // Release the item factory now that the ItemFactory is finished being used:
-    m_services.item_factory.UnsetUsingClient();
+    PyServiceMgr::item_factory->UnsetUsingClient();
 }
 
 void Client::BoardShip(ShipRef new_ship) {
@@ -645,7 +645,7 @@ void Client::_UpdateSession2( uint32 characterID )
     uint32 locationID = 0;
     uint32 shipID = 0;
 
-    ((CharUnboundMgrService *)(m_services.LookupService("charUnboundMgr")))->GetCharacterData( characterID, characterDataMap );
+    ((CharUnboundMgrService *) (PyServiceMgr::LookupService("charUnboundMgr")))->GetCharacterData(characterID, characterDataMap);
 
     if( characterDataMap.size() == 0 )
     {
@@ -776,7 +776,7 @@ void Client::_SendSessionChange()
     scn.changes->Dump(CLIENT__SESSION, "  Changes: ");
 
     //this is probably not necessary...
-    scn.nodesOfInterest.push_back( services().GetNodeID() );
+    scn.nodesOfInterest.push_back(PyServiceMgr::GetNodeID());
 
     //build the packet:
     PyPacket* p = new PyPacket;
@@ -784,7 +784,7 @@ void Client::_SendSessionChange()
     p->type = SESSIONCHANGENOTIFICATION;
 
     p->source.type = PyAddress::Node;
-    p->source.typeID = services().GetNodeID();
+    p->source.typeID = PyServiceMgr::GetNodeID();
     p->source.callID = 0;
 
     p->dest.type = PyAddress::Client;
@@ -817,7 +817,7 @@ void Client::_SendPingRequest()
     ping_req->type_string = "macho.PingReq";
 
     ping_req->source.type = PyAddress::Node;
-    ping_req->source.typeID = services().GetNodeID();
+    ping_req->source.typeID = PyServiceMgr::GetNodeID();
     ping_req->source.service = "ping";
     ping_req->source.callID = 0;
 
@@ -983,7 +983,7 @@ void Client::SendNotification(const PyAddress &dest, EVENotificationStream &noti
     p->type = NOTIFICATION;
 
     p->source.type = PyAddress::Node;
-    p->source.typeID = m_services.GetNodeID();
+    p->source.typeID = PyServiceMgr::GetNodeID();
 
     p->dest = dest;
 
@@ -1061,7 +1061,7 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
 
     uint32 solarSystemID, constellationID, regionID;
     GPoint position;
-    if(!m_services.serviceDB().GetStaticItemInfo(
+    if (!PyServiceMgr::serviceDB().GetStaticItemInfo(
         toGate,
         &solarSystemID, &constellationID, &regionID, &position
     )) {
@@ -1147,37 +1147,37 @@ bool Client::AddBalance(double amount) {
 
 bool Client::SelectCharacter( uint32 char_id )
 {
-    m_services.item_factory.SetUsingClient( this );
+    PyServiceMgr::item_factory->SetUsingClient(this);
 
     _UpdateSession2( char_id );
 
 //    if( !EnterSystem( true ) )
 //        return false;
 
-    m_char = m_services.item_factory.GetCharacter( char_id );
+    m_char = PyServiceMgr::item_factory->GetCharacter(char_id);
     if( !GetChar() )
     {
         // Release the item factory now that the ItemFactory is finished being used:
-        m_services.item_factory.UnsetUsingClient();
+        PyServiceMgr::item_factory->UnsetUsingClient();
         return false;
     }
 
-    ShipRef ship = m_services.item_factory.GetShip( GetShipID() );
+    ShipRef ship = PyServiceMgr::item_factory->GetShip(GetShipID());
    if( !ship )
    {
         // Release the item factory now that the ItemFactory is finished being used:
-        m_services.item_factory.UnsetUsingClient();
+        PyServiceMgr::item_factory->UnsetUsingClient();
         return false;
-   }
+    }
 
-   ship->Load( m_services.item_factory, GetShipID() );
+    ship->Load(*PyServiceMgr::item_factory, GetShipID());
 
    BoardShip( ship );
 
     if( !EnterSystem( true ) )
     {
         // Release the item factory now that the ItemFactory is finished being used:
-        m_services.item_factory.UnsetUsingClient();
+        PyServiceMgr::item_factory->UnsetUsingClient();
         return false;
     }
 
@@ -1187,12 +1187,12 @@ bool Client::SelectCharacter( uint32 char_id )
     GetChar()->UpdateSkillQueue();
 
     //johnsus - characterOnline mod
-    m_services.serviceDB().SetCharacterOnlineStatus( GetCharacterID(), true );
+    PyServiceMgr::serviceDB().SetCharacterOnlineStatus(GetCharacterID(), true);
 
     _SendSessionChange();
 
     // Release the item factory now that the ItemFactory is finished being used:
-    m_services.item_factory.UnsetUsingClient();
+    PyServiceMgr::item_factory->UnsetUsingClient();
     return true;
 }
 
@@ -1392,7 +1392,6 @@ DoDestinyUpdate ,*args= ([(31759,
     //this adds itself into the system.
     NPC *drone_npc = new NPC(
         m_system,
-        m_services,
         drone,
         GetCorporationID(),
         GetAllianceID(),
@@ -1522,7 +1521,7 @@ void Client::BanClient()
     SendNotifyMsg("You have been banned from this server and will be disconnected shortly.  You will no longer be able to log in");
 
     //ban the client
-    services().serviceDB().SetAccountBanStatus( GetAccountID(), true );
+            PyServiceMgr::serviceDB().SetAccountBanStatus(GetAccountID(), true);
 }
 
 /************************************************************************/
@@ -1612,7 +1611,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     //sLog.Debug("Client","%s: Received Client Challenge.", GetAddress().c_str());
     //sLog.Debug("Client","Login with %s:", ccp.user_name.c_str());
 
-    if (!services().serviceDB().GetAccountInformation(
+    if (!PyServiceMgr::serviceDB().GetAccountInformation(
 				ccp.user_name.c_str(),
 				ccp.user_password_hash.c_str(),
 				account_info))
@@ -1642,7 +1641,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
             goto error_login_auth_failed;
         }
 
-        if( !services().serviceDB().UpdateAccountHash(
+        if (!PyServiceMgr::serviceDB().UpdateAccountHash(
                 ccp.user_name.c_str(),
                 password_hash ) )
         {
@@ -1673,7 +1672,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     sLog.Log("Client","successful");
 
     /* update account information, increase login count, last login timestamp and mark account as online */
-    m_services.serviceDB().UpdateAccountInformation( account_info.name.c_str(), true );
+            PyServiceMgr::serviceDB().UpdateAccountInformation(account_info.name.c_str(), true);
 
     /* marshaled Python string "None" */
     static const uint8 handshakeFunc[] = { 0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65 };
@@ -1766,13 +1765,13 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
             return false;
         }
 
-        if( nodeID != m_services.GetNodeID() )
+        if (nodeID != PyServiceMgr::GetNodeID())
         {
-            sLog.Error("Client","Unknown nodeID %u received (expected %u).", nodeID, m_services.GetNodeID());
+            sLog.Error("Client", "Unknown nodeID %u received (expected %u).", nodeID, PyServiceMgr::GetNodeID());
             return false;
         }
 
-        dest = services().FindBoundObject( bindID );
+        dest = PyServiceMgr::FindBoundObject(bindID);
         if( dest == NULL )
         {
             sLog.Error("Client", "Failed to find bound object %u.", bindID);
@@ -1782,7 +1781,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
     else
     {
         //service
-        dest = services().LookupService( packet->dest.service );
+        dest = PyServiceMgr::LookupService(packet->dest.service);
         if( dest == NULL )
         {
             sLog.Error("Client","Unable to find service to handle call to: %s", packet->dest.service.c_str());
@@ -1843,13 +1842,14 @@ bool Client::Handle_Notify( PyPacket* packet )
                 continue;
             }
 
-            if(nodeID != m_services.GetNodeID()) {
+            if (nodeID != PyServiceMgr::GetNodeID())
+            {
                 sLog.Error("Client","Notification '%s' from %s: Unknown nodeID %u received (expected %u). Skipping.",
-                    notify.method.c_str(), GetName(), nodeID, m_services.GetNodeID());
+                           notify.method.c_str(), GetName(), nodeID, PyServiceMgr::GetNodeID());
                 continue;
             }
 
-            m_services.ClearBoundObject(bindID);
+            PyServiceMgr::ClearBoundObject(bindID);
         }
     }
     else

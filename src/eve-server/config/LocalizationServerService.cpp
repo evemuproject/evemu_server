@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(LocalizationServerService)
 
-LocalizationServerService::LocalizationServerService( PyServiceMgr *mgr )
-: PyService(mgr, "localizationServer"),
+LocalizationServerService::LocalizationServerService(  )
+: PyService("localizationServer"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

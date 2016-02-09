@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "station/StationSvcService.h"
+#include "PyServiceMgr.h"
 
 /*
 class StationSvcBound
@@ -41,7 +42,7 @@ public:
         : PyCallableDispatcher<StationSvcBound>(c) {}
     };
 
-    StationSvcBound(PyServiceMgr *mgr, StationSvcDB *db)
+    StationSvcBound(StationSvcDB *db)
     : PyBoundObject(mgr, "StationSvcBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -68,8 +69,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(StationSvcService)
 
-StationSvcService::StationSvcService(PyServiceMgr *mgr)
-: PyService(mgr, "stationSvc"),
+StationSvcService::StationSvcService()
+: PyService("stationSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -109,13 +110,14 @@ PyResult StationSvcService::Handle_GetSolarSystem(PyCallArgs &call) {
 
     ObjectCachedMethodID method_id(GetName(), "GetSolarSystem");
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyPackedRow *t = m_db.GetSolarSystem(arg.arg);
 
-        m_manager->cache_service->GiveCache(method_id, (PyRep **)&t);
+        PyServiceMgr::cache_service->GiveCache(method_id, (PyRep **) & t);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    return (PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id));
 }
 
 PyResult StationSvcService::Handle_GetStation(PyCallArgs &call) {

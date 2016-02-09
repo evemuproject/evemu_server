@@ -28,11 +28,12 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "standing/FactionWarMgrService.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(FactionWarMgrService)
 
-FactionWarMgrService::FactionWarMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "facWarMgr"),
+FactionWarMgrService::FactionWarMgrService()
+: PyService("facWarMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -55,30 +56,31 @@ FactionWarMgrService::~FactionWarMgrService()
 PyResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
     ObjectCachedMethodID method_id(GetName(), "GetWarFactions");
 
-    if(!m_manager->cache_service->IsCacheLoaded(method_id)) {
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
+    {
         PyRep *res = m_db.GetWarFactions();
         if(res == NULL)
             return NULL;
-        m_manager->cache_service->GiveCache(method_id, &res);
+        PyServiceMgr::cache_service->GiveCache(method_id, &res);
     }
 
-    return(m_manager->cache_service->MakeObjectCachedMethodCallResult(method_id));
+    return (PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id));
 }
 
 PyResult FactionWarMgrService::Handle_GetFWSystems( PyCallArgs& call )
 {
     ObjectCachedMethodID method_id( GetName(), "GetFacWarSystems" );
 
-    if( !m_manager->cache_service->IsCacheLoaded( method_id ) )
+    if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         PyRep* res = m_db.GetWarFactions();
         if( res == NULL )
             return NULL;
 
-        m_manager->cache_service->GiveCache( method_id, &res );
+        PyServiceMgr::cache_service->GiveCache(method_id, &res);
     }
 
-    return m_manager->cache_service->MakeObjectCachedMethodCallResult( method_id );
+    return PyServiceMgr::cache_service->MakeObjectCachedMethodCallResult(method_id);
 }
 
 PyResult FactionWarMgrService::Handle_GetMyCharacterRankOverview( PyCallArgs& call )

@@ -32,7 +32,7 @@
 class ReprocessingService
 : public PyService    {
 public:
-    ReprocessingService(PyServiceMgr *mgr);
+    ReprocessingService();
     virtual ~ReprocessingService();
 
 protected:

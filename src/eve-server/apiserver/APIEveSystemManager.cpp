@@ -27,8 +27,8 @@
 
 #include "apiserver/APIEveSystemManager.h"
 
-APIEveSystemManager::APIEveSystemManager(const PyServiceMgr &services)
-: APIServiceManager(services)
+APIEveSystemManager::APIEveSystemManager()
+: APIServiceManager()
 {
 }
 

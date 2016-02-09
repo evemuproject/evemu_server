@@ -27,11 +27,12 @@
 
 #include "PyServiceCD.h"
 #include "inventory/InventoryBound.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(InventoryBound)
 
-InventoryBound::InventoryBound( PyServiceMgr *mgr, Inventory &inventory, EVEItemFlags flag)
-: PyBoundObject(mgr),
+InventoryBound::InventoryBound( Inventory &inventory, EVEItemFlags flag)
+: PyBoundObject(),
   m_dispatch(new Dispatcher(this)),
   mInventory(inventory),
   mFlag(flag)
@@ -314,13 +315,13 @@ PyResult InventoryBound::Handle_MultiMerge(PyCallArgs &call) {
             continue;
         }
 
-        InventoryItemRef stationaryItem = m_manager->item_factory.GetItem( element.stationaryItemID );
+        InventoryItemRef stationaryItem = PyServiceMgr::item_factory->GetItem(element.stationaryItemID);
         if( !stationaryItem ) {
             _log(SERVICE__ERROR, "Failed to load stationary item %u. Skipping.", element.stationaryItemID);
             continue;
         }
 
-        InventoryItemRef draggedItem = m_manager->item_factory.GetItem( element.draggedItemID );
+        InventoryItemRef draggedItem = PyServiceMgr::item_factory->GetItem(element.draggedItemID);
         if( !draggedItem ) {
             _log(SERVICE__ERROR, "Failed to load dragged item %u. Skipping.", element.draggedItemID);
             continue;
@@ -368,7 +369,7 @@ PyResult InventoryBound::Handle_DestroyFitting(PyCallArgs &call) {
     }
 
     //get the actual item
-    InventoryItemRef item = m_manager->item_factory.GetItem(args.arg);
+    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(args.arg);
 
     //remove the rig effects from the ship
     call.client->GetShip()->RemoveRig(item, mInventory.inventoryID());
@@ -405,7 +406,7 @@ PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
             bookmarkID = call.tuple->GetItem( 0 )->AsList()->GetItem(i)->AsInt()->value();
                             //ItemData ( typeID, ownerID, locationID, flag, quantity, customInfo, contraband)
             ItemData itemBookmarkVoucher( 51, call.client->GetCharacterID(), call.client->GetLocationID(), flagHangar, 1 );
-            InventoryItemRef i = m_manager->item_factory.SpawnItem( itemBookmarkVoucher );
+            InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(itemBookmarkVoucher);
 
             if( !i ) {
                 codelog(CLIENT__ERROR, "%s: Failed to spawn bookmark voucher for %u", call.client->GetName(), bookmarkID);
@@ -441,8 +442,9 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
     std::vector<int32>::const_iterator cur, end;
     cur = items.begin();
     end = items.end();
-    for(; cur != end; cur++) {
-        InventoryItemRef sourceItem = m_manager->item_factory.GetItem( *cur );
+    for(; cur != end; cur++)
+    {
+        InventoryItemRef sourceItem = PyServiceMgr::item_factory->GetItem(*cur);
         if( !sourceItem ) {
             sLog.Error("_ExecAdd","Failed to load item %u. Skipping.", *cur);
             continue;

@@ -34,7 +34,7 @@ class LookupService
 : public PyService
 {
 public:
-    LookupService(PyServiceMgr *mgr);
+    LookupService();
     virtual ~LookupService();
 
 protected:

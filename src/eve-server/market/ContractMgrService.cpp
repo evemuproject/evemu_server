@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(ContractMgrService)
 
-ContractMgrService::ContractMgrService(PyServiceMgr *mgr)
-: PyService(mgr, "contractMgr"),
+ContractMgrService::ContractMgrService()
+: PyService("contractMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

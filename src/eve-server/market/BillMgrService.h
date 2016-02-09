@@ -33,7 +33,7 @@
 class BillMgrService : public PyService
 {
 public:
-    BillMgrService(PyServiceMgr *mgr);
+    BillMgrService();
     virtual ~BillMgrService();
 
 protected:

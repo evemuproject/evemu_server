@@ -32,6 +32,7 @@
 #include "station/Station.h"
 #include "system/SystemBubble.h"
 #include "system/SystemManager.h"
+#include "PyServiceMgr.h"
 
 using namespace Destiny;
 
@@ -1394,7 +1395,7 @@ PyResult DestinyManager::AttemptDockOperation()
             1
         );
         //spawn rookie
-        InventoryItemRef i = who->services().item_factory.SpawnItem( idata );
+        InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
 
         //move the new rookie ship into the players hanger in station
         if(!i)

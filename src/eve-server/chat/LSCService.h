@@ -68,7 +68,7 @@ public:
     static const uint32 BASE_CHANNEL_ID;
     static const uint32 MAX_CHANNEL_ID;
 
-    LSCService(PyServiceMgr *mgr, CommandDispatcher *cd);
+    LSCService(CommandDispatcher *cd);
     virtual ~LSCService();
 
     PyResult ExecuteCommand(Client *from, const char *msg);

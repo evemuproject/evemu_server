@@ -30,7 +30,7 @@
 
 class ClientStatsMgr : public PyService {
 public:
-    ClientStatsMgr(PyServiceMgr *mgr);
+    ClientStatsMgr();
     ~ClientStatsMgr();
 
 protected:

@@ -31,7 +31,7 @@
 class CharFittingMgrService: public PyService
 {
 public:
-    CharFittingMgrService(PyServiceMgr *mgr);
+    CharFittingMgrService();
     virtual ~CharFittingMgrService();
 
 protected:

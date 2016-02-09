@@ -33,7 +33,7 @@ class PosMgrService
 : public PyService
 {
 public:
-    PosMgrService(PyServiceMgr *mgr);
+    PosMgrService();
     virtual ~PosMgrService();
 
 protected:

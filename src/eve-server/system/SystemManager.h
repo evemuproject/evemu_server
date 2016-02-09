@@ -46,14 +46,13 @@ class DoDestiny_SetState;
 
 
 class SpawnManager;
-class PyServiceMgr;
 
 class SystemManager
 //: public Inventory,
 //  public InventoryItem
 {
 public:
-    SystemManager(uint32 systemID, PyServiceMgr &svc);//, ItemData idata);
+    SystemManager(uint32 systemID);//, ItemData idata);
     virtual ~SystemManager();
 
     //bubble stuff:
@@ -89,8 +88,6 @@ public:
 
     ItemFactory &itemFactory() const;
 
-    PyServiceMgr * GetServiceMgr() { return &m_services; }
-
     void AddItemToInventory(InventoryItemRef item);
     ShipRef GetShipFromInventory(uint32 shipID);
     void RemoveItemFromInventory(InventoryItemRef item);
@@ -112,7 +109,6 @@ protected:
     std::string m_systemSecurity;
 
     SystemDB m_db;
-    PyServiceMgr &m_services;    //we do not own this
     SpawnManager *m_spawnManager;    //we own this, never NULL, dynamic to keep the knowledge down.
 
     //overall system entity lists:

@@ -31,7 +31,6 @@
 class SystemManager;
 class BubbleManager;
 class SystemBubble;
-class PyServiceMgr;
 
 //TODO: add formation stuff....
 
@@ -93,7 +92,7 @@ public:
 	void GetSpawnIDsList(std::set<uint32> &spawnIDsList);
 
     //passing these pointers so we dont have to store them in each entry.
-    void Process(SystemManager &mgr, PyServiceMgr &svc);
+    void Process(SystemManager &mgr);
 
     bool CheckBounds() const;
 
@@ -104,7 +103,7 @@ public:
     //easier right now, so here it is.
     std::vector<GPoint> bounds;
 protected:
-    void _DoSpawn(SystemManager &mgr, PyServiceMgr &svc);
+    void _DoSpawn(SystemManager &mgr);
 
     //curently spawned information:
     std::set<uint32> m_spawnedIDs;
@@ -126,7 +125,7 @@ protected:
 class SpawnManager
 {
 public:
-    SpawnManager(SystemManager &mgr, PyServiceMgr &svc);
+    SpawnManager(SystemManager &mgr);
     ~SpawnManager();
 
     bool Load();
@@ -138,7 +137,6 @@ protected:
     SpawnEntry * _FindSpawnForBubble(SystemBubble &thisBubble);
 
 	SystemManager &m_system;    //we do not own this
-    PyServiceMgr &m_services;    //we do not own this
 
     SpawnDB m_db;
 

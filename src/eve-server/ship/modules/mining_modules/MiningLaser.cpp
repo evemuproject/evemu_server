@@ -141,7 +141,7 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 	}
 }
 
-void MiningLaser::Deactivate() 
+void MiningLaser::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
 	m_ActiveModuleProc->DeactivateCycle();
@@ -288,7 +288,7 @@ void MiningLaser::_ProcessCycle()
 					oreUnitsToPull
 				);
 
-				InventoryItemRef ore = m_Ship->GetOperator()->GetDestiny()->GetSystemManager()->GetServiceMgr()->item_factory.SpawnItem( idata );
+                InventoryItemRef ore = PyServiceMgr::item_factory->SpawnItem(idata);
 				if( ore )
 				{
 					//ore->Move(m_Ship->itemID(), flagCargoHold);

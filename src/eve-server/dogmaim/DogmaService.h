@@ -34,7 +34,7 @@ class DogmaService
 : public PyService
 {
 public:
-    DogmaService(PyServiceMgr *mgr);
+    DogmaService();
     virtual ~DogmaService();
 
 protected:

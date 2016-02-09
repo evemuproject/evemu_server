@@ -31,7 +31,7 @@
 class PyBoundObject
 : public PyCallable {
 public:
-    PyBoundObject(PyServiceMgr *mgr);
+    PyBoundObject();
     virtual ~PyBoundObject();
 
     virtual void Release() = 0;
@@ -50,7 +50,6 @@ protected:
     friend class PyServiceMgr;    //for access to _SetNodeBindID only.
     void _SetNodeBindID(uint32 nodeID, uint32 bindID) { m_nodeID = nodeID; m_bindID = bindID; }
 
-    PyServiceMgr *const m_manager;
     std::string m_strBoundObjectName;
 
 private:

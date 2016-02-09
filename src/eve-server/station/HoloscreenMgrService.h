@@ -31,7 +31,7 @@
 class HoloscreenMgrService : public PyService
 {
 public:
-    HoloscreenMgrService(PyServiceMgr* mgr);
+    HoloscreenMgrService();
     virtual ~HoloscreenMgrService();
 
 protected:

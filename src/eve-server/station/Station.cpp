@@ -192,11 +192,9 @@ using namespace Destiny;
 StationEntity::StationEntity(
     StationRef station,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), station),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _stationRef = station;
     m_destiny->SetPosition(position, false);

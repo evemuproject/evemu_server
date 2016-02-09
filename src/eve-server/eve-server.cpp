@@ -131,6 +131,8 @@
 #include "system/KeeperService.h"
 #include "system/ScenarioService.h"
 #include "system/WrecksAndLoot.h"
+// service manager
+#include "PyServiceMgr.h"
 
 static void SetupSignals();
 static void CatchSignal( int sig_num );
@@ -238,11 +240,11 @@ int main( int argc, char* argv[] )
   sLog.Log("Server Init", "starting item factory");
 
     //now, the service manager...
-    PyServiceMgr services( 888444, item_factory );
+    PyServiceMgr::Init(888444, &item_factory);
   sLog.Log("Server Init", "starting service manager");
 
     //setup the command dispatcher
-    CommandDispatcher command_dispatcher( services );
+    CommandDispatcher command_dispatcher;
     RegisterAllCommands( command_dispatcher );
 
     /*
@@ -253,83 +255,83 @@ int main( int argc, char* argv[] )
 
     // Please keep the services list clean so it's easier to find something
 
-    services.RegisterService(new AccountService(&services));
-    services.RegisterService(new AgentMgrService(&services));
-    services.RegisterService(new AggressionMgrService(&services));
-    services.RegisterService(new AlertService(&services));
-    services.RegisterService(new AuthService(&services));
-    services.RegisterService(new BillMgrService(&services));
-    services.RegisterService(new BeyonceService(&services));
-    services.RegisterService(new BookmarkService(&services));
-    services.RegisterService(new BrowserLockdownService(&services));
-    services.RegisterService(new BulkMgrService(&services));
-    services.RegisterService(new CertificateMgrService(&services));
-    services.RegisterService(new CharFittingMgrService(&services));
-    services.RegisterService(new CharUnboundMgrService(&services));
-    services.RegisterService(new CharMgrService(&services));
-    services.RegisterService(new ClientStatLogger(&services));
-    services.RegisterService(new ClientStatsMgr(&services));
-    services.RegisterService(new ConfigService(&services));
-    services.RegisterService(new CorpBookmarkMgrService(&services));
-    services.RegisterService(new CorpMgrService(&services));
-    services.RegisterService(new CorporationService(&services));
-    services.RegisterService(new CorpRegistryService(&services));
-    services.RegisterService(new CorpStationMgrService(&services));
-    services.RegisterService(new ContractMgrService(&services));
-    services.RegisterService(new ContractProxyService(&services));
-    services.RegisterService(new DevToolsProviderService(&services));
-    services.RegisterService(new DogmaIMService(&services));
-    services.RegisterService(new DogmaService(&services));
-    services.RegisterService(new DungeonExplorationMgrService(&services));
-    services.RegisterService(new DungeonService(&services));
-    services.RegisterService(new FactionWarMgrService(&services));
-    services.RegisterService(new FactoryService(&services));
-    services.RegisterService(new FleetManager(&services));
-    services.RegisterService(new FleetObject(&services));
-    services.RegisterService(new FleetProxyService(&services));
-    services.RegisterService(new HoloscreenMgrService(&services));
-    services.RegisterService(new InfoGatheringMgr(&services));
-    services.RegisterService(new InsuranceService(&services));
-    services.RegisterService(new InvBrokerService(&services));
-    services.RegisterService(new JumpCloneService(&services));
-    services.RegisterService(new KeeperService(&services));
-    services.RegisterService(new LanguageService(&services));
-    services.RegisterService(new LocalizationServerService(&services));
-    services.RegisterService(new LookupService(&services));
-    services.RegisterService(new LPService(&services));
-    services.RegisterService(services.lsc_service = new LSCService(&services, &command_dispatcher));
-    services.RegisterService(new MailMgrService(&services));
-    services.RegisterService(new MailingListMgrService(&services));
-    services.RegisterService(new MapService(&services));
-    services.RegisterService(new MarketProxyService(&services));
-    services.RegisterService(new MissionMgrService(&services));
-    services.RegisterService(new NetService(&services));
-    services.RegisterService(new NotificationMgrService(&services));
-    services.RegisterService(services.cache_service = new ObjCacheService(&services, sConfig.files.cacheDir.c_str()));
-    services.RegisterService(new OnlineStatusService(&services));
-    services.RegisterService(new PaperDollService(&services));
-    services.RegisterService(new PetitionerService(&services));
-    services.RegisterService(new PhotoUploadService(&services));
-    services.RegisterService(new PlanetMgrService(&services));
-    services.RegisterService(new PosMgrService(&services));
-    services.RegisterService(new RamProxyService(&services));
-    services.RegisterService(new RepairService(&services));
-    services.RegisterService(new ReprocessingService(&services));
-    services.RegisterService(new SearchMgrService(&services));
-    services.RegisterService(new ShipService(&services));
-    services.RegisterService(new SkillMgrService(&services));
-    services.RegisterService(new SlashService(&services, &command_dispatcher));
-    services.RegisterService(new SovereigntyMgrService(&services));
-    services.RegisterService(new Standing2Service(&services));
-    services.RegisterService(new StationService(&services));
-    services.RegisterService(new StationSvcService(&services));
-    services.RegisterService(new TutorialService(&services));
-    services.RegisterService(new UserService(&services));
-    services.RegisterService(new VoiceMgrService(&services));
-    services.RegisterService(new WarRegistryService(&services));
+    PyServiceMgr::RegisterService(new AccountService());
+    PyServiceMgr::RegisterService(new AgentMgrService());
+    PyServiceMgr::RegisterService(new AggressionMgrService());
+    PyServiceMgr::RegisterService(new AlertService());
+    PyServiceMgr::RegisterService(new AuthService());
+    PyServiceMgr::RegisterService(new BillMgrService());
+    PyServiceMgr::RegisterService(new BeyonceService());
+    PyServiceMgr::RegisterService(new BookmarkService());
+    PyServiceMgr::RegisterService(new BrowserLockdownService());
+    PyServiceMgr::RegisterService(new BulkMgrService());
+    PyServiceMgr::RegisterService(new CertificateMgrService());
+    PyServiceMgr::RegisterService(new CharFittingMgrService());
+    PyServiceMgr::RegisterService(new CharUnboundMgrService());
+    PyServiceMgr::RegisterService(new CharMgrService());
+    PyServiceMgr::RegisterService(new ClientStatLogger());
+    PyServiceMgr::RegisterService(new ClientStatsMgr());
+    PyServiceMgr::RegisterService(new ConfigService());
+    PyServiceMgr::RegisterService(new CorpBookmarkMgrService());
+    PyServiceMgr::RegisterService(new CorpMgrService());
+    PyServiceMgr::RegisterService(new CorporationService());
+    PyServiceMgr::RegisterService(new CorpRegistryService());
+    PyServiceMgr::RegisterService(new CorpStationMgrService());
+    PyServiceMgr::RegisterService(new ContractMgrService());
+    PyServiceMgr::RegisterService(new ContractProxyService());
+    PyServiceMgr::RegisterService(new DevToolsProviderService());
+    PyServiceMgr::RegisterService(new DogmaIMService());
+    PyServiceMgr::RegisterService(new DogmaService());
+    PyServiceMgr::RegisterService(new DungeonExplorationMgrService());
+    PyServiceMgr::RegisterService(new DungeonService());
+    PyServiceMgr::RegisterService(new FactionWarMgrService());
+    PyServiceMgr::RegisterService(new FactoryService());
+    PyServiceMgr::RegisterService(new FleetManager());
+    PyServiceMgr::RegisterService(new FleetObject());
+    PyServiceMgr::RegisterService(new FleetProxyService());
+    PyServiceMgr::RegisterService(new HoloscreenMgrService());
+    PyServiceMgr::RegisterService(new InfoGatheringMgr());
+    PyServiceMgr::RegisterService(new InsuranceService());
+    PyServiceMgr::RegisterService(new InvBrokerService());
+    PyServiceMgr::RegisterService(new JumpCloneService());
+    PyServiceMgr::RegisterService(new KeeperService());
+    PyServiceMgr::RegisterService(new LanguageService());
+    PyServiceMgr::RegisterService(new LocalizationServerService());
+    PyServiceMgr::RegisterService(new LookupService());
+    PyServiceMgr::RegisterService(new LPService());
+    PyServiceMgr::RegisterService(PyServiceMgr::lsc_service = new LSCService(&command_dispatcher));
+    PyServiceMgr::RegisterService(new MailMgrService());
+    PyServiceMgr::RegisterService(new MailingListMgrService());
+    PyServiceMgr::RegisterService(new MapService());
+    PyServiceMgr::RegisterService(new MarketProxyService());
+    PyServiceMgr::RegisterService(new MissionMgrService());
+    PyServiceMgr::RegisterService(new NetService());
+    PyServiceMgr::RegisterService(new NotificationMgrService());
+    PyServiceMgr::RegisterService(PyServiceMgr::cache_service = new ObjCacheService(sConfig.files.cacheDir.c_str()));
+    PyServiceMgr::RegisterService(new OnlineStatusService());
+    PyServiceMgr::RegisterService(new PaperDollService());
+    PyServiceMgr::RegisterService(new PetitionerService());
+    PyServiceMgr::RegisterService(new PhotoUploadService());
+    PyServiceMgr::RegisterService(new PlanetMgrService());
+    PyServiceMgr::RegisterService(new PosMgrService());
+    PyServiceMgr::RegisterService(new RamProxyService());
+    PyServiceMgr::RegisterService(new RepairService());
+    PyServiceMgr::RegisterService(new ReprocessingService());
+    PyServiceMgr::RegisterService(new SearchMgrService());
+    PyServiceMgr::RegisterService(new ShipService());
+    PyServiceMgr::RegisterService(new SkillMgrService());
+    PyServiceMgr::RegisterService(new SlashService(&command_dispatcher));
+    PyServiceMgr::RegisterService(new SovereigntyMgrService());
+    PyServiceMgr::RegisterService(new Standing2Service());
+    PyServiceMgr::RegisterService(new StationService());
+    PyServiceMgr::RegisterService(new StationSvcService());
+    PyServiceMgr::RegisterService(new TutorialService());
+    PyServiceMgr::RegisterService(new UserService());
+    PyServiceMgr::RegisterService(new VoiceMgrService());
+    PyServiceMgr::RegisterService(new WarRegistryService());
 
     sLog.Log("Server Init", "Priming cached objects.");
-    services.cache_service->PrimeCache();
+    PyServiceMgr::cache_service->PrimeCache();
     sLog.Log("Server Init", "finished priming");
 
     // start up the image server
@@ -337,7 +339,7 @@ int main( int argc, char* argv[] )
   sLog.Log("Server Init", "started image server");
 
     // start up the api server
-    sAPIServer.CreateServices( services );
+    sAPIServer.CreateServices( );
     sAPIServer.Run();
   sLog.Log("Server Init", "started API server");
 
@@ -380,7 +382,7 @@ int main( int argc, char* argv[] )
   /////////////////////////////////////////////////////////////////////////////////////
   //     !!!  DO NOT PUT ANY INITIALIZATION CODE OR CALLS BELOW THIS LINE   !!!
   /////////////////////////////////////////////////////////////////////////////////////
-  services.serviceDB().SetServerOnlineStatus(true);
+    PyServiceMgr::serviceDB().SetServerOnlineStatus(true);
   sLog.Success("STATUS", "SERVER IS NOW [ONLINE]");
   sLog.Log("INFO", "(press Ctrl+C to start controlled server shutdown)");
 
@@ -408,13 +410,13 @@ int main( int argc, char* argv[] )
         //timeout_manager.CheckTimeouts();
         while( ( tcpc = tcps.PopConnection() ) )
         {
-            Client* c = new Client( services, &tcpc );
+            Client* c = new Client( &tcpc );
 
             EntityList::Add( &c );
         }
 
         EntityList::Process();
-        services.Process();
+        PyServiceMgr::Process();
 
         /* UPDATE */
         last_time = GetTickCount();
@@ -442,8 +444,9 @@ int main( int argc, char* argv[] )
     sImageServer.Stop();
     sLog.Log("Server Shutdown", "API Server TCP listener stopped." );
 
-    services.serviceDB().SetServerOnlineStatus(false);
-	sLog.Log("Server Shutdown", "SERVER IS NOW [OFFLINE]");
+    PyServiceMgr::serviceDB().SetServerOnlineStatus(false);
+    PyServiceMgr::Shutdown();
+    sLog.Log("Server Shutdown", "SERVER IS NOW [OFFLINE]");
 
     sLog.Log("Server Shutdown", "Cleanup db cache" );
     delete _sDgmTypeAttrMgr;

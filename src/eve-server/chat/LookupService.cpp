@@ -41,7 +41,7 @@ public:
         : PyCallableDispatcher<LookupSvcBound>(c) {}
     };
 
-    LookupSvcBound(PyServiceMgr *mgr, LookupSvcDB *db)
+    LookupSvcBound(LookupSvcDB *db)
     : PyBoundObject(mgr, "LookupSvcBound"),
       m_db(db),
       m_dispatch(new Dispatcher(this))
@@ -68,8 +68,8 @@ protected:
 
 PyCallable_Make_InnerDispatcher(LookupService)
 
-LookupService::LookupService(PyServiceMgr *mgr)
-: PyService(mgr, "lookupSvc"),
+LookupService::LookupService()
+: PyService("lookupSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

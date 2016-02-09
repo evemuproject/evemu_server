@@ -30,11 +30,12 @@
 #include "cache/ObjCacheService.h"
 #include "character/CharUnboundMgrService.h"
 #include "imageserver/ImageServer.h"
+#include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(CharUnboundMgrService)
 
-CharUnboundMgrService::CharUnboundMgrService(PyServiceMgr* mgr)
-: PyService(mgr, "charUnboundMgr"),
+CharUnboundMgrService::CharUnboundMgrService()
+: PyService("charUnboundMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
@@ -150,7 +151,7 @@ PyResult CharUnboundMgrService::Handle_GetCharCreationInfo(PyCallArgs &call) {
     PyDict *result = new PyDict();
 
     //send all the cache hints needed for char creation.
-    m_manager->cache_service->InsertCacheHints(
+    PyServiceMgr::cache_service->InsertCacheHints(
         ObjCacheService::hCharCreateCachables,
         result);
     _log(CLIENT__MESSAGE, "Sending char creation info reply");
@@ -160,7 +161,7 @@ PyResult CharUnboundMgrService::Handle_GetCharCreationInfo(PyCallArgs &call) {
 
 PyResult CharUnboundMgrService::Handle_GetCharNewExtraCreationInfo(PyCallArgs &call) {
     PyDict *result = new PyDict();
-    m_manager->cache_service->InsertCacheHints(ObjCacheService::hCharCreateNewExtraCachables, result);
+    PyServiceMgr::cache_service->InsertCacheHints(ObjCacheService::hCharCreateNewExtraCachables, result);
     _log(CLIENT__MESSAGE, "Sending char new extra creation info reply");
     return result;
 }
@@ -179,8 +180,8 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
             arg.bloodlineID, arg.genderID, arg.ancestryID);
 
     // obtain character type
-    m_manager->item_factory.SetUsingClient( call.client );
-    const CharacterType *char_type = m_manager->item_factory.GetCharacterTypeByBloodline(arg.bloodlineID);
+    PyServiceMgr::item_factory->SetUsingClient(call.client);
+    const CharacterType *char_type = PyServiceMgr::item_factory->GetCharacterTypeByBloodline(arg.bloodlineID);
     if(char_type == NULL)
         return NULL;
 
@@ -302,7 +303,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     //now we have all the data we need, stick it in the DB
     //create char item
-    CharacterRef char_item = m_manager->item_factory.SpawnCharacter(idata, cdata, corpData);
+    CharacterRef char_item = PyServiceMgr::item_factory->SpawnCharacter(idata, cdata, corpData);
     if( !char_item ) {
         //a return to the client of 0 seems to be the only means of marking failure
         codelog(CLIENT__ERROR, "Failed to create character '%s'", idata.name.c_str());
@@ -331,7 +332,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     for(; cur != end; cur++)
     {
         ItemData skillItem( cur->first, char_item->itemID(), char_item->itemID(), flagSkill );
-        SkillRef i = m_manager->item_factory.SpawnSkill( skillItem );
+        SkillRef i = PyServiceMgr::item_factory->SpawnSkill(skillItem);
         if( !i ) {
             _log(CLIENT__ERROR, "Failed to add skill %u to char %s (%u) during char create.", cur->first, char_item->itemName().c_str(), char_item->itemID());
             continue;
@@ -350,19 +351,19 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     // add "Damage Control I"
     ItemData itemDamageControl( 2046, char_item->itemID(), char_item->locationID(), flagHangar, 1 );
-    initInvItem = m_manager->item_factory.SpawnItem( itemDamageControl );
+    initInvItem = PyServiceMgr::item_factory->SpawnItem(itemDamageControl);
 
     if( !initInvItem )
         codelog(CLIENT__ERROR, "%s: Failed to spawn a starting item", char_item->itemName().c_str());
 
     // add 1 unit of "Tritanium"
     ItemData itemTritanium( 34, char_item->itemID(), char_item->locationID(), flagHangar, 1 );
-    initInvItem = m_manager->item_factory.SpawnItem( itemTritanium );
+    initInvItem = PyServiceMgr::item_factory->SpawnItem(itemTritanium);
 
     // add 1 unit of "Clone Grade Alpha"
     ItemData itemCloneAlpha( 164, char_item->itemID(), char_item->locationID(), flagClone, 1 );
     itemCloneAlpha.customInfo="active";
-    initInvItem = m_manager->item_factory.SpawnItem( itemCloneAlpha );
+    initInvItem = PyServiceMgr::item_factory->SpawnItem(itemCloneAlpha);
 
     if( !initInvItem )
         codelog(CLIENT__ERROR, "%s: Failed to spawn a starting item", char_item->itemName().c_str());
@@ -371,7 +372,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     std::string ship_name = char_item->itemName() + "'s Ship";
 
     ItemData shipItem( char_type->shipTypeID(), char_item->itemID(), char_item->locationID(), flagHangar, ship_name.c_str() );
-    ShipRef ship_item = m_manager->item_factory.SpawnShip( shipItem );
+    ShipRef ship_item = PyServiceMgr::item_factory->SpawnShip(shipItem);
 
     char_item->SetActiveShip( ship_item->itemID() );
     char_item->SaveFullCharacter();
@@ -390,7 +391,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     sImageServer.ReportNewCharacter(call.client->GetAccountID(), char_item->itemID());
 
     // Release the item factory now that the character is finished being accessed:
-    m_manager->item_factory.UnsetUsingClient();
+    PyServiceMgr::item_factory->UnsetUsingClient();
 
     return new PyInt( char_item->itemID() );
 }

@@ -33,7 +33,7 @@ class JumpCloneService
 : public PyService
 {
 public:
-    JumpCloneService(PyServiceMgr *mgr);
+    JumpCloneService();
     virtual ~JumpCloneService();
 
 protected:

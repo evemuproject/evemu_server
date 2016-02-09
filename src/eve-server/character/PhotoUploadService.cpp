@@ -31,8 +31,8 @@
 
 PyCallable_Make_InnerDispatcher(PhotoUploadService)
 
-PhotoUploadService::PhotoUploadService(PyServiceMgr* mgr)
-: PyService(mgr, "photoUploadSvc"),
+PhotoUploadService::PhotoUploadService()
+: PyService("photoUploadSvc"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

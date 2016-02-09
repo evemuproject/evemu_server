@@ -33,7 +33,7 @@
 class TutorialService : public PyService
 {
 public:
-    TutorialService(PyServiceMgr *mgr);
+    TutorialService();
     virtual ~TutorialService();
 
 protected:

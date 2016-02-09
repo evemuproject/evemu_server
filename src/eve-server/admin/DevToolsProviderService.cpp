@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(DevToolsProviderService)
 
-DevToolsProviderService::DevToolsProviderService(PyServiceMgr* mgr)
-: PyService(mgr, "devToolsProvider"),
+DevToolsProviderService::DevToolsProviderService()
+: PyService("devToolsProvider"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

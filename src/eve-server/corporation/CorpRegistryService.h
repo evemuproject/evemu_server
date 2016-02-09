@@ -34,7 +34,7 @@ class CorpRegistryService
 : public PyService
 {
 public:
-    CorpRegistryService(PyServiceMgr *mgr);
+    CorpRegistryService();
     virtual ~CorpRegistryService();
 
 protected:

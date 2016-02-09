@@ -150,11 +150,9 @@ CelestialEntity::CelestialEntity(
     CelestialObjectRef celestial,
     //InventoryItemRef celestial,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : CelestialDynamicSystemEntity(new DestinyManager(this, system), celestial),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _celestialRef = celestial;
     m_destiny->SetPosition(position, false);

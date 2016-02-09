@@ -69,7 +69,6 @@ class EVENotificationStream;
 class PySubStream;
 class InventoryItem;
 class SystemManager;
-class PyServiceMgr;
 class PyCallStream;
 class PyTuple;
 class LSCChannel;
@@ -87,13 +86,11 @@ class Client
   protected EVEPacketDispatcher
 {
 public:
-    Client(PyServiceMgr &services, EVETCPConnection** con);
+    Client( EVETCPConnection** con);
     virtual ~Client();
 
     bool            ProcessNet();
     virtual void    Process();
-
-    PyServiceMgr& services() const { return m_services; }
 
     /********************************************************************/
     /* Session values                                                   */
@@ -129,7 +126,7 @@ public:
     //  public functions to update client session when char's roles are changed
     void UpdateCorpSession( const CharacterConstRef& character );
     void UpdateFleetSession( const CharacterConstRef& character );
-    
+
 
     // character data
     CharacterRef GetChar() const                    { return m_char; }
@@ -256,7 +253,6 @@ protected:
     void _SendPingRequest();
     void _SendPingResponse( const PyAddress& source, uint64 callID );
 
-    PyServiceMgr& m_services;
     Timer m_pingTimer;
     ClientSession mSession;
 

@@ -30,8 +30,8 @@
 
 PyCallable_Make_InnerDispatcher(ClientStatsMgr)
 
-ClientStatsMgr::ClientStatsMgr(PyServiceMgr *mgr)
-: PyService(mgr, "clientStatsMgr"),
+ClientStatsMgr::ClientStatsMgr()
+: PyService("clientStatsMgr"),
   m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);

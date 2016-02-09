@@ -34,11 +34,9 @@ using namespace Destiny;
 DeployableEntity::DeployableEntity(
     InventoryItemRef deployable,
     SystemManager *system,
-    PyServiceMgr &services,
     const GPoint &position)
 : DynamicSystemEntity(new DestinyManager(this, system), deployable),
-  m_system(system),
-  m_services(services)
+  m_system(system)
 {
     _deployableRef = deployable;
     m_destiny->SetPosition(position, false);
