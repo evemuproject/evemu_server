@@ -76,7 +76,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *SearchID) {
     }
     
     // Escape the match string
-    sDatabase.DoEscapeString(matchEsc, match.c_str());
+    DBcore::DoEscapeString(matchEsc, match.c_str());
 
     //Form the query and execute it
     query = "SELECT itemID,itemName FROM entity"
@@ -88,7 +88,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *SearchID) {
 
     _log(SERVICE__MESSAGE, query.c_str(), matchEsc.c_str(), supplement.str().c_str() ,st.str().c_str());
 
-    if(!sDatabase.RunQuery(res,query.c_str(), matchEsc.c_str(), supplement.str().c_str() , st.str().c_str() ))
+    if(!DBcore::RunQuery(res,query.c_str(), matchEsc.c_str(), supplement.str().c_str() , st.str().c_str() ))
     {
         _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
         return NULL;
@@ -125,7 +125,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
     }
 
     // Escape the searchString
-    sDatabase.DoEscapeString(matchEsc, match.c_str());
+    DBcore::DoEscapeString(matchEsc, match.c_str());
 
 
     // The client wants a dict in return
@@ -138,7 +138,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
 
 	switch(searchID->at(i)) {
 	  case 1:	//searchResultAgent = 1
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT"
             " itemID AS agentID"
             " FROM entity"
@@ -147,7 +147,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
 	  case 2:	//searchResultCharacter = 2
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT"
             " itemID"
             " FROM entity"
@@ -156,7 +156,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " AND ownerID = 1",equal.c_str(), matchEsc.c_str(),EVEMU_MINIMUM_ID );
             break;
 	  case 3:	//searchResultCorporation = 3
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT"
             " corporationID"
             " FROM corporation"
@@ -164,21 +164,21 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
 	  case 4:	//searchResultAlliance = 4
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT allianceID"
             " FROM alliance_ShortNames"
             " WHERE shortName %s '%s'"
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str()  );
             break;
 	  case 5:	//searchResultFaction = 5
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT factionID"
             " FROM chrFactions"
             " WHERE factionName %S '%s' "
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
 	  case 6:	//searchResultConstellation = 6
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT"
             " constellationID"
             " FROM mapConstellations"
@@ -187,7 +187,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             break;
           
 	  case 7:	//searchResultSolarSystem = 7
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT "
             " solarSystemID"
             " FROM mapSolarSystems"
@@ -195,7 +195,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
 	  case 8:	//searchResultRegion = 8
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
       	    "SELECT "
             " regionID"
             " FROM mapRegions"
@@ -203,7 +203,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
 	  case 9:	//searchResultStation = 9
-            sDatabase.RunQuery(res,
+            DBcore::RunQuery(res,
 	    "SELECT "
             " stationID"
             " FROM staStations "
@@ -211,7 +211,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
 	  case 10:	//searchResultInventoryType = 10
-	    sDatabase.RunQuery(res,
+	    DBcore::RunQuery(res,
 	    "SELECT"
             "   typeID"
             " FROM entity"

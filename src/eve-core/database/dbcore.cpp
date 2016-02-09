@@ -33,15 +33,36 @@
 
 //#define COLUMN_BOUNDS_CHECKING
 
-DBcore::DBcore(bool compress, bool ssl) : pCompress(compress), pSSL(ssl)
-{
-    mysql_init(&mysql);
-    pStatus = Closed;
-}
+Mutex DBcore::MDatabase;
+DBcore::eStatus DBcore::pStatus = Closed;
 
-DBcore::~DBcore()
+std::string DBcore::pHost;
+std::string DBcore::pUser;
+std::string DBcore::pPassword;
+std::string DBcore::pDatabase;
+bool DBcore::pCompress = false;
+int16 DBcore::pPort;
+bool DBcore::pSSL = false;
+
+class MySQLHolder
 {
-    mysql_close(&mysql);
+public:
+
+    MySQLHolder()
+    {
+        mysql_init(&mysql);
+    }
+
+    ~MySQLHolder()
+    {
+        mysql_close(&mysql);
+    }
+    MYSQL mysql;
+} mSQL;
+
+MYSQL* getMySQL()
+{
+    return &mSQL.mysql;
 }
 
 // Sends the MySQL server a ping
@@ -50,7 +71,7 @@ void DBcore::ping()
     // well, if it's locked, someone's using it. If someone's using it, it doesn't need a ping
     if( MDatabase.TryLock() )
     {
-        mysql_ping( &mysql );
+        mysql_ping(getMySQL());
         MDatabase.Unlock();
     }
 }
@@ -68,14 +89,15 @@ bool DBcore::RunQuery(DBQueryResult &into, const char *query_fmt, ...) {
     if(!DoQuery_locked(into.error, query, querylen))
         return false;
 
-    uint32 col_count = mysql_field_count(&mysql);
+    MYSQL* mysql = getMySQL();
+    uint32 col_count = mysql_field_count(mysql);
     if(col_count == 0) {
         into.error.SetError(0xFFFF, "DBcore::RunQuery: No Result");
         sLog.Error("DBCore Query", "Query: %s failed because did not return a result", query);
         return false;
     }
 
-    MYSQL_RES *result = mysql_store_result(&mysql);
+    MYSQL_RES *result = mysql_store_result(mysql);
 
     //give them the result set.
     into.SetResult(&result, col_count);
@@ -123,7 +145,7 @@ bool DBcore::RunQuery(DBerror &err, uint32 &affected_rows, const char *query_fmt
     }
     free(query);
 
-    affected_rows = (uint32)mysql_affected_rows(&mysql);
+    affected_rows = (uint32) mysql_affected_rows(getMySQL());
 
     return true;
 }
@@ -144,7 +166,7 @@ bool DBcore::RunQueryLID(DBerror &err, uint32 &last_insert_id, const char *query
     }
     free(query);
 
-    last_insert_id = (uint32)mysql_insert_id(&mysql);
+    last_insert_id = (uint32) mysql_insert_id(getMySQL());
 
     return true;
 }
@@ -154,8 +176,10 @@ bool DBcore::DoQuery_locked(DBerror &err, const char *query, int32 querylen, boo
     if (pStatus != Connected)
         Open_locked();
 
-    if (mysql_real_query(&mysql, query, querylen)) {
-        int num = mysql_errno(&mysql);
+    MYSQL* mysql = getMySQL();
+    if (mysql_real_query(mysql, query, querylen))
+    {
+        int num = mysql_errno(mysql);
 
         if (num == CR_SERVER_GONE_ERROR)
             pStatus = Error;
@@ -167,7 +191,7 @@ bool DBcore::DoQuery_locked(DBerror &err, const char *query, int32 querylen, boo
         }
 
         pStatus = Error;
-        err.SetError(num, mysql_error(&mysql));
+        err.SetError(num, mysql_error(mysql));
         sLog.Error("DBCore Query", "#%d in '%s': %s", err.GetErrNo(), query, err.c_str());
         return false;
     }
@@ -199,9 +223,12 @@ bool DBcore::RunQuery(const char* query, int32 querylen, char* errbuf, MYSQL_RES
         return false;
     }
 
-    if (result) {
-        if(mysql_field_count(&mysql)) {
-            *result = mysql_store_result(&mysql);
+    MYSQL* mysql = getMySQL();
+    if (result)
+    {
+        if (mysql_field_count(mysql))
+        {
+            *result = mysql_store_result(mysql);
         } else {
             *result = NULL;
             if (errnum)
@@ -217,22 +244,22 @@ bool DBcore::RunQuery(const char* query, int32 querylen, char* errbuf, MYSQL_RES
         }
     }
     if (affected_rows)
-        *affected_rows = (uint32)mysql_affected_rows(&mysql);
+        *affected_rows = (uint32) mysql_affected_rows(mysql);
     if (last_insert_id)
-        *last_insert_id = (uint32)mysql_insert_id(&mysql);
+        *last_insert_id = (uint32) mysql_insert_id(mysql);
     return true;
 }
 
 int32 DBcore::DoEscapeString(char* tobuf, const char* frombuf, int32 fromlen)
 {
-    return mysql_real_escape_string(&mysql, tobuf, frombuf, fromlen);
+    return mysql_real_escape_string(getMySQL(), tobuf, frombuf, fromlen);
 }
 
 void DBcore::DoEscapeString(std::string &to, const std::string &from)
 {
     uint32 len = (uint32)from.length();
     to.resize(len*2 + 1);   // make enough room
-    uint32 esc_len = mysql_real_escape_string(&mysql, &to[0], from.c_str(), len);
+    uint32 esc_len = mysql_real_escape_string(getMySQL(), &to[0], from.c_str(), len);
     to.resize(esc_len+1); // optional.
 }
 
@@ -290,8 +317,9 @@ bool DBcore::Open_locked(int32* errnum, char* errbuf) {
         errbuf[0] = 0;
     if (GetStatus() == Connected)
         return true;
+    MYSQL* mysql = getMySQL();
     if (GetStatus() == Error)
-        mysql_close(&mysql);    //do we need to call init again?
+        mysql_close(mysql); //do we need to call init again?
     if (pHost.empty())
         return false;
 
@@ -305,24 +333,26 @@ bool DBcore::Open_locked(int32* errnum, char* errbuf) {
         flags |= CLIENT_COMPRESS;
     if (pSSL)
         flags |= CLIENT_SSL;
-    if (mysql_real_connect(&mysql, pHost.c_str(), pUser.c_str(), pPassword.c_str(), pDatabase.c_str(), pPort, 0, flags)) {
+    if (mysql_real_connect(mysql, pHost.c_str(), pUser.c_str(), pPassword.c_str(), pDatabase.c_str(), pPort, 0, flags))
+    {
         pStatus = Connected;
     } else {
         pStatus = Error;
         if (errnum)
-            *errnum = mysql_errno(&mysql);
+            *errnum = mysql_errno(mysql);
         if (errbuf)
-            snprintf(errbuf, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(&mysql), mysql_error(&mysql));
+            snprintf(errbuf, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(mysql), mysql_error(mysql));
         return false;
     }
 
     // Setup character set we wish to use
-    if(mysql_set_character_set(&mysql, "utf8") != 0) {
+    if (mysql_set_character_set(mysql, "utf8") != 0)
+    {
         pStatus = Error;
         if(errnum)
-            *errnum = mysql_errno(&mysql);
+            *errnum = mysql_errno(mysql);
         if(errbuf)
-            snprintf(errbuf, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(&mysql), mysql_error(&mysql));
+            snprintf(errbuf, MYSQL_ERRMSG_SIZE, "#%i: %s", mysql_errno(mysql), mysql_error(mysql));
         return false;
     }
 

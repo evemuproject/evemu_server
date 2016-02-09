@@ -30,7 +30,7 @@
 PyObjectEx *MissionDB::GetAgents() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         "    agt.agentID,"
         "    agt.agentTypeID,"
@@ -59,7 +59,7 @@ AgentLevel *MissionDB::LoadAgentLevel(uint8 level) {
 
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT missionID,missionName,missionLevel,"
         "    agtMissions.missionTypeID,missionTypeName,"
         "    importantMission"

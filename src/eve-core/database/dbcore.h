@@ -127,59 +127,52 @@ protected:
 };
 
 class DBcore
-: public Singleton<DBcore>
 {
 public:
     enum eStatus { Closed, Connected, Error };
 
-    DBcore(bool compress=false, bool ssl=false);
-    ~DBcore();
-    eStatus GetStatus() const { return pStatus; }
+    static eStatus GetStatus()
+    {
+        return pStatus;
+    }
 
     //new shorter syntax:
     //query which returns a result (error is stored in the result if it occurs)
-    bool    RunQuery(DBQueryResult &into, const char *query_fmt, ...);
+    static bool RunQuery(DBQueryResult &into, const char *query_fmt, ...);
     //query which returns no information except error status
-    bool    RunQuery(DBerror &err, const char *query_fmt, ...);
+    static bool RunQuery(DBerror &err, const char *query_fmt, ...);
     //query which returns affected rows:
-    bool    RunQuery(DBerror &err, uint32 &affected_rows, const char *query_fmt, ...);
+    static bool RunQuery(DBerror &err, uint32 &affected_rows, const char *query_fmt, ...);
     //query which returns last insert ID:
-    bool    RunQueryLID(DBerror &err, uint32 &last_insert_id, const char *query_fmt, ...);
+    static bool RunQueryLID(DBerror &err, uint32 &last_insert_id, const char *query_fmt, ...);
 
     //old style to be used with MakeAnyLengthString
-    bool    RunQuery(const char* query, int32 querylen, char* errbuf = 0, MYSQL_RES** result = 0, int32* affected_rows = 0, int32* last_insert_id = 0, int32* errnum = 0, bool retry = true);
+    static bool RunQuery(const char* query, int32 querylen, char* errbuf = 0, MYSQL_RES** result = 0, int32* affected_rows = 0, int32* last_insert_id = 0, int32* errnum = 0, bool retry = true);
 
-    int32   DoEscapeString(char* tobuf, const char* frombuf, int32 fromlen);
-    void    DoEscapeString(std::string &to, const std::string &from);
+    static int32 DoEscapeString(char* tobuf, const char* frombuf, int32 fromlen);
+    static void DoEscapeString(std::string &to, const std::string &from);
     static bool IsSafeString(const char *str);
-    void    ping();
+    static void ping();
 
 //  static bool ReadDBINI(char *host, char *user, char *pass, char *db, int32 &port, bool &compress, bool *items);
-    bool    Open(const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, int32* errnum = 0, char* errbuf = 0, bool iCompress = false, bool iSSL = false);
-    bool    Open(DBerror &err, const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, bool iCompress = false, bool iSSL = false);
-
-protected:
-    MYSQL*  getMySQL(){ return &mysql; }
+    static bool Open(const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, int32* errnum = 0, char* errbuf = 0, bool iCompress = false, bool iSSL = false);
+    static bool Open(DBerror &err, const char* iHost, const char* iUser, const char* iPassword, const char* iDatabase, int16 iPort, bool iCompress = false, bool iSSL = false);
 
 private:
     //MDatabase must be locked before these calls:
-    bool    Open_locked(int32* errnum = 0, char* errbuf = 0);
-    bool    DoQuery_locked(DBerror &err, const char *query, int32 querylen, bool retry = true);
+    static bool Open_locked(int32* errnum = 0, char* errbuf = 0);
+    static bool DoQuery_locked(DBerror &err, const char *query, int32 querylen, bool retry = true);
 
-    MYSQL   mysql;
-    Mutex   MDatabase;
-    eStatus pStatus;
+    static Mutex MDatabase;
+    static eStatus pStatus;
 
-    std::string pHost;
-    std::string pUser;
-    std::string pPassword;
-    std::string pDatabase;
-    bool    pCompress;
-    int16   pPort;
-    bool    pSSL;
+    static std::string pHost;
+    static std::string pUser;
+    static std::string pPassword;
+    static std::string pDatabase;
+    static bool pCompress;
+    static int16 pPort;
+    static bool pSSL;
 };
-
-#define sDatabase \
-    ( DBcore::get() )
 
 #endif /* !__DATABASE__DBCORE_H__INCL__ */

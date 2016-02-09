@@ -30,7 +30,7 @@
 PyRep *DogmaDB::GetOperand() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " operandID,"
         " operandKey,"

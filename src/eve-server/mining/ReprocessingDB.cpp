@@ -30,7 +30,7 @@
 bool ReprocessingDB::IsRefinable(const uint32 typeID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
                 "SELECT NULL"
                 " FROM typeActivityMaterials"
                 " WHERE typeID=%u"
@@ -50,7 +50,7 @@ bool ReprocessingDB::IsRefinable(const uint32 typeID) {
 bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
                 "SELECT NULL FROM typeActivityMaterials"
                 " LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
                 " WHERE damagePerJob = 1 AND ("
@@ -73,7 +73,7 @@ bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
 bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
 	DBQueryResult res;
 
-	if (!sDatabase.RunQuery(res,
+	if (!DBcore::RunQuery(res,
 		"SELECT NULL FROM ramTypeRequirements"
 		" LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
 		" WHERE damagePerJob = 1 AND ("
@@ -94,7 +94,7 @@ bool ReprocessingDB::IsRecyclable(const uint32 typeID) {
 bool ReprocessingDB::LoadStatic(const uint32 stationID, double &efficiency, double &tax) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
                 "SELECT reprocessingEfficiency, reprocessingStationsTake"
                 " FROM staStations"
                 " WHERE stationID=%u",
@@ -122,7 +122,7 @@ bool ReprocessingDB::GetRecoverables(const uint32 typeID, std::vector<Recoverabl
     DBQueryResult res;
     DBResultRow row;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
                 "SELECT requiredTypeID, MIN(quantity) FROM typeActivityMaterials"
                 " LEFT JOIN invBlueprintTypes ON typeID = blueprintTypeID"
                 " WHERE damagePerJob = 1 AND ("
@@ -152,7 +152,7 @@ bool ReprocessingDB::GetRecoverables(const uint32 typeID, std::vector<Recoverabl
 	DBQueryResult res;
 	DBResultRow row;
 
-	if (!sDatabase.RunQuery(res,
+	if (!DBcore::RunQuery(res,
 		"SELECT materialTypeID, MIN(quantity) FROM invTypeMaterials WHERE typeID = %u"
 		" GROUP BY materialTypeID",
 		typeID))

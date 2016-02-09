@@ -32,7 +32,7 @@
 PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " bookmarkID,"
         " ownerID,"
@@ -59,7 +59,7 @@ PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
 PyObjectEx *BookmarkDB::GetFolders(uint32 ownerID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " ownerID,"
         " folderID,"
@@ -86,7 +86,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
 
     // The most common bookmark made is a location in space, so let's check this first and exit
     // quickly for this high use case:
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    typeID "
         " FROM entity "
@@ -99,7 +99,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
     if (res.GetRow(row))
     {
         // itemID exists in 'entity' table, now let's check to see what type it is:
-        if (!sDatabase.RunQuery(res2,
+        if (!DBcore::RunQuery(res2,
             " SELECT "
             "    groupID "
             " FROM invTypes "
@@ -117,7 +117,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
     }
 
     // No match yet, so next let's check the 'mapDenormalize' table for a Sun, Planet, Moon, Asteroid Belt, or Stargate:
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    typeID, groupID "
         " FROM mapDenormalize "
@@ -144,7 +144,7 @@ bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint
        DBResultRow row;
 
     // Query database 'bookmarks' table for the supplied bookmarkID and retrieve entire row:
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    bookmarkID, "
         "   ownerID, "
@@ -197,7 +197,7 @@ bool BookmarkDB::SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, u
 {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " INSERT INTO bookmarks "
         " (bookmarkID, ownerID, itemID, typeID, flag, memo, created, x, y, z, locationID, note, creatorID, folderID)"
         " VALUES (%u, %u, %u, %u, %u, '%s', %" PRIu64 ", %f, %f, %f, %u, '%s', %u, %u) ",
@@ -215,7 +215,7 @@ bool BookmarkDB::DeleteBookmarkFromDatabase(uint32 ownerID, uint32 bookmarkID)
 {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM bookmarks "
         " WHERE ownerID = %u AND bookmarkID = %u", ownerID, bookmarkID
         ))
@@ -243,7 +243,7 @@ bool BookmarkDB::DeleteBookmarksFromDatabase(uint32 ownerID, std::vector<unsigne
             st << ", ";
     }
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM bookmarks "
         " WHERE ownerID = %u AND bookmarkID IN (%s)", ownerID, st.str().c_str()
         ))
@@ -260,7 +260,7 @@ bool BookmarkDB::UpdateBookmarkInDatabase(uint32 bookmarkID, uint32 ownerID, std
 {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " UPDATE bookmarks "
         " SET "
         " memo = '%s', note = '%s'"
@@ -283,7 +283,7 @@ bool BookmarkDB::SaveNewFolderToDatabase(uint32 &folderID, std::string folderNam
 {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " INSERT INTO bookmarkFolders"
         " (folderID, folderName, ownerID, creatorID )"
         " VALUES (%u, '%s', %u, %u) ",
@@ -302,7 +302,7 @@ bool BookmarkDB::UpdateFolderInDatabase(uint32 &folderID, std::string folderName
 {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " UPDATE bookmarkFolders"
         "  SET  folderName = '%s'"
         " WHERE folderID = %u AND ownerID = %u",
@@ -320,7 +320,7 @@ bool BookmarkDB::DeleteFolderFromDatabase(uint32 folderID, uint32 ownerID)
 {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM bookmarkFolders "
         " WHERE ownerID = %u AND folderID = %u",
         ownerID, folderID

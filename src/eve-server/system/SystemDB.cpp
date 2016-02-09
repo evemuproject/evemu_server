@@ -30,7 +30,7 @@
 bool SystemDB::LoadSystemEntities(uint32 systemID, std::vector<DBSystemEntity> &into) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " itemID,typeID,groupID,orbitID,"
         " x,y,z,radius,security,itemName"
@@ -64,7 +64,7 @@ bool SystemDB::LoadSystemEntities(uint32 systemID, std::vector<DBSystemEntity> &
 bool SystemDB::LoadSystemDynamicEntities(uint32 systemID, std::vector<DBSystemDynamicEntity> &into) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         "    entity.itemID,"
         "   entity.itemName,"
@@ -123,7 +123,7 @@ bool SystemDB::LoadSystemDynamicEntities(uint32 systemID, std::vector<DBSystemDy
 
 bool SystemDB::GetWrecksToTypes(DBQueryResult &res)
 {
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " *"
         " FROM invTypesToWrecks "))
@@ -138,7 +138,7 @@ bool SystemDB::GetWrecksToTypes(DBQueryResult &res)
 PyObject *SystemDB::ListFactions() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " factionID"
         " FROM chrFactions "))
@@ -153,7 +153,7 @@ PyObject *SystemDB::ListFactions() {
 PyObject *SystemDB::ListJumps(uint32 stargateID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " celestialID AS toCelestialID,"
         " solarSystemID AS locationID"

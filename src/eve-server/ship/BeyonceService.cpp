@@ -527,7 +527,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
                 uint32 groupID = 0;
 
                 // Query database 'invTypes' table for the supplied typeID and retrieve the groupID for this type:
-                if (!sDatabase.RunQuery(result,
+                if (!DBcore::RunQuery(result,
                     " SELECT "
                     "    groupID "
                     " FROM invTypes "
@@ -581,7 +581,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
     else if( arg.type == "launch" )
     {
         DBQueryResult res;
-        if(!sDatabase.RunQuery(res, "SELECT `x`, `y`, `z` FROM `planetlaunches` WHERE `launchID` = %u", arg.ID)) {
+        if(!DBcore::RunQuery(res, "SELECT `x`, `y`, `z` FROM `planetlaunches` WHERE `launchID` = %u", arg.ID)) {
             codelog(SERVICE__ERROR, "Error in BeyonceService::CmdWarpToStuff:launch Query: %s", res.error.c_str());
             return NULL;
         }

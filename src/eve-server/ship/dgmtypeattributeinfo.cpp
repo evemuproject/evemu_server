@@ -32,7 +32,7 @@ dgmtypeattributemgr::dgmtypeattributemgr()
     // load shit from db
     DBQueryResult res;
 
-    if( !sDatabase.RunQuery( res,
+    if( !DBcore::RunQuery( res,
         "SELECT * FROM dgmTypeAttributes ORDER BY typeID" ) )
     {
         sLog.Error("DgmTypeAttrMgr", "Error in db load query: %s", res.error.c_str());

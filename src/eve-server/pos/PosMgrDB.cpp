@@ -29,7 +29,7 @@
 
 PyRep *PosMgrDB::GetControlTowerFuelRequirements() {
     DBQueryResult res;
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "   controlTowerTypeID, resourceTypeID, purpose, quantity, factionID, minSecurityLevel "
         " FROM invControlTowerResources "))

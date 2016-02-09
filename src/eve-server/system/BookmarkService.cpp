@@ -59,7 +59,7 @@ uint32 BookmarkService::GetNextAvailableBookmarkID()
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         "SELECT"
         "  bookmarkID "
         " FROM bookmarks "
@@ -96,7 +96,7 @@ uint32 BookmarkService::GetNextAvailableFolderID()
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         "SELECT"
         "  folderID "
         " FROM bookmarkFolders "

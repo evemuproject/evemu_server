@@ -38,7 +38,7 @@ bool APICharacterDB::GetCharacterSkillsTrained(uint32 characterID, std::vector<s
     DBQueryResult res;
 
     // Get list of characters and their corporation info from the accountID:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         "   entity.itemID, "
         "   entity.typeID, "
@@ -112,7 +112,7 @@ bool APICharacterDB::GetCharacterInfo(uint32 characterID, std::vector<std::strin
     DBQueryResult res;
 
     // Get list of characters and their corporation info from the accountID:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         "  character_.balance, "
         "  character_.skillPoints, "
@@ -172,7 +172,7 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
     DBQueryResult res;
 
     // Get list of characters and their corporation info from the accountID:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         "  itemID, "
         "  attributeID, "
@@ -263,7 +263,7 @@ bool APICharacterDB::GetCharacterSkillQueue(uint32 characterID, std::vector<std:
     DBQueryResult res;
 
     // Get list of characters and their corporation info from the accountID:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         "  chrSkillQueue.*, "
         "  dgmTypeAttributes.attributeID, "
@@ -368,7 +368,7 @@ bool APIServiceDB::GetAccountIdFromUsername(std::string username, std::string * 
     DBQueryResult res;
 
     // Find accountID in 'account' table using accountName:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         "SELECT"
         "    accountID "
         " FROM account "
@@ -395,7 +395,7 @@ bool APIServiceDB::GetApiAccountInfoUsingAccountID(std::string accountID, uint32
     DBQueryResult res;
 
     // Find userID, fullKey, limitedKey, and apiRole from 'accountApi' table using accountID obtained from 'account' table:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         "SELECT"
         "    userID, fullKey, limitedKey, apiRole "
         " FROM accountApi "
@@ -424,7 +424,7 @@ bool APIServiceDB::GetApiAccountInfoUsingUserID(std::string userID, std::string 
     DBQueryResult res;
 
     // Find fullKey, limitedKey, and apiRole from 'accountApi' table using userID supplied from an API query string:
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         "SELECT"
         "    fullKey, limitedKey, apiRole "
         " FROM accountApi "
@@ -465,7 +465,7 @@ bool APIServiceDB::UpdateUserIdApiKeyDatabaseRow(uint32 userID, std::string apiF
     // Update fullKey and limitedKey in the 'accountApi' table using userID:
     DBerror err;
 
-    if( !sDatabase.RunQuery(err,
+    if( !DBcore::RunQuery(err,
         "UPDATE"
         " accountApi"
         " SET fullKey = '%s', limitedKey = '%s'"
@@ -496,7 +496,7 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
 
     DBerror err;
 
-    if( !sDatabase.RunQuery(err,
+    if( !DBcore::RunQuery(err,
         "INSERT INTO"
         " accountApi ("
         "    accountID, fullKey, limitedKey, apiRole"
@@ -518,7 +518,7 @@ bool APIServiceDB::UpdateUserIdApiRole(uint32 userID, uint32 apiRole)
     // Update fullKey and limitedKey in the 'accountApi' table using userID:
     DBerror err;
 
-    if( !sDatabase.RunQuery(err,
+    if( !DBcore::RunQuery(err,
         "UPDATE"
         " accountApi"
         " SET apiRole = %u"

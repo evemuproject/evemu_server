@@ -158,13 +158,13 @@ bool NPCMarket::ProcessStation(const TiXmlElement* ele)
         itr++;
     }
     // Check to see if were being requested to stop?  Or if the database has closed!
-    if (stopNPCMarketSeeding || sDatabase.GetStatus() == sDatabase.Closed)
+    if (stopNPCMarketSeeding || DBcore::GetStatus() == DBcore::Closed)
     {
         sLog.Warning("Failed to complete NPC market seeding from file %s.", marketFile.c_str());
         return false;
     }
     // Process the sql command.
-    if (!sDatabase.RunQueryLID(err, orderID,
+    if (!DBcore::RunQueryLID(err, orderID,
                                "INSERT INTO market_orders ("
                                "    typeID, charID, regionID, stationID,"
                                "    `range`, bid, price, volEntered, volRemaining, issued,"
@@ -242,7 +242,7 @@ void NPCMarket::NPCMarketTask()
         {
             sLog.Log("NPCMarket", "Deleting old NPC orders.");
         }
-        if (!sDatabase.RunQuery(err, "DELETE FROM market_orders WHERE duration > 90"))
+        if (!DBcore::RunQuery(err, "DELETE FROM market_orders WHERE duration > 90"))
         {
             _log(MARKET__ERROR, "Error in query: %s.", err.c_str());
             sLog.Log("NPCMarket", "Failed to clear old NPC market.");

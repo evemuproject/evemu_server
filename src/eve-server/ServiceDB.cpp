@@ -39,10 +39,10 @@ bool ServiceDB::GetAccountInformation( const char* username, const char* passwor
     std::string _username = username;
     std::string _escaped_username;
 
-    sDatabase.DoEscapeString(_escaped_username, _username);
+    DBcore::DoEscapeString(_escaped_username, _username);
 
     DBQueryResult res;
-    if( !sDatabase.RunQuery( res, "SELECT accountID, password, hash, role, online, banned, logonCount, lastLogin FROM account WHERE accountName = '%s'", _escaped_username.c_str() ) )
+    if( !DBcore::RunQuery( res, "SELECT accountID, password, hash, role, online, banned, logonCount, lastLogin FROM account WHERE accountName = '%s'", _escaped_username.c_str() ) )
     {
         sLog.Error( "ServiceDB", "Error in query: %s.", res.error.c_str() );
         return false;
@@ -93,10 +93,10 @@ bool ServiceDB::UpdateAccountHash( const char* username, std::string & hash )
     std::string escaped_hash;
     std::string escaped_username;
 
-    sDatabase.DoEscapeString(escaped_hash, hash);
-    sDatabase.DoEscapeString(escaped_username, user_name);
+    DBcore::DoEscapeString(escaped_hash, hash);
+    DBcore::DoEscapeString(escaped_username, user_name);
 
-    if(!sDatabase.RunQuery(err, "UPDATE account SET password='',hash='%s' where accountName='%s'", escaped_hash.c_str(), escaped_username.c_str())) {
+    if(!DBcore::RunQuery(err, "UPDATE account SET password='',hash='%s' where accountName='%s'", escaped_hash.c_str(), escaped_username.c_str())) {
 
         sLog.Error( "AccountDB", "Unable to update account information for: %s.", username );
         return false;
@@ -111,8 +111,8 @@ bool ServiceDB::UpdateAccountInformation( const char* username, bool isOnline )
     std::string user_name = username;
     std::string escaped_username;
 
-    sDatabase.DoEscapeString(escaped_username, user_name);
-    if(!sDatabase.RunQuery(err, "UPDATE account SET lastLogin=now(), logonCount=logonCount+1, online=%u where accountName='%s'", isOnline, escaped_username.c_str())) {
+    DBcore::DoEscapeString(escaped_username, user_name);
+    if(!DBcore::RunQuery(err, "UPDATE account SET lastLogin=now(), logonCount=logonCount+1, online=%u where accountName='%s'", isOnline, escaped_username.c_str())) {
         sLog.Error( "AccountDB", "Unable to update account information for: %s.", username );
         return false;
     }
@@ -125,7 +125,7 @@ uint32 ServiceDB::CreateNewAccount( const char* login, const char* pass, uint64 
     uint32 accountID;
 
     DBerror err;
-    if( !sDatabase.RunQueryLID( err, accountID,
+    if( !DBcore::RunQueryLID( err, accountID,
         "INSERT INTO account ( accountName, hash, role )"
         " VALUES ( '%s', '%s', %" PRIu64 " )",
         login, pass, role ) )
@@ -141,7 +141,7 @@ PyObject *ServiceDB::GetSolRow(uint32 systemID) const
 {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         //not sure if this is gunna be valid all the time...
         "SELECT "
         "    itemID,entity.typeID,ownerID,locationID,flag,contraband,singleton,quantity,"
@@ -171,7 +171,7 @@ PyObject *ServiceDB::GetSolRow(uint32 systemID) const
 PyObject *ServiceDB::GetSolDroneState(uint32 systemID) const {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         //not sure if this is gunna be valid all the time...
         "SELECT "
         "    droneID, solarSystemID, ownerID, controllerID,"
@@ -197,7 +197,7 @@ bool ServiceDB::GetSystemInfo(uint32 systemID, uint32 *constellationID, uint32 *
         return true;
 
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " constellationID,"
         " regionID,"
@@ -238,7 +238,7 @@ bool ServiceDB::GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *const
         return true;
 
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " solarSystemID,"
         " constellationID,"
@@ -285,7 +285,7 @@ bool ServiceDB::GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *const
         return true;
 
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " solarSystemID,"
         " constellationID,"
@@ -342,7 +342,7 @@ bool ServiceDB::GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *const
 uint32 ServiceDB::GetDestinationStargateID(uint32 fromSystem, uint32 toSystem) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         " SELECT "
         "    fromStargate.solarSystemID AS fromSystem,"
         "    fromStargate.itemID AS fromGate,"
@@ -375,9 +375,9 @@ bool ServiceDB::GetConstant(const char *name, uint32 &into) {
     DBQueryResult res;
 
     std::string escaped;
-    sDatabase.DoEscapeString(escaped, name);
+    DBcore::DoEscapeString(escaped, name);
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
     "SELECT"
     "    constantValue"
     " FROM eveConstants"
@@ -405,7 +405,7 @@ void ServiceDB::ProcessStringChange(const char * key, const std::string & oldVal
         std::string newEscValue;
         std::string qValue(key);
 
-        sDatabase.DoEscapeString(newEscValue, newValue);
+        DBcore::DoEscapeString(newEscValue, newValue);
 
         // add to notification
         PyTuple * val = new PyTuple(2);
@@ -460,7 +460,7 @@ void ServiceDB::SetCharacterOnlineStatus(uint32 char_id, bool onoff_status) {
 
     _log(CLIENT__TRACE, "ChrStatus: Setting character %u %s.", char_id, onoff_status ? "Online" : "Offline");
 
-    if(!sDatabase.RunQuery(err,
+    if(!DBcore::RunQuery(err,
         "UPDATE character_"
         " SET online = %d"
         " WHERE characterID = %u",
@@ -473,7 +473,7 @@ void ServiceDB::SetCharacterOnlineStatus(uint32 char_id, bool onoff_status) {
     {
         _log(CLIENT__TRACE, "SrvStatus: Incrementing ConnectSinceStartup.");
 
-        if(!sDatabase.RunQuery(err, "UPDATE srvStatus SET config_value = config_value + 1 WHERE config_name = 'connectSinceStartup'"))
+        if(!DBcore::RunQuery(err, "UPDATE srvStatus SET config_value = config_value + 1 WHERE config_name = 'connectSinceStartup'"))
         {
             codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
         }
@@ -486,7 +486,7 @@ void ServiceDB::SetServerOnlineStatus(bool onoff_status) {
 
     _log(onoff_status ? SERVER__INIT : SERVER__SHUTDOWN, "SrvStatus: Server is %s, setting serverStartTime.", onoff_status ? "coming Online" : "going Offline");
 
-    if(!sDatabase.RunQuery(err,
+    if(!DBcore::RunQuery(err,
         "REPLACE INTO srvStatus (config_name, config_value)"
         " VALUES ('%s', %s)",
         "serverStartTime",
@@ -497,7 +497,7 @@ void ServiceDB::SetServerOnlineStatus(bool onoff_status) {
 
     _log(SERVER__INIT, "SrvStatus: Resetting ConnectSinceStartup.");
 
-    if(!sDatabase.RunQuery(err, "REPLACE INTO srvStatus (config_name, config_value)"
+    if(!DBcore::RunQuery(err, "REPLACE INTO srvStatus (config_name, config_value)"
         " VALUES ('%s', '0')",
         "connectSinceStartup"))
     {
@@ -506,7 +506,7 @@ void ServiceDB::SetServerOnlineStatus(bool onoff_status) {
 
     _log(CLIENT__TRACE, "ChrStatus: Setting all characters and accounts offline.");
 
-    if(!sDatabase.RunQuery(err,
+    if(!DBcore::RunQuery(err,
         "UPDATE character_, account"
         " SET character_.online = 0,"
         "     account.online = 0"))
@@ -520,7 +520,7 @@ void ServiceDB::SetAccountOnlineStatus(uint32 accountID, bool onoff_status) {
 
     _log(CLIENT__TRACE, "AccStatus: Setting account %u %s.", accountID, onoff_status ? "Online" : "Offline");
 
-    if(!sDatabase.RunQuery(err,
+    if(!DBcore::RunQuery(err,
         "UPDATE account "
         " SET account.online = %d "
         " WHERE accountID = %u ",
@@ -535,7 +535,7 @@ void ServiceDB::SetAccountBanStatus(uint32 accountID, bool onoff_status) {
 
     _log(CLIENT__TRACE, "AccStatus: %s account %u.", onoff_status ? "Banned" : "Removed ban on", accountID );
 
-    if(!sDatabase.RunQuery(err,
+    if(!DBcore::RunQuery(err,
         " UPDATE account "
         " SET account.banned = %d "
         " WHERE accountID = %u ",

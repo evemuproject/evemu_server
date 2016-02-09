@@ -32,9 +32,9 @@ PyObject *LSCDB::LookupChars(const char *match, bool exact) {
     DBQueryResult res;
 
     std::string matchEsc;
-    sDatabase.DoEscapeString(matchEsc, match);
+    DBcore::DoEscapeString(matchEsc, match);
     if (matchEsc == "__ALL__") {
-        if(!sDatabase.RunQuery(res,
+        if(!DBcore::RunQuery(res,
             "SELECT "
             "    characterID, itemName AS characterName, typeID"
             " FROM character_"
@@ -45,7 +45,7 @@ PyObject *LSCDB::LookupChars(const char *match, bool exact) {
             return NULL;
         }
     } else {
-        if(!sDatabase.RunQuery(res,
+        if(!DBcore::RunQuery(res,
             "SELECT "
             "    characterID, itemName AS characterName, typeID"
             " FROM character_"
@@ -67,14 +67,14 @@ PyObject *LSCDB::LookupOwners(const char *match, bool exact) {
     DBQueryResult res;
 
     std::string matchEsc;
-    sDatabase.DoEscapeString(matchEsc, match);
+    DBcore::DoEscapeString(matchEsc, match);
 
     // so each row needs "ownerID", "ownerName", and "groupID"
     // ownerID = either characterID or corporationID
     // ownerName = either characterName or corporationName
     // groupID = either 1 for character or 2 for corporation
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         "  character_.characterID AS ownerID,"
         "  entity.itemName AS ownerName,"
@@ -106,8 +106,8 @@ PyObject *LSCDB::LookupPlayerChars(const char *match, bool exact) {
     DBQueryResult res;
 
     std::string matchEsc;
-    sDatabase.DoEscapeString(matchEsc, match);
-    if(!sDatabase.RunQuery(res,
+    DBcore::DoEscapeString(matchEsc, match);
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " characterID, itemName AS characterName, typeID"
         " FROM character_"
@@ -127,9 +127,9 @@ PyObject *LSCDB::LookupPlayerChars(const char *match, bool exact) {
 PyObject *LSCDB::LookupCorporations(const std::string & search) {
     DBQueryResult res;
     std::string secure;
-    sDatabase.DoEscapeString(secure, search);
+    DBcore::DoEscapeString(secure, search);
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         " corporationID, corporationName, corporationType "
         " FROM corporation "
@@ -146,9 +146,9 @@ PyObject *LSCDB::LookupCorporations(const std::string & search) {
 PyObject *LSCDB::LookupFactions(const std::string & search) {
     DBQueryResult res;
     std::string secure;
-    sDatabase.DoEscapeString(secure, search);
+    DBcore::DoEscapeString(secure, search);
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         " factionID, factionName "
         " FROM chrFactions "
@@ -165,9 +165,9 @@ PyObject *LSCDB::LookupFactions(const std::string & search) {
 PyObject *LSCDB::LookupCorporationTickers(const std::string & search) {
     DBQueryResult res;
     std::string secure;
-    sDatabase.DoEscapeString(secure, search);
+    DBcore::DoEscapeString(secure, search);
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         " corporationID, corporationName, tickerName "
         " FROM corporation "
@@ -184,9 +184,9 @@ PyObject *LSCDB::LookupCorporationTickers(const std::string & search) {
 PyObject *LSCDB::LookupStations(const std::string & search) {
     DBQueryResult res;
     std::string secure;
-    sDatabase.DoEscapeString(secure, search);
+    DBcore::DoEscapeString(secure, search);
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         " stationID, stationName, stationTypeID "
         " FROM staStations "
@@ -203,9 +203,9 @@ PyObject *LSCDB::LookupStations(const std::string & search) {
 PyObject *LSCDB::LookupKnownLocationsByGroup(const std::string & search, uint32 typeID) {
     DBQueryResult res;
     std::string secure;
-    sDatabase.DoEscapeString(secure, search);
+    DBcore::DoEscapeString(secure, search);
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         " itemID, itemName, typeID "
         " FROM entity "
@@ -227,11 +227,11 @@ uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, c
 
     std::string escaped;
     // Escape message header
-    sDatabase.DoEscapeString(escaped, subject);
+    DBcore::DoEscapeString(escaped, subject);
 
     // Store message header
     uint32 messageID;
-    if (!sDatabase.RunQueryLID(err, messageID,
+    if (!DBcore::RunQueryLID(err, messageID,
         " INSERT INTO "
         " eveMail "
         " (channelID, senderID, subject, created) "
@@ -245,10 +245,10 @@ uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, c
     _log(SERVICE__MESSAGE, "New messageID: %u", messageID);
 
     // Escape message content
-    sDatabase.DoEscapeString(escaped, message);
+    DBcore::DoEscapeString(escaped, message);
 
     // Store message content
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " INSERT INTO eveMailDetails "
         " (messageID, mimeTypeID, attachment) VALUES (%u, 1, '%s') ",
         messageID, escaped.c_str()
@@ -256,7 +256,7 @@ uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, c
     {
         codelog(SERVICE__ERROR, "Error in query, message content couldn't be saved: %s", err.c_str());
         // Delete message header
-        if (!sDatabase.RunQuery(err, "DELETE FROM `eveMail` WHERE `messageID` = %u;", messageID))
+        if (!DBcore::RunQuery(err, "DELETE FROM `eveMail` WHERE `messageID` = %u;", messageID))
         {
             codelog(SERVICE__ERROR, "Failed to remove invalid header data for messgae id %u: %s", messageID, err.c_str());
         }
@@ -271,7 +271,7 @@ uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, c
 PyObject *LSCDB::GetMailHeaders(uint32 recID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT channelID, messageID, senderID, subject, created, `read` "
         " FROM eveMail "
         " WHERE channelID=%u", recID))
@@ -290,7 +290,7 @@ PyRep *LSCDB::GetMailDetails(uint32 messageID, uint32 readerID) {
 
     //we need to query out the primary message here... not sure how to properly
     //grab the "main message" though... the text/plain clause is pretty hackish.
-    if (!sDatabase.RunQuery(result,
+    if (!DBcore::RunQuery(result,
         " SELECT eveMail.messageID, eveMail.senderID, eveMail.subject, " // need messageID as char*
         " eveMailDetails.attachment, eveMailDetails.mimeTypeID, "
         " eveMailMimeType.mimeType, eveMailMimeType.`binary`, "
@@ -333,7 +333,7 @@ PyRep *LSCDB::GetMailDetails(uint32 messageID, uint32 readerID) {
 bool LSCDB::MarkMessageRead(uint32 messageID) {
     DBerror err;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " UPDATE eveMail "
         " SET `read` = 1 "
         " WHERE messageID=%u", messageID
@@ -351,7 +351,7 @@ bool LSCDB::DeleteMessage(uint32 messageID, uint32 readerID) {
     DBerror err;
     bool ret = true;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM eveMail "
         " WHERE messageID=%u AND channelID=%u", messageID, readerID
         ))
@@ -359,7 +359,7 @@ bool LSCDB::DeleteMessage(uint32 messageID, uint32 readerID) {
         codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
         ret = false;
     }
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM eveMailDetails "
         " WHERE messageID=%u", messageID
         ))
@@ -376,7 +376,7 @@ bool LSCDB::DeleteMessage(uint32 messageID, uint32 readerID) {
 void LSCDB::GetChannelNames(uint32 charID, std::vector<std::string> & names) {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    entity.itemName AS characterName, "
         "    corporation.corporationName, "
@@ -420,7 +420,7 @@ uint32 LSCDB::GetNextAvailableChannelID()
     // NOTE: For large servers, this is inefficient and as everything in this file should be using
     // the cached object system rather than touching the database, this query could cause large server slow-down
     // if there is a very large number of existing channels in the database.
-    if( !sDatabase.RunQuery( res,
+    if( !DBcore::RunQuery( res,
         " SELECT "
         "    channelID "
         " FROM channels "
@@ -461,7 +461,7 @@ bool LSCDB::IsChannelNameAvailable(std::string name)
     DBQueryResult res;
 
     // MySQL query channels table for any channel whose displayName matches "name":
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    displayName "
         " FROM channels "
@@ -487,7 +487,7 @@ bool LSCDB::IsChannelIDAvailable(uint32 channelID)
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    channelID "
         " FROM channels "
@@ -513,7 +513,7 @@ bool LSCDB::IsChannelSubscribedByThisChar(uint32 charID, uint32 channelID)
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    channelID, "
         "   charID "
@@ -543,7 +543,7 @@ void LSCDB::GetChannelInformation(std::string & name, uint32 & id,
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    channelID, "
         "    displayName, "
@@ -594,7 +594,7 @@ void LSCDB::GetChannelInformation(uint32 channelID, std::string & name,
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    channelID, "
         "    displayName, "
@@ -649,7 +649,7 @@ void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & 
     // The result is a two column multi-row structure where each row is a channel
     // that the character (charID) is subscribed to where the channel ID is presented
     // in the first column and the display name of that channel in the second column
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    channelID, "
         "    displayName, "
@@ -705,7 +705,7 @@ std::string LSCDB::GetChannelInfo(uint32 channelID, std::string & name, std::str
 {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    displayName, "
         "   motd "
@@ -738,7 +738,7 @@ uint32 LSCDB::GetChannelIDFromComparisonKey(std::string compkey)
 {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         "    channelID "
         " FROM channels"
@@ -763,7 +763,7 @@ uint32 LSCDB::GetChannelIDFromComparisonKey(std::string compkey)
 std::string LSCDB::GetChannelName(uint32 id, const char * table, const char * column, const char * key) {
     DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT "
         "    %s "
         " FROM %s "
@@ -796,7 +796,7 @@ int LSCDB::WriteNewChannelSubscriptionToDatabase(uint32 characterID, uint32 chan
     DBerror err;
     DBResultRow row;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " INSERT INTO channelChars "
         " (channelID, corpID, charID, allianceID, role, extra) VALUES (%u, %u, %u, %u, %u, %u) ",
         channelID, corpID, characterID, allianceID, role, extra
@@ -819,7 +819,7 @@ int LSCDB::WriteNewChannelToDatabase(uint32 channelID, std::string name, uint32 
     DBerror err;
     DBResultRow row;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " INSERT INTO channels "
         "      (channelID, ownerID, displayName, motd, comparisonKey, memberless, password, mailingList,"
         "       cspa, temporary, mode, subscribed, estimatedMemberCount) "
@@ -850,7 +850,7 @@ int LSCDB::UpdateChannelConfigureInfo(LSCChannel * channel)
     else
         new_password = "'" + channel->GetPassword() + "'";
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " UPDATE channels "
         " SET "
         " displayName = '%s', "
@@ -894,7 +894,7 @@ int LSCDB::RemoveChannelSubscriptionFromDatabase(uint32 channelID, uint32 charID
     DBerror err;
     bool ret = true;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM channelChars "
         " WHERE channelID=%u AND charID=%u", channelID, charID
         ))
@@ -913,7 +913,7 @@ int LSCDB::RemoveChannelFromDatabase(uint32 channelID)
     DBerror err;
     bool ret = true;
 
-    if (!sDatabase.RunQuery(err,
+    if (!DBcore::RunQuery(err,
         " DELETE FROM channels "
         " WHERE channelID=%u", channelID
         ))

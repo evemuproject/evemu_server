@@ -43,7 +43,7 @@
 PyRep *CertificateMgrDB::GetCertificateCategories() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " categoryID,"
         " categoryName,"
@@ -62,7 +62,7 @@ PyRep *CertificateMgrDB::GetCertificateCategories() {
 PyRep *CertificateMgrDB::GetAllShipCertificateRecommendations() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " shipTypeID,"
         " certificateID,"
@@ -80,7 +80,7 @@ PyRep *CertificateMgrDB::GetAllShipCertificateRecommendations() {
 PyRep *CertificateMgrDB::GetCertificateClasses() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT"
         " classID,"
         " className,"

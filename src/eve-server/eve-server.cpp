@@ -200,7 +200,7 @@ int main( int argc, char* argv[] )
 
     //connect to the database...
     DBerror err;
-    if( !sDatabase.Open( err,
+    if (!DBcore::Open(err,
         sConfig.database.host.c_str(),
         sConfig.database.username.c_str(),
         sConfig.database.password.c_str(),
@@ -210,7 +210,9 @@ int main( int argc, char* argv[] )
         sLog.Error( "Server Init", "Unable to connect to the database: %s", err.c_str() );
         std::cout << std::endl << "Exiting";
         return 1;
-    } else if(sDatabase.Connected){
+    }
+    else if (DBcore::Connected)
+    {
         sLog.Success("Server Init", "Connected to database successfully");
     }
 

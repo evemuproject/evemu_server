@@ -30,7 +30,7 @@
 PyObject *MapDB::GetPseudoSecurities() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res, "SELECT solarSystemID, security FROM mapSolarSystems"))
+    if(!DBcore::RunQuery(res, "SELECT solarSystemID, security FROM mapSolarSystems"))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -42,7 +42,7 @@ PyObject *MapDB::GetPseudoSecurities() {
 PyObject *MapDB::GetStationExtraInfo() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         "    stationID,solarSystemID,operationID,stationTypeID,corporationID AS ownerID"
         " FROM staStations"
@@ -58,7 +58,7 @@ PyObject *MapDB::GetStationExtraInfo() {
 PyObject *MapDB::GetStationOpServices() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         "    operationID, serviceID"
         " FROM staOperationServices"
@@ -74,7 +74,7 @@ PyObject *MapDB::GetStationOpServices() {
 PyObject *MapDB::GetStationServiceInfo() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         "    serviceID,serviceName"
         " FROM staServices"
@@ -90,7 +90,7 @@ PyObject *MapDB::GetStationServiceInfo() {
 PyObject *MapDB::GetStationCount() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         " SELECT "
         "    stationID "
         " FROM staStations "

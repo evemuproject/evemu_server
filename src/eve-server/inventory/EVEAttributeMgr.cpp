@@ -515,7 +515,8 @@ bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
     //this isn't particularly efficient, but until I write a better solution, this will do
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res, "SELECT * FROM dgmTypeAttributes WHERE typeID='%u'", mItem.typeID())) {
+    if (!DBcore::RunQuery(res, "SELECT * FROM dgmTypeAttributes WHERE typeID='%u'", mItem.typeID()))
+    {
         sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
@@ -560,15 +561,17 @@ bool AttributeMap::Load()
     DBQueryResult res;
 
 	if(mDefault)
-	{
-		if(!sDatabase.RunQuery(res, "SELECT * FROM entity_default_attributes WHERE itemID='%u'", mItem.itemID())) {
+    {
+        if (!DBcore::RunQuery(res, "SELECT * FROM entity_default_attributes WHERE itemID='%u'", mItem.itemID()))
+        {
 			sLog.Error("AttributeMap (DEFAULT)", "Error in db load query: %s", res.error.c_str());
 			return false;
 		}
 	}
 	else
-	{
-		if(!sDatabase.RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+    {
+        if (!DBcore::RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID()))
+        {
 			sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
 			return false;
 		}
@@ -591,11 +594,11 @@ bool AttributeMap::Load()
 
     return true;
 
-/*
-    /// EXISTING AttributeMap::Load() function
-    DBQueryResult res;
+    /*
+        /// EXISTING AttributeMap::Load() function
+        DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+        if(!DBcore::RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
         sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
@@ -658,8 +661,8 @@ bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
     DBerror err;
 
 	if(mDefault)
-	{
-		if(!sDatabase.RunQuery(err,
+    {
+        if (!DBcore::RunQuery(err,
 			"REPLACE INTO entity_default_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
@@ -671,8 +674,8 @@ bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
 		}
 	}
 	else
-	{
-		if(!sDatabase.RunQuery(err,
+    {
+        if (!DBcore::RunQuery(err,
 			"REPLACE INTO entity_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
@@ -693,8 +696,8 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
     DBerror err;
 
 	if(mDefault)
-	{
-		if(!sDatabase.RunQuery(err,
+    {
+        if (!DBcore::RunQuery(err,
 			"REPLACE INTO entity_default_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
@@ -706,8 +709,8 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 		}
 	}
 	else
-	{
-		if(!sDatabase.RunQuery(err,
+    {
+        if (!DBcore::RunQuery(err,
 			"REPLACE INTO entity_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
@@ -741,14 +744,14 @@ bool AttributeMap::Save()
             DBerror err;
 
 			if(mDefault)
-			{
-				success = sDatabase.RunQuery(err,
+            {
+                success = DBcore::RunQuery(err,
 					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
 					mItem.itemID(), itr->first, itr->second.get_int());
 			}
 			else
-			{
-				success = sDatabase.RunQuery(err,
+            {
+                success = DBcore::RunQuery(err,
 					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
 					mItem.itemID(), itr->first, itr->second.get_int());
 			}
@@ -761,14 +764,14 @@ bool AttributeMap::Save()
             DBerror err;
 
 			if(mDefault)
-			{
-				success = sDatabase.RunQuery(err,
+            {
+                success = DBcore::RunQuery(err,
 					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
 					mItem.itemID(), itr->first, itr->second.get_float());
 			}
 			else
-			{
-				success = sDatabase.RunQuery(err,
+            {
+                success = DBcore::RunQuery(err,
 					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
 					mItem.itemID(), itr->first, itr->second.get_float());
 			}
@@ -795,8 +798,8 @@ bool AttributeMap::Delete()
     DBerror err;
 
 	if(mDefault)
-	{
-		if(!sDatabase.RunQuery(err,
+    {
+        if (!DBcore::RunQuery(err,
 			"DELETE"
 			" FROM entity_default_attributes"
 			" WHERE itemID=%u",
@@ -808,8 +811,8 @@ bool AttributeMap::Delete()
 		}
 	}
 	else
-	{
-		if(!sDatabase.RunQuery(err,
+    {
+        if (!DBcore::RunQuery(err,
 			"DELETE"
 			" FROM entity_attributes"
 			" WHERE itemID=%u",

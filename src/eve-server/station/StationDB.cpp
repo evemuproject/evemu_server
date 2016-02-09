@@ -37,7 +37,7 @@ StationDB::StationDB()
 PyPackedRow *StationDB::GetSolarSystem(uint32 solarSystemID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " solarSystemID,"            // nr
         " solarSystemName,"            // string
@@ -304,7 +304,7 @@ PyRep *StationDB::DoGetStation(uint32 sid)
 
 //" SELECT staStations.stationID, staStations.security, staStations.dockingCostPerVolume, staStations.maxShipVolumeDockable, staStations.officeRentalCost, staStations.operationID, staStations.stationTypeID, staStations.corporationID AS ownerID, staStations.solarSystemID, staStations.constellationID, staStations.regionID, staStations.stationName, staStations.x, staStations.y, staStations.z, staStations.reprocessingEfficiency, staStations.reprocessingStationsTake, staStations.reprocessingHangarFlag, staOperations.description, CAST(SUM(staOperationServices.serviceID) as UNSIGNED INTEGER) AS serviceMask FROM staStations LEFT JOIN staOperations ON staStations.operationID = staOperations.operationID LEFT JOIN staOperationServices ON staStations.operationID = staOperationServices.operationID WHERE staStations.stationID = %u GROUP BY staStations.stationID
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
     "SELECT"
     " staStations.x,"
     " staStations.y,"
@@ -358,7 +358,7 @@ PyRep *StationDB::DoGetStation(uint32 sid)
         return NULL;
     }
 
-    /*if(!sDatabase.RunQuery(res,
+    /*if(!DBcore::RunQuery(res,
         " SELECT "
         " staStations.stationID, staStations.security, staStations.dockingCostPerVolume, staStations.maxShipVolumeDockable, "
         " staStations.officeRentalCost, staStations.operationID, staStations.stationTypeID, staStations.corporationID AS ownerID, staStations.solarSystemID, staStations.constellationID, "
@@ -398,7 +398,7 @@ PyRep *StationDB::DoGetStation(uint32 sid)
 PyRep *StationDB::GetStationItemBits(uint32 sid) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         " SELECT "
         " staStations.stationID, "
         " staStations.stationTypeID, staStations.corporationID AS ownerID, "

@@ -30,7 +30,7 @@
 PyObject *StandingDB::GetNPCStandings() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " fromID,toID,standing"
         " FROM npcStandings"
@@ -48,7 +48,7 @@ PyObjectEx *StandingDB::GetCharStandings(uint32 characterID) {
     DBQueryResult res;
 
     //Hack: Have hardcoded the rename of toId to fromID until i know if its going to affect anything else.
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " toID AS fromID, standing"
         " FROM chrStandings"
@@ -65,7 +65,7 @@ PyObjectEx *StandingDB::GetCorpStandings(uint32 corporationID) {
     DBQueryResult res;
 
     //Hack: Have hardcoded the rename of toId to fromID until i know if its going to affect anything else.
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " fromID, standing"
         " FROM crpStandings"
@@ -85,7 +85,7 @@ PyObject *StandingDB::GetCharPrimeStandings(uint32 characterID) {
 
     //TODO: hacking GetCharPrimeStandings until we know what it does
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " itemID AS ownerID,"
         " itemName AS ownerName,"
@@ -105,7 +105,7 @@ PyObject *StandingDB::GetCharPrimeStandings(uint32 characterID) {
 PyObject *StandingDB::GetCharNPCStandings(uint32 characterID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " fromID, standing"
         " FROM chrNPCStandings"
@@ -123,7 +123,7 @@ PyObject *StandingDB::GetStandingTransactions( uint32 characterID )
 {
     /*DBQueryResult res;
 
-    if (!sDatabase.RunQuery(res,
+    if (!DBcore::RunQuery(res,
         " SELECT * FROM chrStandingChanges "
         " WHERE toID = %u ", characterID
         ))

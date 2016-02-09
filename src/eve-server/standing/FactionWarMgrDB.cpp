@@ -30,7 +30,7 @@
 PyRep *FactionWarMgrDB::GetWarFactions() {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT factionID, militiaCorporationID"
         " FROM chrFactions"
         " WHERE militiaCorporationID IS NOT NULL"))
@@ -61,7 +61,7 @@ PyRep* FactionWarMgrDB::GetFacWarSystems()
 uint32 FactionWarMgrDB::GetFactionMilitiaCorporation(const uint32 factionID) {
     DBQueryResult res;
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT militiaCorporationID"
         " FROM chrFactions"
         " WHERE factionID=%u",

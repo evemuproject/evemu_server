@@ -121,7 +121,7 @@ PyResult PlanetMgrService::Handle_GetPlanetsForChar(PyCallArgs &call) {
     /* Used by the client to populate the industry:planets tab
      */
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res, "SELECT `solarSystemID`, `planetID`, `typeID`, `numberOfPins` FROM `planetsforchar` WHERE `characterID` = %u", call.client->GetCharacterID())) {
+    if(!DBcore::RunQuery(res, "SELECT `solarSystemID`, `planetID`, `typeID`, `numberOfPins` FROM `planetsforchar` WHERE `characterID` = %u", call.client->GetCharacterID())) {
         codelog(SERVICE__ERROR, "Error in GetPlanetsForChar Query: %s", res.error.c_str());
         return NULL;
     }
@@ -131,7 +131,7 @@ PyResult PlanetMgrService::Handle_GetPlanetsForChar(PyCallArgs &call) {
 PyResult PlanetMgrService::Handle_GetMyLaunchesDetails(PyCallArgs &call) {
     //TODO, double check if this requires x,y,z, or if only Beyonce uses them.
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res, "SELECT `solarSystemID`, `planetID`, `launchTime`, `launchID`, `x`, `y`, `z` FROM `planetlaunches` WHERE `characterID` = %u", call.client->GetCharacterID())) {
+    if(!DBcore::RunQuery(res, "SELECT `solarSystemID`, `planetID`, `launchTime`, `launchID`, `x`, `y`, `z` FROM `planetlaunches` WHERE `characterID` = %u", call.client->GetCharacterID())) {
         codelog(SERVICE__ERROR, "Error in GetMyLaunchesDetails Query: %s", res.error.c_str());
         return NULL;
     }
@@ -150,7 +150,7 @@ PyResult PlanetMgrBound::Handle_GetExtractorsForPlanet(PyCallArgs &call) {
      * Currently stops the client from throwing errors.
      */
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res, "SELECT 2130 AS `typeID`, 0 as `ownerID`")) {
+    if(!DBcore::RunQuery(res, "SELECT 2130 AS `typeID`, 0 as `ownerID`")) {
         codelog(SERVICE__ERROR, "Error in GetExtractorsForPlanet Query: %s", res.error.c_str());
         return NULL;
     }
@@ -164,7 +164,7 @@ PyResult PlanetMgrBound::Handle_GetPlanetInfo(PyCallArgs &call) {
      */
 
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res, "SELECT `solarSystemID`, `typeID` AS `planetTypeID`, `itemID` AS `planetID`, `radius` FROM mapdenormalize WHERE `itemID` = %u", m_planetID)) {
+    if(!DBcore::RunQuery(res, "SELECT `solarSystemID`, `typeID` AS `planetTypeID`, `itemID` AS `planetID`, `radius` FROM mapdenormalize WHERE `itemID` = %u", m_planetID)) {
         codelog(SERVICE__ERROR, "Error in GetPlanetInfo query: %s", res.error.c_str());
         return NULL;
     }
@@ -182,7 +182,7 @@ PyResult PlanetMgrBound::Handle_GetPlanetResourceInfo(PyCallArgs &call) {
      * quality: (min=1.0, max=154.275)
      */
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res, "SELECT `itemID1`, `itemID2`, `itemID3`, `itemID4`, `itemID5`, `quality1`, `quality2`, `quality3`, `quality4`, `quality5` FROM `planetresourceinfo` WHERE `planetID` = %u", m_planetID)) {
+    if(!DBcore::RunQuery(res, "SELECT `itemID1`, `itemID2`, `itemID3`, `itemID4`, `itemID5`, `quality1`, `quality2`, `quality3`, `quality4`, `quality5` FROM `planetresourceinfo` WHERE `planetID` = %u", m_planetID)) {
         codelog(SERVICE__ERROR, "Error in GetPlanetResourceInfo Query: %s", res.error.c_str());
         return NULL;
     }
@@ -217,7 +217,7 @@ PyResult PlanetMgrBound::Handle_GetResourceData(PyCallArgs &call) {
     int offset = 0;
 
     DBQueryResult res;
-    if(!sDatabase.RunQuery(res, "SELECT `itemID1`, `itemID2`, `itemID3`, `itemID4`, `itemID5`, `data1`, `data2`, `data3`, `data4`, `data5`, `numBands1`, `numBands2`, `numBands3`, `numBands4`, `numBands5` FROM `planetresourceinfo` WHERE `planetID` = %u", m_planetID)) {
+    if(!DBcore::RunQuery(res, "SELECT `itemID1`, `itemID2`, `itemID3`, `itemID4`, `itemID5`, `data1`, `data2`, `data3`, `data4`, `data5`, `numBands1`, `numBands2`, `numBands3`, `numBands4`, `numBands5` FROM `planetresourceinfo` WHERE `planetID` = %u", m_planetID)) {
         codelog(SERVICE__ERROR, "Error in GetResourceData Query: %s", res.error.c_str());
         return NULL;
     }

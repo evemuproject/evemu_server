@@ -34,7 +34,7 @@ bool SpawnDB::LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup 
     //we could avoid this join by doing the `spawns` select first and collecting the
     //spawn group IDs needed... but this is fine for now.
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " spawnGroups.spawnGroupID,"
         " spawnGroups.spawnGroupName,"
@@ -72,7 +72,7 @@ bool SpawnDB::LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup 
     std::string INstr;
     ListToINString(groupIDs, INstr, "-1");
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " spawnGroupID,"
         " npcTypeID,"
@@ -124,7 +124,7 @@ bool SpawnDB::LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, Spaw
     //we could avoid this join by doing the `spawns` select first and collecting the
     //spawn group IDs needed... but this is fine for now.
 
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " spawnID,"
         " spawnGroupID,"
@@ -201,7 +201,7 @@ bool SpawnDB::LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, Spaw
     ListToINString(entryIDs, INstr, "-1");
 
     //we could avoid this order by clause by exposing the `m_bounds` member of SpawnEntry
-    if(!sDatabase.RunQuery(res,
+    if(!DBcore::RunQuery(res,
         "SELECT "
         " spawnID,"
         " pointIndex,"

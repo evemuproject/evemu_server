@@ -29,7 +29,7 @@
 
 void ModuleDB::GetAllTypeIDs(DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " typeID "
         " FROM invTypes "
@@ -41,7 +41,7 @@ void ModuleDB::GetAllTypeIDs(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmEffects(DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " effectID "
         " FROM dgmEffects "
@@ -53,7 +53,7 @@ void ModuleDB::GetAllDgmEffects(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmEffectsInfo(DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " effectID "
         " FROM dgmEffectsInfo "
@@ -65,7 +65,7 @@ void ModuleDB::GetAllDgmEffectsInfo(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmTypeEffects(DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " effectID "
         " FROM dgmTypeEffects "
@@ -77,7 +77,7 @@ void ModuleDB::GetAllDgmTypeEffects(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmSkillBonusModifiers(DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " skillID "
         " FROM dgmSkillBonusModifiers "
@@ -89,7 +89,7 @@ void ModuleDB::GetAllDgmSkillBonusModifiers(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmShipBonusModifiers(DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " shipID "
         " FROM dgmShipBonusModifiers "
@@ -101,7 +101,7 @@ void ModuleDB::GetAllDgmShipBonusModifiers(DBQueryResult &res)
 
 void ModuleDB::GetDgmEffects(uint32 effectID, DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " effectName, "
         " effectCategory, "
@@ -139,7 +139,7 @@ void ModuleDB::GetDgmEffects(uint32 effectID, DBQueryResult &res)
 
 void ModuleDB::GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " sourceAttributeID, "
         " targetAttributeID, "
@@ -162,7 +162,7 @@ void ModuleDB::GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res)
 
 void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
         " effectID, "
 		" isDefault "
@@ -175,7 +175,7 @@ void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
 
 void ModuleDB::GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
 		" effectID, "
         " sourceAttributeID, "
@@ -198,7 +198,7 @@ void ModuleDB::GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res)
 
 void ModuleDB::GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res)
 {
-    if( !sDatabase.RunQuery(res,
+    if( !DBcore::RunQuery(res,
         " SELECT "
 		" effectID, "
 		" attributeSkillID, "

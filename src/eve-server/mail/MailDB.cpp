@@ -30,7 +30,7 @@
 PyRep* MailDB::GetMailStatus(int charId)
 {
     DBQueryResult res;
-    if (!sDatabase.RunQuery(res, "SELECT messageID, statusMask, labelMask FROM mailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
+    if (!DBcore::RunQuery(res, "SELECT messageID, statusMask, labelMask FROM mailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
         return NULL;
     return DBResultToCRowset(res);
 }
@@ -38,7 +38,7 @@ PyRep* MailDB::GetMailStatus(int charId)
 PyRep* MailDB::GetNewMail(int charId)
 {
     DBQueryResult res;
-    if (!sDatabase.RunQuery(res, "SELECT messageID, senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, sentDate FROM mailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
+    if (!DBcore::RunQuery(res, "SELECT messageID, senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, sentDate FROM mailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
         return NULL;
     return DBResultToCRowset(res);
 }
@@ -71,14 +71,14 @@ int MailDB::SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID,
 
     // escape it to not break the query with special characters
     std::string bodyEscaped;
-    sDatabase.DoEscapeString(bodyEscaped, bodyCompressedStr);
+    DBcore::DoEscapeString(bodyEscaped, bodyCompressedStr);
 
     // default label is 1 = Inbox
     const int defaultLabel = 1;
 
     DBerror err;
     uint32 messageID;
-    bool status = sDatabase.RunQueryLID(err, messageID,
+    bool status = DBcore::RunQueryLID(err, messageID,
         "INSERT INTO mailMessage (senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, body, sentDate, statusMask, labelMask, unread) "
         " VALUES (%u, '%s', %d, %d, '%s', '%s', %" PRIu64 ", 0, %u, 1)", sender, toStr.c_str(), toListID, toCorpOrAllianceID, title.c_str(), bodyEscaped.c_str(), Win32TimeNow(), defaultLabel);
 
@@ -90,7 +90,7 @@ int MailDB::SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID,
 PyString* MailDB::GetMailBody(int id) const
 {
     DBQueryResult res;
-    if (!sDatabase.RunQuery(res, "SELECT body FROM mailMessage WHERE messageID = %u", id))
+    if (!DBcore::RunQuery(res, "SELECT body FROM mailMessage WHERE messageID = %u", id))
         return NULL;
     if (res.GetRowCount() <= 0)
         return NULL;
@@ -105,13 +105,13 @@ PyString* MailDB::GetMailBody(int id) const
 void MailDB::SetMailUnread(int id, bool unread)
 {
     DBerror unused;
-    sDatabase.RunQuery(unused, "UPDATE mailMessage SET unread = %u WHERE messageID = %u", (unread ? 1 : 0), id);
+    DBcore::RunQuery(unused, "UPDATE mailMessage SET unread = %u WHERE messageID = %u", (unread ? 1 : 0), id);
 }
 
 PyRep* MailDB::GetLabels(int characterID) const
 {
     DBQueryResult res;
-    if (!sDatabase.RunQuery(res, "SELECT bit, name, color, ownerId FROM mailLabel WHERE ownerID = %u", characterID))
+    if (!DBcore::RunQuery(res, "SELECT bit, name, color, ownerId FROM mailLabel WHERE ownerID = %u", characterID))
         return NULL;
 
     PyDict* ret = new PyDict();
@@ -134,7 +134,7 @@ bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID)
 {
     // we need to get the next free bit index; can't avoid a SELECT
     DBQueryResult res;
-    sDatabase.RunQuery(res, "SELECT bit FROM mailLabel WHERE ownerID = %u ORDER BY bit DESC LIMIT 1", characterID);
+    DBcore::RunQuery(res, "SELECT bit FROM mailLabel WHERE ownerID = %u ORDER BY bit DESC LIMIT 1", characterID);
 
     // 6 is a guessed default; there are some hardcoded labels that we don't have the details on yet
     int bit = 6;
@@ -148,7 +148,7 @@ bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID)
     }
 
     DBerror error;
-    if (!sDatabase.RunQuery(error, "INSERT INTO mailLabel (bit, name, color, ownerID) VALUES (%u, '%s', %u, %u)", bit, args.name.c_str(), args.color, characterID))
+    if (!DBcore::RunQuery(error, "INSERT INTO mailLabel (bit, name, color, ownerID) VALUES (%u, '%s', %u, %u)", bit, args.name.c_str(), args.color, characterID))
     {
         codelog(SERVICE__ERROR, "Failed to insert new mail label into database");
         // since this is an out parameter, make sure we assign this even in case of an error
@@ -165,7 +165,7 @@ void MailDB::DeleteLabel(int characterID, int labelID) const
 {
     int bit = BitFromLabelID(labelID);
     DBerror error;
-    sDatabase.RunQuery(error, "DELETE FROM mailLabel WHERE ownerID = %u AND bit = %u", characterID, bit);
+    DBcore::RunQuery(error, "DELETE FROM mailLabel WHERE ownerID = %u AND bit = %u", characterID, bit);
 }
 
 void MailDB::EditLabel(int characterID, Call_EditLabel& args) const
@@ -174,11 +174,11 @@ void MailDB::EditLabel(int characterID, Call_EditLabel& args) const
 
     DBerror error;
     if (args.name.length() == 0)
-        sDatabase.RunQuery(error, "UPDATE mailLabel SET color = %u WHERE bit = %u AND ownerID = %u", args.color, bit, characterID);
+        DBcore::RunQuery(error, "UPDATE mailLabel SET color = %u WHERE bit = %u AND ownerID = %u", args.color, bit, characterID);
     else if (args.color == -1)
-        sDatabase.RunQuery(error, "UPDATE mailLabel SET name = '%s' WHERE bit = %u AND ownerID = %u", args.name.c_str(), bit, characterID);
+        DBcore::RunQuery(error, "UPDATE mailLabel SET name = '%s' WHERE bit = %u AND ownerID = %u", args.name.c_str(), bit, characterID);
     else
-        sDatabase.RunQuery(error, "UPDATE mailLabel SET name = '%s', color = %u WHERE bit = %u AND ownerID = %u", args.name.c_str(), args.color, bit, characterID);
+        DBcore::RunQuery(error, "UPDATE mailLabel SET name = '%s', color = %u WHERE bit = %u AND ownerID = %u", args.name.c_str(), args.color, bit, characterID);
 }
 
 int MailDB::BitFromLabelID(int id)

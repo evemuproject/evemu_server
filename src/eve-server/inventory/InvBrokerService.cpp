@@ -136,7 +136,7 @@ PyResult InvBrokerBound::Handle_GetContainerContents(PyCallArgs &call)
 
 	// get list of items in container and return it to client
     DBQueryResult res;
-	if(!sDatabase.RunQuery(res,
+	if(!DBcore::RunQuery(res,
 		"SELECT "
 		"  e.itemID, "
 		"  e.flag as flagID, "
