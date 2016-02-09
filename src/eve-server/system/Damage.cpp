@@ -795,7 +795,7 @@ void Client::Killed(Damage &fatal_blow) {
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1055,7 +1055,7 @@ void NPC::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1220,7 +1220,7 @@ void ShipEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1334,7 +1334,7 @@ void DroneEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1385,7 +1385,7 @@ void StructureEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1436,7 +1436,7 @@ void ContainerEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1487,7 +1487,7 @@ void DeployableEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1521,7 +1521,7 @@ void AsteroidEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1569,7 +1569,7 @@ void CelestialEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )
@@ -1620,7 +1620,7 @@ void StationEntity::Killed(Damage &fatal_blow)
     DynamicSystemEntity::Killed(fatal_blow);
 
     SystemEntity *killer = fatal_blow.source;
-    Client* client = m_services.entity_list.FindByShip( killer->Item()->ownerID() );
+    Client* client = EntityList::FindByShip( killer->Item()->ownerID() );
     if( !killer->IsClient() )
     {
         if( client != NULL )

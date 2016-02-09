@@ -528,7 +528,7 @@ void Character::JoinCorporation(uint32 corporationID, const CorpMemberInfo &role
 void Character::SetAccountKey(int32 accountKey)
 {
     m_corpAccountKey = accountKey;
-    Client* pClient = m_factory.entity_list.FindCharacter( itemID() );
+    Client* pClient = EntityList::FindCharacter( itemID() );
     pClient->UpdateCorpSession(pClient->GetChar());
 
     SaveCharacter();
@@ -543,7 +543,7 @@ void Character::SetFleetData(FleetMemberInfo &fleet)
     m_fleetBooster = fleet.fleetBooster;
     m_fleetJob = fleet.fleetJob;
 
-    Client* pClient = m_factory.entity_list.FindCharacter( itemID() );
+    Client* pClient = EntityList::FindCharacter( itemID() );
     pClient->UpdateFleetSession(pClient->GetChar());
 }
 
@@ -656,7 +656,7 @@ EvilNumber Character::GetEndOfTraining() const
 
 bool Character::InjectSkillIntoBrain(SkillRef skill)
 {
-    Client *c = m_factory.entity_list.FindCharacter( itemID() );
+    Client *c = EntityList::FindCharacter( itemID() );
 
     SkillRef oldSkill = GetSkill( skill->typeID() );
     if( oldSkill )
@@ -704,7 +704,7 @@ bool Character::InjectSkillIntoBrain(SkillRef skill)
 
 bool Character::InjectSkillIntoBrain(SkillRef skill, uint8 level)
 {
-    Client *c = m_factory.entity_list.FindCharacter( itemID() );
+    Client *c = EntityList::FindCharacter( itemID() );
 
 
     SkillRef oldSkill = GetSkill( skill->typeID() );
@@ -797,7 +797,7 @@ void Character::ClearSkillQueue()
 
 void Character::UpdateSkillQueue()
 {
-    Client *c = m_factory.entity_list.FindCharacter( itemID() );
+    Client *c = EntityList::FindCharacter( itemID() );
 
     SkillRef currentTraining = GetSkillInTraining();
     if( currentTraining )

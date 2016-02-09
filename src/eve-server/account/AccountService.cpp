@@ -174,7 +174,7 @@ PyResult AccountService::Handle_GiveCash(PyCallArgs &call) {
 
     //NOTE: this will need work once we reorganize the entity list...
     bool targetIsChar;
-    Client *other = m_manager->entity_list.FindCharacter(args.destination);
+    Client *other = EntityList::FindCharacter(args.destination);
     if(other == NULL) {
         // then the money has to be sent to a corporation...
         // check this too
@@ -233,7 +233,7 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
 
     MulticastTarget mct;
     mct.corporations.insert(corpID);
-    m_manager->entity_list.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
+    EntityList::Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
 
     //record the transactions in the wallet.
     if(!m_db.GiveCash(
@@ -399,7 +399,7 @@ PyResult AccountService::Handle_GiveCashFromCorpAccount(PyCallArgs &call) {
     }
 
     //NOTE: this will need work once we reorganize the entity list...
-    Client *other = m_manager->entity_list.FindCharacter(args.destination);
+    Client *other = EntityList::FindCharacter(args.destination);
     if(other == NULL) {
         _log(CLIENT__ERROR, "%s: Failed to find character %u", call.client->GetName(), args.destination);
         call.client->SendErrorMsg("Unable to find the target");
@@ -434,7 +434,7 @@ PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * con
 
     MulticastTarget mct;
     mct.corporations.insert(corpID);
-    m_manager->entity_list.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
+    EntityList::Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
 
     if(!other->AddBalance(amount)) {
         _log(CLIENT__ERROR, "%s: Failed to add %.2f ISK to %u for donation from %u",

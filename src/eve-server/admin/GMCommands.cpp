@@ -212,9 +212,9 @@ PyResult Command_translocate( Client* who, CommandDB* db, PyServiceMgr* services
 
     if( !IsStation( loc ) && !IsSolarSystem( loc ) )
     {
-        Client* target = services->entity_list.FindCharacter( loc );
+        Client* target = EntityList::FindCharacter( loc );
         if( NULL == target )
-            target = services->entity_list.FindByShip( loc );
+            target = EntityList::FindByShip( loc );
         if( NULL == target )
             throw PyException( MakeCustomError( "Unable to find location %u.", loc ) );
 
@@ -364,9 +364,9 @@ PyResult Command_tr( Client* who, CommandDB* db, PyServiceMgr* services, const S
 
     if( !IsStation( loc ) && !IsSolarSystem( loc ) )
     {
-        Client* target = services->entity_list.FindCharacter( loc );
+        Client* target = EntityList::FindCharacter( loc );
         if( NULL == target )
-            target = services->entity_list.FindByShip( loc );
+            target = EntityList::FindByShip( loc );
         if( NULL == target )
             throw PyException( MakeCustomError( "Unable to find location %u.", loc ) );
 
@@ -409,7 +409,7 @@ PyResult Command_giveisk( Client* who, CommandDB* db, PyServiceMgr* services, co
     Client* tgt;
     if( entity >= EVEMU_MINIMUM_ID )
     {
-        tgt = services->entity_list.FindCharacter( entity );
+        tgt = EntityList::FindCharacter( entity );
         if( NULL == tgt )
             throw PyException( MakeCustomError( "Unable to find character %u", entity ) );
     }
@@ -940,7 +940,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
         if( args.isNumber( 1 ) )
         {
             ownerID = atoi( args.arg( 1 ).c_str() );
-            clientPtr = services->entity_list.FindCharacter( ownerID );
+            clientPtr = EntityList::FindCharacter( ownerID );
 			if( clientPtr == NULL )
 				throw PyException( MakeCustomError( "ERROR: Cannot find character #%d", ownerID ) );
 			else
@@ -956,7 +956,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, PyServiceMgr* servic
             throw PyException( MakeCustomError( "The use of string based Character names for this command is not yet supported!  Use 'me' instead or the entityID of the character to which you wish to give skills." ) );
             /*
             const char *name = args.arg( 1 ).c_str();
-            Client *target = services->entity_list.FindCharacter( name );
+            Client *target = EntityList::FindCharacter( name );
             if(target == NULL)
                 throw PyException( MakeCustomError( "Cannot find Character by the name of %s", name ) );
             ownerID = target->GetCharacterID();
@@ -1049,7 +1049,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
         if( args.isNumber( 1 ) )
         {
             ownerID = atoi( args.arg( 1 ).c_str() );
-            character = services->entity_list.FindCharacter( ownerID )->GetChar();
+            character = EntityList::FindCharacter( ownerID )->GetChar();
         }
         else if( args.arg( 1 ) == "me" )
         {
@@ -1061,7 +1061,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, PyServiceMgr* services, 
             throw PyException( MakeCustomError( "The use of string based Character names for this command is not yet supported!  Use 'me' instead or the entityID of the character to which you wish to give skills." ) );
             /*
             const char *name = args.arg( 1 ).c_str();
-            Client *target = services->entity_list.FindCharacter( name );
+            Client *target = EntityList::FindCharacter( name );
             if(target == NULL)
                 throw PyException( MakeCustomError( "Cannot find Character by the name of %s", name ) );
             ownerID = target->GetCharacterID();
@@ -1168,7 +1168,7 @@ PyResult Command_online(Client *who, CommandDB *db, PyServiceMgr *services, cons
             tgt = who;
         else
         {
-            tgt = services->entity_list.FindCharacter( entity );
+            tgt = EntityList::FindCharacter( entity );
             if( NULL == tgt )
                 throw PyException( MakeCustomError( "Unable to find character %u", entity ) );
         }
@@ -1211,7 +1211,7 @@ PyResult Command_unload(Client *who, CommandDB *db, PyServiceMgr *services, cons
             tgt = who;
         else
         {
-            tgt = services->entity_list.FindCharacter( entity );
+            tgt = EntityList::FindCharacter( entity );
 
             if( NULL == tgt )
                 throw PyException( MakeCustomError( "Unable to find character %u", entity ) );
@@ -1254,7 +1254,7 @@ PyResult Command_heal( Client* who, CommandDB* db, PyServiceMgr* services, const
             }
         uint32 entity = atoi( args.arg( 1 ).c_str() );
 
-        Client *target = services->entity_list.FindCharacter( entity );
+        Client *target = EntityList::FindCharacter( entity );
         if(target == NULL)
             throw PyException( MakeCustomError( "Cannot find Character by the entity %d", entity ) );
 
@@ -1282,7 +1282,7 @@ PyResult Command_repairmodules( Client* who, CommandDB* db, PyServiceMgr* servic
             }
         uint32 charID = atoi( args.arg( 1 ).c_str() );
 
-        Client *target = services->entity_list.FindCharacter( charID );
+        Client *target = EntityList::FindCharacter( charID );
         if(target == NULL)
             throw PyException( MakeCustomError( "Cannot find Character by the entity %d", charID ) );
         target->GetShip()->RepairModules();
@@ -1376,12 +1376,12 @@ PyResult Command_kick( Client* who, CommandDB* db, PyServiceMgr* services, const
         if( args.isNumber( 1 ) )
         {
             int id = atoi( args.arg( 1 ).c_str() );
-            target = services->entity_list.FindCharacter( id );
+            target = EntityList::FindCharacter( id );
         }
         else
         {
             const char *name = args.arg( 1 ).c_str();
-            target = services->entity_list.FindCharacter( name );
+            target = EntityList::FindCharacter( name );
         }
     }
     //support for characters with first and last names
@@ -1391,7 +1391,7 @@ PyResult Command_kick( Client* who, CommandDB* db, PyServiceMgr* services, const
             throw PyException( MakeCustomError("Unknown arguments") );
 
         std::string name = args.arg( 1 ) + " " + args.arg( 2 );
-        target = services->entity_list.FindCharacter( name.c_str() ) ;
+        target = EntityList::FindCharacter( name.c_str() ) ;
     }
     else
         throw PyException( MakeCustomError("Correct Usage: /kick [Character Name]") );
@@ -1414,7 +1414,7 @@ PyResult Command_ban( Client* who, CommandDB* db, PyServiceMgr* services, const 
         if( !args.isNumber( 1 ) )
         {
             const char *name = args.arg( 1 ).c_str();
-            target = services->entity_list.FindCharacter( name );
+            target = EntityList::FindCharacter( name );
         }
         else
             throw PyException( MakeCustomError("Correct Usage: /ban [Character Name]") );
@@ -1426,7 +1426,7 @@ PyResult Command_ban( Client* who, CommandDB* db, PyServiceMgr* services, const 
             throw PyException( MakeCustomError("Unknown arguments") );
 
         std::string name = args.arg( 1 ) + " " + args.arg( 2 );
-        target = services->entity_list.FindCharacter( name.c_str() ) ;
+        target = EntityList::FindCharacter( name.c_str() ) ;
     }
     else
         throw PyException( MakeCustomError("Correct Usage: /ban [Character Name]") );

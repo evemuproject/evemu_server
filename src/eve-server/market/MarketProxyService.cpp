@@ -631,7 +631,7 @@ void MarketProxyService::_SendOnMarketRefresh(Client *who) {
 
 void MarketProxyService::_BroadcastOnOwnOrderChanged(uint32 regionID, uint32 orderID, const char *action, bool isCorp, PyRep* order) {
     std::vector<Client *> clients;
-    m_manager->entity_list.FindByRegionID(regionID, clients);
+    EntityList::FindByRegionID(regionID, clients);
     std::vector<Client *>::iterator cur, end;
     cur = clients.begin();
     end = clients.end();
@@ -644,7 +644,7 @@ void MarketProxyService::_BroadcastOnOwnOrderChanged(uint32 regionID, uint32 ord
 
 void MarketProxyService::_BroadcastOnMarketRefresh(uint32 regionID) {
     std::vector<Client *> clients;
-    m_manager->entity_list.FindByRegionID(regionID, clients);
+    EntityList::FindByRegionID(regionID, clients);
     std::vector<Client *>::iterator cur, end;
     cur = clients.begin();
     end = clients.end();
@@ -719,7 +719,7 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
     seller->AddBalance(money);
     //TODO: record this in the wallet history.
 
-    Client *buyer = m_manager->entity_list.FindCharacter(orderOwnerID);
+    Client *buyer = EntityList::FindCharacter(orderOwnerID);
     if(quantity == qtyReq) {
         _log(MARKET__TRACE, "%s: Completely satisfied order %u, deleting.", seller->GetName(), buy_order_id);
         PyRep* order = m_db.GetOrderRow(buy_order_id);
@@ -797,7 +797,7 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
 
     //give the money to the seller...
     //TODO: take off market overhead fees...
-    Client *seller = m_manager->entity_list.FindCharacter(orderOwnerID);
+    Client *seller = EntityList::FindCharacter(orderOwnerID);
     if(seller != NULL) {
         //the seller is logged in, send them a notification...
         if(!seller->AddBalance(money))

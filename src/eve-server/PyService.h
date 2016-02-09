@@ -52,7 +52,6 @@ public:
     virtual PyResult Call(const std::string &method, PyCallArgs &args);
 
     const char *GetName() const { return(m_name.c_str()); }
-    EntityList &entityList() const { return(m_manager->entity_list); }
 
 protected:
     typedef enum {    //enum to make sure the caller uses legit values.

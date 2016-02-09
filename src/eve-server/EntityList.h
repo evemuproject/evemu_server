@@ -23,10 +23,6 @@
     Author:        Zhur
 */
 
-
-
-
-
 #ifndef EVE_ENTITY_LIST_H
 #define EVE_ENTITY_LIST_H
 
@@ -37,7 +33,6 @@ class Client;
 class PyAddress;
 class EVENotificationStream;
 class SystemManager;
-class DBcore;
 class PyTuple;
 class PyServiceMgr;
 
@@ -55,54 +50,38 @@ public:
 };
 
 class EntityList
-: public Singleton<EntityList>
 {
 public:
-    EntityList();
-    virtual ~EntityList();
 
-    void UseServices(PyServiceMgr *svc) { m_services = svc; }
+    static void UseServices(PyServiceMgr *svc);
 
     typedef std::set<uint32> character_set;
 
-    void Add(Client **client);
+    static void Add(Client **client);
 
-    void Process();
+    static void Process();
 
-    Client *FindCharacter(uint32 char_id) const;
-    Client *FindCharacter(const char *name) const;
-    Client *FindByShip(uint32 ship_id) const;
-    Client *FindAccount(uint32 account_id) const;
-        void FindByStationID(uint32 stationID, std::vector<Client *> &result) const;
-        void FindByRegionID(uint32 regionID, std::vector<Client *> &result) const;
-    uint32 GetClientCount() const { return(uint32(m_clients.size())); }
+    static Client *FindCharacter(uint32 char_id);
+    static Client *FindCharacter(const char *name);
+    static Client *FindByShip(uint32 ship_id);
+    static Client *FindAccount(uint32 account_id);
+    static void FindByStationID(uint32 stationID, std::vector<Client *> &result);
+    static void FindByRegionID(uint32 regionID, std::vector<Client *> &result);
 
-    SystemManager *FindOrBootSystem(uint32 systemID);
+    static uint32 GetClientCount();
 
-    void Broadcast(const char *notifyType, const char *idType, PyTuple **payload) const;
-    void Broadcast(const PyAddress &dest, EVENotificationStream &noti) const;
-    void Multicast(const char *notifyType, const char *idType, PyTuple **payload, NotificationDestination target, uint32 target_id, bool seq=true);
-    void Multicast(const char *notifyType, const char *idType, PyTuple **payload, const MulticastTarget &mcset, bool seq=true);
-    void Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream &noti) const;
-    void Multicast(const character_set &cset, const char *notifyType, const char *idType, PyTuple **payload, bool seq=true) const;
-    void Unicast(uint32 charID, const char *notifyType, const char *idType, PyTuple **payload, bool seq=true);
-    void GetClients(const character_set &cset, std::vector<Client *> &result) const;
+    static SystemManager *FindOrBootSystem(uint32 systemID);
 
-protected:
-    typedef std::list<Client *> client_list;
-    client_list m_clients;
-    typedef std::map<uint32, SystemManager *> system_list;
-    system_list m_systems;
+    static void Broadcast(const char *notifyType, const char *idType, PyTuple **payload);
+    static void Broadcast(const PyAddress &dest, EVENotificationStream &noti);
+    static void Multicast(const char *notifyType, const char *idType, PyTuple **payload, NotificationDestination target, uint32 target_id, bool seq = true);
+    static void Multicast(const char *notifyType, const char *idType, PyTuple **payload, const MulticastTarget &mcset, bool seq = true);
+    static void Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream &noti);
+    static void Multicast(const character_set &cset, const char *notifyType, const char *idType, PyTuple **payload, bool seq = true);
+    static void Unicast(uint32 charID, const char *notifyType, const char *idType, PyTuple **payload, bool seq = true);
+    static void GetClients(const character_set &cset, std::vector<Client *> &result);
 
-    Mutex mMutex;
-
-    PyServiceMgr *m_services;    //we do not own this, only used for booting systems.
 };
-
-//Singleton
-#define sEntityList \
-    ( EntityList::get() )
-
 
 #endif
 

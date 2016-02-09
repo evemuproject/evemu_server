@@ -234,11 +234,11 @@ int main( int argc, char* argv[] )
     }
 
     //make the item factory
-    ItemFactory item_factory( sEntityList );
+    ItemFactory item_factory;
   sLog.Log("Server Init", "starting item factory");
 
     //now, the service manager...
-    PyServiceMgr services( 888444, sEntityList, item_factory );
+    PyServiceMgr services( 888444, item_factory );
   sLog.Log("Server Init", "starting service manager");
 
     //setup the command dispatcher
@@ -373,7 +373,7 @@ int main( int argc, char* argv[] )
 #endif /* HAVE_UNISTD_H */
 
     // Seed NPC market.  This would probably be better in a GM command?
-    NPCMarket::CreateNPCMarketFromFile(EVEMU_ROOT "/etc/npcMarket.xml", false);
+    //    NPCMarket::CreateNPCMarketFromFile(EVEMU_ROOT "/etc/npcMarket.xml", false);
 
     sLog.Success("Server Init", "Initialisation finished");
 
@@ -410,10 +410,10 @@ int main( int argc, char* argv[] )
         {
             Client* c = new Client( services, &tcpc );
 
-            sEntityList.Add( &c );
+            EntityList::Add( &c );
         }
 
-        sEntityList.Process();
+        EntityList::Process();
         services.Process();
 
         /* UPDATE */

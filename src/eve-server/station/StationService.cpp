@@ -63,7 +63,7 @@ PyResult StationService::Handle_GetGuests(PyCallArgs &call) {
     PyList *res = new PyList();
 
     std::vector<Client *> clients;
-    m_manager->entity_list.FindByStationID(call.client->GetStationID(), clients);
+    EntityList::FindByStationID(call.client->GetStationID(), clients);
     std::vector<Client *>::iterator cur, end;
     cur = clients.begin();
     end = clients.end();

@@ -1037,7 +1037,7 @@ void InventoryItem::SaveItem()
 //contents of changes are consumed and cleared
 void InventoryItem::SendItemChange(uint32 toID, std::map<int32, PyRep *> &changes) const {
     //TODO: figure out the appropriate list of interested people...
-    Client *c = m_factory.entity_list.FindCharacter(toID);
+    Client *c = EntityList::FindCharacter(toID);
     if(c == NULL)
         return; //not found or not online...
 
@@ -1066,7 +1066,7 @@ void InventoryItem::SetOnline(bool online) {
 
     SetAttribute(AttrIsOnline, int(online));
 
-    Client *c = sEntityList.FindCharacter(m_ownerID);
+    Client *c = EntityList::FindCharacter(m_ownerID);
     if(c == NULL)
     {
         sLog.Error("InventoryItem", "unable to set ourselfs online//offline because we can't find the client");
@@ -1106,7 +1106,7 @@ void InventoryItem::SetOnline(bool online) {
 
 void InventoryItem::SetActive(bool active, uint32 effectID, double duration, bool repeat)
 {
-	Client* c = sEntityList.FindCharacter(m_ownerID);
+	Client* c = EntityList::FindCharacter(m_ownerID);
     if(c == NULL)
     {
         sLog.Error("InventoryItem", "unable to set ourselfs online//offline because we can't find the client");

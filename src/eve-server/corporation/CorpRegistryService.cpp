@@ -287,8 +287,8 @@ PyResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
     }
     PyTuple* a1 = cc.Encode();
     PyTuple* a2 = cc.Encode();
-    m_manager->entity_list.Multicast("OnCorporationChanged", "clientID", &a1, NOTIF_DEST__LOCATION, location);
-    m_manager->entity_list.Multicast("OnCorporationChanged", "stationid", &a2, NOTIF_DEST__LOCATION, location);
+    EntityList::Multicast("OnCorporationChanged", "clientID", &a1, NOTIF_DEST__LOCATION, location);
+    EntityList::Multicast("OnCorporationChanged", "stationid", &a2, NOTIF_DEST__LOCATION, location);
 
     // Set char's roles in corp
     CorpMemberInfo roles;
@@ -503,7 +503,7 @@ PyResult CorpRegistryBound::Handle_InsertApplication(PyCallArgs &call) {
     MulticastTarget mct;
     mct.characters.insert(OCAC.charID);
     mct.corporations.insert(OCAC.corpID);
-    m_manager->entity_list.Multicast(
+    EntityList::Multicast(
         "OnCorporationApplicationChanged",
         "clientID", &notif, mct);
 
@@ -648,14 +648,14 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
 
         FillOCApplicationChange(OCAC, oldInfo, newInfo);
         answer = OCAC.Encode();
-        m_manager->entity_list.Unicast(OCAC.charID,
+        EntityList::Unicast(OCAC.charID,
             "OnCorporationApplicationChanged",
             "*corpid&corprole", &answer);
 
         FillOCApplicationChange(OCAC, oldInfo, invalidInfo);
         answer = OCAC.Encode();
         // Maybe this will remove the app from the corp
-        m_manager->entity_list.Multicast(
+        EntityList::Multicast(
             "OnCorporationApplicationChanged",
             "*corpid&corprole", &answer,
             NOTIF_DEST__CORPORATION, OCAC.corpID);
@@ -690,7 +690,7 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
         MulticastTarget mct;
         mct.characters.insert(OCAC.charID);
         mct.corporations.insert(OCAC.corpID);
-        m_manager->entity_list.Multicast(
+        EntityList::Multicast(
             "OnCorporationApplicationChanged",
             "*corpid&corprole", &answer, mct);
 
@@ -714,7 +714,7 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
         N_pau.changes = change.Encode();
 
         answer = N_pau.Encode();
-        m_manager->entity_list.Multicast(
+        EntityList::Multicast(
             "OnObjectPublicAttributesUpdated",
             "objectID", &answer,
             NOTIF_DEST__CORPORATION, OCAC.corpID);
@@ -734,7 +734,7 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
         both_corps.corporations.insert(ocmc.newCorpID);
         both_corps.corporations.insert(ocmc.oldCorpID);
         answer = ocmc.Encode();
-        m_manager->entity_list.Multicast(
+        EntityList::Multicast(
             "OnCorporationMemberChanged", "corpid",
             &answer, both_corps);
 
@@ -748,12 +748,12 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
         notif.data = change.Encode();
 
         answer = notif.Encode();
-        m_manager->entity_list.Multicast(
+        EntityList::Multicast(
             "OnCorporationMemberChanged", "corpid",
             &answer, both_corps);
 
         answer = notif.Encode();
-        m_manager->entity_list.Multicast(
+        EntityList::Multicast(
             "OnCorporationMemberChanged", "corpid",
             &answer, both_corps);
 
@@ -763,7 +763,7 @@ PyResult CorpRegistryBound::Handle_UpdateApplicationOffer(PyCallArgs &call) {
             return NULL;
         }
 
-        Client *recruit = m_manager->entity_list.FindCharacter(ocmc.charID);
+        Client *recruit = EntityList::FindCharacter(ocmc.charID);
         if(recruit != NULL) {
             recruit->JoinCorporationUpdate(ocmc.newCorpID);
         }
@@ -806,7 +806,7 @@ PyResult CorpRegistryBound::Handle_DeleteApplication(PyCallArgs & call) {
     MulticastTarget mct;
     mct.characters.insert(OCAC.charID);
     mct.corporations.insert(OCAC.corpID);
-    m_manager->entity_list.Multicast(
+    EntityList::Multicast(
         "OnCorporationApplicationChanged",
         "*corpid&corprole", &answer, mct);
 
@@ -841,13 +841,13 @@ PyResult CorpRegistryBound::Handle_UpdateApplication(PyCallArgs &call) {
     FillOCApplicationChange(OCAC, oldInfo, newInfo);
 
     PyTuple* notif = OCAC.Encode();
-    m_manager->entity_list.Unicast(OCAC.charID,
+    EntityList::Unicast(OCAC.charID,
         "OnCorporationApplicationChanged",
         "clientID", &notif);
 
     FillOCApplicationChange(OCAC, ApplicationInfo(false), newInfo);
     notif = OCAC.Encode();
-    m_manager->entity_list.Multicast(
+    EntityList::Multicast(
         "OnCorporationApplicationChanged",
         "clientID", &notif,
         NOTIF_DEST__CORPORATION, OCAC.corpID);
@@ -875,11 +875,11 @@ PyResult CorpRegistryBound::Handle_UpdateDivisionNames(PyCallArgs &call) {
     MulticastTarget mct;
     mct.corporations.insert(notif.key);
     PyTuple * answer = notif.Encode();
-    m_manager->entity_list.Multicast("OnCorporationChanged", "corpid", &answer, mct);
+    EntityList::Multicast("OnCorporationChanged", "corpid", &answer, mct);
     answer = notif.Encode();
-    m_manager->entity_list.Multicast("OnCorporationChanged", "clientID", &answer, mct);
+    EntityList::Multicast("OnCorporationChanged", "clientID", &answer, mct);
     answer = notif.Encode();
-    m_manager->entity_list.Multicast("OnCorporationChanged", "clientID", &answer, mct);
+    EntityList::Multicast("OnCorporationChanged", "clientID", &answer, mct);
 
     return(new PyNone());
 }
@@ -906,7 +906,7 @@ PyResult CorpRegistryBound::Handle_UpdateCorporation(PyCallArgs &call) {
         MulticastTarget mct;
         mct.corporations.insert(notif.key);
         PyTuple * answer = notif.Encode();
-        m_manager->entity_list.Multicast("OnCorporationChanged", "corpid", &answer, mct);
+        EntityList::Multicast("OnCorporationChanged", "corpid", &answer, mct);
     }
 
     return new PyNone();
@@ -993,12 +993,12 @@ PyResult CorpRegistryBound::Handle_UpdateLogo(PyCallArgs &call) {
 
     MulticastTarget mct;
     mct.corporations.insert(notif.key);
-    m_manager->entity_list.Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
+    EntityList::Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
 
     // for those in the station
     mct.locations.insert(call.client->GetLocationID());
     answer = notif.Encode();
-    m_manager->entity_list.Multicast("OnCorporationChanged", "corpid", &answer, mct);
+    EntityList::Multicast("OnCorporationChanged", "corpid", &answer, mct);
 
     return m_db.GetCorporation(notif.key);
 }

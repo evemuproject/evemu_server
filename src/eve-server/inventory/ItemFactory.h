@@ -44,10 +44,9 @@ class ItemFactory
 {
     friend class InventoryItem;    //only for access to _DeleteItem
 public:
-    ItemFactory(EntityList& el);
+    ItemFactory();
     ~ItemFactory();
 
-    EntityList& entity_list;    //we do not own this.
     InventoryDB& db() { return(m_db); }
 
     /*

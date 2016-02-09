@@ -102,7 +102,7 @@ PyResult TradeService::Handle_InitiateTrade(PyCallArgs &call){
         return NULL;
     }
 
-    Client *target = call.client->services().entity_list.FindCharacter( args.arg );
+    Client *target = EntityList::FindCharacter( args.arg );
 
     InitiateTradeRsp rsp;
 

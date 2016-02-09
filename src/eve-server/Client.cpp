@@ -373,7 +373,7 @@ bool Client::EnterSystem(bool login) {
     if(m_system == NULL) {
         //m_system is NULL, we need new system
         //find our system manager and register ourself with it.
-        m_system = m_services.entity_list.FindOrBootSystem(GetSystemID());
+        m_system = EntityList::FindOrBootSystem(GetSystemID());
         if(m_system == NULL) {
             sLog.Error("Client", "Failed to boot system %u for char %s (%u)", GetSystemID(), GetName(), GetCharacterID());
             SendErrorMsg("Unable to boot system %u", GetSystemID());
@@ -1493,7 +1493,7 @@ void Client::OnCharNoLongerInStation()
 
     PyTuple* tmp = n.Encode();
     // this entire line should be something like this Broadcast("OnCharNoLongerInStation", "stationid", &tmp);
-    services().entity_list.Broadcast( "OnCharNoLongerInStation", "stationid", &tmp );
+    EntityList::Broadcast( "OnCharNoLongerInStation", "stationid", &tmp );
 }
 
 /* besides broadcasting the message this function should handle everything for this event */
@@ -1505,7 +1505,7 @@ void Client::OnCharNowInStation()
     n.allianceID = GetAllianceID();
 
     PyTuple* tmp = n.Encode();
-    services().entity_list.Broadcast( "OnCharNowInStation", "stationid", &tmp );
+    EntityList::Broadcast( "OnCharNowInStation", "stationid", &tmp );
 }
 
 /************************************************************************/
@@ -1540,7 +1540,7 @@ void Client::_GetVersion( VersionExchangeServer& version )
 
 uint32 Client::_GetUserCount()
 {
-    return services().entity_list.GetClientCount();
+    return EntityList::GetClientCount();
 }
 
 bool Client::_VerifyVersion( VersionExchangeClient& version )
@@ -1662,7 +1662,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
      * @note we should send GPSTransportClosed with reason "The user's connection has been usurped on the proxy"
      */
     if (account_info.online) {
-        Client* client = sEntityList.FindAccount(account_info.id);
+        Client* client = EntityList::FindAccount(account_info.id);
         if (client)
             client->DisconnectClient();
     }

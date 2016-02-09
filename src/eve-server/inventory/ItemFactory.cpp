@@ -36,7 +36,7 @@
 // Initialize ID Authority variables:
 uint32 ItemFactory::m_nextEntityID = EVEMU_MINIMUM_ENTITY_ID;
 
-ItemFactory::ItemFactory(EntityList& el) : entity_list(el) {}
+ItemFactory::ItemFactory() {}
 
 ItemFactory::~ItemFactory() {
     // items
@@ -51,7 +51,7 @@ ItemFactory::~ItemFactory() {
             // save attributes of item
 			if( IsNonStaticItem(cur->second->itemID()) )
 				cur->second->SaveItem();
-			
+
 			items_saved++;
 			if( ((float)items_saved / (float)total_item_count) > (current_percent_items_saved + 0.05) )
 			{

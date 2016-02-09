@@ -57,7 +57,7 @@ std::tr1::shared_ptr<std::string> APIServerManager::ProcessCall(const APICommand
 
 std::tr1::shared_ptr<std::string> APIServerManager::_ServerStatus(const APICommandCall * pAPICommandCall)
 {
-    uint32 playersOnline = services().entity_list.GetClientCount();
+    uint32 playersOnline = EntityList::GetClientCount();
     std::string playersOnlineStr( itoa( playersOnline ) );
 
     _BuildXMLHeader();

@@ -1135,10 +1135,10 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
                 //invitor = new LSCChannelChar(channel,0,char_ID,call.client->GetCharacterName(),0,0,0,0);
                 mct.characters.insert(char_ID);
             }
-            //invitee = new LSCChannelChar(channel,0,invited_char_ID,entityList().FindCharacter(invited_char_ID)->GetCharacterName(),0,0,0,0);
+            //invitee = new LSCChannelChar(channel,0,invited_char_ID,EntityList::FindCharacter(invited_char_ID)->GetCharacterName(),0,0,0,0);
             mct.characters.insert(invited_char_ID);
-            entityList().Multicast( "OnLSC", channel->GetTypeString(), &answer, mct );
-            //entityList().Unicast(invited_char_ID,"OnLSC",channel->GetTypeString(),&answer,false);
+            EntityList::Multicast( "OnLSC", channel->GetTypeString(), &answer, mct );
+            //EntityList::Unicast(invited_char_ID,"OnLSC",channel->GetTypeString(),&answer,false);
         */
 
             // ********** TODO **********
@@ -1156,7 +1156,7 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
             //chatInvitePacket.integer4 = 0;
             //chatInvitePacket.integer5 = 1;
             //PyTuple *tuple = chatInvitePacket.Encode();
-            //entityList().Unicast(invited_char_ID, "", "", &tuple, false);
+            //EntityList::Unicast(invited_char_ID, "", "", &tuple, false);
         }
         else
         {
@@ -1247,7 +1247,7 @@ void LSCService::SendMail(uint32 sender, const std::vector<int32> &recipients, c
 
     //now, send a notification to each successful recipient
     PyTuple *answer = notify.Encode();
-    m_manager->entity_list.Multicast(successful_recipients, "OnMessage", "*multicastID", &answer, false);
+    EntityList::Multicast(successful_recipients, "OnMessage", "*multicastID", &answer, false);
 }
 
 

@@ -30,34 +30,20 @@
 #include "ship/DestinyManager.h"
 #include "system/SystemManager.h"
 
-EntityList::EntityList() : m_services( NULL ) {}
-EntityList::~EntityList() {
-/**  this is the cause of seg faults on server shutdown with connected clients
-		Line 42: error reading variable: Could not find the frame base...
-		at this point, the client list `m_clients` is already dereferenced.
-    {
-        client_list::iterator cur, end;
-        cur = m_clients.begin();
-        end = m_clients.end();
-        for(; cur != end; cur++)
-        {
-            delete *cur;
-        }
-    }
+typedef std::list<Client *> client_list;
+client_list m_clients;
+typedef std::map<uint32, SystemManager *> system_list;
+system_list m_systems;
+Mutex mMutex;
+PyServiceMgr *m_services = NULL; //we do not own this, only used for booting systems.
 
-    {
-        system_list::iterator cur, end;
-        cur = m_systems.begin();
-        end = m_systems.end();
-        for(; cur != end; cur++)
-        {
-            delete cur->second;
-        }
-    }
-    */
+void EntityList::UseServices(PyServiceMgr *svc)
+{
+    m_services = svc;
 }
 
-void EntityList::Add(Client **client) {
+void EntityList::Add(Client **client)
+{
     if(client == NULL || *client == NULL)
         return;
 
@@ -129,7 +115,7 @@ void EntityList::Process()
     }
 }
 
-Client *EntityList::FindCharacter(uint32 char_id) const {
+Client *EntityList::FindCharacter(uint32 char_id) {
     //could likely improve this with a map, but its a little more work since
     //clients are added to the list before we know who they are.
 
@@ -143,7 +129,7 @@ Client *EntityList::FindCharacter(uint32 char_id) const {
     return NULL;
 }
 
-Client *EntityList::FindCharacter(const char *name) const {
+Client *EntityList::FindCharacter(const char *name) {
     //could likely improve this with a map, but its a little more work since
     //clients are added to the list before we know who they are.
 
@@ -161,7 +147,7 @@ Client *EntityList::FindCharacter(const char *name) const {
     return NULL;
 }
 
-Client *EntityList::FindByShip(uint32 ship_id) const {
+Client *EntityList::FindByShip(uint32 ship_id) {
     //could likely improve this with a map, but its a little more work since
     //clients are added to the list before we know who they are.
 
@@ -175,7 +161,7 @@ Client *EntityList::FindByShip(uint32 ship_id) const {
     return NULL;
 }
 
-Client *EntityList::FindAccount(uint32 account_id) const {
+Client *EntityList::FindAccount(uint32 account_id) {
     //could likely improve this with a map, but its a little more work since
     //clients are added to the list before we know who they are.
 
@@ -189,7 +175,7 @@ Client *EntityList::FindAccount(uint32 account_id) const {
     return NULL;
 }
 
-void EntityList::FindByStationID(uint32 stationID, std::vector<Client *> &result) const {
+void EntityList::FindByStationID(uint32 stationID, std::vector<Client *> &result) {
     //this could likely be done better
 
     client_list::const_iterator cur, end;
@@ -201,7 +187,7 @@ void EntityList::FindByStationID(uint32 stationID, std::vector<Client *> &result
     }
 }
 
-void EntityList::FindByRegionID(uint32 regionID, std::vector<Client *> &result) const {
+void EntityList::FindByRegionID(uint32 regionID, std::vector<Client *> &result) {
     //this could likely be done better
 
     client_list::const_iterator cur, end;
@@ -213,7 +199,13 @@ void EntityList::FindByRegionID(uint32 regionID, std::vector<Client *> &result) 
     }
 }
 
-void EntityList::Broadcast(const char *notifyType, const char *idType, PyTuple **payload) const {
+uint32 EntityList::GetClientCount()
+{
+    return (uint32(m_clients.size()));
+}
+
+void EntityList::Broadcast(const char *notifyType, const char *idType, PyTuple **payload)
+{
     //build a little notification out of it.
     EVENotificationStream notify;
     notify.remoteObject = 1;
@@ -228,7 +220,7 @@ void EntityList::Broadcast(const char *notifyType, const char *idType, PyTuple *
     Broadcast(dest, notify);
 }
 
-void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream &noti) const {
+void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream &noti) {
     client_list::const_iterator cur, end;
     cur = m_clients.begin();
     end = m_clients.end();
@@ -237,7 +229,7 @@ void EntityList::Broadcast(const PyAddress &dest, EVENotificationStream &noti) c
     }
 }
 
-void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream &noti) const {
+void EntityList::Multicast(const character_set &cset, const PyAddress &dest, EVENotificationStream &noti) {
     //this could likely be done better
 
     std::vector<Client *> result;
@@ -330,7 +322,7 @@ void EntityList::Multicast(const char *notifyType, const char *idType, PyTuple *
     PyDecRef( payload );
 }
 
-void EntityList::Multicast(const character_set &cset, const char *notifyType, const char *idType, PyTuple **in_payload, bool seq) const {
+void EntityList::Multicast(const character_set &cset, const char *notifyType, const char *idType, PyTuple **in_payload, bool seq) {
     std::vector<Client *> result;
     GetClients(cset, result);
 
@@ -363,7 +355,7 @@ void EntityList::Unicast(uint32 charID, const char *notifyType, const char *idTy
     Multicast(cset, notifyType, idType, payload, seq);
 }
 
-void EntityList::GetClients(const character_set &cset, std::vector<Client *> &result) const {
+void EntityList::GetClients(const character_set &cset, std::vector<Client *> &result) {
     //this could likely be done better
 
     character_set::const_iterator res;
