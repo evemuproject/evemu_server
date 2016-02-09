@@ -159,7 +159,7 @@ protected:
 
         // load solar system data
         SolarSystemData ssData;
-        if( !factory.db().GetSolarSystem( solarSystemID, ssData ) )
+        if (!InventoryDB::GetSolarSystem(solarSystemID, ssData))
             return RefPtr<_Ty>();
 
         // get sun type

@@ -26,7 +26,6 @@
 #ifndef __CERTIFICATE_MGR_SERVICE__H__INCL__
 #define __CERTIFICATE_MGR_SERVICE__H__INCL__
 
-#include "character/CertificateMgrDB.h"
 #include "PyService.h"
 
 class CertificateMgrService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    CertificateMgrDB m_db;
 
     PyCallable_DECL_CALL(GetMyCertificates)
     PyCallable_DECL_CALL(GetCertificateCategories)

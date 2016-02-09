@@ -34,8 +34,8 @@ class SpawnDB
 : public ServiceDB
 {
 public:
-    bool LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup *> &into);
-    bool LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, SpawnGroup *> &groups, std::map<uint32, SpawnEntry *> &into);
+    static bool LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup *> &into);
+    static bool LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, SpawnGroup *> &groups, std::map<uint32, SpawnEntry *> &into);
 
 protected:
 };

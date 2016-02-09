@@ -41,7 +41,7 @@ Agent::~Agent() {
     }
 }
 
-bool Agent::Load(MissionDB *from) {
+bool Agent::Load() {
     return true;
 }
 

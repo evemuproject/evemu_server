@@ -27,6 +27,7 @@
 
 #include "EntityList.h"
 #include "PyServiceCD.h"
+#include "account/AccountDB.h"
 #include "account/AccountService.h"
 #include "cache/ObjCacheService.h"
 #include "PyServiceMgr.h"
@@ -85,7 +86,7 @@ PyResult AccountService::Handle_GetCashBalance(PyCallArgs &call) {
 
         if(corporate_wallet)
             //corporate wallet
-            return new PyFloat( m_db.GetCorpBalance( call.client->GetCorporationID() ) );
+            return new PyFloat(AccountDB::GetCorpBalance(call.client->GetCorporationID()));
         else
             //personal wallet
             return new PyFloat( call.client->GetBalance() );
@@ -113,7 +114,7 @@ PyResult AccountService::Handle_GetEntryTypes(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetEntryTypes();
+        result = AccountDB::GetEntryTypes();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
@@ -137,7 +138,7 @@ PyResult AccountService::Handle_GetKeyMap(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetKeyMap();
+        result = AccountDB::GetKeyMap();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
@@ -181,7 +182,8 @@ PyResult AccountService::Handle_GiveCash(PyCallArgs &call) {
     if(other == NULL) {
         // then the money has to be sent to a corporation...
         // check this too
-        if (m_db.CheckIfCorporation(args.destination)) {
+        if (AccountDB::CheckIfCorporation(args.destination))
+        {
             targetIsChar = false;
         } else {
             _log(CLIENT__ERROR, "%s: Failed to find character %u", call.client->GetName(), args.destination);
@@ -211,7 +213,8 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
         client->SendErrorMsg("Failed to transfer money from your account.");
         return NULL;
     }
-    if(!m_db.AddBalanceToCorp(corpID, amount)) {
+    if (!AccountDB::AddBalanceToCorp(corpID, amount))
+    {
         _log(CLIENT__ERROR, "%s: Failed to add %.2f ISK to %u for donation from %u",
             client->GetName(),
             amount,
@@ -225,7 +228,7 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
         return NULL;
     }
 
-    double cnb = m_db.GetCorpBalance(corpID);
+    double cnb = AccountDB::GetCorpBalance(corpID);
 
     // Send notification about the cash change
     OnAccountChange oac;
@@ -239,7 +242,7 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
     EntityList::Multicast("OnAccountChange", "*corpid&corpAccountKey", &answer, mct);
 
     //record the transactions in the wallet.
-    if(!m_db.GiveCash(
+    if (!AccountDB::GiveCash(
         client->GetCharacterID(),
         refTypeID,
         client->GetCharacterID(),
@@ -256,7 +259,7 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
         //no good reason to return... the money has actually been moved.
     }
 
-    if(!m_db.GiveCash(
+    if (!AccountDB::GiveCash(
         corpID,
         refTypeID,
         client->GetCharacterID(),
@@ -307,7 +310,7 @@ PyTuple * AccountService::GiveCashToChar(Client * const client, Client * const o
 
     //record the transactions in the wallet.
     //first on the send side.
-    if(!m_db.GiveCash(
+    if (!AccountDB::GiveCash(
         client->GetCharacterID(),
         refTypeID,
         client->GetCharacterID(),
@@ -325,7 +328,7 @@ PyTuple * AccountService::GiveCashToChar(Client * const client, Client * const o
     }
 
     //then on the receive side.
-    if(!m_db.GiveCash(
+    if (!AccountDB::GiveCash(
         other->GetCharacterID(),
         refTypeID,
         other->GetCharacterID(),
@@ -371,7 +374,7 @@ PyResult AccountService::Handle_GetJournal(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.GetJournal(
+    return AccountDB::GetJournal(
         ( ca ? call.client->GetCorporationID() : call.client->GetCharacterID() ),
         args.refTypeID,
         args.accountKey,
@@ -389,7 +392,8 @@ PyResult AccountService::Handle_GiveCashFromCorpAccount(PyCallArgs &call) {
     if(args.amount == 0)
         return NULL;
 
-    if(args.amount < 0 || args.amount > m_db.GetCorpBalance(call.client->GetCorporationID())) {
+    if (args.amount < 0 || args.amount > AccountDB::GetCorpBalance(call.client->GetCorporationID()))
+    {
         _log(CLIENT__ERROR, "%s: Invalid amount in GiveCashFromCorpAccount(): %.2f", call.client->GetName(), args.amount);
         call.client->SendErrorMsg("Invalid amount '%.2f'", args.amount);
         return NULL;
@@ -416,7 +420,8 @@ PyResult AccountService::Handle_GiveCashFromCorpAccount(PyCallArgs &call) {
 PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * const other, double amount, const char *reason, JournalRefType refTypeID) {
     // remove money from the corp
     uint32 corpID = client->GetCorporationID();
-    if (!m_db.AddBalanceToCorp(corpID, double(-amount))) {
+    if (!AccountDB::AddBalanceToCorp(corpID, double(-amount)))
+    {
         _log(CLIENT__ERROR, "%s: Failed to remove %.2f ISK from %u for withdrawal to %u",
             client->GetName(),
             amount,
@@ -426,7 +431,7 @@ PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * con
         return NULL;
     }
 
-    double ncb = m_db.GetCorpBalance(corpID);
+    double ncb = AccountDB::GetCorpBalance(corpID);
 
     // Send notification about the cash change
     OnAccountChange oac;
@@ -448,7 +453,7 @@ PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * con
         client->SendErrorMsg("Failed to transfer money to your destination.");
 
         //try to refund the money..
-        m_db.AddBalanceToCorp(corpID, double(amount));
+        AccountDB::AddBalanceToCorp(corpID, double(amount));
         // if we're here, we have a more serious problem than
         // corp's balance not being displayed properly, so i won't bother with it
 
@@ -459,7 +464,7 @@ PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * con
     //first on the send side.
     char argID[15];
     snprintf(argID, 14, "%u", client->GetCharacterID());
-    if(!m_db.GiveCash(
+    if (!AccountDB::GiveCash(
         corpID,
         refTypeID,
         corpID,
@@ -477,7 +482,7 @@ PyTuple * AccountService::WithdrawCashToChar(Client * const client, Client * con
     }
 
     //then on the receive side.
-    if(!m_db.GiveCash(
+    if (!AccountDB::GiveCash(
         other->GetCharacterID(),
         refTypeID,
         corpID,

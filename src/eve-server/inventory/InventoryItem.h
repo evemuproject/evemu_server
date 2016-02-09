@@ -33,8 +33,6 @@ class PyRep;
 class PyDict;
 class PyObject;
 
-class ServiceDB;
-
 class ItemContainer;
 class Rsp_CommonGetInfo_Entry;
 class ItemRowset_Row;
@@ -260,7 +258,7 @@ protected:
     {
         // pull the item info
         ItemData data;
-        if( !factory.db().GetItem( itemID, data ) )
+        if( !InventoryDB::GetItem( itemID, data ) )
             return RefPtr<_Ty>();
 
         // obtain type

@@ -32,32 +32,32 @@ class BookmarkDB
 : public ServiceDB
 {
 public:
-    PyObjectEx *GetBookmarks(uint32 ownerID);
-    PyObjectEx *GetFolders(uint32 ownerID);
+    static PyObjectEx *GetBookmarks(uint32 ownerID);
+    static PyObjectEx *GetFolders(uint32 ownerID);
 
-    uint32 FindBookmarkTypeID(uint32 itemID);
+    static uint32 FindBookmarkTypeID(uint32 itemID);
 
-    bool GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint32 &itemID, uint32 &typeID,
+    static bool GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint32 &itemID, uint32 &typeID,
                                 uint32 &flag, std::string &memo, uint64 &created, double &x, double &y,
                                 double &z, uint32 &locationID, std::string &note, uint32 &creatorID,
                                 uint32 folderID);
 
-    bool SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, uint32 itemID,
+    static bool SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, uint32 itemID,
                                    uint32 typeID, uint32 flag, std::string memo, uint64 created,
                                    double x, double y, double z, uint32 locationID, std::string note,
                                    uint32 creatorID, uint32 folderID);
 
-    bool DeleteBookmarkFromDatabase(uint32 ownerID, uint32 bookmarkID);
+    static bool DeleteBookmarkFromDatabase(uint32 ownerID, uint32 bookmarkID);
 
-    bool DeleteBookmarksFromDatabase(uint32 ownerID, std::vector<unsigned long> *bookmarkList);
+    static bool DeleteBookmarksFromDatabase(uint32 ownerID, std::vector<unsigned long> *bookmarkList);
 
-    bool UpdateBookmarkInDatabase(uint32 bookmarkID, uint32 ownerID, std::string memo, std::string note);
+    static bool UpdateBookmarkInDatabase(uint32 bookmarkID, uint32 ownerID, std::string memo, std::string note);
 
-    bool SaveNewFolderToDatabase(uint32 &folderID, std::string folderName, uint32 ownerID, uint32 creatorID);
+    static bool SaveNewFolderToDatabase(uint32 &folderID, std::string folderName, uint32 ownerID, uint32 creatorID);
 
-    bool UpdateFolderInDatabase(uint32 &folderID, std::string folderName, uint32 ownerID, uint32 creatorID);
+    static bool UpdateFolderInDatabase(uint32 &folderID, std::string folderName, uint32 ownerID, uint32 creatorID);
 
-    bool DeleteFolderFromDatabase(uint32 folderID, uint32 ownerID);
+    static bool DeleteFolderFromDatabase(uint32 folderID, uint32 ownerID);
 };
 
 #endif /* !__BOOKMARK_DB__H__INCL__ */

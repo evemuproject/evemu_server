@@ -151,7 +151,7 @@ const CharacterType *ItemFactory::GetCharacterType(uint32 characterTypeID) {
 const CharacterType *ItemFactory::GetCharacterTypeByBloodline(uint32 bloodlineID) {
     // Unfortunately, we have it indexed by typeID, so we must get it ...
     uint32 characterTypeID;
-    if(!db().GetCharacterTypeByBloodline(bloodlineID, characterTypeID))
+    if (!InventoryDB::GetCharacterTypeByBloodline(bloodlineID, characterTypeID))
         return NULL;
     return GetCharacterType(characterTypeID);
 }

@@ -47,8 +47,6 @@ public:
     ItemFactory();
     ~ItemFactory();
 
-    InventoryDB& db() { return(m_db); }
-
     /*
      * Category stuff
      */
@@ -242,8 +240,6 @@ public:
 	uint32 GetNextEntityID();
 
 protected:
-    InventoryDB m_db;
-
     Client * m_pClient;     // pointer to client currently using the ItemFactory, we do not own this
 
     /*

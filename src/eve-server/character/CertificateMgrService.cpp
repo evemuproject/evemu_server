@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "character/CertificateMgrService.h"
+#include "character/CertificateMgrDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(CertificateMgrService)
@@ -84,7 +85,7 @@ PyResult CertificateMgrService::Handle_GetCertificateCategories(PyCallArgs &call
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyRep *res = m_db.GetCertificateCategories();
+        PyRep *res = CertificateMgrDB::GetCertificateCategories();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();
@@ -100,7 +101,7 @@ PyResult CertificateMgrService::Handle_GetAllShipCertificateRecommendations(PyCa
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyRep *res = m_db.GetAllShipCertificateRecommendations();
+        PyRep *res = CertificateMgrDB::GetAllShipCertificateRecommendations();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();
@@ -116,7 +117,7 @@ PyResult CertificateMgrService::Handle_GetCertificateClasses(PyCallArgs &call) {
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyRep *res = m_db.GetCertificateClasses();
+        PyRep *res = CertificateMgrDB::GetCertificateClasses();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();

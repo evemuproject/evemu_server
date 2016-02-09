@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "dogmaim/DogmaService.h"
+#include "dogmaim/DogmaDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(DogmaService)
@@ -51,7 +52,7 @@ PyResult DogmaService::Handle_GetOperandsForChar(PyCallArgs &call)
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyRep* res = m_db.GetOperand();
+        PyRep* res = DogmaDB::GetOperand();
         if( res == NULL )
             return NULL;
 

@@ -34,7 +34,6 @@
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
-class ServiceDB;
 
 class DeployableEntity
 : public DynamicSystemEntity

@@ -26,7 +26,6 @@
 #ifndef __MARKETPROXY_SERVICE_H_INCL__
 #define __MARKETPROXY_SERVICE_H_INCL__
 
-#include "market/MarketDB.h"
 #include "PyService.h"
 
 class MarketProxyService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    MarketDB m_db;
 
     PyCallable_DECL_CALL(GetStationAsks)
     PyCallable_DECL_CALL(GetSystemAsks)

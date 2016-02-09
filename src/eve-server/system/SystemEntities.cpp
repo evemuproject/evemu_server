@@ -61,7 +61,7 @@ SimpleSystemEntity::SimpleSystemEntity( SystemManager* system, const DBSystemEnt
 {
 }
 
-bool SimpleSystemEntity::LoadExtras(SystemDB *db) {
+bool SimpleSystemEntity::LoadExtras() {
     return true;
 }
 
@@ -169,11 +169,11 @@ SystemStargateEntity::~SystemStargateEntity() {
     PySafeDecRef( m_jumps );
 }
 
-bool SystemStargateEntity::LoadExtras(SystemDB *db) {
-    if(!SystemStationEntity::LoadExtras(db))
+bool SystemStargateEntity::LoadExtras() {
+    if(!SystemStationEntity::LoadExtras())
         return false;
 
-    m_jumps = db->ListJumps(GetID());
+    m_jumps = SystemDB::ListJumps(GetID());
     if(m_jumps == NULL)
         return false;
     return true;
@@ -219,8 +219,8 @@ void SystemAsteroidBeltEntity::EncodeDestiny( Buffer& into ) const
     into.Append( main );
 }
 
-bool SystemAsteroidBeltEntity::LoadExtras(SystemDB *db) {
-    if(!SimpleSystemEntity::LoadExtras(db))
+bool SystemAsteroidBeltEntity::LoadExtras() {
+    if(!SimpleSystemEntity::LoadExtras())
         return false;
 
     //TODO: fire up the belt manager.

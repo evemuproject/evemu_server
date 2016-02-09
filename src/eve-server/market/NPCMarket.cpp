@@ -25,6 +25,7 @@
 
 #include "eve-server.h"
 #include "NPCMarket.h"
+#include "MarketDB.h"
 
 Mutex NPCMarket::mMarket;
 bool npcMarketSeederRunning = false;
@@ -114,7 +115,7 @@ bool NPCMarket::ProcessStation(const TiXmlElement* ele)
     // Get the solar system and region IDs.
     uint32 solarSystemID;
     uint32 regionID;
-    if (!m_db.GetStationInfo(StationID, &solarSystemID, NULL, &regionID, NULL, NULL, NULL))
+    if (!MarketDB::GetStationInfo(StationID, &solarSystemID, NULL, &regionID, NULL, NULL, NULL))
     {
         newOrders.clear();
         codelog(MARKET__ERROR, "NPCMarket: Failed to find parents for station %u", StationID);

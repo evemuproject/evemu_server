@@ -27,7 +27,6 @@
 #ifndef __CONFIG_SERVICE_H_INCL__
 #define __CONFIG_SERVICE_H_INCL__
 
-#include "config/ConfigDB.h"
 #include "PyService.h"
 
 class ConfigService : public PyService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    ConfigDB m_db;
 
     PyCallable_DECL_CALL(GetMultiOwnersEx)
     PyCallable_DECL_CALL(GetMultiLocationsEx)

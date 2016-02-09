@@ -26,7 +26,6 @@
 #ifndef __FACTION_WAR_MGR__H__INCL__
 #define __FACTION_WAR_MGR__H__INCL__
 
-#include "standing/FactionWarMgrDB.h"
 #include "PyService.h"
 
 class FactionWarMgrService : public PyService
@@ -49,7 +48,6 @@ private:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    FactionWarMgrDB m_db;
 };
 
 #endif /* __FACTION_WAR_MGR_SERVICE__H__INCL__ */

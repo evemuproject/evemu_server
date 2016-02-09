@@ -28,7 +28,6 @@
 #define __MAP_SERVICE_H_INCL__
 
 #include "PyService.h"
-#include "map/MapDB.h"
 
 class MapService : public PyService
 {
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    MapDB m_db;
 
     PyCallable_DECL_CALL(GetStationExtraInfo)
     PyCallable_DECL_CALL(GetSolarSystemPseudoSecurities)

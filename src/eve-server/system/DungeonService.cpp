@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "system/DungeonService.h"
+#include "system/SystemDB.h"
 
 /*
 class DungeonBound

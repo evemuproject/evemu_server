@@ -27,7 +27,6 @@
 #ifndef __BEYONCE_SERVICE_H_INCL__
 #define __BEYONCE_SERVICE_H_INCL__
 
-#include "ship/ShipDB.h"
 #include "PyService.h"
 
 class BeyonceService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    ShipDB m_db;
 
     //PyCallable_DECL_CALL()
     PyCallable_DECL_CALL(GetFormations)

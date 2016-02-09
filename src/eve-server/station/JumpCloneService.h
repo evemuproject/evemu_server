@@ -26,7 +26,6 @@
 #ifndef __JUMPCLONE_SERVICE_H_INCL__
 #define __JUMPCLONE_SERVICE_H_INCL__
 
-#include "station/StationDB.h"
 #include "PyService.h"
 
 class JumpCloneService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    StationDB m_db;
 
     PyCallable_DECL_CALL(GetShipCloneState)
 

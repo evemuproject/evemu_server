@@ -87,7 +87,7 @@ int MailDB::SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID,
     return messageID;
 }
 
-PyString* MailDB::GetMailBody(int id) const
+PyString* MailDB::GetMailBody(int id)
 {
     DBQueryResult res;
     if (!DBcore::RunQuery(res, "SELECT body FROM mailMessage WHERE messageID = %u", id))
@@ -108,7 +108,7 @@ void MailDB::SetMailUnread(int id, bool unread)
     DBcore::RunQuery(unused, "UPDATE mailMessage SET unread = %u WHERE messageID = %u", (unread ? 1 : 0), id);
 }
 
-PyRep* MailDB::GetLabels(int characterID) const
+PyRep* MailDB::GetLabels(int characterID)
 {
     DBQueryResult res;
     if (!DBcore::RunQuery(res, "SELECT bit, name, color, ownerId FROM mailLabel WHERE ownerID = %u", characterID))
@@ -130,7 +130,7 @@ PyRep* MailDB::GetLabels(int characterID) const
     return ret;
 }
 
-bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID) const
+bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID)
 {
     // we need to get the next free bit index; can't avoid a SELECT
     DBQueryResult res;
@@ -161,14 +161,14 @@ bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID)
     return true;
 }
 
-void MailDB::DeleteLabel(int characterID, int labelID) const
+void MailDB::DeleteLabel(int characterID, int labelID)
 {
     int bit = BitFromLabelID(labelID);
     DBerror error;
     DBcore::RunQuery(error, "DELETE FROM mailLabel WHERE ownerID = %u AND bit = %u", characterID, bit);
 }
 
-void MailDB::EditLabel(int characterID, Call_EditLabel& args) const
+void MailDB::EditLabel(int characterID, Call_EditLabel& args)
 {
     int bit = BitFromLabelID(args.labelId);
 

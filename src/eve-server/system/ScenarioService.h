@@ -26,7 +26,6 @@
 #ifndef __SCENARIO_SERVICE_H_INCL__
 #define __SCENARIO_SERVICE_H_INCL__
 
-#include "system/SystemDB.h"
 #include "PyService.h"
 
 class ScenarioService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    SystemDB m_db;
 
     PyCallable_DECL_CALL(ResetD)
     //PlayDungeon(dungeonVID, selectedRoom)

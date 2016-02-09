@@ -37,8 +37,8 @@ class MissionDB
 : public ServiceDB
 {
 public:
-    PyObjectEx *GetAgents();
-    bool LoadAgentActions(uint32 agentID, std::map<uint32, AgentActions *> &into);
+    static PyObjectEx *GetAgents();
+    static bool LoadAgentActions(uint32 agentID, std::map<uint32, AgentActions *> &into);
 
     //AgentLevel *LoadAgentLevel(uint8 level);
 

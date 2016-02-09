@@ -28,6 +28,7 @@
 #include "PyBoundObject.h"
 #include "PyServiceCD.h"
 #include "ship/InsuranceService.h"
+#include "ship/ShipDB.h"
 
 class InsuranceBound
 : public PyBoundObject
@@ -35,9 +36,8 @@ class InsuranceBound
 public:
     PyCallable_Make_Dispatcher(InsuranceBound)
 
-    InsuranceBound(ShipDB* db)
+    InsuranceBound()
     : PyBoundObject(),
-      m_db(db),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -58,7 +58,6 @@ public:
     PyCallable_DECL_CALL(GetInsurancePrice)
 
 protected:
-    ShipDB* m_db;
     Dispatcher *const m_dispatch;
 };
 
@@ -84,7 +83,7 @@ PyBoundObject* InsuranceService::_CreateBoundObject( Client* c, const PyRep* bin
     _log( CLIENT__MESSAGE, "InsuranceService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new InsuranceBound( &m_db );
+    return new InsuranceBound( );
 }
 
 PyResult InsuranceBound::Handle_GetInsurancePrice( PyCallArgs& call )

@@ -55,41 +55,44 @@ struct AccountInfo
 
 class ServiceDB
 {
+protected:
+    ServiceDB() = delete;
+
 public:
-    bool GetAccountInformation( const char* username, const char* password, AccountInfo & account_info );
-    bool UpdateAccountHash( const char* username, std::string & hash );
-    bool UpdateAccountInformation( const char* username, bool isOnline );
+    static bool GetAccountInformation(const char* username, const char* password, AccountInfo & account_info);
+    static bool UpdateAccountHash(const char* username, std::string & hash);
+    static bool UpdateAccountInformation(const char* username, bool isOnline);
 
 
     //entity/item stuff:
-    PyObject *GetSolRow(uint32 systemID) const;
-    PyObject *GetSolDroneState(uint32 systemID) const;
+    static PyObject *GetSolRow(uint32 systemID);
+    static PyObject *GetSolDroneState(uint32 systemID);
 
-    bool GetSystemInfo(uint32 systemID, uint32 *constellationID, uint32 *regionID, std::string *name, std::string *securityClass);    // mapSolarSystems
-    bool GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position);    // mapDenormalize
-    bool GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position, GPoint *dockPosition, GVector *dockOrientation);    // staStations
+    static bool GetSystemInfo(uint32 systemID, uint32 *constellationID, uint32 *regionID, std::string *name, std::string *securityClass); // mapSolarSystems
+    static bool GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position); // mapDenormalize
+    static bool GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position, GPoint *dockPosition, GVector *dockOrientation); // staStations
 
-    uint32 GetDestinationStargateID(uint32 fromSystem, uint32 toSystem);
+    static uint32 GetDestinationStargateID(uint32 fromSystem, uint32 toSystem);
 
-    bool GetConstant(const char *name, uint32 &into);
+    static bool GetConstant(const char *name, uint32 &into);
 
     //these really want to move back into AccountDB
-    bool GiveCash( uint32 characterID, JournalRefType refTypeID, uint32 ownerFromID, uint32 ownerToID, const char *argID1, uint32 accountID, EVEAccountKeys accountKey, double amount, double balance, const char *reason);
-    double GetCorpBalance(uint32 corpID);
-    bool AddBalanceToCorp(uint32 corpID, double amount);
+    static bool GiveCash(uint32 characterID, JournalRefType refTypeID, uint32 ownerFromID, uint32 ownerToID, const char *argID1, uint32 accountID, EVEAccountKeys accountKey, double amount, double balance, const char *reason);
+    static double GetCorpBalance(uint32 corpID);
+    static bool AddBalanceToCorp(uint32 corpID, double amount);
 
     //johnsus - serverOnline mod
-    void SetServerOnlineStatus(bool onoff_status);
+    static void SetServerOnlineStatus(bool onoff_status);
     //johnsus - characterOnline mod
-    void SetCharacterOnlineStatus(uint32 char_id, bool onoff_status);
+    static void SetCharacterOnlineStatus(uint32 char_id, bool onoff_status);
 
-    void SetAccountOnlineStatus(uint32 accountID, bool onoff_status);
-    void SetAccountBanStatus(uint32 accountID, bool onoff_status);
+    static void SetAccountOnlineStatus(uint32 accountID, bool onoff_status);
+    static void SetAccountBanStatus(uint32 accountID, bool onoff_status);
 
 protected:
-    void ProcessStringChange(const char * key, const std::string & oldValue, const std::string & newValue, PyDict * notif, std::vector<std::string> & dbQ);
-    void ProcessRealChange(const char * key, double oldValue, double newValue, PyDict * notif, std::vector<std::string> & dbQ);
-    void ProcessIntChange(const char * key, uint32 oldValue, uint32 newValue, PyDict * notif, std::vector<std::string> & dbQ);
+    static void ProcessStringChange(const char * key, const std::string & oldValue, const std::string & newValue, PyDict * notif, std::vector<std::string> & dbQ);
+    static void ProcessRealChange(const char * key, double oldValue, double newValue, PyDict * notif, std::vector<std::string> & dbQ);
+    static void ProcessIntChange(const char * key, uint32 oldValue, uint32 newValue, PyDict * notif, std::vector<std::string> & dbQ);
 
     /**
      * CreateNewAccount
@@ -103,7 +106,7 @@ protected:
      * @param role is the users role in the game.
      * @author firefoxpdm, xanarox
      */
-    uint32 CreateNewAccount( const char* login, const char* pass, uint64 role );
+    static uint32 CreateNewAccount(const char* login, const char* pass, uint64 role);
 };
 
 #endif

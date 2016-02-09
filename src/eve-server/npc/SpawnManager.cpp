@@ -28,6 +28,7 @@
 #include "PyServiceMgr.h"
 #include "npc/NPC.h"
 #include "npc/SpawnManager.h"
+#include "npc/SpawnDB.h"
 #include "ship/DestinyManager.h"
 #include "system/SystemManager.h"
 #include "system/SystemBubble.h"
@@ -265,7 +266,7 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr) {
     endn = spawned.end();
     for(; curn != endn; curn++) {
         //load up any NPC attributes...
-        if (!(*curn)->Load(PyServiceMgr::serviceDB()))
+        if (!(*curn)->Load())
         {
             _log(SPAWN__POP, "Failed to load NPC data for NPC %u with type %u, depoping.", (*curn)->GetID(), (*curn)->Item()->typeID());
             delete *curn;
@@ -361,12 +362,14 @@ bool SpawnManager::Load() {
     // the spawn manager to be more persistent. This would require a table
     // mapping the entity table to the spawns table
     // (Drones too?)
-    if(!m_db.LoadSpawnGroups(m_system.GetID(), m_groups)) {
+    if (!SpawnDB::LoadSpawnGroups(m_system.GetID(), m_groups))
+    {
         _log(SPAWN__ERROR, "Failed to load spawn groups for system %u!", m_system.GetID());
         return false;
     }
 
-    if(!m_db.LoadSpawnEntries(m_system.GetID(), m_groups, m_spawns)) {
+    if (!SpawnDB::LoadSpawnEntries(m_system.GetID(), m_groups, m_spawns))
+    {
         _log(SPAWN__ERROR, "Failed to load spawn entries for system %u!", m_system.GetID());
         return false;
     }

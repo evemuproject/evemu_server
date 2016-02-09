@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "market/BillMgrService.h"
+#include "market/MarketDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(BillMgrService)
@@ -59,7 +60,7 @@ PyResult BillMgrService::Handle_GetBillTypes( PyCallArgs& call )
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetRefTypes();
+        result = MarketDB::GetRefTypes();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
@@ -78,12 +79,12 @@ PyResult BillMgrService::Handle_GetCorporationBills(PyCallArgs &call) {
     // No incoming params
     uint32 corpID = call.client->GetCorporationID();
 
-    return m_db.GetCorporationBills(corpID, true);
+    return MarketDB::GetCorporationBills(corpID, true);
 }
 PyResult BillMgrService::Handle_GetCorporationBillsReceivable(PyCallArgs &call) {
     uint32 corpID = call.client->GetCorporationID();
 
-    return m_db.GetCorporationBills(corpID, false);
+    return MarketDB::GetCorporationBills(corpID, false);
 }
 
 PyResult BillMgrService::Handle_GetAutomaticPaySettings(PyCallArgs &call) {

@@ -110,7 +110,7 @@ protected:
 
         // load additional ship type stuff
         ShipTypeData stData;
-        if( !factory.db().GetShipType(shipTypeID, stData) )
+        if( !InventoryDB::GetShipType(shipTypeID, stData) )
             return NULL;
 
         // try to load weapon type
@@ -337,7 +337,6 @@ protected:
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
-class ServiceDB;
 
 class ShipEntity
 : public DynamicSystemEntity

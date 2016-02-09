@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
+#include "cache/ObjCacheDB.h"
 #include "EVEServerConfig.h"
 
 const char *const ObjCacheService::LoginCachableObjects[] = {
@@ -141,7 +142,7 @@ ObjCacheService::ObjCacheService(const char *cacheDir)
   m_cacheDir(cacheDir)
 {
 	/*
-	*	Create server_cache directory to store the cached objects 
+	*	Create server_cache directory to store the cached objects
 	*/
 	std::string _basePath = sConfig.files.cacheDir;
 
@@ -314,7 +315,7 @@ bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
 
     //first try to generate it from the database...
     //we go to the DB with a string, not a rep
-    PyRep *cache = m_db.GetCachableObject(objectID_string);
+    PyRep *cache = ObjCacheDB::GetCachableObject(objectID_string);
     if(cache != NULL) {
         //we have generated the cache file in question, remember it
         m_cache.UpdateCache(objectID, &cache);

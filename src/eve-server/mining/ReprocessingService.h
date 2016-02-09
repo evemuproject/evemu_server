@@ -26,7 +26,6 @@
 #ifndef __REPROCESSING_SVC_H__
 #define __REPROCESSING_SVC_H__
 
-#include "mining/ReprocessingDB.h"
 #include "PyService.h"
 
 class ReprocessingService
@@ -38,8 +37,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    ReprocessingDB m_db;
 
     virtual PyBoundObject *_CreateBoundObject(Client *c, const PyRep *bind_args);
 };

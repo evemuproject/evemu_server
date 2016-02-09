@@ -33,7 +33,6 @@ class PyService;
 class PyCallable;
 class PyBoundObject;
 class PyPacket;
-class ServiceDB;
 class Client;
 class PyRep;
 class PySubStruct;
@@ -66,13 +65,6 @@ public:
     static void ClearBoundObject(uint32 bindID);
     static void ClearBoundObjects(Client *who);
 
-    //this is a hack and needs to die:
-
-    static ServiceDB &serviceDB()
-    {
-        return (m_svcDB);
-    }
-
     static ItemFactory *item_factory; //here for anybody to use. we do not own this.
 
     //Area to access services by name. This isn't ideal, but it avoids casting.
@@ -102,7 +94,6 @@ protected:
     static ObjectsBoundMap m_boundObjects;
 
     static uint32 m_nodeID;
-    static ServiceDB m_svcDB; //this is crap, get rid of this
 };
 
 #endif

@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
+#include "station/StationDB.h"
 #include "station/StationSvcService.h"
 #include "PyServiceMgr.h"
 
@@ -96,8 +97,9 @@ PyBoundObject* StationSvcService::_CreateBoundObject( Client* c, const PyRep* bi
 
 
 
-PyResult StationSvcService::Handle_GetStationItemBits(PyCallArgs &call) {
-    return m_db.GetStationItemBits(call.client->GetStationID());
+PyResult StationSvcService::Handle_GetStationItemBits(PyCallArgs &call)
+{
+    return StationDB::GetStationItemBits(call.client->GetStationID());
 }
 
 
@@ -112,7 +114,7 @@ PyResult StationSvcService::Handle_GetSolarSystem(PyCallArgs &call) {
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyPackedRow *t = m_db.GetSolarSystem(arg.arg);
+        PyPackedRow *t = StationDB::GetSolarSystem(arg.arg);
 
         PyServiceMgr::cache_service->GiveCache(method_id, (PyRep **) & t);
     }
@@ -127,7 +129,7 @@ PyResult StationSvcService::Handle_GetStation(PyCallArgs &call) {
         return (new PyInt(0));
     }
 
-    return m_db.DoGetStation(arg.arg);
+    return StationDB::DoGetStation(arg.arg);
 }
 
 PyResult StationSvcService::Handle_GetAllianceSystems(PyCallArgs &call) {

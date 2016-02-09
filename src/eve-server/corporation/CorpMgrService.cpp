@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "corporation/CorpMgrService.h"
+#include "corporation/CorporationDB.h"
 
 PyCallable_Make_InnerDispatcher(CorpMgrService)
 
@@ -55,7 +56,7 @@ PyResult CorpMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.GetCorporation(corpID.arg);
+    return CorporationDB::GetCorporation(corpID.arg);
 }
 
 PyResult CorpMgrService::Handle_GetCorporations(PyCallArgs &call) {

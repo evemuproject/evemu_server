@@ -36,16 +36,16 @@ class Call_EditLabel;
 class MailDB : public ServiceDB
 {
 public:
-    PyRep* GetLabels(int characterID) const;
-    bool CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID) const;
-    void DeleteLabel(int characterID, int labelID) const;
-    void EditLabel(int characterID, Call_EditLabel& args) const;
+    static PyRep* GetLabels(int characterID);
+    static bool CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID);
+    static void DeleteLabel(int characterID, int labelID);
+    static void EditLabel(int characterID, Call_EditLabel& args);
 
-    PyString* GetMailBody(int id) const;
-    void SetMailUnread(int id, bool unread);
-    int SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID, int toCorpOrAllianceID, std::string& title, std::string& body, int isReplyTo, int isForwardedFrom);
-    PyRep* GetNewMail(int charId);
-    PyRep* GetMailStatus(int charId);
+    static PyString* GetMailBody(int id);
+    static void SetMailUnread(int id, bool unread);
+    static int SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID, int toCorpOrAllianceID, std::string& title, std::string& body, int isReplyTo, int isForwardedFrom);
+    static PyRep* GetNewMail(int charId);
+    static PyRep* GetMailStatus(int charId);
 
 protected:
     static int BitFromLabelID(int id);

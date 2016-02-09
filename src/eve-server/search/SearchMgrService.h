@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author: BB2k       
+    Author: BB2k
 */
 
 
@@ -28,7 +28,6 @@
 #define __SEARCHMGR_SERVICE_H_INCL__
 
 #include "PyService.h"
-#include "search/SearchDB.h"
 
 class SearchMgrService : public PyService
 {
@@ -40,7 +39,6 @@ protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    SearchDB m_db;
     PyCallable_DECL_CALL(QuickQuery);
     PyCallable_DECL_CALL(Query);
 };

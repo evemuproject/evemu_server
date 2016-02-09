@@ -36,62 +36,81 @@ class LSCDB
 : public ServiceDB
 {
 public:
-    PyObject *LookupChars(const char *match, bool exact);
-    PyObject *LookupOwners(const char *match, bool exact);
-    PyObject *LookupPlayerChars(const char *match, bool exact);
-    PyObject *LookupCorporations(const std::string &);
-    PyObject *LookupFactions(const std::string &);
-    PyObject *LookupCorporationTickers(const std::string &);
-    PyObject *LookupStations(const std::string &);
-    PyObject *LookupKnownLocationsByGroup(const std::string &, uint32);
+    static PyObject *LookupChars(const char *match, bool exact);
+    static PyObject *LookupOwners(const char *match, bool exact);
+    static PyObject *LookupPlayerChars(const char *match, bool exact);
+    static PyObject *LookupCorporations(const std::string &);
+    static PyObject *LookupFactions(const std::string &);
+    static PyObject *LookupCorporationTickers(const std::string &);
+    static PyObject *LookupStations(const std::string &);
+    static PyObject *LookupKnownLocationsByGroup(const std::string &, uint32);
 
-    uint32 StoreMail(uint32 senderID, uint32 recipID, const char * subject, const char * message, uint64 sentTime);
-    PyObject *GetMailHeaders(uint32 recID);
-    PyRep *GetMailDetails(uint32 messageID, uint32 readerID);
-    bool MarkMessageRead(uint32 messageID);
-    bool DeleteMessage(uint32 messageID, uint32 readerID);
-    void GetChannelNames(uint32 charID, std::vector<std::string> & names);
+    static uint32 StoreMail(uint32 senderID, uint32 recipID, const char * subject, const char * message, uint64 sentTime);
+    static PyObject *GetMailHeaders(uint32 recID);
+    static PyRep *GetMailDetails(uint32 messageID, uint32 readerID);
+    static bool MarkMessageRead(uint32 messageID);
+    static bool DeleteMessage(uint32 messageID, uint32 readerID);
+    static void GetChannelNames(uint32 charID, std::vector<std::string> & names);
 
-    uint32 GetNextAvailableChannelID();
-    bool IsChannelNameAvailable(std::string name);
-    bool IsChannelIDAvailable(uint32 channel_ID);
-    bool IsChannelSubscribedByThisChar(uint32 char_ID, uint32 channel_ID);
+    static uint32 GetNextAvailableChannelID();
+    static bool IsChannelNameAvailable(std::string name);
+    static bool IsChannelIDAvailable(uint32 channel_ID);
+    static bool IsChannelSubscribedByThisChar(uint32 char_ID, uint32 channel_ID);
 
-    std::string GetRegionName(uint32 id) { return GetChannelName(id, "mapRegions", "regionName", "regionID"); }
-    std::string GetConstellationName(uint32 id) { return GetChannelName(id, "mapConstellations", "constellationName", "constellationID"); }
-    std::string GetSolarSystemName(uint32 id) { return GetChannelName(id, "mapSolarSystems", "solarSystemName", "solarSystemID"); }
-    std::string GetCorporationName(uint32 id) { return GetChannelName(id, "corporation", "corporationName", "corporationID"); }
-    std::string GetCharacterName(uint32 id) { return GetChannelName(id, "entity", "itemName", "itemID"); }
+    static std::string GetRegionName(uint32 id)
+    {
+        return GetChannelName(id, "mapRegions", "regionName", "regionID");
+    }
 
-    void GetChannelInformation(std::string & name, uint32 & id,
+    static std::string GetConstellationName(uint32 id)
+    {
+        return GetChannelName(id, "mapConstellations", "constellationName", "constellationID");
+    }
+
+    static std::string GetSolarSystemName(uint32 id)
+    {
+        return GetChannelName(id, "mapSolarSystems", "solarSystemName", "solarSystemID");
+    }
+
+    static std::string GetCorporationName(uint32 id)
+    {
+        return GetChannelName(id, "corporation", "corporationName", "corporationID");
+    }
+
+    static std::string GetCharacterName(uint32 id)
+    {
+        return GetChannelName(id, "entity", "itemName", "itemID");
+    }
+
+    static void GetChannelInformation(std::string & name, uint32 & id,
         std::string & motd, uint32 & ownerid, std::string & compkey,
         bool & memberless, std::string & password, bool & maillist,
         uint32 & cspa, uint32 & temp, uint32 & mode);
 
-    void GetChannelInformation(uint32 channelID, std::string & name,
+    static void GetChannelInformation(uint32 channelID, std::string & name,
         std::string & motd, uint32 & ownerid, std::string & compkey,
         bool & memberless, std::string & password, bool & maillist,
         uint32 & cspa, uint32 & temp, uint32 & mode);
 
-    void GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & ids, std::vector<std::string> & names,
+    static void GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & ids, std::vector<std::string> & names,
         std::vector<std::string> & MOTDs, std::vector<unsigned long> & ownerids, std::vector<std::string> & compkeys,
         std::vector<int> & memberless, std::vector<std::string> & passwords, std::vector<int> & maillists,
         std::vector<int> & cspas, std::vector<int> & temps, std::vector<int> & modes, int & channelCount);
 
-    std::string GetChannelInfo(uint32 channelID, std::string & name, std::string & motd);
+    static std::string GetChannelInfo(uint32 channelID, std::string & name, std::string & motd);
 
-    uint32 GetChannelIDFromComparisonKey(std::string compkey);
+    static uint32 GetChannelIDFromComparisonKey(std::string compkey);
 
-    int WriteNewChannelSubscriptionToDatabase(uint32 characterID, uint32 channelID, uint32 corpID, uint32 allianceID, uint32 role, uint32 extra);
-    int WriteNewChannelToDatabase(uint32 channelID, std::string name, uint32 ownerID, uint32 temporary, uint32 mode);
+    static int WriteNewChannelSubscriptionToDatabase(uint32 characterID, uint32 channelID, uint32 corpID, uint32 allianceID, uint32 role, uint32 extra);
+    static int WriteNewChannelToDatabase(uint32 channelID, std::string name, uint32 ownerID, uint32 temporary, uint32 mode);
 
-    int UpdateChannelConfigureInfo(LSCChannel * channel);
+    static int UpdateChannelConfigureInfo(LSCChannel * channel);
 
-    int RemoveChannelSubscriptionFromDatabase(uint32 channelID, uint32 charID);
-    int RemoveChannelFromDatabase(uint32 channelID);
+    static int RemoveChannelSubscriptionFromDatabase(uint32 channelID, uint32 charID);
+    static int RemoveChannelFromDatabase(uint32 channelID);
 
 protected:
-    std::string GetChannelName(uint32 id, const char * table, const char * column, const char * key);
+    static std::string GetChannelName(uint32 id, const char * table, const char * column, const char * key);
 };
 
 

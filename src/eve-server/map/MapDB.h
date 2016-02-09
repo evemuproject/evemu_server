@@ -31,11 +31,11 @@ class MapDB
 : public ServiceDB
 {
 public:
-    PyObject *GetPseudoSecurities();
-    PyObject *GetStationExtraInfo();
-    PyObject *GetStationOpServices();
-    PyObject *GetStationServiceInfo();
-    PyObject *GetStationCount();
+    static PyObject *GetPseudoSecurities();
+    static PyObject *GetStationExtraInfo();
+    static PyObject *GetStationOpServices();
+    static PyObject *GetStationServiceInfo();
+    static PyObject *GetStationCount();
 
 protected:
 };

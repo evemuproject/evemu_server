@@ -27,7 +27,7 @@
 
 #include "manufacturing/FactoryDB.h"
 
-PyRep *FactoryDB::GetMaterialsForTypeWithActivity(const uint32 blueprintTypeID) const {
+PyRep *FactoryDB::GetMaterialsForTypeWithActivity(const uint32 blueprintTypeID) {
     DBQueryResult res;
 
     if(!DBcore::RunQuery(res,
@@ -43,7 +43,7 @@ PyRep *FactoryDB::GetMaterialsForTypeWithActivity(const uint32 blueprintTypeID) 
     return DBResultToRowset(res);
 }
 
-PyRep *FactoryDB::GetMaterialCompositionOfItemType(const uint32 typeID) const {
+PyRep *FactoryDB::GetMaterialCompositionOfItemType(const uint32 typeID) {
     DBQueryResult res;
 
     if(!DBcore::RunQuery(res,

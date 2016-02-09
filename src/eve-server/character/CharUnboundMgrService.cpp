@@ -38,6 +38,8 @@ CharUnboundMgrService::CharUnboundMgrService()
 : PyService("charUnboundMgr"),
   m_dispatch(new Dispatcher(this))
 {
+    CharacterDB::Init();
+
     _SetCallDispatcher(m_dispatch);
 
     PyCallable_REG_CALL(CharUnboundMgrService, SelectCharacterID)
@@ -58,8 +60,9 @@ CharUnboundMgrService::~CharUnboundMgrService() {
     delete m_dispatch;
 }
 
-void CharUnboundMgrService::GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap) {
-    m_db.GetCharacterData( characterID, characterDataMap );
+void CharUnboundMgrService::GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap)
+{
+    CharacterDB::GetCharacterData(characterID, characterDataMap);
 }
 
 PyResult CharUnboundMgrService::Handle_IsUserReceivingCharacter(PyCallArgs &call) {
@@ -75,7 +78,7 @@ PyResult CharUnboundMgrService::Handle_ValidateNameEx(PyCallArgs &call)
         return NULL;
     }
 
-    return new PyBool(m_db.ValidateCharName(arg.arg.c_str()));
+    return new PyBool(CharacterDB::ValidateCharName(arg.arg.c_str()));
 }
 
 PyResult CharUnboundMgrService::Handle_SelectCharacterID(PyCallArgs &call) {
@@ -89,8 +92,9 @@ PyResult CharUnboundMgrService::Handle_SelectCharacterID(PyCallArgs &call) {
     return NULL;
 }
 
-PyResult CharUnboundMgrService::Handle_GetCharactersToSelect(PyCallArgs &call) {
-    return(m_db.GetCharacterList(call.client->GetAccountID()));
+PyResult CharUnboundMgrService::Handle_GetCharactersToSelect(PyCallArgs &call)
+{
+    return (CharacterDB::GetCharacterList(call.client->GetAccountID()));
 }
 
 PyResult CharUnboundMgrService::Handle_GetCharacterToSelect(PyCallArgs &call) {
@@ -100,7 +104,7 @@ PyResult CharUnboundMgrService::Handle_GetCharacterToSelect(PyCallArgs &call) {
         return NULL;
     }
 
-    PyRep *result = m_db.GetCharSelectInfo(args.arg);
+    PyRep *result = CharacterDB::GetCharSelectInfo(args.arg);
     if(result == NULL) {
         _log(CLIENT__ERROR, "Failed to load character %d", args.arg);
         return NULL;
@@ -116,7 +120,7 @@ PyResult CharUnboundMgrService::Handle_DeleteCharacter(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.DeleteCharacter(call.client->GetAccountID(), args.arg);
+    return CharacterDB::DeleteCharacter(call.client->GetAccountID(), args.arg);
 }
 
 PyResult CharUnboundMgrService::Handle_PrepareCharacterForDelete(PyCallArgs &call) {
@@ -126,7 +130,7 @@ PyResult CharUnboundMgrService::Handle_PrepareCharacterForDelete(PyCallArgs &cal
         return NULL;
     }
 
-    return new PyLong((int64)m_db.PrepareCharacterForDelete(call.client->GetAccountID(), args.arg));
+    return new PyLong((int64) CharacterDB::PrepareCharacterForDelete(call.client->GetAccountID(), args.arg));
 }
 
 PyResult CharUnboundMgrService::Handle_CancelCharacterDeletePrepare(PyCallArgs &call) {
@@ -136,7 +140,7 @@ PyResult CharUnboundMgrService::Handle_CancelCharacterDeletePrepare(PyCallArgs &
         return NULL;
     }
 
-    m_db.CancelCharacterDeletePrepare(call.client->GetAccountID(), args.arg);
+    CharacterDB::CancelCharacterDeletePrepare(call.client->GetAccountID(), args.arg);
 
     // the client doesn't care what we return here
     return NULL;
@@ -203,7 +207,8 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     cdata.schoolID = arg.schoolID;
 
     //Set the character's career based on the school they picked.
-    if( m_db.GetCareerBySchool( cdata.schoolID, cdata.careerID ) ) {
+    if (CharacterDB::GetCareerBySchool(cdata.schoolID, cdata.careerID))
+    {
         // Right now we don't know what causes the specialization switch, so just make both values the same
         cdata.careerSpecialityID = cdata.careerID;
     } else {
@@ -227,8 +232,8 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     // Setting character's starting position, and getting it's location...
     // Also query attribute bonuses from ancestry
-    if(    !m_db.GetLocationCorporationByCareer(cdata)
-        || !m_db.GetAttributesFromAncestry(cdata.ancestryID, intelligence, charisma, perception, memory, willpower)
+    if (!CharacterDB::GetLocationCorporationByCareer(cdata)
+            || !CharacterDB::GetAttributesFromAncestry(cdata.ancestryID, intelligence, charisma, perception, memory, willpower)
     ) {
         codelog(CLIENT__ERROR, "Failed to load char create details. Bloodline %u, ancestry %u.",
             char_type->bloodlineID(), cdata.ancestryID);
@@ -239,7 +244,8 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     // Change starting corperation based on value in XML file.
     if( sConfig.character.startCorporation ) { // Skip if 0
-        if( m_db.DoesCorporationExist( sConfig.character.startCorporation ) ) {
+        if (CharacterDB::DoesCorporationExist(sConfig.character.startCorporation))
+        {
             cdata.corporationID = sConfig.character.startCorporation;
         } else {
             codelog(SERVICE__WARNING, "Could not find default Corporation ID %u. Using Career Defaults instead.", sConfig.character.startCorporation);
@@ -248,7 +254,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     else
     {
         uint32 corporationID;
-        if(m_db.GetCorporationBySchool(cdata.schoolID, corporationID))
+        if (CharacterDB::GetCorporationBySchool(cdata.schoolID, corporationID))
         {
             cdata.corporationID = corporationID;
         }
@@ -260,16 +266,17 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     // Added ability to set starting station in xml config by Pyrii
     if( sConfig.character.startStation ) { // Skip if 0
-        if( !m_db.GetLocationByStation(sConfig.character.startStation, cdata) ) {
+        if (!CharacterDB::GetLocationByStation(sConfig.character.startStation, cdata))
+        {
             codelog(SERVICE__WARNING, "Could not find default station ID %u. Using Career Defaults instead.", sConfig.character.startStation);
         }
     }
     else
     {
         uint32 stationID;
-        if (m_db.GetCareerStationByCorporation(cdata.corporationID, stationID))
+        if (CharacterDB::GetCareerStationByCorporation(cdata.corporationID, stationID))
         {
-            if(!m_db.GetLocationByStation(stationID, cdata))
+            if (!CharacterDB::GetLocationByStation(stationID, cdata))
                 codelog(SERVICE__WARNING, "Could not find default station ID %u.", stationID);
         }
         else
@@ -294,7 +301,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     //load skills
     CharSkillMap startingSkills;
-    if( !m_db.GetSkillsByRace(char_type->race(), startingSkills) )
+    if (!CharacterDB::GetSkillsByRace(char_type->race(), startingSkills))
     {
         codelog(CLIENT__ERROR, "Failed to load char create skills. Bloodline %u, Ancestry %u.",
             char_type->bloodlineID(), cdata.ancestryID);
@@ -321,7 +328,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     char_item->SetAttribute(AttrWillpower, willpower);
 
     // register name
-    m_db.add_name_validation_set(char_item->itemName().c_str(), char_item->itemID());
+    CharacterDB::add_name_validation_set(char_item->itemName().c_str(), char_item->itemID());
 
     //spawn all the skills
     uint32 skillLevel;

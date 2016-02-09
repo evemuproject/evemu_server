@@ -33,7 +33,7 @@ class DogmaDB
 : public ServiceDB
 {
 public:
-    PyRep *GetOperand();
+    static PyRep *GetOperand();
 protected:
 };
 

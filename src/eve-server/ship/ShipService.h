@@ -27,7 +27,6 @@
 #ifndef __SHIP_SERVICE_H_INCL__
 #define __SHIP_SERVICE_H_INCL__
 
-#include "ship/ShipDB.h"
 #include "PyService.h"
 
 class ShipService
@@ -40,8 +39,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    ShipDB m_db;
 
     //PyCallable_DECL_CALL()
 

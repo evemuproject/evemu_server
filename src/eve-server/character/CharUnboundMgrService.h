@@ -50,8 +50,6 @@ private:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    CharacterDB m_db;
-
     PyCallable_DECL_CALL(SelectCharacterID)
 
     /**

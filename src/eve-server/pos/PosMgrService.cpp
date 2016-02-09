@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "pos/PosMgrService.h"
+#include "pos/PosMgrDB.h"
 #include "PyBoundObject.h"
 
 class PosMgrServiceBound
@@ -106,8 +107,9 @@ PyBoundObject *PosMgrService::_CreateBoundObject(Client *c, const PyRep *bind_ar
     return new PosMgrServiceBound();
 }
 
-PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args) {
-    return m_db.GetControlTowerFuelRequirements();
+PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args)
+{
+    return PosMgrDB::GetControlTowerFuelRequirements();
 }
 
 PyResult PosMgrServiceBound::Handle_SetShipPassword(PyCallArgs &call) {

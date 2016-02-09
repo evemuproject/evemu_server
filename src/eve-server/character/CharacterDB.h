@@ -38,27 +38,27 @@ class Client;
 class CharacterDB : public ServiceDB
 {
 public:
-    CharacterDB();
+    static void Init();
 
-    PyRep *GetCharacterList(uint32 accountID);
-    PyRep *GetCharSelectInfo(uint32 characterID);
-	void SetAvatar(uint32 charID, PyRep* hairDarkness);
-	void SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNameA, uint32 colorNameBC, double weight, double gloss);
-	void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
-	void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
-    PyObject *GetCharPublicInfo(uint32 characterID);
-    PyObject *GetCharPublicInfo3(uint32 characterID);
+    static PyRep *GetCharacterList(uint32 accountID);
+    static PyRep *GetCharSelectInfo(uint32 characterID);
+    static void SetAvatar(uint32 charID, PyRep* hairDarkness);
+    static void SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNameA, uint32 colorNameBC, double weight, double gloss);
+    static void SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID, PyRep* paperdollResourceID, PyRep* paperdollResourceVariation);
+    static void SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep* weightUpDown, PyRep* weightLeftRight, PyRep* weightForwardBack);
+    static PyObject *GetCharPublicInfo(uint32 characterID);
+    static PyObject *GetCharPublicInfo3(uint32 characterID);
     //PyObject *GetAgentPublicInfo(uint32 agentID);
-    PyObject *GetOwnerNoteLabels(uint32 charID);
-    PyObject *GetOwnerNote(uint32 charID, uint32 noteID);
+    static PyObject *GetOwnerNoteLabels(uint32 charID);
+    static PyObject *GetOwnerNote(uint32 charID, uint32 noteID);
 
-    bool GetCharClones(uint32 characterID, std::vector<uint32> &into);
-    bool GetActiveClone(uint32 characterID, uint32 &itemID);
-    bool GetActiveCloneType(uint32 characterID, uint32 &typeID);
-    void GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap);
-	bool GetCharHomeStation(uint32 characterID, uint32 &stationID);
+    static bool GetCharClones(uint32 characterID, std::vector<uint32> &into);
+    static bool GetActiveClone(uint32 characterID, uint32 &itemID);
+    static bool GetActiveCloneType(uint32 characterID, uint32 &typeID);
+    static void GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap);
+    static bool GetCharHomeStation(uint32 characterID, uint32 &stationID);
 
-    bool ValidateCharName(const char *name);
+    static bool ValidateCharName(const char *name);
     /**
      * add_name_validation_set
      *
@@ -70,7 +70,7 @@ public:
      * @return true if adding is successful and false if it was not.
      * @author Captnoord, Firefoxpdm
      */
-    bool add_name_validation_set(const char* name, uint32 characterID);
+    static bool add_name_validation_set(const char* name, uint32 characterID);
     /**
      * del_name_validation_set
      *
@@ -81,21 +81,21 @@ public:
      * @return true if the deletion was successful and false if a error occurred.
      * @author Captnoord, Firefoxpdm
      */
-    bool del_name_validation_set(uint32 characterID);
+    static bool del_name_validation_set(uint32 characterID);
 
-    bool GetCharItems(uint32 characterID, std::vector<uint32> &into);
+    static bool GetCharItems(uint32 characterID, std::vector<uint32> &into);
 
-    bool GetLocationByStation(uint32 staID, CharacterData &cdata);
+    static bool GetLocationByStation(uint32 staID, CharacterData &cdata);
 
-    bool GetCareerStationByCorporation(uint32 corporationID, uint32 &stationID);
+    static bool GetCareerStationByCorporation(uint32 corporationID, uint32 &stationID);
 
-    bool GetCareerBySchool(uint32 schoolID, uint32 &careerID);
+    static bool GetCareerBySchool(uint32 schoolID, uint32 &careerID);
 
-    bool GetCorporationBySchool(uint32 schoolID, uint32 &corporationID);
+    static bool GetCorporationBySchool(uint32 schoolID, uint32 &corporationID);
 
-    bool GetLocationCorporationByCareer(CharacterData &cdata);
+    static bool GetLocationCorporationByCareer(CharacterData &cdata);
 
-    bool DoesCorporationExist(uint32 corpID);
+    static bool DoesCorporationExist(uint32 corpID);
 
     /**
      * Obtains attribute bonuses for given ancestry.
@@ -108,18 +108,18 @@ public:
      * @param[out] willpower Bonus to willpower.
      * @return True if operation succeeded, false if failed.
      */
-    bool GetAttributesFromAncestry(uint32 ancestryID, uint8 &intelligence, uint8 &charisma, uint8 &perception, uint8 &memory, uint8 &willpower);
+    static bool GetAttributesFromAncestry(uint32 ancestryID, uint8 &intelligence, uint8 &charisma, uint8 &perception, uint8 &memory, uint8 &willpower);
 
-    bool GetSkillsByRace(uint32 raceID, std::map<uint32, uint32> &into);
-    bool GetSkillsByCareer(uint32 careerID, std::map<uint32, uint32> &into);
-    bool GetSkillsByCareerSpeciality(uint32 careerSpecialityID, std::map<uint32, uint32> &into);
+    static bool GetSkillsByRace(uint32 raceID, std::map<uint32, uint32> &into);
+    static bool GetSkillsByCareer(uint32 careerID, std::map<uint32, uint32> &into);
+    static bool GetSkillsByCareerSpeciality(uint32 careerSpecialityID, std::map<uint32, uint32> &into);
 
     /**
      * Retrieves the character note from the database as a PyString pointer.
      *
      * @author LSMoura
      */
-    PyString *GetNote(uint32 ownerID, uint32 itemID);
+    static PyString *GetNote(uint32 ownerID, uint32 itemID);
 
     /**
      * Stores the character note on the database, given the ownerID and itemID and the string itself.
@@ -130,20 +130,20 @@ public:
      *
      * @author LSMoura
      */
-    bool SetNote(uint32 ownerID, uint32 itemID, const char *str);
+    static bool SetNote(uint32 ownerID, uint32 itemID, const char *str);
 
-    uint32 AddOwnerNote(uint32 charID, const std::string &label, const std::string &content);
-    bool EditOwnerNote(uint32 charID, uint32 noteID, const std::string &label, const std::string &content);
+    static uint32 AddOwnerNote(uint32 charID, const std::string &label, const std::string &content);
+    static bool EditOwnerNote(uint32 charID, uint32 noteID, const std::string &label, const std::string &content);
 
-    uint64 PrepareCharacterForDelete(uint32 accountID, uint32 charID);
-    void CancelCharacterDeletePrepare(uint32 accountID, uint32 charID);
-    PyRep* DeleteCharacter(uint32 accountID, uint32 charID);
+    static uint64 PrepareCharacterForDelete(uint32 accountID, uint32 charID);
+    static void CancelCharacterDeletePrepare(uint32 accountID, uint32 charID);
+    static PyRep* DeleteCharacter(uint32 accountID, uint32 charID);
 
-    bool ReportRespec(uint32 characterId);
-    bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
-    PyObject *GetTopBounties();
-    uint32 GetBounty(uint32 charID);
-    bool AddBounty(uint32 charID, uint32 ammount);
+    static bool ReportRespec(uint32 characterId);
+    static bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
+    static PyObject *GetTopBounties();
+    static uint32 GetBounty(uint32 charID);
+    static bool AddBounty(uint32 charID, uint32 ammount);
 
 private:
     /**
@@ -152,7 +152,7 @@ private:
      * @param[in] str string that needs to be hashed.
      * @return djb2 hash of the string.
      */
-    uint32 djb2_hash(const char* str);
+    static uint32 djb2_hash(const char* str);
 
     /**
      * load_name_validation_set
@@ -161,17 +161,17 @@ private:
      *
      * @author Captnoord, Firefoxpdm
      */
-    void load_name_validation_set();
+    static void load_name_validation_set();
 
     /* set only for validation */
     typedef std::set<uint32>            CharValidationSet;
     typedef CharValidationSet::iterator    CharValidationSetItr;
-    CharValidationSet mNameValidation;
+    static CharValidationSet mNameValidation;
 
     /* helper object for deleting ( waisting mem here ) */
     typedef std::map<uint32, std::string>    CharIdNameMap;
     typedef CharIdNameMap::iterator            CharIdNameMapItr;
-    CharIdNameMap mIdNameContainer;
+    static CharIdNameMap mIdNameContainer;
 };
 
 #endif

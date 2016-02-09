@@ -640,7 +640,7 @@ uint32 InventoryItem::_Spawn(ItemFactory &factory,
         data.name = t->name();
 
     // insert new entry into DB
-    return factory.db().NewItem(data);
+    return InventoryDB::NewItem(data);
 }
 
 // This Spawn function is meant for in-memory only items created from the
@@ -672,7 +672,7 @@ void InventoryItem::Delete() {
 
     //take ourself out of the DB
     //attributes.Delete();
-    m_factory.db().DeleteItem( itemID() );
+    InventoryDB::DeleteItem( itemID() );
 
     mAttributeMap.Delete();
     mDefaultAttributeMap.Delete();
@@ -1017,7 +1017,7 @@ void InventoryItem::SaveItem()
 
     SaveAttributes();
 
-    m_factory.db().SaveItem(
+    InventoryDB::SaveItem(
         itemID(),
         ItemData(
             itemName().c_str(),

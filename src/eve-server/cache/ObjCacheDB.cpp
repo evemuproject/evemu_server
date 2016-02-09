@@ -27,105 +27,104 @@
 
 #include "cache/ObjCacheDB.h"
 
-ObjCacheDB::ObjCacheDB()
-{
-    //register all the generators
-    m_generators["charNewExtraCreationInfo.raceskills"] = &ObjCacheDB::Generate_CharNewExtraRaceSkills;
-    m_generators["charNewExtraCreationInfo.careerskills"] = &ObjCacheDB::Generate_CharNewExtraCareerSkills;
-    m_generators["charNewExtraCreationInfo.specialityskills"] = &ObjCacheDB::Generate_CharNewExtraSpecialitySkills;
-    m_generators["charNewExtraCreationInfo.careers"] = &ObjCacheDB::Generate_CharNewExtraCareers;
-    m_generators["charNewExtraCreationInfo.specialities"] = &ObjCacheDB::Generate_CharNewExtraSpecialities;
+//register all the generators
+std::map<std::string, ObjCacheDB::genFunc> ObjCacheDB::m_generators = {
+    { "charNewExtraCreationInfo.raceskills", &ObjCacheDB::Generate_CharNewExtraRaceSkills},
+    { "charNewExtraCreationInfo.careerskills", &ObjCacheDB::Generate_CharNewExtraCareerSkills},
+    { "charNewExtraCreationInfo.specialityskills", &ObjCacheDB::Generate_CharNewExtraSpecialitySkills},
+    { "charNewExtraCreationInfo.careers", &ObjCacheDB::Generate_CharNewExtraCareers},
+    { "charNewExtraCreationInfo.specialities", &ObjCacheDB::Generate_CharNewExtraSpecialities},
 
-    m_generators["config.BulkData.paperdollResources"] = &ObjCacheDB::Generate_PaperdollResources;
-    m_generators["config.BulkData.paperdollColors"] = &ObjCacheDB::Generate_PaperdollColors;
-    m_generators["config.BulkData.paperdollModifierLocations"] = &ObjCacheDB::Generate_PaperdollModifierLocations;
-    m_generators["config.BulkData.paperdollSculptingLocations"] = &ObjCacheDB::Generate_PaperdollSculptingLocations;
-    m_generators["config.BulkData.paperdollColorNames"] = &ObjCacheDB::Generate_PaperdollColorNames;
-    m_generators["config.BulkData.paperdollColorRestrictions"] = &ObjCacheDB::Generate_PaperdollColorRestrictions;
+    { "config.BulkData.paperdollResources", &ObjCacheDB::Generate_PaperdollResources},
+    { "config.BulkData.paperdollColors", &ObjCacheDB::Generate_PaperdollColors},
+    { "config.BulkData.paperdollModifierLocations", &ObjCacheDB::Generate_PaperdollModifierLocations},
+    { "config.BulkData.paperdollSculptingLocations", &ObjCacheDB::Generate_PaperdollSculptingLocations},
+    { "config.BulkData.paperdollColorNames", &ObjCacheDB::Generate_PaperdollColorNames},
+    { "config.BulkData.paperdollColorRestrictions", &ObjCacheDB::Generate_PaperdollColorRestrictions},
 
-    m_generators["config.BulkData.bloodlineNames"] = &ObjCacheDB::Generate_BloodlineNames;
-    m_generators["config.BulkData.locationscenes"] = &ObjCacheDB::Generate_Locationscenes;
-    m_generators["config.BulkData.overviewDefaults"] = &ObjCacheDB::Generate_OverviewDefaults;
-    m_generators["config.BulkData.schematicspinmap"] = &ObjCacheDB::Generate_Schematicspinmap;
-    m_generators["config.BulkData.overviewDefaultGroups"] = &ObjCacheDB::Generate_OverviewDefaultGroups;
-    m_generators["config.BulkData.schematics"] = &ObjCacheDB::Generate_Schematics;
-    m_generators["config.BulkData.schematicstypemap"] = &ObjCacheDB::Generate_Schematicstypemap;
-    m_generators["config.BulkData.sounds"] = &ObjCacheDB::Generate_Sounds;
-    m_generators["config.BulkData.invtypematerials"] = &ObjCacheDB::Generate_Invtypematerials;
-    m_generators["config.BulkData.ownericons"] = &ObjCacheDB::Generate_Ownericons;
-    m_generators["config.BulkData.icons"] = &ObjCacheDB::Generate_Icons;
+    { "config.BulkData.bloodlineNames", &ObjCacheDB::Generate_BloodlineNames},
+    { "config.BulkData.locationscenes", &ObjCacheDB::Generate_Locationscenes},
+    { "config.BulkData.overviewDefaults", &ObjCacheDB::Generate_OverviewDefaults},
+    { "config.BulkData.schematicspinmap", &ObjCacheDB::Generate_Schematicspinmap},
+    { "config.BulkData.overviewDefaultGroups", &ObjCacheDB::Generate_OverviewDefaultGroups},
+    { "config.BulkData.schematics", &ObjCacheDB::Generate_Schematics},
+    { "config.BulkData.schematicstypemap", &ObjCacheDB::Generate_Schematicstypemap},
+    { "config.BulkData.sounds", &ObjCacheDB::Generate_Sounds},
+    { "config.BulkData.invtypematerials", &ObjCacheDB::Generate_Invtypematerials},
+    { "config.BulkData.ownericons", &ObjCacheDB::Generate_Ownericons},
+    { "config.BulkData.icons", &ObjCacheDB::Generate_Icons},
 
-    m_generators["config.BulkData.billtypes"] = &ObjCacheDB::Generate_BillTypes;
-    m_generators["config.BulkData.allianceshortnames"] = &ObjCacheDB::Generate_AllianceShortnames;
-    m_generators["config.BulkData.categories"] = &ObjCacheDB::Generate_invCategories;
-    m_generators["config.BulkData.invtypereactions"] = &ObjCacheDB::Generate_invTypeReactions;
+    { "config.BulkData.billtypes", &ObjCacheDB::Generate_BillTypes},
+    { "config.BulkData.allianceshortnames", &ObjCacheDB::Generate_AllianceShortnames},
+    { "config.BulkData.categories", &ObjCacheDB::Generate_invCategories},
+    { "config.BulkData.invtypereactions", &ObjCacheDB::Generate_invTypeReactions},
 
-    m_generators["config.BulkData.dgmtypeattribs"] = &ObjCacheDB::Generate_dgmTypeAttribs;
-    m_generators["config.BulkData.dgmtypeeffects"] = &ObjCacheDB::Generate_dgmTypeEffects;
-    m_generators["config.BulkData.dgmeffects"] = &ObjCacheDB::Generate_dgmEffects;
-    m_generators["config.BulkData.dgmattribs"] = &ObjCacheDB::Generate_dgmAttribs;
-    m_generators["config.BulkData.metagroups"] = &ObjCacheDB::Generate_invMetaGroups;
-    m_generators["config.BulkData.ramactivities"] = &ObjCacheDB::Generate_ramActivities;
-    m_generators["config.BulkData.ramaltypesdetailpergroup"] = &ObjCacheDB::Generate_ramALTypeGroup;
-    m_generators["config.BulkData.ramaltypesdetailpercategory"] = &ObjCacheDB::Generate_ramALTypeCategory;
-    m_generators["config.BulkData.ramaltypes"] = &ObjCacheDB::Generate_ramALTypes;
-    m_generators["config.BulkData.ramcompletedstatuses"] = &ObjCacheDB::Generate_ramCompletedStatuses;
-    m_generators["config.BulkData.ramtyperequirements"] = &ObjCacheDB::Generate_ramTypeRequirements;
+    { "config.BulkData.dgmtypeattribs", &ObjCacheDB::Generate_dgmTypeAttribs},
+    { "config.BulkData.dgmtypeeffects", &ObjCacheDB::Generate_dgmTypeEffects},
+    { "config.BulkData.dgmeffects", &ObjCacheDB::Generate_dgmEffects},
+    { "config.BulkData.dgmattribs", &ObjCacheDB::Generate_dgmAttribs},
+    { "config.BulkData.metagroups", &ObjCacheDB::Generate_invMetaGroups},
+    { "config.BulkData.ramactivities", &ObjCacheDB::Generate_ramActivities},
+    { "config.BulkData.ramaltypesdetailpergroup", &ObjCacheDB::Generate_ramALTypeGroup},
+    { "config.BulkData.ramaltypesdetailpercategory", &ObjCacheDB::Generate_ramALTypeCategory},
+    { "config.BulkData.ramaltypes", &ObjCacheDB::Generate_ramALTypes},
+    { "config.BulkData.ramcompletedstatuses", &ObjCacheDB::Generate_ramCompletedStatuses},
+    { "config.BulkData.ramtyperequirements", &ObjCacheDB::Generate_ramTypeRequirements},
 
-    m_generators["config.BulkData.mapcelestialdescriptions"] = &ObjCacheDB::Generate_mapCelestialDescriptions;
-    m_generators["config.BulkData.tickernames"] = &ObjCacheDB::Generate_tickerNames;
-    m_generators["config.BulkData.groups"] = &ObjCacheDB::Generate_invGroups;
-    m_generators["config.BulkData.certificates"] = &ObjCacheDB::Generate_certificates;
-    m_generators["config.BulkData.certificaterelationships"] = &ObjCacheDB::Generate_certificateRelationships;
-    m_generators["config.BulkData.shiptypes"] = &ObjCacheDB::Generate_invShipTypes;
-    m_generators["config.BulkData.locations"] = &ObjCacheDB::Generate_cacheLocations;
-    m_generators["config.BulkData.locationwormholeclasses"] = &ObjCacheDB::Generate_locationWormholeClasses;
-    m_generators["config.BulkData.bptypes"] = &ObjCacheDB::Generate_invBlueprintTypes;
-    m_generators["config.BulkData.graphics"] = &ObjCacheDB::Generate_eveGraphics;
-    m_generators["config.BulkData.types"] = &ObjCacheDB::Generate_invTypes;
-    m_generators["config.BulkData.invmetatypes"] = &ObjCacheDB::Generate_invMetaTypes;
-    m_generators["config.Bloodlines"] = &ObjCacheDB::Generate_chrBloodlines;
-    m_generators["config.Units"] = &ObjCacheDB::Generate_eveUnits;
-    m_generators["config.BulkData.units"] = &ObjCacheDB::Generate_eveBulkDataUnits;
-    m_generators["config.BulkData.owners"] = &ObjCacheDB::Generate_cacheOwners;
-    m_generators["config.StaticOwners"] = &ObjCacheDB::Generate_eveStaticOwners;
-    m_generators["config.Races"] = &ObjCacheDB::Generate_chrRaces;
-    m_generators["config.Attributes"] = &ObjCacheDB::Generate_chrAttributes;
-    m_generators["config.Flags"] = &ObjCacheDB::Generate_invFlags;
-    m_generators["config.StaticLocations"] = &ObjCacheDB::Generate_eveStaticLocations;
-    m_generators["config.InvContrabandTypes"] = &ObjCacheDB::Generate_invContrabandTypes;
+    { "config.BulkData.mapcelestialdescriptions", &ObjCacheDB::Generate_mapCelestialDescriptions},
+    { "config.BulkData.tickernames", &ObjCacheDB::Generate_tickerNames},
+    { "config.BulkData.groups", &ObjCacheDB::Generate_invGroups},
+    { "config.BulkData.certificates", &ObjCacheDB::Generate_certificates},
+    { "config.BulkData.certificaterelationships", &ObjCacheDB::Generate_certificateRelationships},
+    { "config.BulkData.shiptypes", &ObjCacheDB::Generate_invShipTypes},
+    { "config.BulkData.locations", &ObjCacheDB::Generate_cacheLocations},
+    { "config.BulkData.locationwormholeclasses", &ObjCacheDB::Generate_locationWormholeClasses},
+    { "config.BulkData.bptypes", &ObjCacheDB::Generate_invBlueprintTypes},
+    { "config.BulkData.graphics", &ObjCacheDB::Generate_eveGraphics},
+    { "config.BulkData.types", &ObjCacheDB::Generate_invTypes},
+    { "config.BulkData.invmetatypes", &ObjCacheDB::Generate_invMetaTypes},
+    { "config.Bloodlines", &ObjCacheDB::Generate_chrBloodlines},
+    { "config.Units", &ObjCacheDB::Generate_eveUnits},
+    { "config.BulkData.units", &ObjCacheDB::Generate_eveBulkDataUnits},
+    { "config.BulkData.owners", &ObjCacheDB::Generate_cacheOwners},
+    { "config.StaticOwners", &ObjCacheDB::Generate_eveStaticOwners},
+    { "config.Races", &ObjCacheDB::Generate_chrRaces},
+    { "config.Attributes", &ObjCacheDB::Generate_chrAttributes},
+    { "config.Flags", &ObjCacheDB::Generate_invFlags},
+    { "config.StaticLocations", &ObjCacheDB::Generate_eveStaticLocations},
+    { "config.InvContrabandTypes", &ObjCacheDB::Generate_invContrabandTypes},
 
-    m_generators["charCreationInfo.bloodlines"] = &ObjCacheDB::Generate_c_chrBloodlines;
-    m_generators["charCreationInfo.races"] = &ObjCacheDB::Generate_c_chrRaces;
-    m_generators["charCreationInfo.ancestries"] = &ObjCacheDB::Generate_c_chrAncestries;
-    m_generators["charCreationInfo.schools"] = &ObjCacheDB::Generate_c_chrSchools;
-    m_generators["charCreationInfo.attributes"] = &ObjCacheDB::Generate_c_chrAttributes;
-    m_generators["charCreationInfo.bl_accessories"] = &ObjCacheDB::Generate_bl_accessories;
-    m_generators["charCreationInfo.bl_lights"] = &ObjCacheDB::Generate_bl_lights;
-    m_generators["charCreationInfo.bl_skins"] = &ObjCacheDB::Generate_bl_skins;
-    m_generators["charCreationInfo.bl_beards"] = &ObjCacheDB::Generate_bl_beards;
-    m_generators["charCreationInfo.bl_eyes"] = &ObjCacheDB::Generate_bl_eyes;
-    m_generators["charCreationInfo.bl_lipsticks"] = &ObjCacheDB::Generate_bl_lipsticks;
-    m_generators["charCreationInfo.bl_makeups"] = &ObjCacheDB::Generate_bl_makeups;
-    m_generators["charCreationInfo.bl_hairs"] = &ObjCacheDB::Generate_bl_hairs;
-    m_generators["charCreationInfo.bl_backgrounds"] = &ObjCacheDB::Generate_bl_backgrounds;
-    m_generators["charCreationInfo.bl_decos"] = &ObjCacheDB::Generate_bl_decos;
-    m_generators["charCreationInfo.bl_eyebrows"] = &ObjCacheDB::Generate_bl_eyebrows;
-    m_generators["charCreationInfo.bl_costumes"] = &ObjCacheDB::Generate_bl_costumes;
+    { "charCreationInfo.bloodlines", &ObjCacheDB::Generate_c_chrBloodlines},
+    { "charCreationInfo.races", &ObjCacheDB::Generate_c_chrRaces},
+    { "charCreationInfo.ancestries", &ObjCacheDB::Generate_c_chrAncestries},
+    { "charCreationInfo.schools", &ObjCacheDB::Generate_c_chrSchools},
+    { "charCreationInfo.attributes", &ObjCacheDB::Generate_c_chrAttributes},
+    { "charCreationInfo.bl_accessories", &ObjCacheDB::Generate_bl_accessories},
+    { "charCreationInfo.bl_lights", &ObjCacheDB::Generate_bl_lights},
+    { "charCreationInfo.bl_skins", &ObjCacheDB::Generate_bl_skins},
+    { "charCreationInfo.bl_beards", &ObjCacheDB::Generate_bl_beards},
+    { "charCreationInfo.bl_eyes", &ObjCacheDB::Generate_bl_eyes},
+    { "charCreationInfo.bl_lipsticks", &ObjCacheDB::Generate_bl_lipsticks},
+    { "charCreationInfo.bl_makeups", &ObjCacheDB::Generate_bl_makeups},
+    { "charCreationInfo.bl_hairs", &ObjCacheDB::Generate_bl_hairs},
+    { "charCreationInfo.bl_backgrounds", &ObjCacheDB::Generate_bl_backgrounds},
+    { "charCreationInfo.bl_decos", &ObjCacheDB::Generate_bl_decos},
+    { "charCreationInfo.bl_eyebrows", &ObjCacheDB::Generate_bl_eyebrows},
+    { "charCreationInfo.bl_costumes", &ObjCacheDB::Generate_bl_costumes},
 
-    m_generators["charCreationInfo.eyebrows"] = &ObjCacheDB::Generate_a_eyebrows;
-    m_generators["charCreationInfo.eyes"] = &ObjCacheDB::Generate_a_eyes;
-    m_generators["charCreationInfo.decos"] = &ObjCacheDB::Generate_a_decos;
-    m_generators["charCreationInfo.hairs"] = &ObjCacheDB::Generate_a_hairs;
-    m_generators["charCreationInfo.backgrounds"] = &ObjCacheDB::Generate_a_backgrounds;
-    m_generators["charCreationInfo.accessories"] = &ObjCacheDB::Generate_a_accessories;
-    m_generators["charCreationInfo.lights"] = &ObjCacheDB::Generate_a_lights;
-    m_generators["charCreationInfo.costumes"] = &ObjCacheDB::Generate_a_costumes;
-    m_generators["charCreationInfo.makeups"] = &ObjCacheDB::Generate_a_makeups;
-    m_generators["charCreationInfo.beards"] = &ObjCacheDB::Generate_a_beards;
-    m_generators["charCreationInfo.skins"] = &ObjCacheDB::Generate_a_skins;
-    m_generators["charCreationInfo.lipsticks"] = &ObjCacheDB::Generate_a_lipsticks;
-}
+    { "charCreationInfo.eyebrows", &ObjCacheDB::Generate_a_eyebrows},
+    { "charCreationInfo.eyes", &ObjCacheDB::Generate_a_eyes},
+    { "charCreationInfo.decos", &ObjCacheDB::Generate_a_decos},
+    { "charCreationInfo.hairs", &ObjCacheDB::Generate_a_hairs},
+    { "charCreationInfo.backgrounds", &ObjCacheDB::Generate_a_backgrounds},
+    { "charCreationInfo.accessories", &ObjCacheDB::Generate_a_accessories},
+    { "charCreationInfo.lights", &ObjCacheDB::Generate_a_lights},
+    { "charCreationInfo.costumes", &ObjCacheDB::Generate_a_costumes},
+    { "charCreationInfo.makeups", &ObjCacheDB::Generate_a_makeups},
+    { "charCreationInfo.beards", &ObjCacheDB::Generate_a_beards},
+    { "charCreationInfo.skins", &ObjCacheDB::Generate_a_skins},
+    { "charCreationInfo.lipsticks", &ObjCacheDB::Generate_a_lipsticks}
+};
 
 PyRep *ObjCacheDB::GetCachableObject(const std::string &type)
 {
@@ -139,7 +138,7 @@ PyRep *ObjCacheDB::GetCachableObject(const std::string &type)
     }
 
     genFunc f = res->second;
-    return (this->*f)();
+    return (*f)();
 }
 
 //implement all the generators:

@@ -26,7 +26,6 @@
 #ifndef __FACTORY_SERVICE_H__
 #define __FACTORY_SERVICE_H__
 
-#include "manufacturing/FactoryDB.h"
 #include "PyService.h"
 
 class FactoryService : public PyService
@@ -38,8 +37,6 @@ public:
 private:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    FactoryDB m_db;
 
     PyCallable_DECL_CALL(GetBlueprintAttributes)
     PyCallable_DECL_CALL(GetMaterialsForTypeWithActivity)

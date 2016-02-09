@@ -29,8 +29,6 @@
 
 #include "PyService.h"
 
-#include "system/BookmarkDB.h"
-
 class BookmarkService
 : public PyService
 {
@@ -50,8 +48,6 @@ protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
     uint32 nextBookmarkID;
-
-    BookmarkDB m_db;
 
     PyCallable_DECL_CALL(GetBookmarks)
     PyCallable_DECL_CALL(BookmarkLocation)

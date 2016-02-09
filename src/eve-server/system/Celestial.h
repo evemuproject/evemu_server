@@ -125,7 +125,7 @@ protected:
 
         // load celestial data
         CelestialObjectData cData;
-        if( !factory.db().GetCelestialObject( celestialID, cData ) )
+        if (!InventoryDB::GetCelestialObject(celestialID, cData))
             return RefPtr<_Ty>();
 
         return _Ty::template _LoadCelestialObject<_Ty>( factory, celestialID, type, data, cData );
@@ -166,7 +166,6 @@ protected:
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
-class ServiceDB;
 
 class CelestialEntity
 : public CelestialDynamicSystemEntity

@@ -27,7 +27,6 @@
 #ifndef __STANDING2_SERVICE_H_INCL__
 #define __STANDING2_SERVICE_H_INCL__
 
-#include "standing/StandingDB.h"
 #include "PyService.h"
 
 class Standing2Service : public PyService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    StandingDB m_db;
 
     PyCallable_DECL_CALL(GetMyKillRights)
     PyCallable_DECL_CALL(GetNPCNPCStandings)

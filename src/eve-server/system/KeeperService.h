@@ -26,7 +26,6 @@
 #ifndef __KEEPER_SERVICE_H_INCL__
 #define __KEEPER_SERVICE_H_INCL__
 
-#include "system/SystemDB.h"
 #include "PyService.h"
 
 class KeeperService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    SystemDB m_db;
 
 	PyCallable_DECL_CALL(ActivateAccelerationGate)
     PyCallable_DECL_CALL(GetLevelEditor)

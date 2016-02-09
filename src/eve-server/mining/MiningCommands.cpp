@@ -34,7 +34,7 @@
 uint32 GetAsteroidType( double p, const std::map<double, uint32>& roids );
 void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const GVector& position );
 
-PyResult Command_roid( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_roid( Client* who, const Seperator& args )
 {
     if( !args.isNumber( 1 ) )
         throw PyException( MakeCustomError( "Argument 1 should be an item type ID" ) );
@@ -60,7 +60,7 @@ PyResult Command_roid( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Spawn successsfull." );
 }
 
-PyResult Command_spawnbelt( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_spawnbelt( Client* who, const Seperator& args )
 {
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You must be in space to spawn things." ) );
@@ -150,8 +150,8 @@ PyResult Command_spawnbelt( Client* who, CommandDB* db, const Seperator& args )
 		}
 	}
 	else
-	{
-		if( !db->GetRoidDist( sys->GetSystemSecurity(), roidDist ) )
+    {
+        if (!CommandDB::GetRoidDist(sys->GetSystemSecurity(), roidDist))
 		{
 			sLog.Error( "Command", "Couldn't get roid list for system security %s", sys->GetSystemSecurity() );
 
@@ -184,7 +184,7 @@ PyResult Command_spawnbelt( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Spawn successsfull." );
 }
 
-PyResult Command_growbelt( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_growbelt( Client* who, const Seperator& args )
 {
     throw PyException( MakeCustomError( "Not implemented yet." ) );
 }

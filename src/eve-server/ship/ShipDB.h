@@ -33,7 +33,7 @@ class ShipDB
 : public ServiceDB
 {
 public:
-    PyTuple* GetFormations();
+    static PyTuple* GetFormations();
     static PyObject* GetEffectInformation(std::string effectName);
 };
 

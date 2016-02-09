@@ -119,7 +119,7 @@ protected:
 
         // get station type data
         StationTypeData stData;
-        if( !factory.db().GetStationType(stationTypeID, stData) )
+        if (!InventoryDB::GetStationType(stationTypeID, stData))
             return NULL;
 
         return _Ty::template _LoadStationType<_Ty>( factory, stationTypeID, group, data, stData );
@@ -248,7 +248,7 @@ protected:
 
         // load station data
         StationData stData;
-        if( !factory.db().GetStation( stationID, stData ) )
+        if (!InventoryDB::GetStation(stationID, stData))
             return RefPtr<_Ty>();
 
         return _Ty::template _LoadStation<_Ty>( factory, stationID, stType, data, cData, stData );
@@ -293,7 +293,6 @@ protected:
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
-class ServiceDB;
 
 class StationEntity
 : public DynamicSystemEntity

@@ -27,7 +27,6 @@
 #ifndef __TUTORIALSVC_SERVICE_H_INCL__
 #define __TUTORIALSVC_SERVICE_H_INCL__
 
-#include "account/TutorialDB.h"
 #include "PyService.h"
 
 class TutorialService : public PyService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    TutorialDB m_db;
 
     PyCallable_DECL_CALL(GetTutorialInfo)
     PyCallable_DECL_CALL(GetTutorials)

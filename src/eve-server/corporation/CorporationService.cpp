@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "corporation/CorporationService.h"
+#include "corporation/CorporationDB.h"
 
 PyCallable_Make_InnerDispatcher(CorporationService)
 
@@ -61,36 +62,43 @@ PyResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
 
     GetFactionInfoRsp rsp;
 
-    if(!m_db.ListAllCorpFactions(rsp.factionIDbyNPCCorpID)) {
+    if (!CorporationDB::ListAllCorpFactions(rsp.factionIDbyNPCCorpID))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
-    if(!m_db.ListAllFactionStationCounts(rsp.factionStationCount)) {
+    if (!CorporationDB::ListAllFactionStationCounts(rsp.factionStationCount))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
-    if(!m_db.ListAllFactionSystemCounts(rsp.factionSolarSystemCount)) {
+    if (!CorporationDB::ListAllFactionSystemCounts(rsp.factionSolarSystemCount))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
-    if(!m_db.ListAllFactionRegions(rsp.factionRegions)) {
+    if (!CorporationDB::ListAllFactionRegions(rsp.factionRegions))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
-    if(!m_db.ListAllFactionConstellations(rsp.factionConstellations)) {
+    if (!CorporationDB::ListAllFactionConstellations(rsp.factionConstellations))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
-    if(!m_db.ListAllFactionSolarSystems(rsp.factionSolarSystems)) {
+    if (!CorporationDB::ListAllFactionSolarSystems(rsp.factionSolarSystems))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
-    if(!m_db.ListAllFactionRaces(rsp.factionRaces)) {
+    if (!CorporationDB::ListAllFactionRaces(rsp.factionRaces))
+    {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
     }
 
-    rsp.npcCorpInfo = m_db.ListAllCorpInfo();
+    rsp.npcCorpInfo = CorporationDB::ListAllCorpInfo();
     if(rsp.npcCorpInfo == NULL) {
         codelog(SERVICE__ERROR, "Failed to service request");
         return NULL;
@@ -129,19 +137,20 @@ PyResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {
 PyResult CorporationService::Handle_GetCorpInfo(PyCallArgs &call) {
     //  will add this complete code at a later date  -allan 25Jul14
   /*
-    Call_SingleIntegerArg args;
-    if (!args.Decode(&call.tuple)) {
-        codelog(SERVICE__ERROR, "Bad arguments");
-        return (NULL);
-    }
-    PyRep * answer = m_db.GetCorpInfo(args.arg);
+      Call_SingleIntegerArg args;
+      if (!args.Decode(&call.tuple)) {
+          codelog(SERVICE__ERROR, "Bad arguments");
+          return (NULL);
+      }
+      PyRep * answer = CorporationDB::GetCorpInfo(args.arg);
     return (answer);
 	*/
     return NULL;
 }
 
-PyResult CorporationService::Handle_GetNPCDivisions(PyCallArgs &call) {
-    PyRep *result = m_db.ListNPCDivisions();
+PyResult CorporationService::Handle_GetNPCDivisions(PyCallArgs &call)
+{
+    PyRep *result = CorporationDB::ListNPCDivisions();
 
     return result;
 }
@@ -153,7 +162,7 @@ PyResult CorporationService::Handle_GetEmploymentRecord(PyCallArgs &call) {
         return (NULL);
     }
 
-    PyRep * answer = m_db.GetEmploymentRecord(args.arg);
+    PyRep * answer = CorporationDB::GetEmploymentRecord(args.arg);
 
     return (answer);
 }
@@ -167,7 +176,7 @@ PyResult CorporationService::Handle_GetMedalsReceived(PyCallArgs &call) {
     }
 
     PyTuple *t = new PyTuple(2);
-    t->items[0] = m_db.GetMedalsReceived(arg.arg);
+    t->items[0] = CorporationDB::GetMedalsReceived(arg.arg);
     t->items[1] = new PyList;
 
     return t;

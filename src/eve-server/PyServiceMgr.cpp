@@ -40,7 +40,6 @@ std::set<PyService *> PyServiceMgr::m_services; //we own these pointers.
 uint32 PyServiceMgr::m_nextBindID = 100;
 PyServiceMgr::ObjectsBoundMap PyServiceMgr::m_boundObjects;
 uint32 PyServiceMgr::m_nodeID;
-ServiceDB PyServiceMgr::m_svcDB; //this is crap, get rid of this
 
 void PyServiceMgr::Init(uint32 nodeID, ItemFactory *ifactory)
 {

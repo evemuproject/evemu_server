@@ -35,9 +35,8 @@ class JumpCloneBound
 public:
     PyCallable_Make_Dispatcher(JumpCloneBound)
 
-    JumpCloneBound(StationDB *db)
+    JumpCloneBound()
     : PyBoundObject(),
-      m_db(db),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -59,7 +58,6 @@ public:
     PyCallable_DECL_CALL(GetPriceForClone)
 
 protected:
-    StationDB *const m_db;        //we do not own this
     Dispatcher *const m_dispatch;    //we own this
 };
 
@@ -83,7 +81,7 @@ PyBoundObject* JumpCloneService::_CreateBoundObject( Client* c, const PyRep* bin
     _log( CLIENT__MESSAGE, "JumpCloneService bind request for:" );
     bind_args->Dump( CLIENT__MESSAGE, "    " );
 
-    return new JumpCloneBound( &m_db );
+    return new JumpCloneBound();
 }
 
 PyResult JumpCloneBound::Handle_InstallCloneInStation( PyCallArgs& call )

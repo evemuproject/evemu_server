@@ -35,6 +35,7 @@ CharMgrService::CharMgrService()
 : PyService("charMgr"),
   m_dispatch(new Dispatcher(this))
 {
+    CharacterDB::Init();
     _SetCallDispatcher(m_dispatch);
 
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo)
@@ -112,7 +113,7 @@ PyResult CharMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
 
     /*if(IsAgent(args.arg)) {
         //handle agents special right now...
-        PyRep *result = m_db.GetAgentPublicInfo(args.arg);
+        PyRep *result = CharacterDB::GetAgentPublicInfo(args.arg);
         if(result == NULL) {
             codelog(CLIENT__ERROR, "%s: Failed to find agent %u", call.client->GetName(), args.arg);
             return NULL;
@@ -120,7 +121,7 @@ PyResult CharMgrService::Handle_GetPublicInfo(PyCallArgs &call) {
         return result;
     }*/
 
-    PyRep *result = m_db.GetCharPublicInfo(args.arg);
+    PyRep *result = CharacterDB::GetCharPublicInfo(args.arg);
     if(result == NULL) {
         codelog(CLIENT__ERROR, "%s: Failed to find char %u", call.client->GetName(), args.arg);
         return NULL;
@@ -137,7 +138,7 @@ PyResult CharMgrService::Handle_GetPublicInfo3(PyCallArgs &call) {
         return NULL;
     }
 
-    PyRep *result = m_db.GetCharPublicInfo3(args.arg);
+    PyRep *result = CharacterDB::GetCharPublicInfo3(args.arg);
     if(result == NULL) {
         codelog(CLIENT__ERROR, "%s: Failed to find char %u", call.client->GetName(), args.arg);
         return NULL;
@@ -158,12 +159,13 @@ PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
         return NULL;
     }
     if(call.client->GetChar()->AlterBalance(-args.arg2)) // Need to send it to an actual account for stats at some point
-        m_db.AddBounty(args.arg1, args.arg2);
+        CharacterDB::AddBounty(args.arg1, args.arg2);
     return new PyNone;
 }
 
-PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call ) {
-    PyRep *result = m_db.GetTopBounties();
+PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
+{
+    PyRep *result = CharacterDB::GetTopBounties();
     if(result == NULL) {
         sLog.Error("CharMgrService","GetTopBounties error, Failed to find bounties: %s", call.client->GetName());
         return NULL;
@@ -174,7 +176,7 @@ PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call ) {
 PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
 {
 	uint32 typeID;
-	if( !m_db.GetActiveCloneType(call.client->GetCharacterID(), typeID ) )
+    if (!CharacterDB::GetActiveCloneType(call.client->GetCharacterID(), typeID))
 	{
 		// This should not happen, because a clone is created at char creation.
 		// We don't have a clone, so return a basic one. cloneTypeID = 9917 (Clone Grade Delta)
@@ -187,7 +189,7 @@ PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
 PyResult CharMgrService::Handle_GetHomeStation( PyCallArgs& call )
 {
 	uint32 stationID;
-	if( !m_db.GetCharHomeStation(call.client->GetCharacterID(), stationID) )
+    if (!CharacterDB::GetCharHomeStation(call.client->GetCharacterID(), stationID))
 	{
 		sLog.Debug( "CharMgrService", "Could't get the home station for Char %u", call.client->GetCharacterID() );
 		return new PyNone;
@@ -274,7 +276,7 @@ PyResult CharMgrService::Handle_GetNote( PyCallArgs& call )
     uint32 ownerID = call.client->GetCharacterID();
     uint32 itemID = call.tuple->GetItem(0)->AsInt()->value();
 
-	PyString *str = m_db.GetNote(ownerID, itemID);
+	PyString *str = CharacterDB::GetNote(ownerID, itemID);
     if(!str)
         str = new PyString("");
 
@@ -292,7 +294,7 @@ PyResult CharMgrService::Handle_SetNote(PyCallArgs &call)
         return NULL;
     }
 
-    m_db.SetNote(call.client->GetCharacterID(), args.itemID, args.note.c_str());
+    CharacterDB::SetNote(call.client->GetCharacterID(), args.itemID, args.note.c_str());
 */
     return new PyNone;
 }

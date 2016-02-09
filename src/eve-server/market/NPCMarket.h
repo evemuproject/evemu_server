@@ -56,8 +56,6 @@
 #ifndef NPCMARKET_H
 #define	NPCMARKET_H
 
-#include "MarketDB.h"
-
 class NPCMarket
 : public XMLParserEx
 {
@@ -78,10 +76,6 @@ public:
     static void StopSeeding();
 
 private:
-    /**
-     * Access to the market database information.
-     */
-    MarketDB m_db;
     /**
      * The retrieved station ID.
      */

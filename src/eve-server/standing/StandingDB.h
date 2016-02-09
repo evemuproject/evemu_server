@@ -33,12 +33,12 @@ class StandingDB
 : public ServiceDB
 {
 public:
-    PyObject *GetNPCStandings();
-    PyObjectEx *GetCharStandings(uint32 characterID);
-    PyObjectEx *GetCorpStandings(uint32 corporationID);
-    PyObject *GetCharPrimeStandings(uint32 characterID);
-    PyObject *GetCharNPCStandings(uint32 characterID);
-    PyObject *GetStandingTransactions(uint32 characterID);
+    static PyObject *GetNPCStandings();
+    static PyObjectEx *GetCharStandings(uint32 characterID);
+    static PyObjectEx *GetCorpStandings(uint32 corporationID);
+    static PyObject *GetCharPrimeStandings(uint32 characterID);
+    static PyObject *GetCharNPCStandings(uint32 characterID);
+    static PyObject *GetStandingTransactions(uint32 characterID);
 };
 
 

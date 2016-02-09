@@ -27,6 +27,7 @@
 
 #include "EntityList.h"
 #include "PyServiceCD.h"
+#include "station/StationDB.h"
 #include "station/StationService.h"
 
 PyCallable_Make_InnerDispatcher(StationService)

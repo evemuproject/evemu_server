@@ -95,11 +95,11 @@ Client::~Client() {
 
         //johnsus - characterOnline mod
         // switch character online flag to 0
-        PyServiceMgr::serviceDB().SetCharacterOnlineStatus(GetCharacterID(), false);
+        ServiceDB::SetCharacterOnlineStatus(GetCharacterID(), false);
     }
 
     if(GetAccountID() != 0) { // this is not very good ....
-        PyServiceMgr::serviceDB().SetAccountOnlineStatus(GetAccountID(), false);
+        ServiceDB::SetAccountOnlineStatus(GetAccountID(), false);
     }
 
     PyServiceMgr::ClearBoundObjects(this);
@@ -444,7 +444,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         // Entering station
         stationID = location;
 
-        PyServiceMgr::serviceDB().GetStationInfo(
+        ServiceDB::GetStationInfo(
             stationID,
             &solarSystemID, &constellationID, &regionID,
             NULL, NULL, NULL
@@ -460,7 +460,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         stationID = 0;
         solarSystemID = location;
 
-        PyServiceMgr::serviceDB().GetSystemInfo(
+        ServiceDB::GetSystemInfo(
             solarSystemID,
             &constellationID, &regionID,
             NULL, NULL
@@ -1061,7 +1061,7 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
 
     uint32 solarSystemID, constellationID, regionID;
     GPoint position;
-    if (!PyServiceMgr::serviceDB().GetStaticItemInfo(
+    if (!ServiceDB::GetStaticItemInfo(
         toGate,
         &solarSystemID, &constellationID, &regionID, &position
     )) {
@@ -1187,7 +1187,7 @@ bool Client::SelectCharacter( uint32 char_id )
     GetChar()->UpdateSkillQueue();
 
     //johnsus - characterOnline mod
-    PyServiceMgr::serviceDB().SetCharacterOnlineStatus(GetCharacterID(), true);
+    ServiceDB::SetCharacterOnlineStatus(GetCharacterID(), true);
 
     _SendSessionChange();
 
@@ -1521,7 +1521,7 @@ void Client::BanClient()
     SendNotifyMsg("You have been banned from this server and will be disconnected shortly.  You will no longer be able to log in");
 
     //ban the client
-            PyServiceMgr::serviceDB().SetAccountBanStatus(GetAccountID(), true);
+            ServiceDB::SetAccountBanStatus(GetAccountID(), true);
 }
 
 /************************************************************************/
@@ -1611,7 +1611,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     //sLog.Debug("Client","%s: Received Client Challenge.", GetAddress().c_str());
     //sLog.Debug("Client","Login with %s:", ccp.user_name.c_str());
 
-    if (!PyServiceMgr::serviceDB().GetAccountInformation(
+    if (!ServiceDB::GetAccountInformation(
 				ccp.user_name.c_str(),
 				ccp.user_password_hash.c_str(),
 				account_info))
@@ -1641,7 +1641,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
             goto error_login_auth_failed;
         }
 
-        if (!PyServiceMgr::serviceDB().UpdateAccountHash(
+        if (!ServiceDB::UpdateAccountHash(
                 ccp.user_name.c_str(),
                 password_hash ) )
         {
@@ -1672,7 +1672,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     sLog.Log("Client","successful");
 
     /* update account information, increase login count, last login timestamp and mark account as online */
-            PyServiceMgr::serviceDB().UpdateAccountInformation(account_info.name.c_str(), true);
+            ServiceDB::UpdateAccountInformation(account_info.name.c_str(), true);
 
     /* marshaled Python string "None" */
     static const uint8 handshakeFunc[] = { 0x74, 0x04, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x6E, 0x65 };

@@ -30,6 +30,7 @@
 #include "cache/ObjCacheService.h"
 #include "ship/BeyonceService.h"
 #include "ship/DestinyManager.h"
+#include "ship/ShipDB.h"
 #include "system/BookmarkService.h"
 #include "system/SystemEntities.h"
 #include "system/SystemManager.h"
@@ -121,7 +122,7 @@ PyResult BeyonceService::Handle_GetFormations(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        PyRep *res = m_db.GetFormations();
+        PyRep *res = ShipDB::GetFormations();
         if(res == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             res = new PyNone();

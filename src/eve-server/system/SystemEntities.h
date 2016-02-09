@@ -71,7 +71,7 @@ public:
 
     static SimpleSystemEntity *MakeEntity(SystemManager *system, const DBSystemEntity &entity);
 
-    virtual bool LoadExtras(SystemDB *db);
+    virtual bool LoadExtras();
 
     //some of these are generic enough..
     virtual PyDict *MakeSlimItem() const;
@@ -108,7 +108,7 @@ public:
     SystemStargateEntity(SystemManager *system, const DBSystemEntity &entity);
     virtual ~SystemStargateEntity();
 
-    virtual bool LoadExtras(SystemDB *db);
+    virtual bool LoadExtras();
     virtual PyDict *MakeSlimItem() const;
 
 protected:

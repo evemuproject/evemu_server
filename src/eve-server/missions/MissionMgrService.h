@@ -25,7 +25,6 @@
 #ifndef __MISSIONMGR_SERVICE_H_INCL__
 #define __MISSIONMGR_SERVICE_H_INCL__
 
-#include "missions/MissionDB.h"
 #include "PyService.h"
 
 class MissionMgrService
@@ -38,8 +37,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    MissionDB m_db;
 
     PyCallable_DECL_CALL(GetMyCourierMissions)
 

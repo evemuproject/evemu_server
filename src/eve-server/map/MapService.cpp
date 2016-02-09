@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "map/MapService.h"
+#include "map/MapDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(MapService)
@@ -84,19 +85,19 @@ PyResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {
 
         PyTuple *resultt = new PyTuple(3);
 
-        resultt->items[0] = m_db.GetStationExtraInfo();
+        resultt->items[0] = MapDB::GetStationExtraInfo();
         if(resultt->items[0] == NULL) {
             codelog(SERVICE__ERROR, "Failed to query station info");
             return NULL;
         }
 
-        resultt->items[1] = m_db.GetStationOpServices();
+        resultt->items[1] = MapDB::GetStationOpServices();
         if(resultt->items[1] == NULL) {
             codelog(SERVICE__ERROR, "Failed to query op services");
             return NULL;
         }
 
-        resultt->items[2] = m_db.GetStationServiceInfo();
+        resultt->items[2] = MapDB::GetStationServiceInfo();
         if(resultt->items[2] == NULL) {
             codelog(SERVICE__ERROR, "Failed to query service info");
             return NULL;
@@ -123,7 +124,7 @@ PyResult MapService::Handle_GetSolarSystemPseudoSecurities(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetPseudoSecurities();
+        result = MapDB::GetPseudoSecurities();
         if(result == NULL)
             result = new PyNone();
         PyServiceMgr::cache_service->GiveCache(method_id, &result);
@@ -141,21 +142,21 @@ PyResult MapService::Handle_GetSolarSystemVisits(PyCallArgs &call)
     //  will add this complete code with other map data at a later date  -allan 25Jul14
 
     //uint32 charID = call.client->GetCharacterID();
-    //return (m_db.GetSolSystemVisits(charID));
+    //return (MapDB::GetSolSystemVisits(charID));
 	return new PyNone;
 }
 
 PyResult MapService::Handle_GetHistory(PyCallArgs &call) {
     //  will add this complete code with other map data at a later date  -allan 25Jul14
 
-    //return (m_db.GetDynamicData(int1, int2));
+    //return (MapDB::GetDynamicData(int1, int2));
 	return new PyNone;
 }
 
 PyResult MapService::Handle_GetBeaconCount(PyCallArgs &call) {
     //  will add this complete code with other map data at a later date  -allan 25Jul14
 
-    //return (m_db.GetDynamicData(2, 24));
+    //return (MapDB::GetDynamicData(2, 24));
 	return new PyNone;
 }
 
@@ -163,7 +164,7 @@ PyResult MapService::Handle_GetStationCount(PyCallArgs &call)
 {
     //  will add this complete code with other map data at a later date  -allan 25Jul14
 
-    //return (m_db.GetStationCount());
+    //return (MapDB::GetStationCount());
 	return new PyNone;
 }
 

@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "missions/MissionMgrService.h"
+#include "missions/MissionDB.h"
 
 /*
 class MissionMgrBound

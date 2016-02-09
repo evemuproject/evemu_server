@@ -89,7 +89,7 @@ PyBoundObject *LanguageService::_CreateBoundObject(Client *c, PyTuple *bind_args
 PyResult LanguageService::Handle_GetLanguages(PyCallArgs &call) {
     PyRep *result = NULL;
 
-    result = m_db.ListLanguages();
+    result = ConfigDB::ListLanguages();
 
     return result;
 }
@@ -101,7 +101,7 @@ PyResult LanguageService::Handle_GetTextsForGroup(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.GetTextsForGroup(args.languageID, args.textgroup);
+    return ConfigDB::GetTextsForGroup(args.languageID, args.textgroup);
 }
 
 

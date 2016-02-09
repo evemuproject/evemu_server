@@ -28,7 +28,7 @@
 
 #include "character/PaperDollDB.h"
 
-PyRep* PaperDollDB::GetPaperDollAvatar(uint32 charID) const {
+PyRep* PaperDollDB::GetPaperDollAvatar(uint32 charID) {
 
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
@@ -45,7 +45,7 @@ PyRep* PaperDollDB::GetPaperDollAvatar(uint32 charID) const {
 	return DBRowToRow(row, "util.Row");
 }
 
-PyRep* PaperDollDB::GetPaperDollAvatarColors(uint32 charID) const {
+PyRep* PaperDollDB::GetPaperDollAvatarColors(uint32 charID) {
 
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
@@ -58,7 +58,7 @@ PyRep* PaperDollDB::GetPaperDollAvatarColors(uint32 charID) const {
     return DBResultToCRowset(res);
 }
 
-PyRep* PaperDollDB::GetPaperDollAvatarModifiers(uint32 charID) const {
+PyRep* PaperDollDB::GetPaperDollAvatarModifiers(uint32 charID) {
 
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
@@ -71,7 +71,7 @@ PyRep* PaperDollDB::GetPaperDollAvatarModifiers(uint32 charID) const {
     return DBResultToCRowset(res);
 }
 
-PyRep* PaperDollDB::GetPaperDollAvatarSculpts(uint32 charID) const {
+PyRep* PaperDollDB::GetPaperDollAvatarSculpts(uint32 charID) {
 
     DBQueryResult res;
     if (!DBcore::RunQuery(res,

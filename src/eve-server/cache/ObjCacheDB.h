@@ -35,113 +35,112 @@ class ObjCacheDB
 : public ServiceDB
 {
 public:
-    ObjCacheDB();
 
-    PyRep *GetCachableObject(const std::string &type);
+    static PyRep *GetCachableObject(const std::string &type);
 
 protected:
-    typedef PyRep *(ObjCacheDB::* genFunc)();
-    std::map<std::string, genFunc> m_generators;
+    typedef PyRep *(* genFunc)();
+    static std::map<std::string, genFunc> m_generators;
 
     //hack:
-    PyRep *DBResultToRowsetTuple(DBQueryResult &result);
+    static PyRep *DBResultToRowsetTuple(DBQueryResult &result);
 
     //declare all the generators
-    PyRep *Generate_PaperdollResources();
-    PyRep *Generate_PaperdollColors();
-    PyRep *Generate_PaperdollModifierLocations();
-    PyRep *Generate_PaperdollSculptingLocations();
-    PyRep *Generate_PaperdollColorNames();
-    PyRep *Generate_PaperdollColorRestrictions();
-    PyRep *Generate_BloodlineNames();
-    PyRep *Generate_Locationscenes();
-    PyRep *Generate_OverviewDefaults();
-    PyRep *Generate_Schematicspinmap();
-    PyRep *Generate_OverviewDefaultGroups();
-    PyRep *Generate_Schematics();
-    PyRep *Generate_Schematicstypemap();
-    PyRep *Generate_Sounds();
-    PyRep *Generate_Invtypematerials();
-    PyRep *Generate_Ownericons();
-    PyRep *Generate_Icons();
-    PyRep *Generate_CharNewExtraRaceSkills();
-    PyRep *Generate_CharNewExtraCareerSkills();
-    PyRep *Generate_CharNewExtraSpecialitySkills();
-    PyRep *Generate_CharNewExtraCareers();
-    PyRep *Generate_CharNewExtraSpecialities();
+    static PyRep *Generate_PaperdollResources();
+    static PyRep *Generate_PaperdollColors();
+    static PyRep *Generate_PaperdollModifierLocations();
+    static PyRep *Generate_PaperdollSculptingLocations();
+    static PyRep *Generate_PaperdollColorNames();
+    static PyRep *Generate_PaperdollColorRestrictions();
+    static PyRep *Generate_BloodlineNames();
+    static PyRep *Generate_Locationscenes();
+    static PyRep *Generate_OverviewDefaults();
+    static PyRep *Generate_Schematicspinmap();
+    static PyRep *Generate_OverviewDefaultGroups();
+    static PyRep *Generate_Schematics();
+    static PyRep *Generate_Schematicstypemap();
+    static PyRep *Generate_Sounds();
+    static PyRep *Generate_Invtypematerials();
+    static PyRep *Generate_Ownericons();
+    static PyRep *Generate_Icons();
+    static PyRep *Generate_CharNewExtraRaceSkills();
+    static PyRep *Generate_CharNewExtraCareerSkills();
+    static PyRep *Generate_CharNewExtraSpecialitySkills();
+    static PyRep *Generate_CharNewExtraCareers();
+    static PyRep *Generate_CharNewExtraSpecialities();
 
-    PyRep *Generate_BillTypes();
-    PyRep *Generate_AllianceShortnames();
-    PyRep *Generate_invCategories();
-    PyRep *Generate_invTypeReactions();
+    static PyRep *Generate_BillTypes();
+    static PyRep *Generate_AllianceShortnames();
+    static PyRep *Generate_invCategories();
+    static PyRep *Generate_invTypeReactions();
 
-    PyRep *Generate_dgmTypeAttribs();
-    PyRep *Generate_dgmTypeEffects();
-    PyRep *Generate_dgmEffects();
-    PyRep *Generate_dgmAttribs();
+    static PyRep *Generate_dgmTypeAttribs();
+    static PyRep *Generate_dgmTypeEffects();
+    static PyRep *Generate_dgmEffects();
+    static PyRep *Generate_dgmAttribs();
 
-    PyRep *Generate_invMetaGroups();
+    static PyRep *Generate_invMetaGroups();
 
-    PyRep *Generate_ramActivities();
-    PyRep *Generate_ramALTypeGroup();
-    PyRep *Generate_ramALTypeCategory();
-    PyRep *Generate_ramALTypes();
-    PyRep *Generate_ramCompletedStatuses();
-    PyRep *Generate_ramTypeRequirements();
+    static PyRep *Generate_ramActivities();
+    static PyRep *Generate_ramALTypeGroup();
+    static PyRep *Generate_ramALTypeCategory();
+    static PyRep *Generate_ramALTypes();
+    static PyRep *Generate_ramCompletedStatuses();
+    static PyRep *Generate_ramTypeRequirements();
 
-    PyRep *Generate_mapCelestialDescriptions();
-    PyRep *Generate_tickerNames();
-    PyRep *Generate_invGroups();
-    PyRep *Generate_certificates();
-    PyRep *Generate_certificateRelationships();
-    PyRep *Generate_invShipTypes();
-    PyRep *Generate_cacheLocations();
-    PyRep *Generate_locationWormholeClasses();
-    PyRep *Generate_invBlueprintTypes();
-    PyRep *Generate_eveGraphics();
-    PyRep *Generate_invTypes();
-    PyRep *Generate_invMetaTypes();
-    PyRep *Generate_chrBloodlines();
-    PyRep *Generate_eveUnits();
-    PyRep *Generate_eveBulkDataUnits();
-    PyRep *Generate_cacheOwners();
-    PyRep *Generate_eveStaticOwners();
-    PyRep *Generate_chrRaces();
-    PyRep *Generate_chrAttributes();
-    PyRep *Generate_invFlags();
-    PyRep *Generate_eveStaticLocations();
-    PyRep *Generate_invContrabandTypes();
+    static PyRep *Generate_mapCelestialDescriptions();
+    static PyRep *Generate_tickerNames();
+    static PyRep *Generate_invGroups();
+    static PyRep *Generate_certificates();
+    static PyRep *Generate_certificateRelationships();
+    static PyRep *Generate_invShipTypes();
+    static PyRep *Generate_cacheLocations();
+    static PyRep *Generate_locationWormholeClasses();
+    static PyRep *Generate_invBlueprintTypes();
+    static PyRep *Generate_eveGraphics();
+    static PyRep *Generate_invTypes();
+    static PyRep *Generate_invMetaTypes();
+    static PyRep *Generate_chrBloodlines();
+    static PyRep *Generate_eveUnits();
+    static PyRep *Generate_eveBulkDataUnits();
+    static PyRep *Generate_cacheOwners();
+    static PyRep *Generate_eveStaticOwners();
+    static PyRep *Generate_chrRaces();
+    static PyRep *Generate_chrAttributes();
+    static PyRep *Generate_invFlags();
+    static PyRep *Generate_eveStaticLocations();
+    static PyRep *Generate_invContrabandTypes();
 
-    PyRep *Generate_c_chrBloodlines();
-    PyRep *Generate_c_chrRaces();
-    PyRep *Generate_c_chrAncestries();
-    PyRep *Generate_c_chrSchools();
-    PyRep *Generate_c_chrAttributes();
-    PyRep *Generate_bl_accessories();
-    PyRep *Generate_bl_lights();
-    PyRep *Generate_bl_skins();
-    PyRep *Generate_bl_beards();
-    PyRep *Generate_bl_eyes();
-    PyRep *Generate_bl_lipsticks();
-    PyRep *Generate_bl_makeups();
-    PyRep *Generate_bl_hairs();
-    PyRep *Generate_bl_backgrounds();
-    PyRep *Generate_bl_decos();
-    PyRep *Generate_bl_eyebrows();
-    PyRep *Generate_bl_costumes();
+    static PyRep *Generate_c_chrBloodlines();
+    static PyRep *Generate_c_chrRaces();
+    static PyRep *Generate_c_chrAncestries();
+    static PyRep *Generate_c_chrSchools();
+    static PyRep *Generate_c_chrAttributes();
+    static PyRep *Generate_bl_accessories();
+    static PyRep *Generate_bl_lights();
+    static PyRep *Generate_bl_skins();
+    static PyRep *Generate_bl_beards();
+    static PyRep *Generate_bl_eyes();
+    static PyRep *Generate_bl_lipsticks();
+    static PyRep *Generate_bl_makeups();
+    static PyRep *Generate_bl_hairs();
+    static PyRep *Generate_bl_backgrounds();
+    static PyRep *Generate_bl_decos();
+    static PyRep *Generate_bl_eyebrows();
+    static PyRep *Generate_bl_costumes();
 
-    PyRep *Generate_a_eyebrows();
-    PyRep *Generate_a_eyes();
-    PyRep *Generate_a_decos();
-    PyRep *Generate_a_hairs();
-    PyRep *Generate_a_backgrounds();
-    PyRep *Generate_a_accessories();
-    PyRep *Generate_a_lights();
-    PyRep *Generate_a_costumes();
-    PyRep *Generate_a_makeups();
-    PyRep *Generate_a_beards();
-    PyRep *Generate_a_skins();
-    PyRep *Generate_a_lipsticks();
+    static PyRep *Generate_a_eyebrows();
+    static PyRep *Generate_a_eyes();
+    static PyRep *Generate_a_decos();
+    static PyRep *Generate_a_hairs();
+    static PyRep *Generate_a_backgrounds();
+    static PyRep *Generate_a_accessories();
+    static PyRep *Generate_a_lights();
+    static PyRep *Generate_a_costumes();
+    static PyRep *Generate_a_makeups();
+    static PyRep *Generate_a_beards();
+    static PyRep *Generate_a_skins();
+    static PyRep *Generate_a_lipsticks();
 };
 
 #endif

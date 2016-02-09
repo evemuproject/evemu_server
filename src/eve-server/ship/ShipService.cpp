@@ -29,6 +29,7 @@
 #include "PyServiceCD.h"
 #include "pos/Structure.h"
 #include "ship/DestinyManager.h"
+#include "ship/ShipDB.h"
 #include "ship/ShipService.h"
 #include "system/Container.h"
 #include "system/Deployable.h"
@@ -41,9 +42,8 @@ class ShipBound
 public:
     PyCallable_Make_Dispatcher(ShipBound)
 
-    ShipBound(ShipDB& db)
+    ShipBound()
     : PyBoundObject(),
-      m_db(db),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -84,7 +84,6 @@ public:
     PyCallable_DECL_CALL(SelfDestruct)
 
 protected:
-    ShipDB& m_db;
     Dispatcher *const m_dispatch;
 };
 
@@ -107,7 +106,7 @@ PyBoundObject *ShipService::_CreateBoundObject(Client *c, const PyRep *bind_args
     _log(CLIENT__MESSAGE, "ShipService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new ShipBound(m_db));
+    return(new ShipBound());
 }
 
 PyResult ShipBound::Handle_Board(PyCallArgs &call) {
@@ -267,7 +266,8 @@ PyResult ShipBound::Handle_Undock(PyCallArgs &call) {
 
     GPoint dockPosition;
     GVector dockOrientation;
-    if(!m_db.GetStationInfo(call.client->GetLocationID(), NULL, NULL, NULL, NULL, &dockPosition, &dockOrientation)) {
+    if (!ShipDB::GetStationInfo(call.client->GetLocationID(), NULL, NULL, NULL, NULL, &dockPosition, &dockOrientation))
+    {
         _log(SERVICE__ERROR, "%s: Failed to query location of station %u for undock.", call.client->GetName(), call.client->GetLocationID());
         //TODO: throw exception
         return NULL;

@@ -111,15 +111,44 @@ LSCChannel *LSCService::CreateChannel(uint32 channelID) {
     LSCChannel::Type type;
     std::string name;
     std::string motd;
-    if (IsRegion(channelID)) { type = LSCChannel::region; name = "System Channels\\Region"; motd = m_db.GetRegionName(channelID); }
-    else if (IsConstellation(channelID)) {type = LSCChannel::constellation; name = "System Channels\\Constellation"; motd = m_db.GetConstellationName(channelID); }
-    else if (IsSolarSystem(channelID)) { type = LSCChannel::solarsystem; name = "System Channels\\Local"; motd = m_db.GetSolarSystemName(channelID); }
+    if (IsRegion(channelID))
+    {
+        type = LSCChannel::region;
+        name = "System Channels\\Region";
+        motd = LSCDB::GetRegionName(channelID);
+    }
+    else if (IsConstellation(channelID))
+    {
+        type = LSCChannel::constellation;
+        name = "System Channels\\Constellation";
+        motd = LSCDB::GetConstellationName(channelID);
+    }
+    else if (IsSolarSystem(channelID))
+    {
+        type = LSCChannel::solarsystem;
+        name = "System Channels\\Local";
+        motd = LSCDB::GetSolarSystemName(channelID);
+    }
     // official corporations
-    else if ((channelID >= 1000000) && (channelID < 2000000)) { type = LSCChannel::corp; name = "System Channels\\Corp"; motd = m_db.GetCorporationName(channelID); }
+    else if ((channelID >= 1000000) && (channelID < 2000000))
+    {
+        type = LSCChannel::corp;
+        name = "System Channels\\Corp";
+        motd = LSCDB::GetCorporationName(channelID);
+    }
     // player-created corporations
-    else if ((channelID >= 2000000) && (channelID < 3000000)) { type = LSCChannel::corp; name = "System Channels\\Corp"; motd = m_db.GetCorporationName(channelID); }
+    else if ((channelID >= 2000000) && (channelID < 3000000))
+    {
+        type = LSCChannel::corp;
+        name = "System Channels\\Corp";
+        motd = LSCDB::GetCorporationName(channelID);
+    }
     // Only the Help\Rookie and Help\Help channels have channelIDs < 1000000:
-    else { type = LSCChannel::normal; m_db.GetChannelInfo(channelID, name, motd); }
+    else
+    {
+        type = LSCChannel::normal;
+        LSCDB::GetChannelInfo(channelID, name, motd);
+    }
 
     return m_channels[channelID] = new LSCChannel(this, channelID, type, 1, name.c_str(), motd.c_str(), NULL, false, NULL, false, true, false, cmode);
 }
@@ -128,22 +157,46 @@ LSCChannel *LSCService::CreateChannel(uint32 channelID) {
 LSCChannel *LSCService::CreateChannel(uint32 channelID, LSCChannel::Type type) {
     std::string name;
     std::string motd;
-    if (IsRegion(channelID)) { name = "System Channels\\Region"; motd = m_db.GetRegionName(channelID); }
-    else if (IsConstellation(channelID)) { name = "System Channels\\Constellation"; motd = m_db.GetConstellationName(channelID); }
-    else if (IsSolarSystem(channelID)) { name = "System Channels\\Local"; motd = m_db.GetSolarSystemName(channelID); }
+    if (IsRegion(channelID))
+    {
+        name = "System Channels\\Region";
+        motd = LSCDB::GetRegionName(channelID);
+    }
+    else if (IsConstellation(channelID))
+    {
+        name = "System Channels\\Constellation";
+        motd = LSCDB::GetConstellationName(channelID);
+    }
+    else if (IsSolarSystem(channelID))
+    {
+        name = "System Channels\\Local";
+        motd = LSCDB::GetSolarSystemName(channelID);
+    }
     // official corporations
-    else if ((channelID >= 1000000) && (channelID < 2000000)) { name = "System Channels\\Corp"; motd = m_db.GetCorporationName(channelID); }
+    else if ((channelID >= 1000000) && (channelID < 2000000))
+    {
+        name = "System Channels\\Corp";
+        motd = LSCDB::GetCorporationName(channelID);
+    }
     // player-created corporations
-    else if ((channelID >= 2000000) && (channelID < 3000000)) { name = "System Channels\\Corp"; motd = m_db.GetCorporationName(channelID); }
+    else if ((channelID >= 2000000) && (channelID < 3000000))
+    {
+        name = "System Channels\\Corp";
+        motd = LSCDB::GetCorporationName(channelID);
+    }
     // Only the Help\Rookie and Help\Help channels have channelIDs < 1000000:
-    else { m_db.GetChannelInfo(channelID, name, motd); } //GetCharacterName(channelID); motd = ""; }
+    else
+    {
+        LSCDB::GetChannelInfo(channelID, name, motd);
+    } //GetCharacterName(channelID); motd = ""; }
 
     return m_channels[channelID] = new LSCChannel(this, channelID, type, 1, name.c_str(), motd.c_str(), NULL, false, NULL, false, true, false, cmode);
 }
 
 
-LSCChannel *LSCService::CreateChannel(const char * name, bool maillist) {
-    uint32 nextFreeChannelID = m_db.GetNextAvailableChannelID();
+LSCChannel *LSCService::CreateChannel(const char * name, bool maillist)
+{
+    uint32 nextFreeChannelID = LSCDB::GetNextAvailableChannelID();
 
     if( nextFreeChannelID )
         return CreateChannel(nextFreeChannelID, name, LSCChannel::normal, maillist);
@@ -153,8 +206,9 @@ LSCChannel *LSCService::CreateChannel(const char * name, bool maillist) {
 
 
 void LSCService::CreateSystemChannel(uint32 systemID) {
-    if (m_channels.find(systemID) == m_channels.end()) {
-        CreateChannel(systemID, "System Channels\\Local", m_db.GetSolarSystemName(systemID).c_str(), LSCChannel::solarsystem);
+    if (m_channels.find(systemID) == m_channels.end())
+    {
+        CreateChannel(systemID, "System Channels\\Local", LSCDB::GetSolarSystemName(systemID).c_str(), LSCChannel::solarsystem);
     }
 }
 
@@ -195,7 +249,7 @@ PyResult LSCService::Handle_GetChannels(PyCallArgs &call)
     //    2    Solar System name
     //    3    Constellation name
     //    4    Region name
-    m_db.GetChannelNames(call.client->GetCharacterID(), names);
+    LSCDB::GetChannelNames(call.client->GetCharacterID(), names);
 
     uint32 channelID = call.client->GetCharacterID();
 
@@ -237,7 +291,7 @@ PyResult LSCService::Handle_GetChannels(PyCallArgs &call)
     int channelCount = 0;
 
     // Get this character's subscribed Private Channel names and IDs:
-    m_db.GetChannelSubscriptions(call.client->GetCharacterID(), charChannelIDs, charChannelNames, charChannelMOTDs,
+    LSCDB::GetChannelSubscriptions(call.client->GetCharacterID(), charChannelIDs, charChannelNames, charChannelMOTDs,
         charOwnerIDs, charComparisonKeys, charMemberless, charPasswords, charMailingLists, charCSPAs, charTemporaries,
         charModes, channelCount);
 
@@ -385,8 +439,8 @@ PyResult LSCService::Handle_JoinChannels(PyCallArgs &call) {
                 channel->JoinChannel( call.client );
 
                 // Save this subscription to this channel to the database
-                if (!(m_db.IsChannelSubscribedByThisChar(charID, channel->GetChannelID())))
-                    m_db.WriteNewChannelSubscriptionToDatabase( charID, channel->GetChannelID(),
+                if (!(LSCDB::IsChannelSubscribedByThisChar(charID, channel->GetChannelID())))
+                    LSCDB::WriteNewChannelSubscriptionToDatabase(charID, channel->GetChannelID(),
                         call.client->GetCorporationID(), call.client->GetAllianceID(),
                         2, 0 );     // the "extra" field is hard-coded
                                                                 // to '0' for now since I don't
@@ -447,15 +501,15 @@ PyResult LSCService::Handle_LeaveChannel(PyCallArgs &call) {
     {
         // Remove channel subscription from database if this character was subscribed to it.
         // NOTE: channel subscriptions are NOT saved to the database for private convo chats
-        if( m_db.IsChannelSubscribedByThisChar(call.client->GetCharacterID(),toLeave) )
-            m_db.RemoveChannelSubscriptionFromDatabase(toLeave,call.client->GetCharacterID());
+        if (LSCDB::IsChannelSubscribedByThisChar(call.client->GetCharacterID(), toLeave))
+            LSCDB::RemoveChannelSubscriptionFromDatabase(toLeave, call.client->GetCharacterID());
 
         // Remove channel from database if this character was the last one
         // in the channel to leave and it was a private convo (temporary==1):
         if( (m_channels.find( toLeave )->second->GetMemberCount() == 1)
             && (m_channels.find( toLeave )->second->GetTemporary() != 0)
-            && (toLeave >= LSCService::BASE_CHANNEL_ID) )
-                m_db.RemoveChannelFromDatabase(toLeave);
+            && (toLeave >= LSCService::BASE_CHANNEL_ID))
+            LSCDB::RemoveChannelFromDatabase(toLeave);
 
         m_channels[ toLeave ]->LeaveChannel( call.client );
     }
@@ -526,15 +580,15 @@ PyResult LSCService::Handle_LeaveChannels(PyCallArgs &call) {
             {
                 // Remove channel subscription from database if this character was subscribed to it.
                 // NOTE: channel subscriptions are NOT saved to the database for private convo chats
-                if( m_db.IsChannelSubscribedByThisChar(call.client->GetCharacterID(),*cur))
-                    m_db.RemoveChannelSubscriptionFromDatabase(*cur,call.client->GetCharacterID() );
+                if (LSCDB::IsChannelSubscribedByThisChar(call.client->GetCharacterID(), *cur))
+                    LSCDB::RemoveChannelSubscriptionFromDatabase(*cur, call.client->GetCharacterID());
 
                 // Remove channel from database if this character was the last one
                 // in the channel to leave and it was a private convo (temporary==1):
                 if( (m_channels.find( *cur )->second->GetMemberCount() == 1)
                     && (m_channels.find( *cur )->second->GetTemporary() != 0)
-                    && (m_channels.find( *cur )->second->GetChannelID() >= LSCService::BASE_CHANNEL_ID) )
-                        m_db.RemoveChannelFromDatabase(*cur);
+                    && (m_channels.find( *cur )->second->GetChannelID() >= LSCService::BASE_CHANNEL_ID))
+                    LSCDB::RemoveChannelFromDatabase(*cur);
 
                 m_channels[*cur]->LeaveChannel(call.client);
             }
@@ -606,7 +660,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
     {
         // Query Database to see if a channel with this name does not exist and, if so, create the channel,
         // otherwise, set the channel pointer to NULL
-        if (m_db.IsChannelNameAvailable(name.arg))
+        if (LSCDB::IsChannelNameAvailable(name.arg))
             channel = CreateChannel( name.arg.c_str() );
         else
         {
@@ -621,8 +675,8 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
         }
 
         // Save channel info and channel subscription to the database
-        m_db.WriteNewChannelToDatabase(channel->GetChannelID(),channel->GetDisplayName(), call.client->GetCharacterID(),0,cmode);
-        m_db.WriteNewChannelSubscriptionToDatabase( call.client->GetCharacterID(), channel->GetChannelID(),
+        LSCDB::WriteNewChannelToDatabase(channel->GetChannelID(), channel->GetDisplayName(), call.client->GetCharacterID(), 0, cmode);
+        LSCDB::WriteNewChannelSubscriptionToDatabase(call.client->GetCharacterID(), channel->GetChannelID(),
             call.client->GetCorporationID(), call.client->GetAllianceID(),
             2, 0 );     // the "extra" field is hard-coded
                                                     // to '0' for now since I don't
@@ -642,7 +696,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
     {
         std::string channel_name = call.tuple->items[0]->AsWString()->content();
 
-        if (!(m_db.IsChannelNameAvailable(channel_name)))
+        if (!(LSCDB::IsChannelNameAvailable(channel_name)))
         {
             // Channel exists, so get its info from database and create this channel in the cache:
             std::string ch_name, ch_motd, ch_compkey, ch_password;
@@ -650,7 +704,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
             bool ch_memberless, ch_maillist;
             LSCChannel::Type ch_type = LSCChannel::normal;
 
-            m_db.GetChannelInformation(channel_name,ch_ID,ch_motd,ch_ownerID,ch_compkey,ch_memberless,ch_password,ch_maillist,ch_cspa,ch_temp,ch_mode);
+            LSCDB::GetChannelInformation(channel_name, ch_ID, ch_motd, ch_ownerID, ch_compkey, ch_memberless, ch_password, ch_maillist, ch_cspa, ch_temp, ch_mode);
 
             channel = CreateChannel
             (
@@ -685,7 +739,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
     if (temporary_exists && temporary_channel)
     {
         uint32 channel_id;
-        channel_id = m_db.GetNextAvailableChannelID();
+        channel_id = LSCDB::GetNextAvailableChannelID();
 
         // This is a temporary private chat channel, so don't look for it in the database, just make a new one:
         channel = CreateChannel
@@ -712,7 +766,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
         // Save this channel to the database with the 'temporary' field marked as 1 so that when the last character
         // leaves this channel, the server knows to remove it from the database:
-        m_db.WriteNewChannelToDatabase(channel_id,call.tuple->GetItem(0)->AsString()->content(),call.client->GetCharacterID(),1,cmode);
+        LSCDB::WriteNewChannelToDatabase(channel_id, call.tuple->GetItem(0)->AsString()->content(), call.client->GetCharacterID(), 1, cmode);
     }
 
 
@@ -723,7 +777,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
         {
             // Save this subscription to this channel to the database IF it is not temporary:
             if (channel->GetTemporary() == 0)
-                m_db.WriteNewChannelSubscriptionToDatabase( call.client->GetCharacterID(), channel->GetChannelID(),
+                LSCDB::WriteNewChannelSubscriptionToDatabase(call.client->GetCharacterID(), channel->GetChannelID(),
                     call.client->GetCorporationID(), call.client->GetAllianceID(),
                     2, 0 );     // the "extra" field is hard-coded
                                                             // to '0' for now since I don't
@@ -899,7 +953,7 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     }
 
     // Save the new channel parameters to the database 'channels' table:
-    m_db.UpdateChannelConfigureInfo(channel);
+    LSCDB::UpdateChannelConfigureInfo(channel);
 
     // ********** TODO **********
     // Figure out how to send a packet to all clients subscribed to this channel that contains all channel parameters
@@ -939,7 +993,7 @@ PyResult LSCService::Handle_DestroyChannel( PyCallArgs& call )
     // **************************
 
     // Remove the channel from the database:
-    m_db.RemoveChannelFromDatabase( res->second->GetChannelID() );
+    LSCDB::RemoveChannelFromDatabase(res->second->GetChannelID());
 
     // Finally, remove the channel from the server dynamic objects:
     res->second->Evacuate( call.client );
@@ -947,7 +1001,7 @@ PyResult LSCService::Handle_DestroyChannel( PyCallArgs& call )
     m_channels.erase( res );
 
     // Now, remove the channel from the database:
-    m_db.RemoveChannelFromDatabase( res->second->GetChannelID() );
+    LSCDB::RemoveChannelFromDatabase(res->second->GetChannelID());
 
     return new PyNone;
 }
@@ -1181,8 +1235,9 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-PyResult LSCService::Handle_GetMyMessages(PyCallArgs &call) {
-    return(m_db.GetMailHeaders(call.client->GetCharacterID()));
+PyResult LSCService::Handle_GetMyMessages(PyCallArgs &call)
+{
+    return (LSCDB::GetMailHeaders(call.client->GetCharacterID()));
 }
 
 
@@ -1195,7 +1250,7 @@ PyResult LSCService::Handle_GetMessageDetails(PyCallArgs &call) {
 
     //TODO: verify ability to read this message...
 
-    return(m_db.GetMailDetails(args.arg2, args.arg1));
+    return (LSCDB::GetMailDetails(args.arg2, args.arg1));
 }
 
 
@@ -1231,8 +1286,9 @@ void LSCService::SendMail(uint32 sender, const std::vector<int32> &recipients, c
     cur = recipients.begin();
     end = recipients.end();
 
-    for(; cur != end; cur++) {
-        uint32 messageID = m_db.StoreMail(sender, *cur, subject.c_str(), content.c_str(), notify.sentTime);
+    for(; cur != end; cur++)
+    {
+        uint32 messageID = LSCDB::StoreMail(sender, *cur, subject.c_str(), content.c_str(), notify.sentTime);
         if(messageID == 0) {
             _log(SERVICE__ERROR, "Failed to store message from %u for recipient %u", sender, *cur);
             continue;
@@ -1281,8 +1337,9 @@ PyResult LSCService::Handle_MarkMessagesRead(PyCallArgs &call) {
     std::vector<int32>::iterator cur, end;
     cur = args.ints.begin();
     end = args.ints.end();
-    for(; cur != end; cur++) {
-        m_db.MarkMessageRead(*cur);
+    for(; cur != end; cur++)
+    {
+        LSCDB::MarkMessageRead(*cur);
     }
     return NULL;
 }
@@ -1303,8 +1360,9 @@ PyResult LSCService::Handle_DeleteMessages(PyCallArgs &call) {
     std::vector<int32>::iterator cur, end;
     cur = args.messages.begin();
     end = args.messages.end();
-    for(; cur != end; cur++) {
-        m_db.DeleteMessage(*cur, args.channelID);
+    for(; cur != end; cur++)
+    {
+        LSCDB::DeleteMessage(*cur, args.channelID);
     }
 
     return NULL;

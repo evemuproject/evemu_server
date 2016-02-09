@@ -29,6 +29,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "market/MarketProxyService.h"
+#include "market/MarketDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(MarketProxyService)
@@ -77,7 +78,7 @@ PyResult MarketProxyService::Handle_GetStationAsks(PyCallArgs &call) {
         _log(SERVICE__ERROR, "%s: Requested StationAsks when in non-station location %u", call.client->GetName(), locid);
         return NULL;
     }
-    result = m_db.GetStationAsks(locid);
+    result = MarketDB::GetStationAsks(locid);
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load StationAsks for location %u", call.client->GetName(), locid);
         return NULL;
@@ -95,7 +96,7 @@ PyResult MarketProxyService::Handle_GetSystemAsks(PyCallArgs &call) {
         codelog(SERVICE__ERROR, "%s: GetSystemID() returned a non-system %u!", call.client->GetName(), locid);
         return NULL;
     }
-    result = m_db.GetSystemAsks(locid);
+    result = MarketDB::GetSystemAsks(locid);
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load SystemAsks for location %u", call.client->GetName(), locid);
         return NULL;
@@ -115,12 +116,13 @@ PyResult MarketProxyService::Handle_GetRegionBest(PyCallArgs &call) {
     }
 
     uint32 regionID;
-    if(!m_db.GetSystemInfo(locid, NULL, &regionID, NULL, NULL)) {
+    if (!MarketDB::GetSystemInfo(locid, NULL, &regionID, NULL, NULL))
+    {
         codelog(SERVICE__ERROR, "%s: Failed to find parents of system %u!", call.client->GetName(), locid);
         return NULL;
     }
 
-    result = m_db.GetRegionBest(regionID);
+    result = MarketDB::GetRegionBest(regionID);
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load GetRegionBest for region %u", call.client->GetName(), regionID);
         return NULL;
@@ -138,7 +140,7 @@ PyResult MarketProxyService::Handle_GetMarketGroups(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetMarketGroups();
+        result = MarketDB::GetMarketGroups();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
@@ -169,12 +171,12 @@ PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
     }
 
     uint32 regionID;
-    if(!m_db.GetSystemInfo(locid, NULL, &regionID, NULL, NULL)) {
+    if(!MarketDB::GetSystemInfo(locid, NULL, &regionID, NULL, NULL)) {
         codelog(SERVICE__ERROR, "%s: Failed to find parents of system %u!", call.client->GetName(), locid);
         return NULL;
     }
 
-    result = m_db.GetOrders(regionID, args.arg);
+    result = MarketDB::GetOrders(regionID, args.arg);
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load GetOrders for item %u of region %u", call.client->GetName(), args.arg, regionID);
         return NULL;
@@ -204,13 +206,13 @@ PyResult MarketProxyService::Handle_GetOrders(PyCallArgs &call) {
         }
 
         uint32 regionID;
-        if(!m_db.GetSystemInfo(locid, NULL, &regionID, NULL, NULL))
+        if (!MarketDB::GetSystemInfo(locid, NULL, &regionID, NULL, NULL))
         {
             codelog(SERVICE__ERROR, "%s: Failed to find parents of system %u!", call.client->GetName(), locid);
             return NULL;
         }
 
-        result = m_db.GetOrders(regionID, args.arg);
+        result = MarketDB::GetOrders(regionID, args.arg);
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();
@@ -229,7 +231,7 @@ PyResult MarketProxyService::Handle_GetCharOrders(PyCallArgs &call) {
     //no arguments
     PyRep *result = NULL;
 
-    result = m_db.GetCharOrders(call.client->GetCharacterID());
+    result = MarketDB::GetCharOrders(call.client->GetCharacterID());
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load GetCharOrders", call.client->GetName());
         return NULL;
@@ -254,12 +256,13 @@ PyResult MarketProxyService::Handle_GetOldPriceHistory(PyCallArgs &call) {
     }
 
     uint32 regionID;
-    if(!m_db.GetSystemInfo(locid, NULL, &regionID, NULL, NULL)) {
+    if (!MarketDB::GetSystemInfo(locid, NULL, &regionID, NULL, NULL))
+    {
         codelog(SERVICE__ERROR, "%s: Failed to find parents of system %u!", call.client->GetName(), locid);
         return NULL;
     }
 
-    result = m_db.GetOldPriceHistory(regionID, args.arg);
+    result = MarketDB::GetOldPriceHistory(regionID, args.arg);
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load Old Price History for item %u of region %u", call.client->GetName(), args.arg, regionID);
         return NULL;
@@ -284,12 +287,13 @@ PyResult MarketProxyService::Handle_GetNewPriceHistory(PyCallArgs &call) {
     }
 
     uint32 regionID;
-    if(!m_db.GetSystemInfo(locid, NULL, &regionID, NULL, NULL)) {
+    if (!MarketDB::GetSystemInfo(locid, NULL, &regionID, NULL, NULL))
+    {
         codelog(SERVICE__ERROR, "%s: Failed to find parents of system %u!", call.client->GetName(), locid);
         return NULL;
     }
 
-    result = m_db.GetNewPriceHistory(regionID, args.arg);
+    result = MarketDB::GetNewPriceHistory(regionID, args.arg);
     if(result == NULL) {
         _log(SERVICE__ERROR, "%s: Failed to load New Price History for item %u of region %u", call.client->GetName(), args.arg, regionID);
         return NULL;
@@ -311,7 +315,7 @@ PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
         //TODO: do something with args.itemID
 
         //try to satisfy immediately...
-        uint32 order_id = m_db.FindSellOrder(
+        uint32 order_id = MarketDB::FindSellOrder(
             args.stationID,
             args.typeID,
             args.price,
@@ -345,7 +349,7 @@ PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
         }
 
         //store the order in the DB.
-        uint32 orderID = m_db.StoreBuyOrder(
+        uint32 orderID = MarketDB::StoreBuyOrder(
             call.client->GetCharacterID(),
             call.client->GetAccountID(),
             args.stationID,
@@ -414,7 +418,7 @@ PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
         //ok, we think they are allowed to sell this thing...
 
         //try to satisfy immediately...
-        uint32 order_id = m_db.FindBuyOrder(
+        uint32 order_id = MarketDB::FindBuyOrder(
             args.stationID,
             args.typeID,
             args.price,
@@ -449,7 +453,7 @@ PyResult MarketProxyService::Handle_PlaceCharOrder(PyCallArgs &call) {
         }
 
         //store the order in the DB.
-        uint32 orderID = m_db.StoreSellOrder(
+        uint32 orderID = MarketDB::StoreSellOrder(
             call.client->GetCharacterID(),
             call.client->GetAccountID(),
             args.stationID,
@@ -489,7 +493,8 @@ PyResult MarketProxyService::Handle_ModifyCharOrder(PyCallArgs &call) {
     bool isBuy = false;
     bool isCorp = false;
 
-    if(!m_db.GetOrderInfo(args.orderID, NULL, &typeID, NULL, &quantity, &price, &isBuy, &isCorp)) {
+    if (!MarketDB::GetOrderInfo(args.orderID, NULL, &typeID, NULL, &quantity, &price, &isBuy, &isCorp))
+    {
         codelog(MARKET__ERROR, "%s: Failed to get info about order %u.", call.client->GetName(), args.orderID);
         return NULL;
     }
@@ -504,7 +509,8 @@ PyResult MarketProxyService::Handle_ModifyCharOrder(PyCallArgs &call) {
             return NULL;
     }
 
-    if(!m_db.AlterOrderPrice(args.orderID, args.new_price)) {
+    if (!MarketDB::AlterOrderPrice(args.orderID, args.new_price))
+    {
         codelog(MARKET__ERROR, "%s: Failed to modify price for order %u.", call.client->GetName(), args.orderID);
         return NULL;
     }
@@ -531,7 +537,8 @@ PyResult MarketProxyService::Handle_CancelCharOrder(PyCallArgs &call) {
     bool isBuy = false;
     bool isCorp = false;
 
-    if(!m_db.GetOrderInfo(args.orderID, &ownerID, &typeID, &stationID, &quantity, &price, &isBuy, &isCorp)) {
+    if (!MarketDB::GetOrderInfo(args.orderID, &ownerID, &typeID, &stationID, &quantity, &price, &isBuy, &isCorp))
+    {
         codelog(MARKET__ERROR, "%s: Failed to get info about order %u.", call.client->GetName(), args.orderID);
         return NULL;
     }
@@ -557,8 +564,8 @@ PyResult MarketProxyService::Handle_CancelCharOrder(PyCallArgs &call) {
         new_item->ChangeOwner(call.client->GetCharacterID(), true);
     }
 
-    PyRep* order = m_db.GetOrderRow(args.orderID);
-    if(!m_db.DeleteOrder(args.orderID))
+    PyRep* order = MarketDB::GetOrderRow(args.orderID);
+    if (!MarketDB::DeleteOrder(args.orderID))
     {
         codelog(MARKET__ERROR, "Failed to delete order %u.", args.orderID);
         return NULL;
@@ -591,7 +598,7 @@ PyResult MarketProxyService::Handle_CharGetNewTransactions(PyCallArgs &call)
         return NULL;
     }
 
-    result = m_db.GetTransactions(args.clientID==0?call.client->GetCharacterID():args.clientID,
+    result = MarketDB::GetTransactions(args.clientID == 0 ? call.client->GetCharacterID() : args.clientID,
             args.typeID, args.quantity, minPrice, args.maxPrice, args.fromDate, args.buySell);
     if(result == NULL)
     {
@@ -604,7 +611,7 @@ PyResult MarketProxyService::Handle_CharGetNewTransactions(PyCallArgs &call)
 
 PyResult MarketProxyService::Handle_StartupCheck(PyCallArgs &call)
 {
-    m_db.BuildOldPriceHistory();  //added to implement market price history...working   -allan
+    MarketDB::BuildOldPriceHistory(); //added to implement market price history...working   -allan
     return NULL;
 }
 
@@ -619,7 +626,7 @@ void MarketProxyService::_SendOnOwnOrderChanged(Client *who, uint32 orderID, con
     if(order != NULL)
         ooc.order = order;
     else
-        ooc.order = m_db.GetOrderRow(orderID);
+        ooc.order = MarketDB::GetOrderRow(orderID);
     ooc.reason = action;
     ooc.isCorp = isCorp;
     PyTuple *tmp = ooc.Encode();
@@ -671,7 +678,8 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
     uint32 qtyReq = 0;
     double price = 0;
 
-    if(!m_db.GetOrderInfo(buy_order_id, &orderOwnerID, &typeID, NULL, &qtyReq, &price, NULL, NULL)) {
+    if (!MarketDB::GetOrderInfo(buy_order_id, &orderOwnerID, &typeID, NULL, &qtyReq, &price, NULL, NULL))
+    {
         codelog(MARKET__ERROR, "%s: Failed to get info about buy order %u.", seller->GetName(), buy_order_id);
         return;
     }
@@ -724,8 +732,9 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
     Client *buyer = EntityList::FindCharacter(orderOwnerID);
     if(quantity == qtyReq) {
         _log(MARKET__TRACE, "%s: Completely satisfied order %u, deleting.", seller->GetName(), buy_order_id);
-        PyRep* order = m_db.GetOrderRow(buy_order_id);
-        if(!m_db.DeleteOrder(buy_order_id)) {
+        PyRep* order = MarketDB::GetOrderRow(buy_order_id);
+        if (!MarketDB::DeleteOrder(buy_order_id))
+        {
             codelog(MARKET__ERROR, "Failed to delete order %u.", buy_order_id);
             return;
         }
@@ -734,7 +743,8 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
         _BroadcastOnMarketRefresh(seller->GetRegionID());
     } else {
         _log(MARKET__TRACE, "%s: Partially satisfied order %u, altering quantity to %u.", seller->GetName(), buy_order_id, qtyReq - quantity);
-        if(!m_db.AlterOrderQuantity(buy_order_id, qtyReq - quantity)) {
+        if (!MarketDB::AlterOrderQuantity(buy_order_id, qtyReq - quantity))
+        {
             codelog(MARKET__ERROR, "Failed to alter quantity of order %u.", buy_order_id);
             return;
         }
@@ -744,10 +754,12 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
 
     //record this transaction in market_transactions
     //NOTE: regionID may not be accurate here...
-    if(!m_db.RecordTransaction(typeID, quantity, price, TransactionTypeSell, seller->GetCharacterID(), seller->GetRegionID(), stationID)) {
+    if (!MarketDB::RecordTransaction(typeID, quantity, price, TransactionTypeSell, seller->GetCharacterID(), seller->GetRegionID(), stationID))
+    {
         codelog(MARKET__ERROR, "%s: Failed to record sale side of transaction.", seller->GetName());
     }
-    if(!m_db.RecordTransaction(typeID, quantity, price, TransactionTypeBuy, orderOwnerID, seller->GetRegionID(), stationID)) {
+    if (!MarketDB::RecordTransaction(typeID, quantity, price, TransactionTypeBuy, orderOwnerID, seller->GetRegionID(), stationID))
+    {
         codelog(MARKET__ERROR, "%s: Failed to record buy side of transaction.", seller->GetName());
     }
 }
@@ -760,7 +772,8 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
     uint32 qtyAvail = 0;
     double price = 0;
 
-    if(!m_db.GetOrderInfo(sell_order_id, &orderOwnerID, &typeID, NULL, &qtyAvail, &price, NULL, NULL)) {
+    if (!MarketDB::GetOrderInfo(sell_order_id, &orderOwnerID, &typeID, NULL, &qtyAvail, &price, NULL, NULL))
+    {
         codelog(MARKET__ERROR, "%s: Failed to get info about sell order %u.", buyer->GetName(), sell_order_id);
         return;
     }
@@ -806,14 +819,15 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
             codelog(MARKET__ERROR, "%s: Failed to give seller %s (%u) %.2f ISK from order %u", buyer->GetName(), seller->GetName(), orderOwnerID, money, sell_order_id);
     } else {
         //seller is not online right now...
-        if(!m_db.AddCharacterBalance(orderOwnerID, money))
+        if (!MarketDB::AddCharacterBalance(orderOwnerID, money))
            codelog(MARKET__ERROR, "%s: Failed to give seller ID %u %.2f ISK from order %u", buyer->GetName(), orderOwnerID, money, sell_order_id);
     }
 
     if(quantity == qtyAvail) {
         _log(MARKET__TRACE, "%s: Completely satisfied order %u, deleting.", buyer->GetName(), sell_order_id);
-        PyRep* order = m_db.GetOrderRow(sell_order_id);
-        if(!m_db.DeleteOrder(sell_order_id)) {
+        PyRep* order = MarketDB::GetOrderRow(sell_order_id);
+        if (!MarketDB::DeleteOrder(sell_order_id))
+        {
             codelog(MARKET__ERROR, "Failed to delete order %u.", sell_order_id);
             return;
         }
@@ -822,7 +836,8 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
         _BroadcastOnMarketRefresh(buyer->GetRegionID());
     } else {
         _log(MARKET__TRACE, "%s: Partially satisfied order %u, altering quantity to %u.", buyer->GetName(), sell_order_id, qtyAvail - quantity);
-        if(!m_db.AlterOrderQuantity(sell_order_id, qtyAvail - quantity)) {
+        if (!MarketDB::AlterOrderQuantity(sell_order_id, qtyAvail - quantity))
+        {
             codelog(MARKET__ERROR, "Failed to alter quantity of order %u.", sell_order_id);
             return;
         }
@@ -832,10 +847,12 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
 
     //record this transaction in market_transactions
     //NOTE: regionID may not be accurate here...
-    if(!m_db.RecordTransaction(typeID, quantity, price, TransactionTypeSell, orderOwnerID, buyer->GetRegionID(), stationID)) {
+    if (!MarketDB::RecordTransaction(typeID, quantity, price, TransactionTypeSell, orderOwnerID, buyer->GetRegionID(), stationID))
+    {
         codelog(MARKET__ERROR, "%s: Failed to record sale side of transaction.", buyer->GetName());
     }
-    if(!m_db.RecordTransaction(typeID, quantity, price, TransactionTypeBuy, buyer->GetCharacterID(), buyer->GetRegionID(), stationID)) {
+    if (!MarketDB::RecordTransaction(typeID, quantity, price, TransactionTypeBuy, buyer->GetCharacterID(), buyer->GetRegionID(), stationID))
+    {
         codelog(MARKET__ERROR, "%s: Failed to record buy side of transaction.", buyer->GetName());
     }
 }

@@ -33,7 +33,7 @@ class PosMgrDB
 : public ServiceDB
 {
 public:
-    PyRep *GetControlTowerFuelRequirements();
+    static PyRep *GetControlTowerFuelRequirements();
 };
 
 

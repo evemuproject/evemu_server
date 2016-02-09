@@ -27,7 +27,6 @@
 #ifndef __CORPREGISTRY_SERVICE_H_INCL__
 #define __CORPREGISTRY_SERVICE_H_INCL__
 
-#include "corporation/CorporationDB.h"
 #include "PyService.h"
 
 class CorpRegistryService
@@ -40,8 +39,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    CorporationDB m_db;
 
     //PyCallable_DECL_CALL()
 

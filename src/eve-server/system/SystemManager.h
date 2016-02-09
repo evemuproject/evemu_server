@@ -83,7 +83,6 @@ public:
 
     void MakeSetState(const SystemBubble *bubble, DoDestiny_SetState &into) const;
 
-    SystemDB *GetSystemDB() { return(&m_db); }
     const char * GetSystemSecurity() { return m_systemSecurity.c_str(); }
 
     ItemFactory &itemFactory() const;
@@ -108,7 +107,6 @@ protected:
     std::string m_systemName;
     std::string m_systemSecurity;
 
-    SystemDB m_db;
     SpawnManager *m_spawnManager;    //we own this, never NULL, dynamic to keep the knowledge down.
 
     //overall system entity lists:

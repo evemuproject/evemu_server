@@ -382,7 +382,7 @@ int main( int argc, char* argv[] )
   /////////////////////////////////////////////////////////////////////////////////////
   //     !!!  DO NOT PUT ANY INITIALIZATION CODE OR CALLS BELOW THIS LINE   !!!
   /////////////////////////////////////////////////////////////////////////////////////
-    PyServiceMgr::serviceDB().SetServerOnlineStatus(true);
+    ServiceDB::SetServerOnlineStatus(true);
   sLog.Success("STATUS", "SERVER IS NOW [ONLINE]");
   sLog.Log("INFO", "(press Ctrl+C to start controlled server shutdown)");
 
@@ -444,7 +444,7 @@ int main( int argc, char* argv[] )
     sImageServer.Stop();
     sLog.Log("Server Shutdown", "API Server TCP listener stopped." );
 
-    PyServiceMgr::serviceDB().SetServerOnlineStatus(false);
+    ServiceDB::SetServerOnlineStatus(false);
     PyServiceMgr::Shutdown();
     sLog.Log("Server Shutdown", "SERVER IS NOW [OFFLINE]");
 

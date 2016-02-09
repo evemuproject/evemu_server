@@ -73,7 +73,7 @@ ItemCategory *ItemCategory::_Load(ItemFactory &factory, EVEItemCategories catego
 ) {
     // pull data
     CategoryData data;
-    if(!factory.db().GetCategory(category, data))
+    if(!InventoryDB::GetCategory(category, data))
         return NULL;
 
     return(
@@ -159,7 +159,7 @@ ItemGroup *ItemGroup::_Load(ItemFactory &factory, uint32 groupID
 ) {
     // pull data
     GroupData data;
-    if(!factory.db().GetGroup(groupID, data))
+    if(!InventoryDB::GetGroup(groupID, data))
         return NULL;
 
     // retrieve category
@@ -317,10 +317,10 @@ _Ty *ItemType::_LoadType(ItemFactory &factory, uint32 typeID,
 
 bool ItemType::_Load(ItemFactory &factory) {
 	// load type effects
-	factory.db().GetTypeEffectsList( m_id, m_effects );
+	InventoryDB::GetTypeEffectsList( m_id, m_effects );
 
     // load type attributes
-    return (attributes.Load( factory.db() ));
+    return (attributes.Load());
 }
 
 

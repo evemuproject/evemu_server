@@ -26,7 +26,6 @@
 #ifndef __POSMGRSVC_SERVICE_H_INCL__
 #define __POSMGRSVC_SERVICE_H_INCL__
 
-#include "pos/PosMgrDB.h"
 #include "PyService.h"
 
 class PosMgrService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    PosMgrDB m_db;
 
     PyCallable_DECL_CALL(GetControlTowerFuelRequirements)
     //PyCallable_DECL_CALL()

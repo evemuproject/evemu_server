@@ -901,8 +901,7 @@ void Client::Killed(Damage &fatal_blow) {
 		//TODO: destroy all implants
 
 		//TODO: change current clone back to Clone Grade Alpha
-		CorporationDB corpDBobj;
-		corpDBobj.ChangeCloneType(GetCharacterID(), 164);		// typeID = 164 is for Clone Grade Alpha
+        CorporationDB::ChangeCloneType(GetCharacterID(), 164); // typeID = 164 is for Clone Grade Alpha
 
         //TODO: send them back to their clone.
         m_system->RemoveClient(this);
@@ -1170,7 +1169,7 @@ void NPC::_AwardBounty(SystemEntity *who) {
 
     std::string reason = "Bounty";    //TODO: improve this.
 
-    if (!PyServiceMgr::serviceDB().GiveCash(
+    if (!ServiceDB::GiveCash(
             killer->GetID(),
             RefType_playerDonation,    //TODO: find the proper type
             m_self->itemID(),    //probably actually a special concord item ID or something.

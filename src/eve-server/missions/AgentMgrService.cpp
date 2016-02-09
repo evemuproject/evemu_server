@@ -41,6 +41,7 @@
 #include "cache/ObjCacheService.h"
 #include "missions/Agent.h"
 #include "missions/AgentMgrService.h"
+#include "missions/MissionDB.h"
 #include "PyServiceMgr.h"
 
 class AgentMgrBound
@@ -49,9 +50,8 @@ public:
 
     PyCallable_Make_Dispatcher(AgentMgrBound)
 
-    AgentMgrBound(MissionDB *db, Agent *agt)
+    AgentMgrBound(Agent *agt)
     : PyBoundObject(),
-      m_db(db),
       m_dispatch(new Dispatcher(this)),
       m_agent(agt)
     {
@@ -80,7 +80,6 @@ public:
     PyCallable_DECL_CALL(GetMissionObjectiveInfo)
 
 protected:
-    MissionDB *const m_db;        //we do not own this
     Dispatcher *const m_dispatch;    //we own this
     Agent *const m_agent;    //we do not own this.
 };
@@ -115,7 +114,7 @@ Agent *AgentMgrService::_GetAgent(uint32 agentID) {
     if(res != m_agents.end())
         return(res->second);
     Agent *a = new Agent(agentID);
-    if(!a->Load(&m_db)) {
+    if(!a->Load()) {
         delete a;
         return NULL;
     }
@@ -140,7 +139,7 @@ PyBoundObject *AgentMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
         return NULL;
     }
 
-    return(new AgentMgrBound(&m_db, agent));
+    return(new AgentMgrBound(agent));
 }
 
 
@@ -153,7 +152,7 @@ PyResult AgentMgrService::Handle_GetAgents(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetAgents();
+        result = MissionDB::GetAgents();
         if(result == NULL) {
             codelog(SERVICE__ERROR, "Failed to load cache, generating empty contents.");
             result = new PyNone();

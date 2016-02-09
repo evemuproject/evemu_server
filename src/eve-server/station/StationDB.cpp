@@ -27,14 +27,8 @@
 
 #include "station/StationDB.h"
 
-storage StationDB::g_station_db_storage;
-
-StationDB::StationDB()
+PyPackedRow *StationDB::GetSolarSystem(uint32 solarSystemID)
 {
-    g_station_db_storage.load();
-}
-
-PyPackedRow *StationDB::GetSolarSystem(uint32 solarSystemID) {
     DBQueryResult res;
 
     if(!DBcore::RunQuery(res,

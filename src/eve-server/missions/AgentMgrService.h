@@ -27,7 +27,6 @@
 #ifndef __AGENTMGR_SERVICE_H_INCL__
 #define __AGENTMGR_SERVICE_H_INCL__
 
-#include "missions/MissionDB.h"
 #include "PyService.h"
 
 class Agent;
@@ -41,8 +40,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    MissionDB m_db;
 
     //for now this lives here, might want to move eventually.
     std::map<uint32, Agent *> m_agents;    //we own these

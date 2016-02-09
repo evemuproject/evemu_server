@@ -28,6 +28,7 @@
 
 #include "PyServiceCD.h"
 #include "chat/LookupService.h"
+#include "chat/LSCDB.h"
 
 /*
 class LookupSvcBound
@@ -108,7 +109,7 @@ PyResult LookupService::Handle_LookupEvePlayerCharacters(PyCallArgs& call) {
         return NULL;
     }
 
-    return m_db.LookupPlayerChars(args.searchString.c_str(), args.searchOption ? true : false);
+    return LSCDB::LookupPlayerChars(args.searchString.c_str(), args.searchOption ? true : false);
 }
 
 PyResult LookupService::Handle_LookupCharacters(PyCallArgs &call) {
@@ -118,7 +119,7 @@ PyResult LookupService::Handle_LookupCharacters(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupChars(args.searchString.c_str(), args.searchOption ? true : false);
+    return LSCDB::LookupChars(args.searchString.c_str(), args.searchOption ? true : false);
 }
 
 //LookupOwners
@@ -129,7 +130,7 @@ PyResult LookupService::Handle_LookupOwners(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupOwners(args.searchString.c_str(),  args.searchOption ? true : false );
+    return LSCDB::LookupOwners(args.searchString.c_str(), args.searchOption ? true : false);
 }
 
 PyResult LookupService::Handle_LookupPlayerCharacters(PyCallArgs &call) {
@@ -139,7 +140,7 @@ PyResult LookupService::Handle_LookupPlayerCharacters(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupPlayerChars(args.searchString.c_str(),  false);
+    return LSCDB::LookupPlayerChars(args.searchString.c_str(), false);
 }
 PyResult LookupService::Handle_LookupCorporations(PyCallArgs &call) {
     Call_LookupStringInt args;
@@ -148,7 +149,7 @@ PyResult LookupService::Handle_LookupCorporations(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupCorporations(args.searchString);
+    return LSCDB::LookupCorporations(args.searchString);
 }
 PyResult LookupService::Handle_LookupFactions(PyCallArgs &call) {
     Call_LookupStringInt args;
@@ -157,7 +158,7 @@ PyResult LookupService::Handle_LookupFactions(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupFactions(args.searchString);
+    return LSCDB::LookupFactions(args.searchString);
 }
 PyResult LookupService::Handle_LookupCorporationTickers(PyCallArgs &call) {
     Call_LookupStringInt args;
@@ -166,7 +167,7 @@ PyResult LookupService::Handle_LookupCorporationTickers(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupCorporationTickers(args.searchString);
+    return LSCDB::LookupCorporationTickers(args.searchString);
 }
 PyResult LookupService::Handle_LookupStations(PyCallArgs &call) {
     Call_LookupStringInt args;
@@ -175,7 +176,7 @@ PyResult LookupService::Handle_LookupStations(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupStations(args.searchString);
+    return LSCDB::LookupStations(args.searchString);
 }
 // Asteroids, constellations and regions should be injected into the entity table...
 PyResult LookupService::Handle_LookupKnownLocationsByGroup(PyCallArgs &call) {
@@ -185,7 +186,7 @@ PyResult LookupService::Handle_LookupKnownLocationsByGroup(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.LookupKnownLocationsByGroup(args.searchString, args.searchOption);
+    return LSCDB::LookupKnownLocationsByGroup(args.searchString, args.searchOption);
 }
 
 

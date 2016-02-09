@@ -27,6 +27,7 @@
 
 #include "PyBoundObject.h"
 #include "PyServiceCD.h"
+#include "system/SystemDB.h"
 #include "system/KeeperService.h"
 #include "system/SystemManager.h"
 #include "PyServiceMgr.h"
@@ -37,9 +38,8 @@ class KeeperBound
 public:
     PyCallable_Make_Dispatcher(KeeperBound)
 
-    KeeperBound(SystemDB *db)
+    KeeperBound()
     : PyBoundObject(),
-      m_db(db),
       m_dispatch(new Dispatcher(this))
     {
         _SetCallDispatcher(m_dispatch);
@@ -60,7 +60,6 @@ public:
     //PyCallable_DECL_CALL()
 
 protected:
-    SystemDB *const m_db;
     Dispatcher *const m_dispatch;   //we own this
 };
 
@@ -84,7 +83,7 @@ PyBoundObject *KeeperService::_CreateBoundObject(Client *c, const PyRep *bind_ar
     _log(CLIENT__MESSAGE, "KeeperService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new KeeperBound(&m_db));
+    return(new KeeperBound());
 }
 
 PyResult KeeperService::Handle_ActivateAccelerationGate(PyCallArgs &call) {
@@ -118,7 +117,7 @@ PyResult KeeperService::Handle_ActivateAccelerationGate(PyCallArgs &call) {
 PyResult KeeperService::Handle_GetLevelEditor(PyCallArgs &call) {
     PyRep *result = NULL;
 
-    KeeperBound *ib = new KeeperBound(&m_db);
+    KeeperBound *ib = new KeeperBound();
     result = PyServiceMgr::BindObject(call.client, ib);
 
     return result;

@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "standing/Standing2Service.h"
+#include "standing/StandingDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(Standing2Service)
@@ -73,9 +74,9 @@ PyResult Standing2Service::Handle_GetMyStandings(PyCallArgs &call) {
     PyRep *charprime;
     PyRep *npccharstandings;
 
-    charstandings = m_db.GetCharStandings(call.client->GetCharacterID());
-    charprime = m_db.GetCharPrimeStandings(call.client->GetCharacterID());
-    npccharstandings = m_db.GetCharNPCStandings(call.client->GetCharacterID());
+    charstandings = StandingDB::GetCharStandings(call.client->GetCharacterID());
+    charprime = StandingDB::GetCharPrimeStandings(call.client->GetCharacterID());
+    npccharstandings = StandingDB::GetCharNPCStandings(call.client->GetCharacterID());
 
     PyDict *corpstandings = new PyDict();
     PyDict *corpprime = new PyDict();
@@ -103,7 +104,7 @@ PyResult Standing2Service::Handle_GetNPCNPCStandings(PyCallArgs &call) {
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
         //this method is not in cache yet, load up the contents and cache it.
-        result = m_db.GetNPCStandings();
+        result = StandingDB::GetNPCStandings();
         if(result == NULL)
             result = new PyNone();
         PyServiceMgr::cache_service->GiveCache(method_id, &result);
@@ -140,7 +141,7 @@ PyResult Standing2Service::Handle_GetStandingTransactions(PyCallArgs &call) {
         return NULL;
     }
 
-    PyObject * result = m_db.GetStandingTransactions(args.toID);
+    PyObject * result = StandingDB::GetStandingTransactions(args.toID);
 
     return (result);
 }
@@ -150,7 +151,7 @@ PyResult Standing2Service::Handle_GetCharStandings(PyCallArgs &call) {
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyObjectEx *t = m_db.GetCharStandings(call.client->GetCharacterID());
+        PyObjectEx *t = StandingDB::GetCharStandings(call.client->GetCharacterID());
 
         PyServiceMgr::cache_service->GiveCache(method_id, (PyRep **) & t);
     }
@@ -162,7 +163,7 @@ PyResult Standing2Service::Handle_GetCorpStandings(PyCallArgs &call) {
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyObjectEx *t = m_db.GetCorpStandings(call.client->GetCorporationID());
+        PyObjectEx *t = StandingDB::GetCorpStandings(call.client->GetCorporationID());
 
         PyServiceMgr::cache_service->GiveCache(method_id, (PyRep **) & t);
     }

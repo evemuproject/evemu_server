@@ -27,7 +27,6 @@
 #ifndef __CORPORATION_SERVICE_H_INCL__
 #define __CORPORATION_SERVICE_H_INCL__
 
-#include "corporation/CorporationDB.h"
 #include "PyService.h"
 
 class CorporationService : public PyService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    CorporationDB m_db;
 
     PyCallable_DECL_CALL(GetFactionInfo)
     PyCallable_DECL_CALL(GetCorpInfo)

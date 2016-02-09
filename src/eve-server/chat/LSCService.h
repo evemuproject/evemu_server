@@ -87,8 +87,6 @@ protected:
 
     CommandDispatcher *const m_commandDispatch;
 
-    LSCDB m_db;
-
     std::map<uint32, LSCChannel *> m_channels;  //we own these pointers
 
     //make sure you add things to the constructor too

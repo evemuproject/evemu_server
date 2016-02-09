@@ -135,7 +135,7 @@ protected:
 
         // pull additional blueprint data
         BlueprintTypeData bpData;
-        if( !factory.db().GetBlueprintType( typeID, bpData ) )
+        if( !InventoryDB::GetBlueprintType( typeID, bpData ) )
             return NULL;
 
         // obtain parent blueprint type (might be NULL)
@@ -319,7 +319,7 @@ protected:
 
         // we are blueprint; pull additional blueprint info
         BlueprintData bpData;
-        if( !factory.db().GetBlueprint( blueprintID, bpData ) )
+        if( !InventoryDB::GetBlueprint( blueprintID, bpData ) )
             return RefPtr<_Ty>();
 
         return _Ty::template _LoadBlueprint<_Ty>( factory, blueprintID, bpType, data, bpData );

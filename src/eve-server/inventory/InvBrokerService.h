@@ -26,7 +26,6 @@
 #ifndef __INVBROKER_SERVICE_H_INCL__
 #define __INVBROKER_SERVICE_H_INCL__
 
-#include "inventory/InventoryDB.h"
 #include "PyService.h"
 
 class PyRep;

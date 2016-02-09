@@ -1,8 +1,6 @@
 #ifndef __COMMANDDISPATCHER_H_INCL__
 #define __COMMANDDISPATCHER_H_INCL__
 
-#include "admin/CommandDB.h"
-
 class Client;
 class Seperator;
 class PyResult;
@@ -10,7 +8,7 @@ class PyResult;
 class CommandDispatcher {
 public:
     //this is the prototype for a command function:
-    typedef PyResult (*CommandFunc)(Client *who, CommandDB *db, const Seperator &args);
+    typedef PyResult (*CommandFunc)(Client *who, const Seperator &args);
 
     class CommandRecord {
     public:
@@ -31,8 +29,6 @@ public:
     void AddCommand(const char *cmd, const char *desc, uint64 required_role, CommandFunc function);
 
 protected:
-    CommandDB m_db;
-
     std::map<std::string, CommandRecord *> m_commands;    //we own these pointers
 };
 

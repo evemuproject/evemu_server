@@ -40,8 +40,6 @@ private:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    RamProxyDB m_db;
-
     // verifying functions
     void _VerifyInstallJob_Call(const Call_InstallJob &args, InventoryItemRef installedItem, const PathElement &bomLocation, Client *const c);
     void _VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const PathElement &bomLocation, const std::vector<RequiredItem> &reqItems, const uint32 runs, Client *const c);

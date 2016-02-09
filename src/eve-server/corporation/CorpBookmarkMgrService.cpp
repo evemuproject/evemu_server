@@ -29,6 +29,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "corporation/CorpBookmarkMgrService.h"
+#include "CorporationDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(CorpBookmarkMgrService)
@@ -52,7 +53,7 @@ PyResult CorpBookmarkMgrService::Handle_GetBookmarks(PyCallArgs& call)
     ObjectCachedMethodID method_id(GetName(), "GetBookmarks");
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyDict *res = m_db.GetBookmarks(call.client->GetCorporationID());
+        PyDict *res = CorporationDB::GetBookmarks(call.client->GetCorporationID());
         if(res == NULL)
             return NULL;
 

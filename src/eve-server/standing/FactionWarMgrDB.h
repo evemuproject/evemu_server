@@ -33,9 +33,9 @@ class PyRep;
 class FactionWarMgrDB : public ServiceDB
 {
 public:
-    PyRep *GetWarFactions();
-    PyRep *GetFacWarSystems();
-    uint32 GetFactionMilitiaCorporation(const uint32 factionID);
+    static PyRep *GetWarFactions();
+    static PyRep *GetFacWarSystems();
+    static uint32 GetFactionMilitiaCorporation(const uint32 factionID);
 };
 
 #endif /* __FACTION_WAR_MGR_DB__H__INCL__ */

@@ -181,9 +181,9 @@ uint32 Blueprint::_Spawn(ItemFactory &factory,
         return 0;
 
     // insert blueprint entry into DB
-    if(!factory.db().NewBlueprint(blueprintID, bpData)) {
+    if(!InventoryDB::NewBlueprint(blueprintID, bpData)) {
         // delete item
-        factory.db().DeleteItem(blueprintID);
+        InventoryDB::DeleteItem(blueprintID);
 
         return 0;
     }
@@ -193,7 +193,7 @@ uint32 Blueprint::_Spawn(ItemFactory &factory,
 
 void Blueprint::Delete() {
     // delete our blueprint record
-    m_factory.db().DeleteBlueprint(m_itemID);
+    InventoryDB::DeleteBlueprint(m_itemID);
     // redirect to parent
     InventoryItem::Delete();
 }
@@ -300,7 +300,7 @@ void Blueprint::SaveBlueprint() const
 {
     _log( ITEM__TRACE, "Saving blueprint %u.", itemID() );
 
-    m_factory.db().SaveBlueprint(
+    InventoryDB::SaveBlueprint(
         itemID(),
         BlueprintData(
             copy(),

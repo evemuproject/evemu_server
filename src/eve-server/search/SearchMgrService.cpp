@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author: BB2k       
+    Author: BB2k
 */
 
 #include "eve-server.h"
@@ -40,7 +40,7 @@ SearchMgrService::SearchMgrService()
 
     PyCallable_REG_CALL(SearchMgrService, QuickQuery);
     PyCallable_REG_CALL(SearchMgrService, Query);
-    
+
 }
 
 SearchMgrService::~SearchMgrService() {
@@ -60,7 +60,7 @@ PyResult SearchMgrService::Handle_QuickQuery(PyCallArgs &call) {
         codelog(CLIENT__ERROR, "Failed to decode args for QuickQuery call");
         return NULL;
     }
-    return m_db.QuickQuery( args.searchString.c_str(), &args.type);
+    return SearchDB::QuickQuery(args.searchString.c_str(), &args.type);
 }
 
 
@@ -77,5 +77,5 @@ PyResult SearchMgrService::Handle_Query(PyCallArgs &call) {
         codelog(CLIENT__ERROR, "Failed to decode args for Query call");
         return NULL;
     }
-    return m_db.Query(args.searchString.c_str(), &args.type);
+    return SearchDB::Query(args.searchString.c_str(), &args.type);
 }

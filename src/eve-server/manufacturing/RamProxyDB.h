@@ -73,38 +73,38 @@ struct RequiredItem {
 class RamProxyDB : public ServiceDB
 {
 public:
-    PyRep *GetJobs2(const uint32 ownerID, const bool completed, const uint64 fromDate, const uint64 toDate);
-    PyRep *AssemblyLinesSelectPublic(const uint32 regionID);
-    PyRep *AssemblyLinesSelectPersonal(const uint32 charID);
-    PyRep *AssemblyLinesSelectCorporation(const uint32 corporationID);
-    PyRep *AssemblyLinesSelectAlliance(const uint32 allianceID);
-    PyRep *AssemblyLinesGet(const uint32 containerID);
+    static PyRep *GetJobs2(const uint32 ownerID, const bool completed, const uint64 fromDate, const uint64 toDate);
+    static PyRep *AssemblyLinesSelectPublic(const uint32 regionID);
+    static PyRep *AssemblyLinesSelectPersonal(const uint32 charID);
+    static PyRep *AssemblyLinesSelectCorporation(const uint32 corporationID);
+    static PyRep *AssemblyLinesSelectAlliance(const uint32 allianceID);
+    static PyRep *AssemblyLinesGet(const uint32 containerID);
 
     // InstallJob stuff
-    bool GetAssemblyLineProperties(const uint32 assemblyLineID, double &baseMaterialMultiplier, double &baseTimeMultiplier, double &costInstall, double &costPerHour);
-    bool GetAssemblyLineVerifyProperties(const uint32 assemblyLineID, uint32 &ownerID, double &minCharSecurity, double &maxCharSecurity, EVERamRestrictionMask &restrictionMask, EVERamActivity &activity);
-    bool InstallJob(const uint32 ownerID, const uint32 installerID, const uint32 assemblyLineID, const uint32 installedItemID, const uint64 beginProductionTime, const uint64 endProductionTime, const char *description, const uint32 runs, const EVEItemFlags outputFlag, const uint32 installedInSolarSystem, const int32 licensedProductionRuns);
+    static bool GetAssemblyLineProperties(const uint32 assemblyLineID, double &baseMaterialMultiplier, double &baseTimeMultiplier, double &costInstall, double &costPerHour);
+    static bool GetAssemblyLineVerifyProperties(const uint32 assemblyLineID, uint32 &ownerID, double &minCharSecurity, double &maxCharSecurity, EVERamRestrictionMask &restrictionMask, EVERamActivity &activity);
+    static bool InstallJob(const uint32 ownerID, const uint32 installerID, const uint32 assemblyLineID, const uint32 installedItemID, const uint64 beginProductionTime, const uint64 endProductionTime, const char *description, const uint32 runs, const EVEItemFlags outputFlag, const uint32 installedInSolarSystem, const int32 licensedProductionRuns);
 
-    bool IsProducableBy(const uint32 assemblyLineID, const uint32 groupID);
-    bool MultiplyMultipliers(const uint32 assemblyLineID, const uint32 productGroupID, double &materialMultiplier, double &timeMultiplier);
-    uint32 CountManufacturingJobs(const uint32 installerID);
-    uint32 CountResearchJobs(const uint32 installerID);
+    static bool IsProducableBy(const uint32 assemblyLineID, const uint32 groupID);
+    static bool MultiplyMultipliers(const uint32 assemblyLineID, const uint32 productGroupID, double &materialMultiplier, double &timeMultiplier);
+    static uint32 CountManufacturingJobs(const uint32 installerID);
+    static uint32 CountResearchJobs(const uint32 installerID);
 
-    bool GetRequiredItems(const uint32 typeID, const EVERamActivity activity, std::vector<RequiredItem> &into);
+    static bool GetRequiredItems(const uint32 typeID, const EVERamActivity activity, std::vector<RequiredItem> &into);
 
     // CompleteJob stuff
-    bool GetJobProperties(const uint32 jobID, uint32 &installedItemID, uint32 &ownerID, EVEItemFlags &outputFlag, uint32 &runs, uint32 &licensedProductionRuns, EVERamActivity &activity);
-    bool GetJobVerifyProperties(const uint32 jobID, uint32 &ownerID, uint64 &endProductionTime, EVERamRestrictionMask &restrictionMask, EVERamCompletedStatus &status);
-    bool CompleteJob(const uint32 jobID, const EVERamCompletedStatus completedStatus);
+    static bool GetJobProperties(const uint32 jobID, uint32 &installedItemID, uint32 &ownerID, EVEItemFlags &outputFlag, uint32 &runs, uint32 &licensedProductionRuns, EVERamActivity &activity);
+    static bool GetJobVerifyProperties(const uint32 jobID, uint32 &ownerID, uint64 &endProductionTime, EVERamRestrictionMask &restrictionMask, EVERamCompletedStatus &status);
+    static bool CompleteJob(const uint32 jobID, const EVERamCompletedStatus completedStatus);
 
     // other
-    std::string GetStationName(const uint32 stationID);
-    uint32 GetRegionOfContainer(const uint32 containerID);
-    uint32 GetTech2Blueprint(const uint32 blueprintTypeID);
-    uint64 GetNextFreeTime(const uint32 assemblyLineID);
+    static std::string GetStationName(const uint32 stationID);
+    static uint32 GetRegionOfContainer(const uint32 containerID);
+    static uint32 GetTech2Blueprint(const uint32 blueprintTypeID);
+    static uint64 GetNextFreeTime(const uint32 assemblyLineID);
 
 protected:
-    bool _GetMultipliers(const uint32 assemblyLineID, uint32 groupID, double &materialMultiplier, double &timeMultiplier);
+    static bool _GetMultipliers(const uint32 assemblyLineID, uint32 groupID, double &materialMultiplier, double &timeMultiplier);
 };
 
 #endif

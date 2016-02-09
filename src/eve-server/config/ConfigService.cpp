@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "config/ConfigService.h"
+#include "config/ConfigDB.h"
 
 PyCallable_Make_InnerDispatcher(ConfigService)
 
@@ -66,7 +67,7 @@ PyResult ConfigService::Handle_GetMultiOwnersEx(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMultiOwnersEx(arg.ints));
+    return (ConfigDB::GetMultiOwnersEx(arg.ints));
 }
 
 PyResult ConfigService::Handle_GetMultiAllianceShortNamesEx(PyCallArgs &call) {
@@ -77,7 +78,7 @@ PyResult ConfigService::Handle_GetMultiAllianceShortNamesEx(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMultiAllianceShortNamesEx(arg.ints));
+    return (ConfigDB::GetMultiAllianceShortNamesEx(arg.ints));
 }
 
 
@@ -89,7 +90,7 @@ PyResult ConfigService::Handle_GetMultiLocationsEx(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMultiLocationsEx(arg.ints));
+    return (ConfigDB::GetMultiLocationsEx(arg.ints));
 }
 
 PyResult ConfigService::Handle_GetMultiCorpTickerNamesEx(PyCallArgs &call) {
@@ -100,7 +101,7 @@ PyResult ConfigService::Handle_GetMultiCorpTickerNamesEx(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMultiCorpTickerNamesEx(arg.ints));
+    return (ConfigDB::GetMultiCorpTickerNamesEx(arg.ints));
 }
 
 PyResult ConfigService::Handle_GetMultiGraphicsEx(PyCallArgs &call) {
@@ -111,13 +112,14 @@ PyResult ConfigService::Handle_GetMultiGraphicsEx(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMultiGraphicsEx(arg.ints));
+    return (ConfigDB::GetMultiGraphicsEx(arg.ints));
 }
 
 
 
-PyResult ConfigService::Handle_GetUnits(PyCallArgs &call) {
-    return(m_db.GetUnits());
+PyResult ConfigService::Handle_GetUnits(PyCallArgs &call)
+{
+    return (ConfigDB::GetUnits());
 }
 
 
@@ -128,7 +130,7 @@ PyResult ConfigService::Handle_GetMap(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMap(args.arg));
+    return (ConfigDB::GetMap(args.arg));
 }
 
 PyResult ConfigService::Handle_GetMapOffices(PyCallArgs &call) {
@@ -139,7 +141,7 @@ PyResult ConfigService::Handle_GetMapOffices(PyCallArgs &call) {
         return NULL;
     }
 
-    //return(m_db.GetMapOffices(args.arg));
+    //return(ConfigDB::GetMapOffices(args.arg));
 	return NULL;
 }
 
@@ -255,7 +257,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
 
     PyDecRef( t );
 
-    return m_db.GetMapObjects( arg, wantRegions, wantConstellations, wantSystems, wantStations );
+    return ConfigDB::GetMapObjects(arg, wantRegions, wantConstellations, wantSystems, wantStations);
 }
 
 PyResult ConfigService::Handle_GetMultiInvTypesEx(PyCallArgs &call) {
@@ -266,29 +268,29 @@ PyResult ConfigService::Handle_GetMultiInvTypesEx(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.GetMultiInvTypesEx(arg.ints));
+    return (ConfigDB::GetMultiInvTypesEx(arg.ints));
 }
 
 
 PyResult ConfigService::Handle_GetMapConnections(PyCallArgs &call) {
 /*
-this is cached on clientside.  only called if not in client cache
+    this is cached on clientside.  only called if not in client cache
 
-GetMapConnections(id, sol, reg, con, cel, _c)
-      <int name="id" />
-      <bool name="sol" />
-      <bool name="reg" /> args.reg
-      <bool name="con" />
-      <int name="cel" />
-      <int name="_c" />
-*/
-/*  will add this complete code with other map data at a later date  -allan 25Jul14
-    Call_GetMapConnections args;
-    if(!args.Decode(&call.tuple)) {
-        _log(SERVICE__ERROR, "Failed to decode args.");
-        return new PyInt(0);
-    }
-    return m_db.GetMapConnections(args.id, args.sol, args.reg, args.con, args.cel, args._c);
+    GetMapConnections(id, sol, reg, con, cel, _c)
+          <int name="id" />
+          <bool name="sol" />
+          <bool name="reg" /> args.reg
+          <bool name="con" />
+          <int name="cel" />
+          <int name="_c" />
+     */
+    /*  will add this complete code with other map data at a later date  -allan 25Jul14
+        Call_GetMapConnections args;
+        if(!args.Decode(&call.tuple)) {
+            _log(SERVICE__ERROR, "Failed to decode args.");
+            return new PyInt(0);
+        }
+        return ConfigDB::GetMapConnections(args.id, args.sol, args.reg, args.con, args.cel, args._c);
 */
 	return NULL;
 }
@@ -302,7 +304,7 @@ PyResult ConfigService::Handle_GetStationSolarSystemsByOwner(PyCallArgs &call) {
 
     // No idea what to return... yet...
     // Similar to GetCorpInfo(corpID) / corpSvc
-    return m_db.GetStationSolarSystemsByOwner(arg.arg);
+    return ConfigDB::GetStationSolarSystemsByOwner(arg.arg);
 }
 
 PyResult ConfigService::Handle_GetCelestialStatistic(PyCallArgs &call) {
@@ -312,7 +314,7 @@ PyResult ConfigService::Handle_GetCelestialStatistic(PyCallArgs &call) {
         return NULL;
     }
 
-    return m_db.GetCelestialStatistic(arg.arg);
+    return ConfigDB::GetCelestialStatistic(arg.arg);
 }
 
 PyResult ConfigService::Handle_GetDynamicCelestials(PyCallArgs &call){
@@ -322,12 +324,12 @@ PyResult ConfigService::Handle_GetDynamicCelestials(PyCallArgs &call){
         return NULL;
     }
 
-    return m_db.GetDynamicCelestials(arg.arg);
+    return ConfigDB::GetDynamicCelestials(arg.arg);
 }
 
 PyResult ConfigService::Handle_GetMapLandmarks(PyCallArgs &call) {
     //  will add this complete code with other map data at a later date  -allan 25Jul14
-    //return m_db.GetMapLandmarks();
+    //return ConfigDB::GetMapLandmarks();
 	return NULL;
 }
 

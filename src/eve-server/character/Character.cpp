@@ -28,6 +28,7 @@
 #include "Client.h"
 #include "EntityList.h"
 #include "character/Character.h"
+#include "character/CharacterDB.h"
 #include "inventory/AttributeEnum.h"
 
 /*
@@ -209,7 +210,7 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 			//[4] weight
 			//[5] gloss
 
-			m_db.SetAvatarColors(ownerID,
+            CharacterDB::SetAvatarColors(ownerID,
 								color_tuple->GetItem(1)->AsInt()->value(),
 								color_tuple->GetItem(2)->AsInt()->value(),
 								color_tuple->GetItem(3)->AsInt()->value(),
@@ -222,7 +223,7 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 	PyObjectEx_Type2* app_obj = (PyObjectEx_Type2*)appearance;
 	PyTuple* app_tuple = app_obj->GetArgs()->AsTuple();
 
-	m_db.SetAvatar(ownerID, app_tuple->GetItem(1));
+    CharacterDB::SetAvatar(ownerID, app_tuple->GetItem(1));
 
 	PyList::const_iterator modif_cur, modif_end;
 	modif_cur = modifiers->begin();
@@ -240,7 +241,7 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 			//[1] modifierLocationID
 			//[2] paperdollResourceID
 			//[3] paperdollResourceVariation
-			m_db.SetAvatarModifiers(ownerID,
+            CharacterDB::SetAvatarModifiers(ownerID,
 										modif_tuple->GetItem(1),
 										modif_tuple->GetItem(2),
 										modif_tuple->GetItem(3));
@@ -265,7 +266,7 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 			//[3] weightLeftRight
 			//[4] weightForwardBack
 
-			m_db.SetAvatarSculpts(ownerID,
+            CharacterDB::SetAvatarSculpts(ownerID,
 									sculpt_tuple->GetItem(1),
 									sculpt_tuple->GetItem(2),
 									sculpt_tuple->GetItem(3),
@@ -425,9 +426,9 @@ uint32 Character::_Spawn(ItemFactory &factory,
         return 0;
 
     // then character
-    if(!factory.db().NewCharacter(characterID, charData, corpData)) {
+    if(!InventoryDB::NewCharacter(characterID, charData, corpData)) {
         // delete the item
-        factory.db().DeleteItem(characterID);
+        InventoryDB::DeleteItem(characterID);
 
         return 0;
     }
@@ -442,7 +443,7 @@ bool Character::_Load()
     if( !LoadContents( m_factory ) )
         return false;
 
-    if( !m_factory.db().LoadSkillQueue( itemID(), m_skillQueue ) )
+    if( !InventoryDB::LoadSkillQueue( itemID(), m_skillQueue ) )
         return false;
 
     bLoadSuccessful = Owner::_Load();
@@ -453,7 +454,7 @@ bool Character::_Load()
     // OLD //// Calculate total SP trained and store in internal variable:
     // OLD //_CalculateTotalSPTrained();
 
-    if( !m_factory.db().LoadCertificates( itemID(), m_certificates ) )
+    if( !InventoryDB::LoadCertificates( itemID(), m_certificates ) )
         return false;
 
 	return bLoadSuccessful;
@@ -464,7 +465,7 @@ void Character::Delete() {
     DeleteContents( m_factory );
 
     // delete character record
-    m_factory.db().DeleteCharacter(itemID());
+    InventoryDB::DeleteCharacter(itemID());
 
     // let the parent care about the rest
     Owner::Delete();
@@ -1101,7 +1102,7 @@ void Character::SaveCharacter()
 
     sLog.Debug( "Character::SaveCharacter()", "Saving all basic character info and attribute info to DB for character %s...", itemName().c_str() );
     // character data
-    m_factory.db().SaveCharacter(
+    InventoryDB::SaveCharacter(
         itemID(),
         CharacterData(
             accountID(),
@@ -1133,7 +1134,7 @@ void Character::SaveCharacter()
     );
 
     // corporation data
-    m_factory.db().SaveCorpMemberInfo(
+    InventoryDB::SaveCorpMemberInfo(
         itemID(),
         CorpMemberInfo(
             corporationHQ(),
@@ -1187,7 +1188,7 @@ void Character::SaveSkillQueue() const {
     _log( ITEM__TRACE, "Saving skill queue of character %u.", itemID() );
 
     // skill queue
-    m_factory.db().SaveSkillQueue(
+    InventoryDB::SaveSkillQueue(
         itemID(),
         m_skillQueue
     );
@@ -1197,7 +1198,7 @@ void Character::SaveCertificates() const
 {
     _log( ITEM__TRACE, "Saving Implants of character %u", itemID() );
 
-    m_factory.db().SaveCertificates(
+    InventoryDB::SaveCertificates(
         itemID(),
         m_certificates
         );

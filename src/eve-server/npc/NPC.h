@@ -33,7 +33,6 @@ class SpawnEntry;
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
-class ServiceDB;
 class NPCAIMgr;
 
 //Caution: do not inherit this, see constructor.
@@ -50,7 +49,7 @@ public:
         SpawnEntry *spawner = NULL);
     virtual ~NPC();
 
-    bool Load(ServiceDB &from);
+    bool Load();
 
     void Orbit(SystemEntity *who);
 

@@ -28,8 +28,6 @@
 
 #include "PyService.h"
 
-#include "dogmaim/DogmaDB.h"
-
 class DogmaService
 : public PyService
 {
@@ -40,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    DogmaDB m_db;
 
     PyCallable_DECL_CALL(GetOperandsForChar)
 

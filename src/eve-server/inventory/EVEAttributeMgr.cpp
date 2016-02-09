@@ -121,9 +121,9 @@ void EVEAdvancedAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) c
 /*
  * TypeAttributeMgr
  */
-bool TypeAttributeMgr::Load(InventoryDB &db) {
+bool TypeAttributeMgr::Load() {
     // load new contents from DB
-    return db.LoadTypeAttributes(type().id(), *this);
+    return InventoryDB::LoadTypeAttributes(type().id(), *this);
 }
 
 /*
@@ -154,7 +154,7 @@ void ItemAttributeMgr::SetIntEx(Attr attr, const int_t &v, bool persist) {
     // check if we shall save to DB
     if(GetSave() == true && (persist || IsPersistent(attr))) {
         // save to DB
-        m_factory.db().UpdateAttribute_int(m_item.itemID(), attr, v);
+        InventoryDB::UpdateAttribute_int(m_item.itemID(), attr, v);
     }
     if(GetNotify() == true) {
         std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
@@ -191,7 +191,7 @@ void ItemAttributeMgr::SetRealEx(Attr attr, const real_t &v, bool persist) {
         // check if we shall save to DB
         if(GetSave() == true && (persist || IsPersistent(attr))) {
             // save to DB
-            m_factory.db().UpdateAttribute_double(m_item.itemID(), attr, v);
+            InventoryDB::UpdateAttribute_double(m_item.itemID(), attr, v);
         }
         if(GetNotify() == true) {
             std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
@@ -222,7 +222,7 @@ void ItemAttributeMgr::Clear(Attr attr) {
     EVEAdvancedAttributeMgr::Clear(attr);
     // delete the attribute from DB (no matter if it really is there)
     if(GetSave() == true) {
-        m_factory.db().EraseAttribute(m_item.itemID(), attr);
+        InventoryDB::EraseAttribute(m_item.itemID(), attr);
     }
     if(GetNotify() == true) {
         std::map<Attr, TauCap>::const_iterator i = m_tauCap.find(attr);
@@ -267,7 +267,7 @@ bool ItemAttributeMgr::Load(bool notify) {
     // delete old contents
     EVEAdvancedAttributeMgr::Delete();
     // load the new contents
-    bool res = m_factory.db().LoadItemAttributes(item().itemID(), *this);
+    bool res = InventoryDB::LoadItemAttributes(item().itemID(), *this);
 
     // restore save state
     SetSave(old_save);
@@ -294,9 +294,9 @@ void ItemAttributeMgr::Save() const {
         for(; cur != end; cur++) {
             real_t v = GetReal(cur->first);
             if(_IsInt(v))
-                m_factory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
+                InventoryDB::UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
             else
-                m_factory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
+                InventoryDB::UpdateAttribute_double(m_item.itemID(), cur->first, v);
         }
     }
     // then reals
@@ -307,9 +307,9 @@ void ItemAttributeMgr::Save() const {
         for(; cur != end; cur++) {
             real_t v = GetReal(cur->first);
             if(_IsInt(v))
-                m_factory.db().UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
+                InventoryDB::UpdateAttribute_int(m_item.itemID(), cur->first, static_cast<int32>(v));
             else
-                m_factory.db().UpdateAttribute_double(m_item.itemID(), cur->first, v);
+                InventoryDB::UpdateAttribute_double(m_item.itemID(), cur->first, v);
         }
     }
 }

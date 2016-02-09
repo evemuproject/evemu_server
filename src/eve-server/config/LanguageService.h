@@ -39,8 +39,6 @@ protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    ConfigDB m_db;
-
     PyCallable_DECL_CALL(GetLanguages)
     PyCallable_DECL_CALL(GetTextsForGroup)
 

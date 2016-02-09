@@ -162,7 +162,7 @@ public:
     Agent(uint32 id);
     ~Agent();
 
-    bool Load(MissionDB *from);
+    bool Load();
 
     uint32 GetLoyaltyPoints(Client *who);
     void DoAction(Client *who, uint32 actionID, std::string &say, std::map<uint32, std::string> &choices);

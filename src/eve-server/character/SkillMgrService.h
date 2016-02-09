@@ -26,7 +26,6 @@
 #ifndef _SKILLMGR_SERVICE_H
 #define _SKILLMGR_SERVICE_H
 
-#include "character/CharacterDB.h"
 #include "PyBoundObject.h"
 #include "PyService.h"
 
@@ -39,8 +38,6 @@ protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    CharacterDB m_db;
-
     //overloaded in order to support bound objects:
     virtual PyBoundObject *_CreateBoundObject(Client *c, const PyRep *bind_args);
 };
@@ -49,7 +46,7 @@ class SkillMgrBound
 : public PyBoundObject
 {
 public:
-    SkillMgrBound(CharacterDB &db);
+    SkillMgrBound();
     virtual ~SkillMgrBound();
 
     virtual void Release();
@@ -105,7 +102,6 @@ protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    CharacterDB &m_db;
 };
 
 #endif

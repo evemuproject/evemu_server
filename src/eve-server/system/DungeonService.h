@@ -26,7 +26,6 @@
 #ifndef __DUNGEON_SERVICE_H_INCL__
 #define __DUNGEON_SERVICE_H_INCL__
 
-#include "system/SystemDB.h"
 #include "PyService.h"
 
 class DungeonService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    SystemDB m_db;
 
     PyCallable_DECL_CALL(DEGetFactions)
     PyCallable_DECL_CALL(DEGetDungeons)

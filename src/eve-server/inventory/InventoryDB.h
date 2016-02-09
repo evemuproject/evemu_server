@@ -58,23 +58,23 @@ public:
      * Category stuff
      * (invCategories)
      */
-    bool GetCategory(EVEItemCategories category, CategoryData &into);
+    static bool GetCategory(EVEItemCategories category, CategoryData &into);
 
     /*
      * Group stuff
      * (invGroups)
      */
-    bool GetGroup(uint32 groupID, GroupData &into);
+    static bool GetGroup(uint32 groupID, GroupData &into);
 
     /*
      * Type stuff
      * (invTypes, invBlueprintTypes, bloodlineTypes, chrBloodlines, invShipTypes, staStationTypes)
      */
-    bool GetType(uint32 typeID, TypeData &into);
+    static bool GetType(uint32 typeID, TypeData &into);
 
-    bool GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into);
+    static bool GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into);
 
-    bool GetBlueprintType(uint32 blueprintTypeID, BlueprintTypeData &into);
+    static bool GetBlueprintType(uint32 blueprintTypeID, BlueprintTypeData &into);
 
     /**
      * Loads character type data.
@@ -83,7 +83,7 @@ public:
      * @param[out] into Where loaded data should be stored.
      * @return True on success, false on failure.
      */
-    bool GetCharacterType(uint32 bloodlineID, CharacterTypeData &into);
+    static bool GetCharacterType(uint32 bloodlineID, CharacterTypeData &into);
     /**
      * Obtains ID of character type based on bloodline.
      *
@@ -91,7 +91,7 @@ public:
      * @param[out] characterTypeID Resulting ID of character type.
      * @return True on success, false on failure.
      */
-    bool GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &characterTypeID);
+    static bool GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &characterTypeID);
     /**
      * Obtains ID of bloodline based on character type.
      *
@@ -99,7 +99,7 @@ public:
      * @param[out] bloodlineID Resulting ID of bloodline.
      * @return True on success, false on failure.
      */
-    bool GetBloodlineByCharacterType(uint32 characterTypeID, uint32 &bloodlineID);
+    static bool GetBloodlineByCharacterType(uint32 characterTypeID, uint32 &bloodlineID);
 
     /**
      * Obtains bloodline and loads character type data.
@@ -109,7 +109,7 @@ public:
      * @param[out] into Where character type data should be stored.
      * @return True on success, false on failure.
      */
-    bool GetCharacterType(uint32 characterTypeID, uint32 &bloodlineID, CharacterTypeData &into);
+    static bool GetCharacterType(uint32 characterTypeID, uint32 &bloodlineID, CharacterTypeData &into);
     /**
      * Obtains ID of character type and loads it.
      *
@@ -118,7 +118,7 @@ public:
      * @param[out] into Where loaded character type data should be stored.
      * @return True on success, false on failure.
      */
-    bool GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &characterTypeID, CharacterTypeData &into);
+    static bool GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &characterTypeID, CharacterTypeData &into);
 
     /**
      * Loads ship type data into given container.
@@ -127,7 +127,7 @@ public:
      * @param[in] into Container to load data into.
      * @return True on success, false on failure.
      */
-    bool GetShipType(uint32 shipTypeID, ShipTypeData &into);
+    static bool GetShipType(uint32 shipTypeID, ShipTypeData &into);
 
     /**
      * Loads station type data into given container.
@@ -136,7 +136,7 @@ public:
      * @param[in] into Container to load data into.
      * @return True if load succeeded, false if not.
      */
-    bool GetStationType(uint32 stationTypeID, StationTypeData &into);
+    static bool GetStationType(uint32 stationTypeID, StationTypeData &into);
 
     /*
      * Type attribute stuff
@@ -149,21 +149,21 @@ public:
      * @param[in] into Attribute manager the attributes should be loaded into.
      * @return True if load was successful, false if not.
      */
-    bool LoadTypeAttributes(uint32 typeID, EVEAttributeMgr &into);
+    static bool LoadTypeAttributes(uint32 typeID, EVEAttributeMgr &into);
 
     /*
      * Item stuff
      * (entity)
      */
-    bool GetItem(uint32 itemID, ItemData &into);
+    static bool GetItem(uint32 itemID, ItemData &into);
 
-    uint32 NewItem(const ItemData &data);
-    bool SaveItem(uint32 itemID, const ItemData &data);
-    bool DeleteItem(uint32 itemID);
+    static uint32 NewItem(const ItemData &data);
+    static bool SaveItem(uint32 itemID, const ItemData &data);
+    static bool DeleteItem(uint32 itemID);
 
-    bool GetItemContents(uint32 itemID, std::vector<uint32> &into);
-    bool GetItemContents(uint32 itemID, EVEItemFlags flag, std::vector<uint32> &into);
-    bool GetItemContents(uint32 itemID, EVEItemFlags flag, uint32 ownerID, std::vector<uint32> &into);
+    static bool GetItemContents(uint32 itemID, std::vector<uint32> &into);
+    static bool GetItemContents(uint32 itemID, EVEItemFlags flag, std::vector<uint32> &into);
+    static bool GetItemContents(uint32 itemID, EVEItemFlags flag, uint32 ownerID, std::vector<uint32> &into);
 
     /*
      * Item attribute stuff
@@ -176,34 +176,34 @@ public:
      * @param[in] into Attribute manager the attributes should be loaded into.
      * @return True if load was successful, false if not.
      */
-    bool LoadItemAttributes(uint32 itemID, EVEAttributeMgr &into);
+    static bool LoadItemAttributes(uint32 itemID, EVEAttributeMgr &into);
 
-    bool UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v);
-    bool UpdateAttribute_double(uint32 itemID, uint32 attributeID, double v);
-    bool EraseAttribute(uint32 itemID, uint32 attributeID);
-    bool EraseAttributes(uint32 itemID);
+    static bool UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v);
+    static bool UpdateAttribute_double(uint32 itemID, uint32 attributeID, double v);
+    static bool EraseAttribute(uint32 itemID, uint32 attributeID);
+    static bool EraseAttributes(uint32 itemID);
 
     /*
      * Blueprint stuff
      * (invBlueprints)
      */
-    bool GetBlueprint(uint32 blueprintID, BlueprintData &into);
+    static bool GetBlueprint(uint32 blueprintID, BlueprintData &into);
 
-    bool NewBlueprint(uint32 blueprintID, const BlueprintData &data);
-    bool SaveBlueprint(uint32 blueprintID, const BlueprintData &data);
-    bool DeleteBlueprint(uint32 blueprintID);
+    static bool NewBlueprint(uint32 blueprintID, const BlueprintData &data);
+    static bool SaveBlueprint(uint32 blueprintID, const BlueprintData &data);
+    static bool DeleteBlueprint(uint32 blueprintID);
 
     /*
      * Character stuff
      * (character_, chrSkillQueue)
      */
-    bool GetCharacter(uint32 characterID, CharacterData &into);
-    bool GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into);
+    static bool GetCharacter(uint32 characterID, CharacterData &into);
+    static bool GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into);
 
-    bool NewCharacter(uint32 characterID, const CharacterData &data, const CorpMemberInfo &corpData);
-    bool SaveCharacter(uint32 characterID, const CharacterData &data);
-    bool SaveCorpMemberInfo(uint32 characterID, const CorpMemberInfo &data);
-    bool DeleteCharacter(uint32 characterID);
+    static bool NewCharacter(uint32 characterID, const CharacterData &data, const CorpMemberInfo &corpData);
+    static bool SaveCharacter(uint32 characterID, const CharacterData &data);
+    static bool SaveCorpMemberInfo(uint32 characterID, const CorpMemberInfo &data);
+    static bool DeleteCharacter(uint32 characterID);
 
     // Skill queue:
     struct QueuedSkill {
@@ -219,7 +219,7 @@ public:
      * @param[in] into SkillQueue into which loaded data should be stored.
      * @return True if load succeeds, false if fails.
      */
-    bool LoadSkillQueue(uint32 characterID, SkillQueue &into);
+    static bool LoadSkillQueue(uint32 characterID, SkillQueue &into);
     /**
      * Saves skill queue.
      *
@@ -227,7 +227,7 @@ public:
      * @param[in] queue Queue to save.
      * @return True if save succeeds, false if fails.
      */
-    bool SaveSkillQueue(uint32 characterID, const SkillQueue &queue);
+    static bool SaveSkillQueue(uint32 characterID, const SkillQueue &queue);
     // Certificates:
     struct currentCertificates {
         uint32 certificateID;
@@ -237,22 +237,22 @@ public:
     typedef std::vector<currentCertificates> Certificates;
 
     /**
-    * Loads certificates
-    *
-    * @param[in] characterID ID of character whose certificates should be loaded.
-    * @param[in] into Certificates wich loaded data should be stored.
-    * @return True if load succeeds, false if fails.
-    */
-    bool LoadCertificates( uint32 characterID, Certificates &into );
+     * Loads certificates
+     *
+     * @param[in] characterID ID of character whose certificates should be loaded.
+     * @param[in] into Certificates wich loaded data should be stored.
+     * @return True if load succeeds, false if fails.
+     */
+    static bool LoadCertificates(uint32 characterID, Certificates &into);
 
     /**
-    * Saves Certificates
-    *
-    * @param[in] characterID ID of the character whose Certificates are saved.
-    * @param[in] from Certificates to save.
-    * @return True if save succeds, false if fails.
-    */
-    bool SaveCertificates( uint32 characterID, const Certificates &from );
+     * Saves Certificates
+     *
+     * @param[in] characterID ID of the character whose Certificates are saved.
+     * @param[in] from Certificates to save.
+     * @return True if save succeds, false if fails.
+     */
+    static bool SaveCertificates(uint32 characterID, const Certificates &from);
 
     /*
      * Celestial object stuff
@@ -265,7 +265,7 @@ public:
      * @param[in] into Containter into which the data should be loaded.
      * @return True if succeeds, false if fails.
      */
-    bool GetCelestialObject(uint32 celestialID, CelestialObjectData &into);
+    static bool GetCelestialObject(uint32 celestialID, CelestialObjectData &into);
 
     /*
      * Solar system stuff
@@ -278,7 +278,7 @@ public:
      * @param[in] into Container into which the data should be loaded.
      * @return True if load succeeds, false if fails.
      */
-    bool GetSolarSystem(uint32 solarSystemID, SolarSystemData &into);
+    static bool GetSolarSystem(uint32 solarSystemID, SolarSystemData &into);
 
     /*
      * Station stuff
@@ -291,7 +291,7 @@ public:
      * @param[in] into Container where data should be stored.
      * @return True if load succeeds, false if fails.
      */
-    bool GetStation(uint32 stationID, StationData &into);
+    static bool GetStation(uint32 stationID, StationData &into);
 
     /* /Fit command helper function
      *

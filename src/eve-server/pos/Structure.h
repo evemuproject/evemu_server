@@ -141,7 +141,6 @@ protected:
 class InventoryItem;
 class DestinyManager;
 class SystemManager;
-class ServiceDB;
 
 class StructureEntity
 : public DynamicSystemEntity

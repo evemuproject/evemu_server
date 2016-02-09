@@ -31,102 +31,14 @@
 
 class PyRep;
 
-/**
- * a example of a storage class for static db data. not exactly doxygen commented.
- */
-class storage
-{
-public:
-    storage() : mLoaded(false) {}
-
-    bool load()
-    {
-        /* check if its already loaded */
-        if (mLoaded == true)
-            return true;
-
-        DBQueryResult res;
-        if(!DBcore::RunQuery(res,    "SELECT "
-            " solarSystemID,"                    // int
-            " solarSystemName,"                    // string
-            " x, y, z,"                            // double
-            " radius,"                            // double
-            " security,"                        // double
-            " constellationID,"                    // int
-            " factionID,"                        // int
-            " sunTypeID,"                        // int
-            " regionID,"                        // int
-
-            //Hack: I think this is dynamic data.... meaning it should be stored somewhere else in the db...
-            " NULL AS allianceID,"                // int
-            " 0 AS sovereigntyLevel,"            // int
-            " 0 AS constellationSovereignty"    // int
-            " FROM mapSolarSystems"))
-        {
-            sLog.Error("Station DB", "Error in storage GetSolarSystem query: %s", res.error.c_str());
-            return false;
-        }
-
-        /* I am aware of the fact that the next piece of code is spamming the console */
-        sLog.Log("Station DB", "Loading Solar systems:");
-
-        DBResultRow row;
-        uint32 solarSystems = 0;
-        for(solarSystems = 0; res.GetRow(row); solarSystems++)
-        {
-            mStorageContainer.insert(std::make_pair(row.GetUInt(0), DBRowToRow(row)));
-
-            // If there are no problems this line is replaced by the next sLog.Log when finished.
-            printf("\t\tLoading solar system: %u\r", solarSystems);
-        }
-        sLog.Log("Station DB", "Storing solar system data Done for: %u solar systems.", solarSystems);
-        mLoaded = true;
-
-        return true;
-    }
-
-    // returned pointer doesn't have to be const, but I don't think
-    // we would like anyone to change static db data, so ...
-    const PyObject* find(uint32 id) const
-    {
-        DataContainerConstItr Itr = mStorageContainer.find(id);
-        if (Itr != mStorageContainer.end())
-        {
-            return Itr->second;
-        }
-        return NULL;
-    }
-
-    ~storage()
-    {
-        DataContainerItr Itr = mStorageContainer.begin();
-        for (; Itr != mStorageContainer.end(); Itr++)
-        {
-            PyDecRef( Itr->second );
-        }
-    }
-
-protected:
-    typedef std::tr1::unordered_map<uint32, PyObject*>    DataContainer;
-    typedef DataContainer::iterator                            DataContainerItr;
-    typedef DataContainer::const_iterator                    DataContainerConstItr;
-
-    DataContainer mStorageContainer;
-    bool mLoaded;
-};
-
-
 class StationDB : public ServiceDB
 {
 public:
-    StationDB();
-
-    PyPackedRow *GetSolarSystem(uint32 ssid);
-    PyRep *DoGetStation(uint32 ssid);
-    PyRep *GetStationItemBits(uint32 sid);
+    static PyPackedRow *GetSolarSystem(uint32 ssid);
+    static PyRep *DoGetStation(uint32 ssid);
+    static PyRep *GetStationItemBits(uint32 sid);
 
 protected:
-    static storage g_station_db_storage;
 };
 
 #endif

@@ -61,13 +61,13 @@ class SystemDB
 : public ServiceDB
 {
 public:
-    bool LoadSystemEntities(uint32 systemID, std::vector<DBSystemEntity> &into);
-    bool LoadSystemDynamicEntities(uint32 systemID, std::vector<DBSystemDynamicEntity> &into);
+    static bool LoadSystemEntities(uint32 systemID, std::vector<DBSystemEntity> &into);
+    static bool LoadSystemDynamicEntities(uint32 systemID, std::vector<DBSystemDynamicEntity> &into);
 	static bool GetWrecksToTypes(DBQueryResult &res);
     static uint32 GetObjectLocationID( uint32 itemID );
 
-    PyObject *ListFactions();
-    PyObject *ListJumps(uint32 stargateID);
+    static PyObject *ListFactions();
+    static PyObject *ListJumps(uint32 stargateID);
 
 protected:
 };

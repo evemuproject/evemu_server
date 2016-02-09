@@ -143,7 +143,7 @@ bool APIServiceManager::_AuthenticateUserNamePassword(std::string username, std:
 {
     // Query account info
     AccountInfo account_info;
-    if (!PyServiceMgr::serviceDB().GetAccountInformation(
+    if (!ServiceDB::GetAccountInformation(
             username.c_str(),
 			password.c_str(),
 			account_info ) )

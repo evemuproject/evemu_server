@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "manufacturing/Blueprint.h"
 #include "manufacturing/FactoryService.h"
+#include "manufacturing/FactoryDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(FactoryService)
@@ -68,7 +69,7 @@ PyResult FactoryService::Handle_GetMaterialsForTypeWithActivity(PyCallArgs &call
         return NULL;
     }
 
-    return(m_db.GetMaterialsForTypeWithActivity(call_args.arg));
+    return (FactoryDB::GetMaterialsForTypeWithActivity(call_args.arg));
 }
 
 PyResult FactoryService::Handle_GetMaterialCompositionOfItemType(PyCallArgs &call) {
@@ -78,6 +79,6 @@ PyResult FactoryService::Handle_GetMaterialCompositionOfItemType(PyCallArgs &cal
         return NULL;
     }
 
-    return(m_db.GetMaterialCompositionOfItemType(call_args.arg));
+    return (FactoryDB::GetMaterialCompositionOfItemType(call_args.arg));
 }
 

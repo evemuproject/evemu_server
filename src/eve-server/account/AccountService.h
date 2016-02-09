@@ -27,7 +27,6 @@
 #ifndef __ACCOUNTSERVICE_H_INCL__
 #define __ACCOUNTSERVICE_H_INCL__
 
-#include "account/AccountDB.h"
 #include "PyService.h"
 
 class AccountService
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    AccountDB m_db;
 
     PyCallable_DECL_CALL(GetCashBalance)
     PyCallable_DECL_CALL(GetEntryTypes)

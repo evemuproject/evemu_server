@@ -26,6 +26,7 @@
 #include "eve-server.h"
 
 #include "PyServiceCD.h"
+#include "system/BookmarkDB.h"
 #include "system/BookmarkService.h"
 
 // Set the maximum number for any user-created bookmark and folder.
@@ -137,15 +138,15 @@ bool BookmarkService::LookupBookmark(uint32 characterID, uint32 bookmarkID, uint
     uint32 folderID = 0;		// WARNING!  This should be a parameter passed in from outside so we can select different folders!
     std::string note;
 
-    return m_db.GetBookmarkInformation(bookmarkID,ownerID,itemID,typeID,flag,memo,created,x,y,z,locationID,note,creatorID,folderID);
+    return BookmarkDB::GetBookmarkInformation(bookmarkID, ownerID, itemID, typeID, flag, memo, created, x, y, z, locationID, note, creatorID, folderID);
 }
 
 
 PyResult BookmarkService::Handle_GetBookmarks(PyCallArgs &call) {
     PyTuple* result = new PyTuple(2);
 
-    result->items[0] = m_db.GetBookmarks(call.client->GetCharacterID());
-    result->items[1] = m_db.GetFolders(call.client->GetCharacterID());
+    result->items[0] = BookmarkDB::GetBookmarks(call.client->GetCharacterID());
+    result->items[1] = BookmarkDB::GetFolders(call.client->GetCharacterID());
 
     return result;
 }
@@ -190,7 +191,7 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
 			folderID = call.byname.find("folderID")->second->AsInt()->value();
 
     typeCheck = call.tuple->GetItem( 0 )->AsInt()->value();  //current shipID/stationID/POS_ID/etc...check for typeID
-    typeID = m_db.FindBookmarkTypeID(typeCheck);    // Get typeID for above itemID:
+    typeID = BookmarkDB::FindBookmarkTypeID(typeCheck); // Get typeID for above itemID:
 
     if ( typeCheck >= 140000000 )      // entity #'s above 140m are player-owned
     {
@@ -234,7 +235,7 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
     ////////////////////////////////////////
     flag = 0;                                           // Don't know what to do with this value
     created = Win32TimeNow();
-    m_db.SaveNewBookmarkToDatabase
+    BookmarkDB::SaveNewBookmarkToDatabase
     (
         bookmarkID,
         ownerID,
@@ -297,9 +298,9 @@ PyResult BookmarkService::Handle_DeleteBookmarks(PyCallArgs &call)          //no
           {
               bookmarkID = call.tuple->GetItem( 0 )->AsList()->GetItem(i)->AsInt()->value();
               bookmarkIDs.push_back( bookmarkID );
-          }
+            }
 
-          m_db.DeleteBookmarksFromDatabase( call.client->GetCharacterID(),&bookmarkIDs );
+            BookmarkDB::DeleteBookmarksFromDatabase(call.client->GetCharacterID(), &bookmarkIDs);
       }else{
           sLog.Error( "BookmarkService::Handle_DeleteBookmarks()", "%s: call.tuple->GetItem( 0 )->AsList()->size() == 0.  Expected size >= 1.", call.client->GetName() );
           return NULL;
@@ -309,9 +310,9 @@ PyResult BookmarkService::Handle_DeleteBookmarks(PyCallArgs &call)          //no
       sLog.Log( "BookmarkService::Handle_DeleteBookmarks()", "Call is PyTuple");
 	  //bookmarkIDs = call.tuple->
       /**
-      uint32 bookmarkID;
-      bookmarkID = call.tuple->GetItem( 0 )->AsObjectEx()->value(); <---  this causes a problem.  i am now at a loss....
-      m_db.DeleteBookmarkFromDatabase( call.client->GetCharacterID(), bookmarkID );
+        uint32 bookmarkID;
+        bookmarkID = call.tuple->GetItem( 0 )->AsObjectEx()->value(); <---  this causes a problem.  i am now at a loss....
+        BookmarkDB::DeleteBookmarkFromDatabase( call.client->GetCharacterID(), bookmarkID );
       */
     }else if(call.tuple->IsObjectEx())
     {
@@ -324,8 +325,8 @@ PyResult BookmarkService::Handle_DeleteBookmarks(PyCallArgs &call)          //no
 
     PyTuple* result = new PyTuple(2);
 
-    result->items[0] = m_db.GetBookmarks(call.client->GetCharacterID());
-    result->items[1] = m_db.GetFolders(call.client->GetCharacterID());
+    result->items[0] = BookmarkDB::GetBookmarks(call.client->GetCharacterID());
+    result->items[1] = BookmarkDB::GetFolders(call.client->GetCharacterID());
 
     return result;
 }
@@ -389,7 +390,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
         }
     }
 
-    m_db.GetBookmarkInformation
+    BookmarkDB::GetBookmarkInformation
     (
         bookmarkID,
         ownerID,
@@ -407,7 +408,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
         folderID
     );
 
-    m_db.UpdateBookmarkInDatabase(bookmarkID,call.client->GetCharacterID(),newMemo,newNote);
+    BookmarkDB::UpdateBookmarkInDatabase(bookmarkID, call.client->GetCharacterID(), newMemo, newNote);
 
     PyTuple* res = NULL;
 
@@ -434,7 +435,7 @@ PyResult BookmarkService::Handle_CreateFolder(PyCallArgs &call)     // working
     uint32 ownerID = call.client->GetCharacterID();
     uint32 creatorID = ownerID;
 
-    m_db.SaveNewFolderToDatabase
+    BookmarkDB::SaveNewFolderToDatabase
     (
         folderID,
         folderName,
@@ -455,7 +456,7 @@ PyResult BookmarkService::Handle_UpdateFolder(PyCallArgs &call)     // working
     uint32 ownerID = call.client->GetCharacterID();
     uint32 creatorID = ownerID;
 
-    m_db.UpdateFolderInDatabase
+    BookmarkDB::UpdateFolderInDatabase
     (
         folderID,
         folderName,
@@ -483,7 +484,7 @@ PyResult BookmarkService::Handle_DeleteFolder(PyCallArgs &call)     // working
     uint32 folderID =  call.tuple->GetItem( 0 )->AsInt()->value();
     uint32 ownerID = call.client->GetCharacterID();
 
-    m_db.DeleteFolderFromDatabase
+    BookmarkDB::DeleteFolderFromDatabase
     (
         folderID,
         ownerID

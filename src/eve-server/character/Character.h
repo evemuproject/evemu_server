@@ -26,7 +26,6 @@
 #ifndef __CHARACTER__H__INCL__
 #define __CHARACTER__H__INCL__
 
-#include "character/CharacterDB.h"
 #include "inventory/ItemType.h"
 #include "inventory/Owner.h"
 #include "inventory/Inventory.h"
@@ -150,7 +149,7 @@ protected:
         // query character type data
         uint32 bloodlineID;
         CharacterTypeData charData;
-        if( !factory.db().GetCharacterType(typeID, bloodlineID, charData) )
+        if( !InventoryDB::GetCharacterType(typeID, bloodlineID, charData) )
             return NULL;
 
         // load ship type
@@ -282,7 +281,6 @@ public:
    void Build(uint32 ownerID, PyDict* data);
 
 private:
-	CharacterDB m_db;
 };
 
 /**
@@ -612,11 +610,11 @@ protected:
         const CharacterType &charType = static_cast<const CharacterType &>( type );
 
         CharacterData charData;
-        if( !factory.db().GetCharacter( characterID, charData ) )
+        if( !InventoryDB::GetCharacter( characterID, charData ) )
             return RefPtr<_Ty>();
 
         CorpMemberInfo corpData;
-        if( !factory.db().GetCorpMemberInfo( characterID, corpData ) )
+        if( !InventoryDB::GetCorpMemberInfo( characterID, corpData ) )
             return RefPtr<_Ty>();
 
         return _Ty::template _LoadCharacter<_Ty>( factory, characterID, charType, data, charData, corpData );

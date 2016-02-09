@@ -28,6 +28,7 @@
 #include "PyServiceCD.h"
 #include "manufacturing/Blueprint.h"
 #include "manufacturing/RamProxyService.h"
+#include "manufacturing/RamProxyDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(RamProxyService)
@@ -55,13 +56,13 @@ RamProxyService::~RamProxyService() {
 
 PyResult RamProxyService::Handle_AssemblyLinesSelectPublic(PyCallArgs &call) {
     //  will add this completed code at a later date  -allan 25Jul14
-    //return(m_db.AssemblyLinesSelectPublic(call.client->GetRegionID()));
+    //return(RamProxyDB::AssemblyLinesSelectPublic(call.client->GetRegionID()));
     return NULL;
 }
 
 PyResult RamProxyService::Handle_AssemblyLinesSelectPrivate(PyCallArgs &call) {
     //  will add this completed code at a later date  -allan 25Jul14
-    //return(m_db.AssemblyLinesSelectPrivate(call.client->GetCharacterID()));
+    //return(RamProxyDB::AssemblyLinesSelectPrivate(call.client->GetCharacterID()));
     return NULL;
 }
 
@@ -87,7 +88,7 @@ PyResult RamProxyService::Handle_GetJobs2(PyCallArgs &call) {
         }
     }
 
-    return(m_db.GetJobs2(args.ownerID, args.completed, args.fromDate, args.toDate));
+    return (RamProxyDB::GetJobs2(args.ownerID, args.completed, args.fromDate, args.toDate));
 }
 
 PyResult RamProxyService::Handle_AssemblyLinesSelect(PyCallArgs &call) {
@@ -100,13 +101,14 @@ PyResult RamProxyService::Handle_AssemblyLinesSelect(PyCallArgs &call) {
 
     // unfinished
     if(args.filter == "region")
-        return(m_db.AssemblyLinesSelectPublic(call.client->GetRegionID()));
+        return (RamProxyDB::AssemblyLinesSelectPublic(call.client->GetRegionID()));
     else if(args.filter == "char")
-        return(m_db.AssemblyLinesSelectPersonal(call.client->GetCharacterID()));
+        return (RamProxyDB::AssemblyLinesSelectPersonal(call.client->GetCharacterID()));
     else if(args.filter == "corp")
-        return(m_db.AssemblyLinesSelectCorporation(call.client->GetCorporationID()));
-    else if(args.filter == "alliance") {
-//      return(m_db.AssemblyLinesSelectAlliance(...));
+        return (RamProxyDB::AssemblyLinesSelectCorporation(call.client->GetCorporationID()));
+    else if(args.filter == "alliance")
+    {
+        //      return(RamProxyDB::AssemblyLinesSelectAlliance(...));
         call.client->SendInfoModalMsg("Alliances are not implemented yet.");
         return NULL;
     } else {
@@ -123,7 +125,7 @@ PyResult RamProxyService::Handle_AssemblyLinesGet(PyCallArgs &call) {
         return NULL;
     }
 
-    return(m_db.AssemblyLinesGet(arg.arg));
+    return (RamProxyDB::AssemblyLinesGet(arg.arg));
 }
 
 PyResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
@@ -163,7 +165,7 @@ PyResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
 
     // query required items for activity
     std::vector<RequiredItem> reqItems;
-    if(!m_db.GetRequiredItems(installedItem->typeID(), (EVERamActivity)args.activityID, reqItems))
+    if (!RamProxyDB::GetRequiredItems(installedItem->typeID(), (EVERamActivity) args.activityID, reqItems))
         return NULL;
 
     // if 'quoteOnly' is 1 -> send quote, if 0 -> install job
@@ -187,7 +189,7 @@ PyResult RamProxyService::Handle_InstallJob(PyCallArgs &call) {
             beginProductionTime = rsp.maxJobStartTime;
 
         // register our job
-        if( !m_db.InstallJob(
+        if (!RamProxyDB::InstallJob(
             args.isCorpJob ? call.client->GetCorporationID() : call.client->GetCharacterID(),
             call.client->GetCharacterID(),
             args.installationAssemblyLineID,
@@ -268,7 +270,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
     uint32 installedItemID, ownerID, runs, licensedProductionRuns;
     EVEItemFlags outputFlag;
     EVERamActivity activity;
-    if(!m_db.GetJobProperties(args.jobID, installedItemID, ownerID, outputFlag, runs, licensedProductionRuns, activity))
+    if (!RamProxyDB::GetJobProperties(args.jobID, installedItemID, ownerID, outputFlag, runs, licensedProductionRuns, activity))
         return NULL;
 
     // return item
@@ -278,7 +280,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
     installedItem->Move( installedItem->locationID(), outputFlag );
 
     std::vector<RequiredItem> reqItems;
-    if( !m_db.GetRequiredItems( installedItem->typeID(), activity, reqItems ) )
+    if (!RamProxyDB::GetRequiredItems(installedItem->typeID(), activity, reqItems))
         return NULL;
 
     // return materials which weren't completely consumed
@@ -386,7 +388,7 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
     }
 
     // regardless on success of this, we will return NULL, so there's no condition here
-    m_db.CompleteJob(args.jobID, args.cancel ? ramCompletedStatusAbort : ramCompletedStatusDelivered);
+    RamProxyDB::CompleteJob(args.jobID, args.cancel ? ramCompletedStatusAbort : ramCompletedStatusDelivered);
 
     return NULL;
 }
@@ -468,7 +470,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
             if(!bp->copy())
                 throw(PyException(MakeUserError("RamCannotInventABlueprintOriginal")));
 
-            uint32 productTypeID = m_db.GetTech2Blueprint(installedItem->typeID());
+            uint32 productTypeID = RamProxyDB::GetTech2Blueprint(installedItem->typeID());
             if(productTypeID == NULL)
                 throw(PyException(MakeUserError("RamInventionNoOutput")));
 
@@ -482,21 +484,23 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
         }
     }
 
-    if(!m_db.IsProducableBy(args.installationAssemblyLineID, productType->groupID()))
+    if (!RamProxyDB::IsProducableBy(args.installationAssemblyLineID, productType->groupID()))
         throw(PyException(MakeUserError("RamBadEndProductForActivity")));
 
     // JOBS CHECK
     // ***********
-    if(args.activityID == ramActivityManufacturing) {
-        uint32 jobCount = m_db.CountManufacturingJobs(c->GetCharacterID());
+    if(args.activityID == ramActivityManufacturing)
+    {
+        uint32 jobCount = RamProxyDB::CountManufacturingJobs(c->GetCharacterID());
         if(c->GetChar()->GetAttribute(AttrManufactureSlotLimit).get_int() <= jobCount) {
             std::map<std::string, PyRep *> exceptArgs;
             exceptArgs["current"] = new PyInt(jobCount);
             exceptArgs["max"] = c->GetChar()->GetAttribute(AttrManufactureSlotLimit).GetPyObject();
             throw(PyException(MakeUserError("MaxFactorySlotUsageReached", exceptArgs)));
         }
-    } else {
-        uint32 jobCount = m_db.CountResearchJobs(c->GetCharacterID());
+    } else
+    {
+        uint32 jobCount = RamProxyDB::CountResearchJobs(c->GetCharacterID());
         if(c->GetChar()->GetAttribute(AttrMaxLaborotorySlots).get_int() <= jobCount) {
             std::map<std::string, PyRep *> exceptArgs;
             exceptArgs["current"] = new PyInt(jobCount);
@@ -508,7 +512,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
     // INSTALLATION CHECK
     // *******************
 
-    uint32 regionID = m_db.GetRegionOfContainer(args.installationContainerID);
+    uint32 regionID = RamProxyDB::GetRegionOfContainer(args.installationContainerID);
     if(regionID == 0)
         throw(PyException(MakeUserError("RamIsNotAnInstallation")));
 
@@ -530,7 +534,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
     EVERamActivity activity;
 
     // get properties
-    if(!m_db.GetAssemblyLineVerifyProperties(args.installationAssemblyLineID, ownerID, minCharSec, maxCharSec, restrictionMask, activity))
+    if (!RamProxyDB::GetAssemblyLineVerifyProperties(args.installationAssemblyLineID, ownerID, minCharSec, maxCharSec, restrictionMask, activity))
         throw(PyException(MakeUserError("RamInstallationHasNoDefaultContent")));
 
     // check validity of activity
@@ -606,7 +610,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
         if(installedItem->locationID() != (uint32)args.installationContainerID) {
             if((uint32)args.installationContainerID == c->GetLocationID()) {
                 std::map<std::string, PyRep *> exceptArgs;
-                exceptArgs["location"] = new PyString(m_db.GetStationName(args.installationContainerID));
+                exceptArgs["location"] = new PyString(RamProxyDB::GetStationName(args.installationContainerID));
 
                 if(args.isCorpJob)
                     throw(PyException(MakeUserError("RamCorpInstalledItemWrongLocation", exceptArgs)));
@@ -619,7 +623,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
                 if(installedItem->flag() < flagCorpSecurityAccessGroup2 || installedItem->flag() > flagCorpSecurityAccessGroup7) {
                     if((uint32)args.installationContainerID == c->GetLocationID()) {
                         std::map<std::string, PyRep *> exceptArgs;
-                        exceptArgs["location"] = new PyString(m_db.GetStationName(args.installationContainerID));
+                        exceptArgs["location"] = new PyString(RamProxyDB::GetStationName(args.installationContainerID));
 
                         throw(PyException(MakeUserError("RamCorpInstalledItemWrongLocation", exceptArgs)));
                     } else
@@ -629,7 +633,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
                 if(installedItem->flag() != flagHangar) {
                     if((uint32)args.installationInvLocationID == c->GetLocationID()) {
                         std::map<std::string, PyRep *> exceptArgs;
-                        exceptArgs["location"] = new PyString(m_db.GetStationName(args.installationContainerID));
+                        exceptArgs["location"] = new PyString(RamProxyDB::GetStationName(args.installationContainerID));
 
                         throw(PyException(MakeUserError("RamInstalledItemWrongLocation", exceptArgs)));
                     } else {
@@ -758,7 +762,7 @@ void RamProxyService::_VerifyCompleteJob(const Call_CompleteJob &args, Client *c
     uint64 endProductionTime;
     EVERamCompletedStatus status;
     EVERamRestrictionMask restrictionMask;
-    if(!m_db.GetJobVerifyProperties(args.jobID, ownerID, endProductionTime, restrictionMask, status))
+    if (!RamProxyDB::GetJobVerifyProperties(args.jobID, ownerID, endProductionTime, restrictionMask, status))
         throw(PyException(MakeUserError("RamCompletionNoSuchJob")));
 
     if(ownerID != c->GetCharacterID()) {
@@ -776,8 +780,9 @@ void RamProxyService::_VerifyCompleteJob(const Call_CompleteJob &args, Client *c
         throw(PyException(MakeUserError("RamCompletionInProduction")));
 }
 
-bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef installedItem, Client *const c, Rsp_InstallJob &into) {
-    if(!m_db.GetAssemblyLineProperties(args.installationAssemblyLineID, into.materialMultiplier, into.timeMultiplier, into.installCost, into.usageCost))
+bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef installedItem, Client *const c, Rsp_InstallJob &into)
+{
+    if (!RamProxyDB::GetAssemblyLineProperties(args.installationAssemblyLineID, into.materialMultiplier, into.timeMultiplier, into.installCost, into.usageCost))
         return false;
 
     const ItemType *productType;
@@ -859,7 +864,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
         }
     }
 
-    if(!m_db.MultiplyMultipliers(args.installationAssemblyLineID, productType->groupID(), into.materialMultiplier, into.timeMultiplier))
+    if (!RamProxyDB::MultiplyMultipliers(args.installationAssemblyLineID, productType->groupID(), into.materialMultiplier, into.timeMultiplier))
         return false;
 
     // calculate the remaining things
@@ -870,7 +875,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
     // I "hope" this is right, simple tells client how soon will his job be started
     // Unfortunately, rounding done on client's side causes showing "Start time: 0 seconds" when he has to wait less than minute
     // I have no idea how to avoid this ...
-    into.maxJobStartTime = m_db.GetNextFreeTime(args.installationAssemblyLineID);
+    into.maxJobStartTime = RamProxyDB::GetNextFreeTime(args.installationAssemblyLineID);
 
     return true;
 }

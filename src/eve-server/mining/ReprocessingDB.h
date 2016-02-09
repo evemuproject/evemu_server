@@ -38,10 +38,10 @@ class ReprocessingDB
 : public ServiceDB
 {
 public:
-    bool IsRefinable(const uint32 typeID);
-    bool IsRecyclable(const uint32 typeID);
-    bool LoadStatic(const uint32 stationID, double &efficiency, double &tax);
-    bool GetRecoverables(const uint32 typeID, std::vector<Recoverable> &into);
+    static bool IsRefinable(const uint32 typeID);
+    static bool IsRecyclable(const uint32 typeID);
+    static bool LoadStatic(const uint32 stationID, double &efficiency, double &tax);
+    static bool GetRecoverables(const uint32 typeID, std::vector<Recoverable> &into);
 };
 
 #endif

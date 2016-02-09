@@ -41,7 +41,7 @@
 #include "system/SystemBubble.h"
 #include "PyServiceMgr.h"
 
-PyResult Command_create( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_create( Client* who, const Seperator& args )
 {
     if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /create [typeID]") );
@@ -96,7 +96,7 @@ PyResult Command_create( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Creation successful." );
 }
 
-PyResult Command_createitem( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_createitem( Client* who, const Seperator& args )
 {
     if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /create [typeID]") );
@@ -151,7 +151,7 @@ PyResult Command_createitem( Client* who, CommandDB* db, const Seperator& args )
 }
 
 
-PyResult Command_search( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_search( Client* who, const Seperator& args )
 {
     if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /search [text]") );
@@ -164,7 +164,7 @@ PyResult Command_search( Client* who, CommandDB* db, const Seperator& args )
         throw PyException( MakeCustomError( "Usage: /search [text]" ) );
 
     std::map<uint32, std::string> matches;
-    if( !db->ItemSearch( query.c_str(), matches ) )
+    if (!CommandDB::ItemSearch(query.c_str(), matches))
         throw PyException( MakeCustomError( "Failed to query DB." ) );
 
     std::string result( itoa( matches.size() ) );
@@ -195,9 +195,9 @@ PyResult Command_search( Client* who, CommandDB* db, const Seperator& args )
         return new PyString( result );
 }
 
-PyResult Command_translocate( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_translocate( Client* who, const Seperator& args )
 {
-	return Command_tr(who,db,args);
+	return Command_tr(who,args);
 /*
 	if( args.argCount() < 2 ) {
         throw PyException( MakeCustomError("Correct Usage: /transloacte [entityID]") );
@@ -229,7 +229,7 @@ PyResult Command_translocate( Client* who, CommandDB* db, const Seperator& args 
 }
 
 
-PyResult Command_tr( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_tr( Client* who, const Seperator& args )
 {
 	std::string usageString =
 		"Correct Usage:<br><br>\
@@ -380,7 +380,7 @@ PyResult Command_tr( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Translocation successful." );
 }
 
-PyResult Command_giveisk( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_giveisk( Client* who, const Seperator& args )
 {
 
     if( args.argCount() < 3 ) {
@@ -421,7 +421,7 @@ PyResult Command_giveisk( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Operation successful." );
 }
 
-PyResult Command_pop( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_pop( Client* who, const Seperator& args )
 {
     if( 4 != args.argCount() )
         throw PyException( MakeCustomError( "Correct Usage: /pop [message type] [key] [text]" ) );
@@ -445,7 +445,7 @@ PyResult Command_pop( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Message sent." );
 }
 
-PyResult Command_goto( Client* who, CommandDB* db, const Seperator& args)
+PyResult Command_goto( Client* who, const Seperator& args)
 {
     if( 3 != args.argCount()
         || !args.isNumber( 1 )
@@ -465,7 +465,7 @@ PyResult Command_goto( Client* who, CommandDB* db, const Seperator& args)
     return new PyString( "Goto successful." );
 }
 
-PyResult Command_spawnn( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_spawnn( Client* who, const Seperator& args )
 {
     uint32 typeID = 0;
     uint32 actualTypeID = 0;
@@ -497,7 +497,7 @@ PyResult Command_spawnn( Client* who, CommandDB* db, const Seperator& args )
         throw PyException( MakeCustomError( "You must be in space to spawn things." ) );
 
     // Search for item type using typeID:
-    if( !(db->ItemSearch(typeID, actualTypeID, actualTypeName, actualGroupID, actualCategoryID, actualRadius) ) )
+    if (!(CommandDB::ItemSearch(typeID, actualTypeID, actualTypeName, actualGroupID, actualCategoryID, actualRadius)))
     {
         return new PyString( "Unknown typeID or typeName returned no matches." );
     }
@@ -547,7 +547,7 @@ PyResult Command_spawnn( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Spawn successful." );
 }
 
-PyResult Command_spawn( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_spawn( Client* who, const Seperator& args )
 {
     uint32 typeID = 0;
 	uint32 spawnCount = 1;
@@ -577,7 +577,7 @@ PyResult Command_spawn( Client* who, CommandDB* db, const Seperator& args )
     typeID = atoi( args.arg( 1 ).c_str() );
 
     // Search for item type using typeID:
-    if( !(db->ItemSearch(typeID, actualTypeID, actualTypeName, actualGroupID, actualCategoryID, actualRadius) ) )
+    if (!(CommandDB::ItemSearch(typeID, actualTypeID, actualTypeName, actualGroupID, actualCategoryID, actualRadius)))
     {
         return new PyString( "Unknown typeID or typeName returned no matches." );
     }
@@ -699,7 +699,7 @@ PyResult Command_spawn( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Spawn successful." );
 }
 
-PyResult Command_location( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_location( Client* who, const Seperator& args )
 {
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You're not in space." ) );
@@ -728,7 +728,7 @@ PyResult Command_location( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( reply );
 }
 
-PyResult Command_syncloc( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_syncloc( Client* who, const Seperator& args )
 {
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You're not in space." ) );
@@ -744,7 +744,7 @@ PyResult Command_syncloc( Client* who, CommandDB* db, const Seperator& args )
 
 // command to modify blueprint's attributes, we have to give it blueprint's itemID ...
 // isn't much comfortable, but I don't know about better solution ...
-PyResult Command_setbpattr( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_setbpattr( Client* who, const Seperator& args )
 {
 
     if( args.argCount() < 6 ) {
@@ -783,7 +783,7 @@ PyResult Command_setbpattr( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Properties modified." );
 }
 
-PyResult Command_state(Client *who, CommandDB *db, const Seperator &args) {
+PyResult Command_state(Client *who, const Seperator &args) {
     if(!who->IsInSpace())
         throw(PyException(MakeCustomError("You must be in space.")));
 
@@ -796,7 +796,7 @@ PyResult Command_state(Client *who, CommandDB *db, const Seperator &args) {
     return(new PyString("Update sent."));
 }
 
-PyResult Command_getattr( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_getattr( Client* who, const Seperator& args )
 {
     if( args.argCount() < 3 ) {
         throw PyException( MakeCustomError("Correct Usage: /getattr [itemID] [attributeID]") );
@@ -817,7 +817,7 @@ PyResult Command_getattr( Client* who, CommandDB* db, const Seperator& args )
     return item->GetAttribute(attribute).GetPyObject();
 }
 
-PyResult Command_setattr( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_setattr( Client* who, const Seperator& args )
 {
     if( args.argCount() < 4 ) {
         throw PyException( MakeCustomError("Correct Usage: /setattr [itemID] [attributeID] [value]") );
@@ -862,7 +862,7 @@ PyResult Command_setattr( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Operation successful." );
 }
 
-PyResult Command_fit(Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_fit(Client* who, const Seperator& args )
 {
 
     if( args.argCount() < 2 ) {
@@ -925,7 +925,7 @@ PyResult Command_fit(Client* who, CommandDB* db, const Seperator& args )
     }
 }
 
-PyResult Command_giveallskills( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_giveallskills( Client* who, const Seperator& args )
 {
     uint8 level = 5;			// Ensure that ALL skills trained are trained to level 5
     CharacterRef character;
@@ -980,7 +980,7 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, const Seperator& arg
 		//		SELECT * FROM `invTypes` WHERE `groupID` IN (SELECT groupID FROM invGroups WHERE categoryID = 16)
 		// LOOP through each skill
 		std::vector<uint32> skillList;
-		db->FullSkillList( skillList );
+        CommandDB::FullSkillList(skillList);
 
 		std::vector<uint32>::const_iterator skill_cur, skill_end;
 		skill_cur = skillList.begin();
@@ -1028,16 +1028,16 @@ PyResult Command_giveallskills( Client* who, CommandDB* db, const Seperator& arg
     return new PyString ("Skill Gifting Failure");
 }
 
-PyResult Command_giveskills( Client* who, CommandDB* db, const Seperator& args ) {
+PyResult Command_giveskills( Client* who, const Seperator& args ) {
 
     //pass to command_giveskill
-    Command_giveskill(who,db,args);
+    Command_giveskill(who,args);
 
     return NULL;
 
 }
 
-PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_giveskill( Client* who, const Seperator& args )
 {
 
     EvilNumber typeID;
@@ -1155,7 +1155,7 @@ PyResult Command_giveskill( Client* who, CommandDB* db, const Seperator& args )
 }
 
 
-PyResult Command_online(Client *who, CommandDB *db, const Seperator &args) {
+PyResult Command_online(Client *who, const Seperator &args) {
 
     if( args.argCount() == 2 )
     {
@@ -1185,7 +1185,7 @@ PyResult Command_online(Client *who, CommandDB *db, const Seperator &args) {
         throw PyException( MakeCustomError( "Command failed: You got the arguments all wrong!"));
 }
 
-PyResult Command_unload(Client *who, CommandDB *db, const Seperator &args) {
+PyResult Command_unload(Client *who, const Seperator &args) {
 
     if( args.argCount() >= 2 && args.argCount() <= 3 )
     {
@@ -1233,7 +1233,7 @@ PyResult Command_unload(Client *who, CommandDB *db, const Seperator &args) {
         throw PyException( MakeCustomError( "Command failed: You got the arguments all wrong!"));
 }
 
-PyResult Command_heal( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_heal( Client* who, const Seperator& args )
 {
     if( args.argCount()== 1 )
     {
@@ -1268,7 +1268,7 @@ PyResult Command_heal( Client* who, CommandDB* db, const Seperator& args )
     return(new PyString("Heal successful!"));
 }
 
-PyResult Command_repairmodules( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_repairmodules( Client* who, const Seperator& args )
 {
 
     if(args.argCount()==1)
@@ -1292,7 +1292,7 @@ PyResult Command_repairmodules( Client* who, CommandDB* db, const Seperator& arg
     return(new PyString("Modules repaired successful!"));
 }
 
-PyResult Command_unspawn( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_unspawn( Client* who, const Seperator& args )
 {
     uint32 entityID = 0;
     uint32 itemID = 0;
@@ -1332,7 +1332,7 @@ PyResult Command_unspawn( Client* who, CommandDB* db, const Seperator& args )
     return new PyString( "Un-Spawn successful." );
 }
 
-PyResult Command_dogma( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_dogma( Client* who, const Seperator& args )
 {
     //"dogma" "140019878" "agility" "=" "0.2"
 
@@ -1359,7 +1359,7 @@ PyResult Command_dogma( Client* who, CommandDB* db, const Seperator& args )
     InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
 
     //get attributeID
-    uint32 attributeID = db->GetAttributeID( attributeName );
+    uint32 attributeID = CommandDB::GetAttributeID(attributeName);
 
     sLog.Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
     item->SetAttribute( attributeID, attributeValue );
@@ -1367,7 +1367,7 @@ PyResult Command_dogma( Client* who, CommandDB* db, const Seperator& args )
     return NULL;
 }
 
-PyResult Command_kick( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_kick( Client* who, const Seperator& args )
 {
     Client *target;
 
@@ -1405,7 +1405,7 @@ PyResult Command_kick( Client* who, CommandDB* db, const Seperator& args )
     return NULL;
 }
 
-PyResult Command_ban( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_ban( Client* who, const Seperator& args )
 {
     Client *target;
 
@@ -1441,7 +1441,7 @@ PyResult Command_ban( Client* who, CommandDB* db, const Seperator& args )
     return NULL;
 }
 
-PyResult Command_unban( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_unban( Client* who, const Seperator& args )
 {
     if( args.argCount() == 2 )
     {
@@ -1449,7 +1449,7 @@ PyResult Command_unban( Client* who, CommandDB* db, const Seperator& args )
         if( !args.isNumber( 1 ) )
         {
             const char *name = args.arg( 1 ).c_str();
-            PyServiceMgr::serviceDB().SetAccountBanStatus(db->GetAccountID(name), false);
+            ServiceDB::SetAccountBanStatus(CommandDB::GetAccountID(name), false);
         }
         else
             throw PyException( MakeCustomError("Correct Usage: /ban [Character Name]") );
@@ -1461,7 +1461,7 @@ PyResult Command_unban( Client* who, CommandDB* db, const Seperator& args )
             throw PyException( MakeCustomError("Unknown arguments") );
 
         std::string name = args.arg( 1 ) + " " + args.arg( 2 );
-        PyServiceMgr::serviceDB().SetAccountBanStatus(db->GetAccountID(name), false);
+        ServiceDB::SetAccountBanStatus(CommandDB::GetAccountID(name), false);
     }
     else
         throw PyException( MakeCustomError("Correct Usage: /unban [Character Name / Character ID]") );
@@ -1469,7 +1469,7 @@ PyResult Command_unban( Client* who, CommandDB* db, const Seperator& args )
     return NULL;
 }
 
-PyResult Command_kenny( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_kenny( Client* who, const Seperator& args )
 {
     if( args.argCount() == 2 )
     {
@@ -1494,7 +1494,7 @@ PyResult Command_kenny( Client* who, CommandDB* db, const Seperator& args )
     return NULL;
 }
 
-PyResult Command_kill( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_kill( Client* who, const Seperator& args )
 {
     if( args.argCount() == 2 )
     {
@@ -1545,7 +1545,7 @@ PyResult Command_kill( Client* who, CommandDB* db, const Seperator& args )
     return NULL;
 }
 
-PyResult Command_killallnpcs( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_killallnpcs( Client* who, const Seperator& args )
 {
     if( args.argCount() == 1 )
     {
@@ -1575,7 +1575,7 @@ PyResult Command_killallnpcs( Client* who, CommandDB* db, const Seperator& args 
     return NULL;
 }
 
-PyResult Command_cloak( Client* who, CommandDB* db, const Seperator& args )
+PyResult Command_cloak( Client* who, const Seperator& args )
 {
     if( args.argCount() == 1 )
     {

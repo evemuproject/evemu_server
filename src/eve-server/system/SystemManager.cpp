@@ -38,6 +38,7 @@
 #include "system/Deployable.h"
 #include "system/SolarSystem.h"
 #include "system/SystemBubble.h"
+#include "system/SystemDB.h"
 #include "system/SystemEntities.h"
 #include "system/SystemManager.h"
 #include "PyServiceMgr.h"
@@ -51,7 +52,7 @@ SystemManager::SystemManager(uint32 systemID)//, ItemData idata)
   m_entityChanged(false)//,
 //  InventoryItem( PyServiceMgr::item_factory, systemID, *(PyServiceMgr::item_factory->GetType( 5 )), idata )
 {
-    m_db.GetSystemInfo(GetID(), NULL, NULL, &m_systemName, &m_systemSecurity);
+    SystemDB::GetSystemInfo(GetID(), NULL, NULL, &m_systemName, &m_systemSecurity);
 
     m_solarSystemRef = PyServiceMgr::item_factory->GetSolarSystem(systemID);
     uint32 inventoryID = m_solarSystemRef->itemID();
@@ -98,7 +99,8 @@ GPoint hack_sentry_locs[num_hack_sentry_locs] = {
 
 bool SystemManager::_LoadSystemCelestials() {
     std::vector<DBSystemEntity> entities;
-    if(!m_db.LoadSystemEntities(m_systemID, entities)) {
+    if (!SystemDB::LoadSystemEntities(m_systemID, entities))
+    {
         _log(SERVICE__ERROR, "Unable to load celestial entities during boot of system %u.", m_systemID);
         return false;
     }
@@ -144,7 +146,7 @@ bool SystemManager::_LoadSystemCelestials() {
                     codelog(SERVICE__ERROR, "Failed to create entity for item %u (type %u)", cur->itemID, cur->typeID);
                     continue;
                 }
-                if(!se->LoadExtras(&m_db)) {
+                if(!se->LoadExtras()) {
                     _log(SERVICE__ERROR, "Failed to load additional data for entity %u. Skipping.", se->GetID());
                     delete se;
                     continue;
@@ -160,7 +162,7 @@ bool SystemManager::_LoadSystemCelestials() {
                     codelog(SERVICE__ERROR, "Failed to create entity for item %u (type %u)", cur->itemID, cur->typeID);
                     continue;
                 }
-                if(!se->LoadExtras(&m_db)) {
+                if(!se->LoadExtras()) {
                     _log(SERVICE__ERROR, "Failed to load additional data for entity %u. Skipping.", se->GetID());
                     delete se;
                     continue;
@@ -578,7 +580,8 @@ public:
 
 bool SystemManager::_LoadSystemDynamics() {
     std::vector<DBSystemDynamicEntity> entities;
-    if(!m_db.LoadSystemDynamicEntities(m_systemID, entities)) {
+    if (!SystemDB::LoadSystemDynamicEntities(m_systemID, entities))
+    {
         _log(SERVICE__ERROR, "Unable to load dynamic entities during boot of system %u.", m_systemID);
         return false;
     }
@@ -855,7 +858,7 @@ void SystemManager::MakeSetState(const SystemBubble *bubble, DoDestiny_SetState 
     //ss.gangCorps
 
     //ss.droneState
-    ss.droneState = m_db.GetSolDroneState( m_systemID );
+    ss.droneState = SystemDB::GetSolDroneState(m_systemID);
     if( NULL == ss.droneState )
     {
         _log( SERVICE__ERROR, "Unable to query dronestate entity for destiny update in system %u!", m_systemID );
@@ -863,7 +866,7 @@ void SystemManager::MakeSetState(const SystemBubble *bubble, DoDestiny_SetState 
     }
 
     //ss.solItem
-    ss.solItem = m_db.GetSolRow( m_systemID );
+    ss.solItem = SystemDB::GetSolRow(m_systemID);
     if( NULL == ss.solItem )
     {
         _log( CLIENT__ERROR, "Unable to query solarsystem entity for destiny update in system %u!", m_systemID );

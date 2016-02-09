@@ -33,8 +33,7 @@ PyCallable_Make_InnerDispatcher(MailMgrService)
 
 MailMgrService::MailMgrService()
 : PyService("mailMgr"),
-  m_dispatch(new Dispatcher(this)),
-  m_db(new MailDB())
+  m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
 
@@ -71,7 +70,6 @@ MailMgrService::MailMgrService()
 
 MailMgrService::~MailMgrService() {
     delete m_dispatch;
-    delete m_db;
 }
 
 PyResult MailMgrService::Handle_SendMail(PyCallArgs &call)
@@ -84,7 +82,7 @@ PyResult MailMgrService::Handle_SendMail(PyCallArgs &call)
     }
 
     int sender = call.client->GetCharacterID();
-    return new PyInt(m_db->SendMail(sender, args.toCharacterIDs, args.toListID, args.toCorpOrAllianceID, args.title, args.body, args.isReplyTo, args.isForwardedFrom));
+    return new PyInt(MailDB::SendMail(sender, args.toCharacterIDs, args.toListID, args.toCorpOrAllianceID, args.title, args.body, args.isReplyTo, args.isForwardedFrom));
 }
 
 PyResult MailMgrService::Handle_PrimeOwners(PyCallArgs &call)
@@ -118,8 +116,8 @@ PyResult MailMgrService::Handle_SyncMail(PyCallArgs &call)
 
     PyDict* dummy = new PyDict;
     dummy->SetItemString("oldMail", new PyNone());
-    dummy->SetItemString("newMail", m_db->GetNewMail(call.client->GetCharacterID()));
-    dummy->SetItemString("mailStatus", m_db->GetMailStatus(call.client->GetCharacterID()));
+    dummy->SetItemString("newMail", MailDB::GetNewMail(call.client->GetCharacterID()));
+    dummy->SetItemString("mailStatus", MailDB::GetMailStatus(call.client->GetCharacterID()));
     return new PyObject("util.KeyVal", dummy);
 }
 
@@ -144,7 +142,7 @@ PyResult MailMgrService::Handle_CreateLabel(PyCallArgs &call)
     }
 
     uint32 ret;
-    if (m_db->CreateLabel(call.client->GetCharacterID(), args, ret))
+    if (MailDB::CreateLabel(call.client->GetCharacterID(), args, ret))
         return new PyInt(ret);
     return NULL;
 }
@@ -158,7 +156,7 @@ PyResult MailMgrService::Handle_DeleteLabel(PyCallArgs &call)
         return NULL;
     }
 
-    m_db->DeleteLabel(call.client->GetCharacterID(), args.arg /*labelID*/);
+    MailDB::DeleteLabel(call.client->GetCharacterID(), args.arg /*labelID*/);
 
     return NULL;
 }
@@ -185,7 +183,7 @@ PyResult MailMgrService::Handle_EditLabel(PyCallArgs &call)
         return NULL;
     }
 
-    m_db->EditLabel(call.client->GetCharacterID(), args);
+    MailDB::EditLabel(call.client->GetCharacterID(), args);
     return NULL;
 }
 
@@ -204,13 +202,13 @@ PyResult MailMgrService::Handle_GetBody(PyCallArgs &call)
         return NULL;
     }
 
-    m_db->SetMailUnread(args.messageId, args.isUnread);
-    return m_db->GetMailBody(args.messageId);
+    MailDB::SetMailUnread(args.messageId, args.isUnread);
+    return MailDB::GetMailBody(args.messageId);
 }
 
 PyResult MailMgrService::Handle_GetLabels(PyCallArgs &call)
 {
-    return m_db->GetLabels(call.client->GetCharacterID());
+    return MailDB::GetLabels(call.client->GetCharacterID());
 }
 
 PyResult MailMgrService::Handle_GetMailHeaders(PyCallArgs &call)
@@ -249,7 +247,7 @@ PyResult MailMgrService::Handle_MarkAsRead(PyCallArgs &call)
     }
 
     for (size_t i = 0; i < args.ints.size(); i++)
-        m_db->SetMailUnread(args.ints[i], false);
+        MailDB::SetMailUnread(args.ints[i], false);
 
     return NULL;
 }
@@ -293,7 +291,7 @@ PyResult MailMgrService::Handle_MarkAsUnread(PyCallArgs &call)
     }
 
     for (size_t i = 0; i < args.ints.size(); i++)
-        m_db->SetMailUnread(args.ints[i], true);
+        MailDB::SetMailUnread(args.ints[i], true);
 
     return NULL;
 }

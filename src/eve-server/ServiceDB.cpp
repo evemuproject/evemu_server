@@ -137,7 +137,7 @@ uint32 ServiceDB::CreateNewAccount( const char* login, const char* pass, uint64 
     return accountID;
 }
 
-PyObject *ServiceDB::GetSolRow(uint32 systemID) const
+PyObject *ServiceDB::GetSolRow(uint32 systemID)
 {
     DBQueryResult res;
 
@@ -168,7 +168,7 @@ PyObject *ServiceDB::GetSolRow(uint32 systemID) const
 }
 
 //this function is temporary, I dont plan to keep this crap in the DB.
-PyObject *ServiceDB::GetSolDroneState(uint32 systemID) const {
+PyObject *ServiceDB::GetSolDroneState(uint32 systemID) {
     DBQueryResult res;
 
     if(!DBcore::RunQuery(res,

@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "character/PaperDollService.h"
+#include "character/PaperDollDB.h"
 
 PyCallable_Make_InnerDispatcher(PaperDollService)
 
@@ -70,13 +71,13 @@ PyResult PaperDollService::Handle_GetPaperDollPortraitDataFor(PyCallArgs &call) 
 
 PyResult PaperDollService::Handle_GetMyPaperDollData(PyCallArgs &call)
 {
-	
+
 	PyDict* args = new PyDict;
 
-	args->SetItemString( "colors", m_db.GetPaperDollAvatarColors(call.client->GetCharacterID()) );
-	args->SetItemString( "modifiers", m_db.GetPaperDollAvatarModifiers(call.client->GetCharacterID()) );
-	args->SetItemString( "appearance", m_db.GetPaperDollAvatar(call.client->GetCharacterID()) );
-	args->SetItemString( "sculpts", m_db.GetPaperDollAvatarSculpts(call.client->GetCharacterID()) );
+    args->SetItemString("colors", PaperDollDB::GetPaperDollAvatarColors(call.client->GetCharacterID()));
+    args->SetItemString("modifiers", PaperDollDB::GetPaperDollAvatarModifiers(call.client->GetCharacterID()));
+    args->SetItemString("appearance", PaperDollDB::GetPaperDollAvatar(call.client->GetCharacterID()));
+    args->SetItemString("sculpts", PaperDollDB::GetPaperDollAvatarSculpts(call.client->GetCharacterID()));
 
     return new PyObject("util.KeyVal", args);
 }

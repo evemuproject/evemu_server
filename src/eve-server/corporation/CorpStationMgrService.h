@@ -27,7 +27,6 @@
 #ifndef __CORPSTATIONMGR_SERVICE_H_INCL__
 #define __CORPSTATIONMGR_SERVICE_H_INCL__
 
-#include "corporation/CorporationDB.h"
 #include "PyService.h"
 
 class PyRep;
@@ -41,8 +40,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    CorporationDB m_db;
 
     //overloaded in order to support bound objects:
     virtual PyBoundObject *_CreateBoundObject(Client *c, const PyRep *bind_args);

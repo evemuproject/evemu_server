@@ -37,7 +37,6 @@ class PyRep;
 class ItemType;
 class ItemFactory;
 class InventoryItem;
-class InventoryDB;
 
 class ItemAttributeMgr;
 
@@ -126,7 +125,7 @@ public:
      * @param[in] db Database to use.
      * @return True if load was successful, false if not.
      */
-    bool Load(InventoryDB &db);
+    bool Load();
 
 protected:
     const ItemType &m_type;

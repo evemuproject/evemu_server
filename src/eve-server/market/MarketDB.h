@@ -42,41 +42,41 @@ class MarketDB
 : public ServiceDB
 {
 public:
-    PyRep *CharGetNewTransactions(uint32 characterID);
-    PyRep *GetStationAsks(uint32 stationID);
-    PyRep *GetSystemAsks(uint32 solarSystemID);
-    PyRep *GetRegionBest(uint32 regionID);
+    static PyRep *CharGetNewTransactions(uint32 characterID);
+    static PyRep *GetStationAsks(uint32 stationID);
+    static PyRep *GetSystemAsks(uint32 solarSystemID);
+    static PyRep *GetRegionBest(uint32 regionID);
 
-    PyRep *GetOrders(uint32 regionID, uint32 typeID);
-    PyRep *GetCharOrders(uint32 characterID);
-    PyRep *GetOrderRow(uint32 orderID);
+    static PyRep *GetOrders(uint32 regionID, uint32 typeID);
+    static PyRep *GetCharOrders(uint32 characterID);
+    static PyRep *GetOrderRow(uint32 orderID);
 
-    PyRep *GetOldPriceHistory(uint32 regionID, uint32 typeID);
-    PyRep *GetNewPriceHistory(uint32 regionID, uint32 typeID);
-    PyRep *GetTransactions(uint32 characterID, uint32 typeID, uint32 quantity, double minPrice, double maxPrice, uint64 fromDate, int buySell);
+    static PyRep *GetOldPriceHistory(uint32 regionID, uint32 typeID);
+    static PyRep *GetNewPriceHistory(uint32 regionID, uint32 typeID);
+    static PyRep *GetTransactions(uint32 characterID, uint32 typeID, uint32 quantity, double minPrice, double maxPrice, uint64 fromDate, int buySell);
 
-    PyRep *GetMarketGroups();
-    PyObject *GetRefTypes();
-    PyObject *GetCorporationBills(uint32 corpID, bool payable);
+    static PyRep *GetMarketGroups();
+    static PyObject *GetRefTypes();
+    static PyObject *GetCorporationBills(uint32 corpID, bool payable);
 
-    uint32 FindBuyOrder(uint32 stationID, uint32 typeID, double price, uint32 quantity, uint32 orderRange);
-    uint32 FindSellOrder(uint32 stationID, uint32 typeID, double price, uint32 quantity, uint32 orderRange);
+    static uint32 FindBuyOrder(uint32 stationID, uint32 typeID, double price, uint32 quantity, uint32 orderRange);
+    static uint32 FindSellOrder(uint32 stationID, uint32 typeID, double price, uint32 quantity, uint32 orderRange);
 
-    bool GetOrderInfo(uint32 orderID, uint32 *orderOwnerID, uint32 *typeID, uint32 *stationID, uint32 *quantity, double *price, bool *isBuy, bool *isCorp);
-    bool AlterOrderQuantity(uint32 orderID, uint32 new_qty);
-    bool AlterOrderPrice(uint32 orderID, double new_price);
-    bool DeleteOrder(uint32 orderID);
+    static bool GetOrderInfo(uint32 orderID, uint32 *orderOwnerID, uint32 *typeID, uint32 *stationID, uint32 *quantity, double *price, bool *isBuy, bool *isCorp);
+    static bool AlterOrderQuantity(uint32 orderID, uint32 new_qty);
+    static bool AlterOrderPrice(uint32 orderID, double new_price);
+    static bool DeleteOrder(uint32 orderID);
 
-    bool AddCharacterBalance(uint32 char_id, double delta);
+    static bool AddCharacterBalance(uint32 char_id, double delta);
 
-    uint32 StoreBuyOrder(uint32 clientID, uint32 accountID, uint32 stationID, uint32 typeID, double price, uint32 quantity, uint8 orderRange, uint32 minVolume, uint8 duration, bool isCorp);
-    uint32 StoreSellOrder(uint32 clientID, uint32 accountID, uint32 stationID, uint32 typeID, double price, uint32 quantity, uint8 orderRange, uint32 minVolume, uint8 duration, bool isCorp);
-    bool RecordTransaction(uint32 typeID, uint32 quantity, double price, MktTransType ttype, uint32 charID, uint32 regionID, uint32 stationID);
+    static uint32 StoreBuyOrder(uint32 clientID, uint32 accountID, uint32 stationID, uint32 typeID, double price, uint32 quantity, uint8 orderRange, uint32 minVolume, uint8 duration, bool isCorp);
+    static uint32 StoreSellOrder(uint32 clientID, uint32 accountID, uint32 stationID, uint32 typeID, double price, uint32 quantity, uint8 orderRange, uint32 minVolume, uint8 duration, bool isCorp);
+    static bool RecordTransaction(uint32 typeID, uint32 quantity, double price, MktTransType ttype, uint32 charID, uint32 regionID, uint32 stationID);
 
-    bool BuildOldPriceHistory();
+    static bool BuildOldPriceHistory();
 
 protected:
-    uint32 _StoreOrder(uint32 clientID, uint32 accountID, uint32 stationID, uint32 typeID, double price, uint32 quantity, uint8 orderRange, uint32 minVolume, uint8 duration, bool isCorp, bool isBuy);
+    static uint32 _StoreOrder(uint32 clientID, uint32 accountID, uint32 stationID, uint32 typeID, double price, uint32 quantity, uint8 orderRange, uint32 minVolume, uint8 duration, bool isCorp, bool isBuy);
 };
 
 

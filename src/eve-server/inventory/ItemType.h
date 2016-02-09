@@ -334,7 +334,7 @@ protected:
     {
         // pull data
         TypeData data;
-        if( !factory.db().GetType( typeID, data ) )
+        if( !InventoryDB::GetType( typeID, data ) )
             return NULL;
 
         // obtain group

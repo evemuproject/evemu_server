@@ -29,7 +29,11 @@
 #include "character/Character.h"
 #include "character/CharacterDB.h"
 
-CharacterDB::CharacterDB()
+CharacterDB::CharValidationSet CharacterDB::mNameValidation;
+CharacterDB::CharIdNameMap CharacterDB::mIdNameContainer;
+//to-do: this should probably have mutex protection on static member access.
+
+void CharacterDB::Init()
 {
     load_name_validation_set();
 }

@@ -69,7 +69,7 @@ public:
     virtual void EncodeDestiny( Buffer& into ) const;
     virtual void Process();
     //SimpleSystemEntity:
-    virtual bool LoadExtras(SystemDB *db);
+    virtual bool LoadExtras();
 
 protected:
     AsteroidBeltManager *m_manager;    //dynamic to simplify dependancy issues.

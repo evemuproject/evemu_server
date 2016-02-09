@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "character/SkillMgrService.h"
+#include "character/CharacterDB.h"
 #include "PyServiceMgr.h"
 
 PyCallable_Make_InnerDispatcher(SkillMgrService)
@@ -47,13 +48,12 @@ PyBoundObject *SkillMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
     _log(CLIENT__MESSAGE, "SkillMgrService bind request for:");
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    return(new SkillMgrBound(m_db));
+    return(new SkillMgrBound());
 }
 
-SkillMgrBound::SkillMgrBound(CharacterDB &db)
+SkillMgrBound::SkillMgrBound()
 : PyBoundObject(),
-  m_dispatch(new Dispatcher(this)),
-  m_db(db)
+  m_dispatch(new Dispatcher(this))
 {
     _SetCallDispatcher(m_dispatch);
 
@@ -250,7 +250,7 @@ PyResult SkillMgrBound::Handle_RespecCharacter(PyCallArgs &call)
 		throw(PyException(MakeUserError("RespecSkillInTraining")));
 
     // return early if this is an illegal call
-    if (!m_db.ReportRespec(call.client->GetCharacterID()))
+    if (!CharacterDB::ReportRespec(call.client->GetCharacterID()))
         return NULL;
 
     // TODO: validate these values (and their sum)
@@ -270,7 +270,7 @@ PyResult SkillMgrBound::Handle_GetRespecInfo( PyCallArgs& call )
     uint32 freeRespecs;
     uint64 lastRespec = 0;
     uint64 nextRespec;
-    if (!m_db.GetRespecInfo(call.client->GetCharacterID(), freeRespecs, lastRespec, nextRespec))
+    if (!CharacterDB::GetRespecInfo(call.client->GetCharacterID(), freeRespecs, lastRespec, nextRespec))
     {
         // insert dummy values
         freeRespecs = 0;

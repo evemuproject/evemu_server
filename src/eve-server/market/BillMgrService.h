@@ -28,7 +28,6 @@
 #define __BILLMGR_SERVICE_H_INCL__
 
 #include "PyService.h"
-#include "market/MarketDB.h"
 
 class BillMgrService : public PyService
 {
@@ -39,8 +38,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    MarketDB m_db;
 
     PyCallable_DECL_CALL(GetBillTypes)
     PyCallable_DECL_CALL(GetCorporationBills)

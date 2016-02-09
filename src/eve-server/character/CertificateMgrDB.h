@@ -34,10 +34,10 @@ class CertificateMgrDB
 : public ServiceDB
 {
 public:
-    PyRep *GetMyCertificates(uint32 characterID);
-    PyRep *GetCertificateCategories();
-    PyRep *GetAllShipCertificateRecommendations();
-    PyRep *GetCertificateClasses();
+    static PyRep *GetMyCertificates(uint32 characterID);
+    static PyRep *GetCertificateCategories();
+    static PyRep *GetAllShipCertificateRecommendations();
+    static PyRep *GetCertificateClasses();
 };
 
 #endif /* __CERTIFICATE_MGR_DB__H__INCL__ */

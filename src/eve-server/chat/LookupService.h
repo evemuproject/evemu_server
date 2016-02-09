@@ -27,7 +27,6 @@
 #ifndef __LOOKUPSVC_SERVICE_H_INCL__
 #define __LOOKUPSVC_SERVICE_H_INCL__
 
-#include "chat/LSCDB.h"
 #include "PyService.h"
 
 class LookupService
@@ -40,8 +39,6 @@ public:
 protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    LSCDB m_db;
 
     PyCallable_DECL_CALL(LookupCharacters)
     PyCallable_DECL_CALL(LookupOwners)

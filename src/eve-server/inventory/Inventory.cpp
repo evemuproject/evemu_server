@@ -170,7 +170,7 @@ bool Inventory::LoadContents(ItemFactory &factory)
         // Each "cur" item should be checked to see if they are "owned" by the character connected to this client,
         // and if not, then do not "get" the entire contents of this for() loop for that item, except in the case that
         // this item is located in space or belongs to this character's corporation:
-        factory.db().GetItem( *cur, into );
+        InventoryDB::GetItem( *cur, into );
         if( factory.GetUsingClient() != NULL )
         {
             characterID = factory.GetUsingClient()->GetCharacterID();

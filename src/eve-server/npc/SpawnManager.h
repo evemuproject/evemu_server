@@ -26,8 +26,6 @@
 #ifndef __SPAWN_MANAGER_H__
 #define __SPAWN_MANAGER_H__
 
-#include "npc/SpawnDB.h"
-
 class SystemManager;
 class BubbleManager;
 class SystemBubble;
@@ -137,8 +135,6 @@ protected:
     SpawnEntry * _FindSpawnForBubble(SystemBubble &thisBubble);
 
 	SystemManager &m_system;    //we do not own this
-
-    SpawnDB m_db;
 
     std::map<uint32, SpawnGroup *> m_groups;    //we own these
     std::map<uint32, SpawnEntry *> m_spawns;    //we own these.

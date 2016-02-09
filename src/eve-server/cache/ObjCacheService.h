@@ -27,7 +27,6 @@
 #ifndef __OBJCACHE_H_INCL__
 #define __OBJCACHE_H_INCL__
 
-#include "cache/ObjCacheDB.h"
 #include "PyService.h"
 
 class PyDict;
@@ -99,8 +98,6 @@ protected:
 
     class Dispatcher;
     Dispatcher *const m_dispatch;
-
-    ObjCacheDB m_db;
 
     std::string m_cacheDir;
     CachedObjectMgr m_cache;

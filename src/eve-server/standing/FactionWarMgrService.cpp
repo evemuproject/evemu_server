@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
+#include "standing/FactionWarMgrDB.h"
 #include "standing/FactionWarMgrService.h"
 #include "PyServiceMgr.h"
 
@@ -58,7 +59,7 @@ PyResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyRep *res = m_db.GetWarFactions();
+        PyRep *res = FactionWarMgrDB::GetWarFactions();
         if(res == NULL)
             return NULL;
         PyServiceMgr::cache_service->GiveCache(method_id, &res);
@@ -73,7 +74,7 @@ PyResult FactionWarMgrService::Handle_GetFWSystems( PyCallArgs& call )
 
     if (!PyServiceMgr::cache_service->IsCacheLoaded(method_id))
     {
-        PyRep* res = m_db.GetWarFactions();
+        PyRep* res = FactionWarMgrDB::GetWarFactions();
         if( res == NULL )
             return NULL;
 
@@ -121,7 +122,7 @@ PyResult FactionWarMgrService::Handle_GetFactionMilitiaCorporation(PyCallArgs &c
         _log(SERVICE__ERROR, "Failed to decode args.");
         return NULL;
     }
-    return(new PyInt(m_db.GetFactionMilitiaCorporation(arg.arg)));
+    return (new PyInt(FactionWarMgrDB::GetFactionMilitiaCorporation(arg.arg)));
 }
 
 PyResult FactionWarMgrService::Handle_GetCharacterRankInfo(PyCallArgs &call) {

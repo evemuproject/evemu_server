@@ -39,8 +39,6 @@ protected:
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    CharacterDB m_db;    //using this for now until we decide if we need to split them. Might be bad since we actually have two instances of it, but so far it has no member data.
-
     PyCallable_DECL_CALL(GetPublicInfo)
     PyCallable_DECL_CALL(GetPublicInfo3)
     PyCallable_DECL_CALL(GetTopBounties)

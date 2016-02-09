@@ -27,6 +27,7 @@
 
 #include "PyServiceCD.h"
 #include "account/TutorialService.h"
+#include "account/TutorialDB.h"
 
 PyCallable_Make_InnerDispatcher(TutorialService)
 
@@ -59,25 +60,25 @@ PyResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
 
     Rsp_GetTutorialInfo rsp;
 
-    rsp.pagecriterias = m_db.GetPageCriterias(args.tutorialID);
+    rsp.pagecriterias = TutorialDB::GetPageCriterias(args.tutorialID);
     if(rsp.pagecriterias == NULL) {
         codelog(SERVICE__ERROR, "An error occured while getting pagecriterias for tutorial %u.", args.tutorialID);
         return NULL;
     }
 
-    rsp.pages = m_db.GetPages(args.tutorialID);
+    rsp.pages = TutorialDB::GetPages(args.tutorialID);
     if(rsp.pages == NULL) {
         codelog(SERVICE__ERROR, "An error occured while getting pages for tutorial %u.", args.tutorialID);
         return NULL;
     }
 
-    rsp.tutorial = m_db.GetTutorial(args.tutorialID);
+    rsp.tutorial = TutorialDB::GetTutorial(args.tutorialID);
     if(rsp.tutorial == NULL) {
         codelog(SERVICE__ERROR, "An error occured while getting tutorial %u.", args.tutorialID);
         return NULL;
     }
 
-    rsp.criterias = m_db.GetTutorialCriterias(args.tutorialID);
+    rsp.criterias = TutorialDB::GetTutorialCriterias(args.tutorialID);
     if(rsp.criterias == NULL) {
         codelog(SERVICE__ERROR, "An error occured while getting criterias for tutorial %u.", args.tutorialID);
         return NULL;
@@ -86,16 +87,19 @@ PyResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {
     return(rsp.Encode());
 }
 
-PyResult TutorialService::Handle_GetTutorials(PyCallArgs &call) {
-    return(m_db.GetAllTutorials());
+PyResult TutorialService::Handle_GetTutorials(PyCallArgs &call)
+{
+    return (TutorialDB::GetAllTutorials());
 }
 
-PyResult TutorialService::Handle_GetCriterias(PyCallArgs &call) {
-    return(m_db.GetAllCriterias());
+PyResult TutorialService::Handle_GetCriterias(PyCallArgs &call)
+{
+    return (TutorialDB::GetAllCriterias());
 }
 
-PyResult TutorialService::Handle_GetCategories(PyCallArgs &call) {
-    return(m_db.GetCategories());
+PyResult TutorialService::Handle_GetCategories(PyCallArgs &call)
+{
+    return (TutorialDB::GetCategories());
 }
 
 PyResult TutorialService::Handle_GetContextHelp( PyCallArgs& call )

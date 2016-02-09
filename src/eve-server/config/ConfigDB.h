@@ -35,25 +35,25 @@ class ConfigDB
 : public ServiceDB
 {
 public:
-    PyRep *GetMultiOwnersEx(const std::vector<int32> &entityIDs);
-    PyRep *GetMultiLocationsEx(const std::vector<int32> &entityIDs);
-    PyRep *GetMultiAllianceShortNamesEx(const std::vector<int32> &entityIDs);
-    PyRep *GetMultiCorpTickerNamesEx(const std::vector<int32> &entityIDs);
-    PyRep *GetMultiGraphicsEx(const std::vector<int32> &entityIDs);
-    PyRep *GetMultiInvTypesEx(const std::vector<int32> &typeIDs);
-    PyObject *GetUnits();
-    PyObjectEx *GetMapObjects(uint32 entityID, bool wantRegions, bool wantConstellations, bool wantSystems, bool wantStations);
-    PyObject *GetMap(uint32 solarSystemID);
-    PyObject *ListLanguages();
-    PyRep *GetStationSolarSystemsByOwner(uint32 ownerID);
-    PyRep *GetCelestialStatistic(uint32 celestialID);
+    static PyRep *GetMultiOwnersEx(const std::vector<int32> &entityIDs);
+    static PyRep *GetMultiLocationsEx(const std::vector<int32> &entityIDs);
+    static PyRep *GetMultiAllianceShortNamesEx(const std::vector<int32> &entityIDs);
+    static PyRep *GetMultiCorpTickerNamesEx(const std::vector<int32> &entityIDs);
+    static PyRep *GetMultiGraphicsEx(const std::vector<int32> &entityIDs);
+    static PyRep *GetMultiInvTypesEx(const std::vector<int32> &typeIDs);
+    static PyObject *GetUnits();
+    static PyObjectEx *GetMapObjects(uint32 entityID, bool wantRegions, bool wantConstellations, bool wantSystems, bool wantStations);
+    static PyObject *GetMap(uint32 solarSystemID);
+    static PyObject *ListLanguages();
+    static PyRep *GetStationSolarSystemsByOwner(uint32 ownerID);
+    static PyRep *GetCelestialStatistic(uint32 celestialID);
     /**
-    * @brief Retrieves dynamic, celestial objects for a given solar system
-    *
-    * @param[in] solarSystemID  ID of the solar system whose objects are being retrieved
-    */
-    PyRep *GetDynamicCelestials(uint32 solarSystemID);
-    PyRep *GetTextsForGroup(const std::string & langID, uint32 textgroup);
+     * @brief Retrieves dynamic, celestial objects for a given solar system
+     *
+     * @param[in] solarSystemID  ID of the solar system whose objects are being retrieved
+     */
+    static PyRep *GetDynamicCelestials(uint32 solarSystemID);
+    static PyRep *GetTextsForGroup(const std::string & langID, uint32 textgroup);
 
 protected:
 };
