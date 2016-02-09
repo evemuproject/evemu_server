@@ -1395,7 +1395,7 @@ PyResult DestinyManager::AttemptDockOperation()
             1
         );
         //spawn rookie
-        InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
+        InventoryItemRef i = ItemFactory::SpawnItem(idata);
 
         //move the new rookie ship into the players hanger in station
         if(!i)

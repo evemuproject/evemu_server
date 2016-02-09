@@ -65,11 +65,10 @@ public:
     /**
      * Loads ship type.
      *
-     * @param[in] factory
      * @param[in] shipTypeID ID of ship type to load.
      * @return Pointer to new ShipType object; NULL if failed.
      */
-    static ShipType *Load(ItemFactory &factory, uint32 shipTypeID);
+    static ShipType *Load(uint32 shipTypeID);
 
     /*
      * Access methods:
@@ -98,7 +97,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static _Ty *_LoadType(ItemFactory &factory, uint32 shipTypeID,
+    static _Ty *_LoadType(uint32 shipTypeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data)
     {
@@ -115,35 +114,38 @@ protected:
 
         // try to load weapon type
         const ItemType *weaponType = NULL;
-        if( stData.mWeaponTypeID != 0 ) {
-            weaponType = factory.GetType( stData.mWeaponTypeID );
+        if( stData.mWeaponTypeID != 0 )
+        {
+            weaponType = ItemFactory::GetType(stData.mWeaponTypeID);
             if( weaponType == NULL )
                 return NULL;
         }
 
         // try to load mining type
         const ItemType *miningType = NULL;
-        if( stData.mMiningTypeID != 0 ) {
-            miningType = factory.GetType( stData.mMiningTypeID );
+        if( stData.mMiningTypeID != 0 )
+        {
+            miningType = ItemFactory::GetType(stData.mMiningTypeID);
             if( miningType == NULL )
                 return NULL;
         }
 
         // try to load skill type
         const ItemType *skillType = NULL;
-        if( stData.mSkillTypeID != 0 ) {
-            skillType = factory.GetType( stData.mSkillTypeID );
+        if( stData.mSkillTypeID != 0 )
+        {
+            skillType = ItemFactory::GetType(stData.mSkillTypeID);
             if( skillType == NULL )
                 return NULL;
         }
 
         // continue with load
-        return _Ty::template _LoadShipType<_Ty>( factory, shipTypeID, group, data, weaponType, miningType, skillType, stData );
+        return _Ty::template _LoadShipType<_Ty>( shipTypeID, group, data, weaponType, miningType, skillType, stData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static _Ty *_LoadShipType(ItemFactory &factory, uint32 shipTypeID,
+    static _Ty *_LoadShipType(uint32 shipTypeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data,
         // ShipType stuff:
@@ -174,7 +176,7 @@ public:
      * @param[in] shipID ID of ship to load.
      * @return Pointer to Ship object; NULL if failed.
      */
-    static ShipRef Load(ItemFactory &factory, uint32 shipID);
+    static ShipRef Load(uint32 shipID);
     /**
      * Spawns new ship.
      *
@@ -182,7 +184,7 @@ public:
      * @param[in] data Item data for ship.
      * @return Pointer to new Ship object; NULL if failed.
      */
-    static ShipRef Spawn(ItemFactory &factory, ItemData &data);
+    static ShipRef Spawn(ItemData &data);
 
     /*
      * Primary public interface:
@@ -265,7 +267,6 @@ public:
 
 protected:
     Ship(
-        ItemFactory &_factory,
         uint32 _shipID,
         // InventoryItem stuff:
         const ShipType &_shipType,
@@ -279,7 +280,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 shipID,
+    static RefPtr<_Ty> _LoadItem(uint32 shipID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -294,19 +295,19 @@ protected:
 
         // no additional stuff
 
-        return _Ty::template _LoadShip<_Ty>( factory, shipID, shipType, data );
+        return _Ty::template _LoadShip<_Ty>( shipID, shipType, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadShip(ItemFactory &factory, uint32 shipID,
+    static RefPtr<_Ty> _LoadShip(uint32 shipID,
         // InventoryItem stuff:
         const ShipType &shipType, const ItemData &data
     );
 
     bool _Load();
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );

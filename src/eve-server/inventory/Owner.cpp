@@ -29,22 +29,21 @@
 #include "inventory/Owner.h"
 
 Owner::Owner(
-    ItemFactory &_factory,
     uint32 _ownerID,
     // InventoryItem stuff:
     const ItemType &_type,
     const ItemData &_data)
-: InventoryItem( _factory, _ownerID, _type, _data )
+: InventoryItem( _ownerID, _type, _data )
 {
 }
 
-OwnerRef Owner::Load(ItemFactory &factory, uint32 ownerID)
+OwnerRef Owner::Load(uint32 ownerID)
 {
-    return InventoryItem::Load<Owner>( factory, ownerID );
+    return InventoryItem::Load<Owner>( ownerID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Owner::_LoadOwner(ItemFactory &factory, uint32 ownerID,
+RefPtr<_Ty> Owner::_LoadOwner(uint32 ownerID,
     // InventoryItem stuff:
     const ItemType &type, const ItemData &data )
 {
@@ -56,18 +55,18 @@ RefPtr<_Ty> Owner::_LoadOwner(ItemFactory &factory, uint32 ownerID,
         ///////////////////////////////////////
         case EVEDB::invGroups::Character: {
             // create character
-            return Character::_LoadOwner<Character>( factory, ownerID, type, data );
+            return Character::_LoadOwner<Character>( ownerID, type, data );
         }
     }
 
     // fallback to default:
-    return OwnerRef( new Owner( factory, ownerID, type, data ) );
+    return OwnerRef( new Owner( ownerID, type, data ) );
 }
 
-OwnerRef Owner::Spawn(ItemFactory &factory, ItemData &data)
+OwnerRef Owner::Spawn(ItemData &data)
 {
     // obtain type of new item
-    const ItemType *t = factory.GetType( data.typeID );
+    const ItemType *t = ItemFactory::GetType(data.typeID);
     if( t == NULL )
         return OwnerRef();
 
@@ -85,17 +84,17 @@ OwnerRef Owner::Spawn(ItemFactory &factory, ItemData &data)
     }
 
     // fallback to default:
-    uint32 ownerID = Owner::_Spawn( factory, data );
+    uint32 ownerID = Owner::_Spawn( data );
     if( ownerID == 0 )
         return OwnerRef();
-    return Owner::Load( factory, ownerID );
+    return Owner::Load( ownerID );
 }
 
-uint32 Owner::_Spawn(ItemFactory &factory,
+uint32 Owner::_Spawn(
     // InventoryItem stuff:
     ItemData &data )
 {
     // no additional stuff
-    return InventoryItem::_Spawn( factory, data );
+    return InventoryItem::_Spawn( data );
 }
 

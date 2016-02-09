@@ -837,7 +837,7 @@ void Client::Killed(Damage &fatal_blow) {
 			""
 		);
 
-        ShipRef capsuleRef = PyServiceMgr::item_factory->SpawnShip(capsuleItemData);
+        ShipRef capsuleRef = ItemFactory::SpawnShip(capsuleItemData);
 		if( !capsuleRef )
 		{
 			sLog.Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
@@ -850,7 +850,7 @@ void Client::Killed(Damage &fatal_blow) {
 
 	    capsuleRef->Move(GetLocationID(), (EVEItemFlags)flagHangar, true);
 
-        ShipRef updatedCapsuleRef = PyServiceMgr::item_factory->GetShip(capsuleRef->itemID());
+        ShipRef updatedCapsuleRef = ItemFactory::GetShip(capsuleRef->itemID());
 
 		System()->bubbles.Remove( this, true );
 
@@ -870,7 +870,7 @@ void Client::Killed(Damage &fatal_blow) {
 			deadPodPosition
 		);
 
-        corpseItemRef = PyServiceMgr::item_factory->SpawnItem(corpseItemData);
+        corpseItemRef = ItemFactory::SpawnItem(corpseItemData);
 		if( !corpseItemRef )
 			throw PyException( MakeCustomError( "Unable to spawn item of type %u.", corpseTypeID ) );
 
@@ -940,7 +940,7 @@ void Client::Killed(Damage &fatal_blow) {
 			""
 		);
 
-        ShipRef capsuleRef = PyServiceMgr::item_factory->SpawnShip(capsuleItemData);
+        ShipRef capsuleRef = ItemFactory::SpawnShip(capsuleItemData);
 		if( !capsuleRef )
 		{
 			sLog.Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
@@ -954,7 +954,7 @@ void Client::Killed(Damage &fatal_blow) {
         //put the capsule where the ship was
 	    capsuleRef->Move(GetLocationID(), (EVEItemFlags)flagCapsule, true);
 
-        ShipRef updatedCapsuleRef = PyServiceMgr::item_factory->GetShip(capsuleRef->itemID());
+        ShipRef updatedCapsuleRef = ItemFactory::GetShip(capsuleRef->itemID());
 
 		System()->bubbles.Remove( this, true );
 
@@ -996,7 +996,7 @@ void Client::Killed(Damage &fatal_blow) {
 			deadShipPosition
 		);
 
-        wreckItemRef = PyServiceMgr::item_factory->SpawnItem(wreckItemData);
+        wreckItemRef = ItemFactory::SpawnItem(wreckItemData);
 		if( !wreckItemRef )
 			throw PyException( MakeCustomError( "Unable to spawn item of type %u.", wreckTypeID ) );
 
@@ -1084,7 +1084,7 @@ void NPC::Killed(Damage &fatal_blow)
 		deadNPCPosition
 	);
 
-    wreckItemRef = PyServiceMgr::item_factory->SpawnItem(wreckItemData);
+    wreckItemRef = ItemFactory::SpawnItem(wreckItemData);
 	if( !wreckItemRef )
 		throw PyException( MakeCustomError( "Unable to spawn item of type %u.", wreckTypeID ) );
 
@@ -1247,7 +1247,7 @@ void ShipEntity::Killed(Damage &fatal_blow)
 		wreckPosition
 	);
 
-    wreckItemRef = PyServiceMgr::item_factory->SpawnItem(wreckItemData);
+    wreckItemRef = ItemFactory::SpawnItem(wreckItemData);
 	if( !wreckItemRef )
 		throw PyException( MakeCustomError( "Unable to spawn item of type %u.", wreckTypeID ) );
 

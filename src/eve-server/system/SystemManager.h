@@ -85,8 +85,6 @@ public:
 
     const char * GetSystemSecurity() { return m_systemSecurity.c_str(); }
 
-    ItemFactory &itemFactory() const;
-
     void AddItemToInventory(InventoryItemRef item);
     ShipRef GetShipFromInventory(uint32 shipID);
     void RemoveItemFromInventory(InventoryItemRef item);

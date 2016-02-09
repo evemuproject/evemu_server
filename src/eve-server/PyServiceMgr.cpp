@@ -29,8 +29,8 @@
 #include "PyService.h"
 #include "PyServiceMgr.h"
 #include "PyBoundObject.h"
+#include "inventory/ItemFactory.h"
 
-ItemFactory *PyServiceMgr::item_factory; //here for anybody to use. we do not own this.
 //Area to access services by name. This isn't ideal, but it avoids casting.
 //these may be NULL during service init, but should never be after that.
 //we do not own these pointers (we do in their PyService * form though)
@@ -41,9 +41,8 @@ uint32 PyServiceMgr::m_nextBindID = 100;
 PyServiceMgr::ObjectsBoundMap PyServiceMgr::m_boundObjects;
 uint32 PyServiceMgr::m_nodeID;
 
-void PyServiceMgr::Init(uint32 nodeID, ItemFactory *ifactory)
+void PyServiceMgr::Init(uint32 nodeID)
 {
-    item_factory = ifactory;
     m_nodeID = nodeID;
 }
 
@@ -66,6 +65,7 @@ void PyServiceMgr::Shutdown()
             delete cur->second.destination;
         }
     }
+    ItemFactory::Shutdown();
 }
 
 void PyServiceMgr::Process() {

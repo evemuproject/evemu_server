@@ -58,9 +58,9 @@ ItemCategory::ItemCategory(
     _log(ITEM__TRACE, "Created object %p for category %s (%u).", this, name().c_str(), (uint32)id());
 }
 
-ItemCategory *ItemCategory::Load(ItemFactory &factory, EVEItemCategories category) {
+ItemCategory *ItemCategory::Load(EVEItemCategories category) {
     // create category
-    ItemCategory *c = ItemCategory::_Load(factory, category);
+    ItemCategory *c = ItemCategory::_Load(category);
     if(c == NULL)
         return NULL;
 
@@ -69,7 +69,7 @@ ItemCategory *ItemCategory::Load(ItemFactory &factory, EVEItemCategories categor
     return(c);
 }
 
-ItemCategory *ItemCategory::_Load(ItemFactory &factory, EVEItemCategories category
+ItemCategory *ItemCategory::_Load(EVEItemCategories category
 ) {
     // pull data
     CategoryData data;
@@ -77,11 +77,11 @@ ItemCategory *ItemCategory::_Load(ItemFactory &factory, EVEItemCategories catego
         return NULL;
 
     return(
-        ItemCategory::_Load(factory, category, data)
+        ItemCategory::_Load(category, data)
     );
 }
 
-ItemCategory *ItemCategory::_Load(ItemFactory &factory, EVEItemCategories category,
+ItemCategory *ItemCategory::_Load(EVEItemCategories category,
     // ItemCategory stuff:
     const CategoryData &data
 ) {
@@ -144,9 +144,9 @@ ItemGroup::ItemGroup(
     _log(ITEM__TRACE, "Created object %p for group %s (%u).", this, name().c_str(), id());
 }
 
-ItemGroup *ItemGroup::Load(ItemFactory &factory, uint32 groupID) {
+ItemGroup *ItemGroup::Load(uint32 groupID) {
     // create group
-    ItemGroup *g = ItemGroup::_Load(factory, groupID);
+    ItemGroup *g = ItemGroup::_Load(groupID);
     if(g == NULL)
         return NULL;
 
@@ -155,7 +155,7 @@ ItemGroup *ItemGroup::Load(ItemFactory &factory, uint32 groupID) {
     return(g);
 }
 
-ItemGroup *ItemGroup::_Load(ItemFactory &factory, uint32 groupID
+ItemGroup *ItemGroup::_Load(uint32 groupID
 ) {
     // pull data
     GroupData data;
@@ -163,16 +163,16 @@ ItemGroup *ItemGroup::_Load(ItemFactory &factory, uint32 groupID
         return NULL;
 
     // retrieve category
-    const ItemCategory *c = factory.GetCategory(data.category);
+    const ItemCategory *c = ItemFactory::GetCategory(data.category);
     if(c == NULL)
         return NULL;
 
     return(
-        ItemGroup::_Load(factory, groupID, *c, data)
+        ItemGroup::_Load(groupID, *c, data)
     );
 }
 
-ItemGroup *ItemGroup::_Load(ItemFactory &factory, uint32 groupID,
+ItemGroup *ItemGroup::_Load(uint32 groupID,
     // ItemGroup stuff:
     const ItemCategory &category, const GroupData &data
 ) {
@@ -246,13 +246,13 @@ ItemType::ItemType(
     _log(ITEM__TRACE, "Created object %p for type %s (%u).", this, name().c_str(), id());
 }
 
-ItemType *ItemType::Load(ItemFactory &factory, uint32 typeID)
+ItemType *ItemType::Load(uint32 typeID)
 {
-    return ItemType::Load<ItemType>( factory, typeID );
+    return ItemType::Load<ItemType>( typeID );
 }
 
 template<class _Ty>
-_Ty *ItemType::_LoadType(ItemFactory &factory, uint32 typeID,
+_Ty *ItemType::_LoadType(uint32 typeID,
     // ItemType stuff:
     const ItemGroup &group, const TypeData &data)
 {
@@ -283,14 +283,14 @@ _Ty *ItemType::_LoadType(ItemFactory &factory, uint32 typeID,
         // Blueprint:
         ///////////////////////////////////////
         case EVEDB::invCategories::Blueprint: {
-            return BlueprintType::_LoadType<BlueprintType>( factory, typeID, group, data );
+            return BlueprintType::_LoadType<BlueprintType>( typeID, group, data );
         }
 
         ///////////////////////////////////////
         // Ship:
         ///////////////////////////////////////
         case EVEDB::invCategories::Ship: {
-            return ShipType::_LoadType<ShipType>( factory, typeID, group, data );
+            return ShipType::_LoadType<ShipType>( typeID, group, data );
         }
     }
 
@@ -300,14 +300,14 @@ _Ty *ItemType::_LoadType(ItemFactory &factory, uint32 typeID,
         // Character:
         ///////////////////////////////////////
         case EVEDB::invGroups::Character: {
-            return CharacterType::_LoadType<CharacterType>( factory, typeID, group, data );
+            return CharacterType::_LoadType<CharacterType>( typeID, group, data );
         }
 
         ///////////////////////////////////////
         // Station:
         ///////////////////////////////////////
         case EVEDB::invGroups::Station: {
-            return StationType::_LoadType<StationType>( factory, typeID, group, data );
+            return StationType::_LoadType<StationType>( typeID, group, data );
         }
     }
 
@@ -315,7 +315,7 @@ _Ty *ItemType::_LoadType(ItemFactory &factory, uint32 typeID,
     return new ItemType( typeID, group, data );
 }
 
-bool ItemType::_Load(ItemFactory &factory) {
+bool ItemType::_Load() {
 	// load type effects
 	InventoryDB::GetTypeEffectsList( m_id, m_effects );
 

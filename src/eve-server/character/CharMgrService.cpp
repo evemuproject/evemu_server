@@ -240,8 +240,8 @@ PyResult CharMgrService::Handle_GetCharacterDescription(PyCallArgs &call)
         return NULL;
     }
 
-    PyServiceMgr::item_factory->SetUsingClient(call.client);
-    CharacterRef c = PyServiceMgr::item_factory->GetCharacter(args.arg);
+    ItemFactory::SetUsingClient(call.client);
+    CharacterRef c = ItemFactory::GetCharacter(args.arg);
     if( !c ) {
         _log(CLIENT__ERROR, "GetCharacterDescription failed to load character %u.", args.arg);
         return NULL;

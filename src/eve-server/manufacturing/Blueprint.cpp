@@ -90,13 +90,13 @@ BlueprintType::BlueprintType(
         assert(_bpData.parentBlueprintTypeID == _parentBlueprintType->id());
 }
 
-BlueprintType *BlueprintType::Load(ItemFactory &factory, uint32 typeID)
+BlueprintType *BlueprintType::Load(uint32 typeID)
 {
-    return ItemType::Load<BlueprintType>( factory, typeID );
+    return ItemType::Load<BlueprintType>( typeID );
 }
 
 template<class _Ty>
-_Ty *BlueprintType::_LoadBlueprintType(ItemFactory &factory, uint32 typeID,
+_Ty *BlueprintType::_LoadBlueprintType(uint32 typeID,
     // ItemType stuff:
     const ItemGroup &group, const TypeData &data,
     // BlueprintType stuff:
@@ -124,14 +124,13 @@ BlueprintData::BlueprintData(
  * Blueprint
  */
 Blueprint::Blueprint(
-    ItemFactory &_factory,
     uint32 _blueprintID,
     // InventoryItem stuff:
     const BlueprintType &_bpType,
     const ItemData &_data,
     // Blueprint stuff:
     const BlueprintData &_bpData)
-: InventoryItem(_factory, _blueprintID, _bpType, _data),
+: InventoryItem(_blueprintID, _bpType, _data),
   m_copy(_bpData.copy),
   m_materialLevel(_bpData.materialLevel),
   m_productivityLevel(_bpData.productivityLevel),
@@ -141,42 +140,42 @@ Blueprint::Blueprint(
     assert(_bpType.categoryID() == EVEDB::invCategories::Blueprint);
 }
 
-BlueprintRef Blueprint::Load(ItemFactory &factory, uint32 blueprintID)
+BlueprintRef Blueprint::Load(uint32 blueprintID)
 {
-    return InventoryItem::Load<Blueprint>( factory, blueprintID );
+    return InventoryItem::Load<Blueprint>( blueprintID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Blueprint::_LoadBlueprint(ItemFactory &factory, uint32 blueprintID,
+RefPtr<_Ty> Blueprint::_LoadBlueprint(uint32 blueprintID,
     // InventoryItem stuff:
     const BlueprintType &bpType, const ItemData &data,
     // Blueprint stuff:
     const BlueprintData &bpData)
 {
     // we have enough data, construct the item
-    return BlueprintRef( new Blueprint( factory, blueprintID, bpType, data, bpData ) );
+    return BlueprintRef( new Blueprint( blueprintID, bpType, data, bpData ) );
 }
 
-BlueprintRef Blueprint::Spawn(ItemFactory &factory, ItemData &data, BlueprintData &bpData) {
-    uint32 blueprintID = Blueprint::_Spawn(factory, data, bpData);
+BlueprintRef Blueprint::Spawn(ItemData &data, BlueprintData &bpData) {
+    uint32 blueprintID = Blueprint::_Spawn(data, bpData);
     if(blueprintID == 0)
         return BlueprintRef();
-    return Blueprint::Load(factory, blueprintID);
+    return Blueprint::Load(blueprintID);
 }
 
-uint32 Blueprint::_Spawn(ItemFactory &factory,
+uint32 Blueprint::_Spawn(
     // InventoryItem stuff:
     ItemData &data,
     // Blueprint stuff:
     BlueprintData &bpData
 ) {
     // make sure it's a blueprint type
-    const BlueprintType *bt = factory.GetBlueprintType(data.typeID);
+    const BlueprintType *bt = ItemFactory::GetBlueprintType(data.typeID);
     if(bt == NULL)
         return 0;
 
     // get the blueprintID
-    uint32 blueprintID = InventoryItem::_Spawn(factory, data);
+    uint32 blueprintID = InventoryItem::_Spawn(data);
     if(blueprintID == 0)
         return 0;
 

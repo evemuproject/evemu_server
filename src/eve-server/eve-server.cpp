@@ -236,11 +236,10 @@ int main( int argc, char* argv[] )
     }
 
     //make the item factory
-    ItemFactory item_factory;
   sLog.Log("Server Init", "starting item factory");
 
     //now, the service manager...
-    PyServiceMgr::Init(888444, &item_factory);
+    PyServiceMgr::Init(888444);
   sLog.Log("Server Init", "starting service manager");
 
     //setup the command dispatcher

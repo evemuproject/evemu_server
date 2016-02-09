@@ -233,7 +233,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
     end = call_args.items.end();
     for(; cur != end; cur++)
     {
-        InventoryItemRef item = PyServiceMgr::item_factory->GetItem(*cur);
+        InventoryItemRef item = ItemFactory::GetItem(*cur);
         if( !item )
             continue;
 
@@ -275,7 +275,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
                 quantity
             );
 
-            InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
+            InventoryItemRef i = ItemFactory::SpawnItem(idata);
             if( !i )
                 continue;
 
@@ -325,7 +325,7 @@ double ReprocessingServiceBound::_CalcReprocessingEfficiency(const Client *c, In
 
 PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
 {
-    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
+    InventoryItemRef item = ItemFactory::GetItem(itemID);
     if( !item )
         return NULL;    // No action as GetQuote is also called for reprocessed items (probably for check)
 

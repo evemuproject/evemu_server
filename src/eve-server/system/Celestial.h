@@ -57,13 +57,11 @@ class CelestialObject
     friend class InventoryItem; // to let it construct us
 public:
     CelestialObject(
-        ItemFactory &_factory,
         uint32 _celestialID,
         const ItemType &_type,
         const ItemData &_data);
 
     CelestialObject(
-        ItemFactory &_factory,
         uint32 _celestialID,
         // InventoryItem stuff:
         const ItemType &_type,
@@ -75,19 +73,17 @@ public:
     /**
      * Loads celestial object.
      *
-     * @param[in] factory
      * @param[in] celestialID ID of celestial object to load.
      * @return Pointer to new CelestialObject; NULL if fails.
      */
-    static CelestialObjectRef Load(ItemFactory &factory, uint32 celestialID);
+    static CelestialObjectRef Load(uint32 celestialID);
     /**
      * Spawns new celestial object.
      *
-     * @param[in] factory
      * @param[in] data Item data for celestial object.
      * @return Pointer to new celestial object; NULL if failed.
      */
-    static CelestialObjectRef Spawn(ItemFactory &factory, ItemData &data);
+    static CelestialObjectRef Spawn(ItemData &data);
 
     /*
      * Primary public interface:
@@ -110,7 +106,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 celestialID,
+    static RefPtr<_Ty> _LoadItem(uint32 celestialID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -128,19 +124,19 @@ protected:
         if (!InventoryDB::GetCelestialObject(celestialID, cData))
             return RefPtr<_Ty>();
 
-        return _Ty::template _LoadCelestialObject<_Ty>( factory, celestialID, type, data, cData );
+        return _Ty::template _LoadCelestialObject<_Ty>( celestialID, type, data, cData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadCelestialObject(ItemFactory &factory, uint32 celestialID,
+    static RefPtr<_Ty> _LoadCelestialObject(uint32 celestialID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData
     );
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );

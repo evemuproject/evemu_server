@@ -89,19 +89,17 @@ public:
     /**
      * Loads item from DB.
      *
-     * @param[in] factory
      * @param[in] itemID ID of item to load.
      * @return Pointer to InventoryItem object; NULL if failed.
      */
-    static InventoryItemRef Load(ItemFactory &factory, uint32 itemID);
+    static InventoryItemRef Load(uint32 itemID);
     /**
      * Spawns new item.
      *
-     * @param[in] factory
      * @param[in] data Item data of item to spawn.
      * @return Pointer to InventoryItem object; NULL if failed.
      */
-    static InventoryItemRef Spawn(ItemFactory &factory, ItemData &data);
+    static InventoryItemRef Spawn(ItemData &data);
 
     /*
      * Primary public interface:
@@ -116,7 +114,6 @@ public:
     bool SetFlag(EVEItemFlags new_flag, bool notify=true);
     void Relocate(const GPoint &pos);
     void SetCustomInfo(const char *ci);
-    ItemFactory *GetItemFactory() { return &m_factory; };
 
 
     /*
@@ -226,7 +223,6 @@ public:
 
 protected:
     InventoryItem(
-        ItemFactory &_factory,
         uint32 _itemID,
         // InventoryItem stuff:
         const ItemType &_type,
@@ -238,10 +234,10 @@ protected:
      */
     // Template helper:
     template<class _Ty>
-    static RefPtr<_Ty> Load(ItemFactory &factory, uint32 itemID)
+    static RefPtr<_Ty> Load(uint32 itemID)
     {
         // static load
-        RefPtr<_Ty> i = _Ty::template _Load<_Ty>( factory, itemID );
+        RefPtr<_Ty> i = _Ty::template _Load<_Ty>( itemID );
         if( !i )
             return RefPtr<_Ty>();
 
@@ -254,7 +250,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _Load(ItemFactory &factory, uint32 itemID)
+    static RefPtr<_Ty> _Load(uint32 itemID)
     {
         // pull the item info
         ItemData data;
@@ -262,30 +258,30 @@ protected:
             return RefPtr<_Ty>();
 
         // obtain type
-        const ItemType *type = factory.GetType( data.typeID );
+        const ItemType *type = ItemFactory::GetType(data.typeID);
         if( type == NULL )
             return RefPtr<_Ty>();
 
-        return _Ty::template _LoadItem<_Ty>( factory, itemID, *type, data );
+        return _Ty::template _LoadItem<_Ty>( itemID, *type, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 itemID,
+    static RefPtr<_Ty> _LoadItem(uint32 itemID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data
     );
 
     virtual bool _Load();
 
-	static InventoryItemRef LoadEntity(ItemFactory &factory, uint32 itemID, const ItemData &data);
+	static InventoryItemRef LoadEntity(uint32 itemID, const ItemData &data);
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );
 
-	static uint32 _SpawnEntity(ItemFactory &factory,
+	static uint32 _SpawnEntity(
 		// InventoryItem stuff:
 		ItemData &data
 	);
@@ -299,9 +295,6 @@ protected:
     // our save timer and our default countdown value
     Timer m_saveTimer;
     uint32 m_saveTimerExpiryTime;
-
-    // our factory
-    ItemFactory &       m_factory;
 
     // our item data:
     const uint32        m_itemID;

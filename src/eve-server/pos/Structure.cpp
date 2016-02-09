@@ -34,48 +34,47 @@
  * Structure
  */
 Structure::Structure(
-    ItemFactory &_factory,
     uint32 _structureID,
     // InventoryItem stuff:
     const ItemType &_itemType,
     const ItemData &_data)
-: InventoryItem(_factory, _structureID, _itemType, _data) {}
+: InventoryItem(_structureID, _itemType, _data) {}
 
-StructureRef Structure::Load(ItemFactory &factory, uint32 structureID)
+StructureRef Structure::Load(uint32 structureID)
 {
-    return InventoryItem::Load<Structure>( factory, structureID );
+    return InventoryItem::Load<Structure>( structureID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Structure::_LoadStructure(ItemFactory &factory, uint32 structureID,
+RefPtr<_Ty> Structure::_LoadStructure(uint32 structureID,
     // InventoryItem stuff:
     const ItemType &itemType, const ItemData &data)
 {
     // we don't need any additional stuff
-    return StructureRef( new Structure( factory, structureID, itemType, data ) );
+    return StructureRef( new Structure( structureID, itemType, data ) );
 }
 
-StructureRef Structure::Spawn(ItemFactory &factory,
+StructureRef Structure::Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
-    uint32 structureID = Structure::_Spawn( factory, data );
+    uint32 structureID = Structure::_Spawn( data );
     if( structureID == 0 )
         return StructureRef();
-    return Structure::Load( factory, structureID );
+    return Structure::Load( structureID );
 }
 
-uint32 Structure::_Spawn(ItemFactory &factory,
+uint32 Structure::_Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
     // make sure it's a Structure
-    const ItemType *st = factory.GetType(data.typeID);
+    const ItemType *st = ItemFactory::GetType(data.typeID);
     if(st == NULL)
         return 0;
 
     // store item data
-    uint32 structureID = InventoryItem::_Spawn(factory, data);
+    uint32 structureID = InventoryItem::_Spawn(data);
     if(structureID == 0)
         return 0;
 
@@ -87,7 +86,7 @@ uint32 Structure::_Spawn(ItemFactory &factory,
 bool Structure::_Load()
 {
     // load contents
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
         return false;
 
     return InventoryItem::_Load();
@@ -96,7 +95,7 @@ bool Structure::_Load()
 void Structure::Delete()
 {
     // delete contents first
-    DeleteContents( m_factory );
+    DeleteContents();
 
     InventoryItem::Delete();
 }
@@ -157,7 +156,7 @@ void Structure::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client
 
 PyObject *Structure::StructureGetInfo()
 {
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
     {
         codelog( ITEM__ERROR, "%s (%u): Failed to load contents for StructureGetInfo", itemName().c_str(), itemID() );
         return NULL;

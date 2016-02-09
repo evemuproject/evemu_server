@@ -45,19 +45,17 @@ public:
     /**
      * Loads CargoContainer from DB.
      *
-     * @param[in] factory
      * @param[in] containerID ID of container to load.
      * @return Pointer to CargoContainer object; NULL if failed.
      */
-    static CargoContainerRef Load(ItemFactory &factory, uint32 containerID);
+    static CargoContainerRef Load(uint32 containerID);
     /**
      * Spawns new CargoContainer.
      *
-     * @param[in] factory
      * @param[in] data Item data for CargoContainer.
      * @return Pointer to new CargoContainer object; NULL if failed.
      */
-    static CargoContainerRef Spawn(ItemFactory &factory, ItemData &data);
+    static CargoContainerRef Spawn(ItemData &data);
 
     /*
      * Primary public interface:
@@ -83,7 +81,6 @@ public:
 
 protected:
     CargoContainer(
-        ItemFactory &_factory,
         uint32 _containerID,
         // InventoryItem stuff:
         const ItemType &_containerType,
@@ -97,7 +94,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 containerID,
+    static RefPtr<_Ty> _LoadItem(uint32 containerID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -117,19 +114,19 @@ protected:
 
         // no additional stuff
 
-        return _Ty::template _LoadCargoContainer<_Ty>( factory, containerID, type, data );
+        return _Ty::template _LoadCargoContainer<_Ty>( containerID, type, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadCargoContainer(ItemFactory &factory, uint32 containerID,
+    static RefPtr<_Ty> _LoadCargoContainer(uint32 containerID,
         // InventoryItem stuff:
         const ItemType &itemType, const ItemData &data
     );
 
     bool _Load();
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );

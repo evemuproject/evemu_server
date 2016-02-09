@@ -125,7 +125,7 @@ PyResult Standing2Service::Handle_GetSecurityRating(PyCallArgs &call) {
         return NULL;
     }
 
-    CharacterRef c = PyServiceMgr::item_factory->GetCharacter(arg.arg);
+    CharacterRef c = ItemFactory::GetCharacter(arg.arg);
     if( !c ) {
         _log(SERVICE__ERROR, "Character %u not found.", arg.arg);
         return NULL;

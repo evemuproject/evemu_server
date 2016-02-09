@@ -48,19 +48,17 @@ public:
     /**
      * Loads skill.
      *
-     * @param[in] factory
      * @param[in] skillID ID of skill to load.
      * @return Pointer to new Skill object; NULL if fails.
      */
-    static SkillRef Load(ItemFactory &factory, uint32 skillID);
+    static SkillRef Load(uint32 skillID);
     /**
      * Spawns new skill.
      *
-     * @param[in] factory
      * @param[in] data Item data of new skill.
      * @return Pointer to new Skill object; NULL if fails.
      */
-    static SkillRef Spawn(ItemFactory &factory, ItemData &data);
+    static SkillRef Spawn(ItemData &data);
 
     /**
      * Calculates required amount of skillpoints for level.
@@ -84,7 +82,6 @@ public:
 
 protected:
     Skill(
-        ItemFactory &_factory,
         uint32 _skillID,
         // InventoryItem stuff:
         const ItemType &_type,
@@ -97,7 +94,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadItem(ItemFactory &factory, uint32 skillID,
+    static RefPtr<_Ty> _LoadItem(uint32 skillID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data)
     {
@@ -110,17 +107,17 @@ protected:
 
         // no additional stuff
 
-        return _Ty::template _LoadSkill<_Ty>( factory, skillID, type, data );
+        return _Ty::template _LoadSkill<_Ty>( skillID, type, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static RefPtr<_Ty> _LoadSkill(ItemFactory &factory, uint32 skillID,
+    static RefPtr<_Ty> _LoadSkill(uint32 skillID,
         // InventoryItem stuff:
         const ItemType &type, const ItemData &data
     );
 
-    static uint32 _Spawn(ItemFactory &factory,
+    static uint32 _Spawn(
         // InventoryItem stuff:
         ItemData &data
     );

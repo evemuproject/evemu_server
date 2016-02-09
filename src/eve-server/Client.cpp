@@ -496,8 +496,8 @@ void Client::MoveToPosition(const GPoint &pt) {
 
 void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
 {
-    PyServiceMgr::item_factory->SetUsingClient(this);
-    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
+    ItemFactory::SetUsingClient(this);
+    InventoryItemRef item = ItemFactory::GetItem(itemID);
     if( !item ) {
         sLog.Error("Client","%s: Unable to load item %u", GetName(), itemID);
         return;
@@ -514,7 +514,7 @@ void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
     }
 
     // Release the item factory now that the ItemFactory is finished being used:
-    PyServiceMgr::item_factory->UnsetUsingClient();
+    ItemFactory::UnsetUsingClient();
 }
 
 void Client::BoardShip(ShipRef new_ship) {
@@ -1147,37 +1147,37 @@ bool Client::AddBalance(double amount) {
 
 bool Client::SelectCharacter( uint32 char_id )
 {
-    PyServiceMgr::item_factory->SetUsingClient(this);
+    ItemFactory::SetUsingClient(this);
 
     _UpdateSession2( char_id );
 
 //    if( !EnterSystem( true ) )
 //        return false;
 
-    m_char = PyServiceMgr::item_factory->GetCharacter(char_id);
+    m_char = ItemFactory::GetCharacter(char_id);
     if( !GetChar() )
     {
         // Release the item factory now that the ItemFactory is finished being used:
-        PyServiceMgr::item_factory->UnsetUsingClient();
+        ItemFactory::UnsetUsingClient();
         return false;
     }
 
-    ShipRef ship = PyServiceMgr::item_factory->GetShip(GetShipID());
+    ShipRef ship = ItemFactory::GetShip(GetShipID());
    if( !ship )
    {
         // Release the item factory now that the ItemFactory is finished being used:
-        PyServiceMgr::item_factory->UnsetUsingClient();
+        ItemFactory::UnsetUsingClient();
         return false;
     }
 
-    ship->Load(*PyServiceMgr::item_factory, GetShipID());
+    ship->Load(GetShipID());
 
    BoardShip( ship );
 
     if( !EnterSystem( true ) )
     {
         // Release the item factory now that the ItemFactory is finished being used:
-        PyServiceMgr::item_factory->UnsetUsingClient();
+        ItemFactory::UnsetUsingClient();
         return false;
     }
 
@@ -1192,7 +1192,7 @@ bool Client::SelectCharacter( uint32 char_id )
     _SendSessionChange();
 
     // Release the item factory now that the ItemFactory is finished being used:
-    PyServiceMgr::item_factory->UnsetUsingClient();
+    ItemFactory::UnsetUsingClient();
     return true;
 }
 

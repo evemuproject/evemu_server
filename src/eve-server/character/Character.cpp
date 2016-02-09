@@ -102,13 +102,13 @@ CharacterType::CharacterType(
     assert(_charData.shipTypeID == _shipType.id());
 }
 
-CharacterType *CharacterType::Load(ItemFactory &factory, uint32 characterTypeID)
+CharacterType *CharacterType::Load(uint32 characterTypeID)
 {
-    return ItemType::Load<CharacterType>( factory, characterTypeID );
+    return ItemType::Load<CharacterType>( characterTypeID );
 }
 
 template<class _Ty>
-_Ty *CharacterType::_LoadCharacterType(ItemFactory &factory, uint32 typeID, uint8 bloodlineID,
+_Ty *CharacterType::_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
     // ItemType stuff:
     const ItemGroup &group, const TypeData &data,
     // CharacterType stuff:
@@ -319,7 +319,6 @@ fleetJob(_fleetJob)
  * Character
  */
 Character::Character(
-    ItemFactory &_factory,
     uint32 _characterID,
     // InventoryItem stuff:
     const CharacterType &_charType,
@@ -327,7 +326,7 @@ Character::Character(
     // Character stuff:
     const CharacterData &_charData,
     const CorpMemberInfo &_corpData)
-: Owner(_factory, _characterID, _charType, _data),
+: Owner(_characterID, _charType, _data),
   m_accountID(_charData.accountID),
   m_title(_charData.title),
   m_description(_charData.description),
@@ -369,33 +368,33 @@ Character::Character(
     //EnableSaveTimer();
 }
 
-CharacterRef Character::Load(ItemFactory &factory, uint32 characterID)
+CharacterRef Character::Load(uint32 characterID)
 {
-    return InventoryItem::Load<Character>( factory, characterID );
+    return InventoryItem::Load<Character>( characterID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Character::_LoadCharacter(ItemFactory &factory, uint32 characterID,
+RefPtr<_Ty> Character::_LoadCharacter(uint32 characterID,
     // InventoryItem stuff:
     const CharacterType &charType, const ItemData &data,
     // Character stuff:
     const CharacterData &charData, const CorpMemberInfo &corpData)
 {
     // construct the item
-    return CharacterRef( new Character( factory, characterID, charType, data, charData, corpData ) );
+    return CharacterRef( new Character( characterID, charType, data, charData, corpData ) );
 }
 
-CharacterRef Character::Spawn(ItemFactory &factory,
+CharacterRef Character::Spawn(
     // InventoryItem stuff:
     ItemData &data,
     // Character stuff:
     CharacterData &charData, CorpMemberInfo &corpData)
 {
-    uint32 characterID = Character::_Spawn( factory, data, charData, corpData );
+    uint32 characterID = Character::_Spawn( data, charData, corpData );
     if( characterID == 0 )
         return CharacterRef();
 
-    CharacterRef charRef = Character::Load( factory, characterID );
+    CharacterRef charRef = Character::Load( characterID );
 
     // Create default dynamic attributes in the AttributeMap:
     charRef.get()->SetAttribute(AttrIsOnline, 1);     // Is Online
@@ -403,14 +402,14 @@ CharacterRef Character::Spawn(ItemFactory &factory,
     return charRef;
 }
 
-uint32 Character::_Spawn(ItemFactory &factory,
+uint32 Character::_Spawn(
     // InventoryItem stuff:
     ItemData &data,
     // Character stuff:
     CharacterData &charData, CorpMemberInfo &corpData)
 {
     // make sure it's a character
-    const CharacterType *ct = factory.GetCharacterType(data.typeID);
+    const CharacterType *ct = ItemFactory::GetCharacterType(data.typeID);
     if(ct == NULL)
         return 0;
 
@@ -421,7 +420,7 @@ uint32 Character::_Spawn(ItemFactory &factory,
     }
 
     // first the item
-    uint32 characterID = Owner::_Spawn(factory, data);
+    uint32 characterID = Owner::_Spawn(data);
     if(characterID == 0)
         return 0;
 
@@ -440,7 +439,7 @@ bool Character::_Load()
 {
 	bool bLoadSuccessful = false;
 
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents( ) )
         return false;
 
     if( !InventoryDB::LoadSkillQueue( itemID(), m_skillQueue ) )
@@ -462,7 +461,7 @@ bool Character::_Load()
 
 void Character::Delete() {
     // delete contents
-    DeleteContents( m_factory );
+    DeleteContents( );
 
     // delete character record
     InventoryDB::DeleteCharacter(itemID());
@@ -990,7 +989,7 @@ void Character::UpdateSkillQueueEndTime(const SkillQueue &queue)
 PyDict *Character::CharGetInfo() {
     //TODO: verify that we are a char?
 
-    if( !LoadContents( m_factory ) ) {
+    if( !LoadContents( ) ) {
         codelog(ITEM__ERROR, "%s (%u): Failed to load contents for CharGetInfo", m_itemName.c_str(), m_itemID);
         return NULL;
     }

@@ -49,11 +49,10 @@ CelestialObjectData::CelestialObjectData(
  * CelestialObject
  */
 CelestialObject::CelestialObject(
-    ItemFactory &_factory,
     uint32 _celestialID,
     const ItemType &_type,
     const ItemData &_data)
-: InventoryItem(_factory, _celestialID, _type, _data),
+: InventoryItem(_celestialID, _type, _data),
   m_radius( 0.0 ),
   m_security( 0.0 ),
   m_celestialIndex( 0 ),
@@ -62,14 +61,13 @@ CelestialObject::CelestialObject(
 }
 
 CelestialObject::CelestialObject(
-    ItemFactory &_factory,
     uint32 _celestialID,
     // InventoryItem stuff:
     const ItemType &_type,
     const ItemData &_data,
     // CelestialObject stuff:
     const CelestialObjectData &_cData)
-: InventoryItem(_factory, _celestialID, _type, _data),
+: InventoryItem(_celestialID, _type, _data),
   m_radius(_cData.radius),
   m_security(_cData.security),
   m_celestialIndex(_cData.celestialIndex),
@@ -77,13 +75,13 @@ CelestialObject::CelestialObject(
 {
 }
 
-CelestialObjectRef CelestialObject::Load(ItemFactory &factory, uint32 celestialID)
+CelestialObjectRef CelestialObject::Load(uint32 celestialID)
 {
-    return InventoryItem::Load<CelestialObject>( factory, celestialID );
+    return InventoryItem::Load<CelestialObject>( celestialID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> CelestialObject::_LoadCelestialObject(ItemFactory &factory, uint32 celestialID,
+RefPtr<_Ty> CelestialObject::_LoadCelestialObject(uint32 celestialID,
     // InventoryItem stuff:
     const ItemType &type, const ItemData &data,
     // CelestialObject stuff:
@@ -95,42 +93,42 @@ RefPtr<_Ty> CelestialObject::_LoadCelestialObject(ItemFactory &factory, uint32 c
         // Solar system:
         ///////////////////////////////////////
         case EVEDB::invGroups::Solar_System: {
-            return SolarSystem::_LoadCelestialObject<SolarSystem>( factory, celestialID, type, data, cData );
+            return SolarSystem::_LoadCelestialObject<SolarSystem>( celestialID, type, data, cData );
         }
 
         ///////////////////////////////////////
         // Station:
         ///////////////////////////////////////
         case EVEDB::invGroups::Station: {
-            return Station::_LoadCelestialObject<Station>( factory, celestialID, type, data, cData );
+            return Station::_LoadCelestialObject<Station>( celestialID, type, data, cData );
         }
     }
 
     // Create a generic one:
-    return CelestialObjectRef( new CelestialObject( factory, celestialID, type, data, cData ) );
+    return CelestialObjectRef( new CelestialObject( celestialID, type, data, cData ) );
 }
 
-CelestialObjectRef CelestialObject::Spawn(ItemFactory &factory,
+CelestialObjectRef CelestialObject::Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
-    uint32 celestialID = CelestialObject::_Spawn( factory, data );
+    uint32 celestialID = CelestialObject::_Spawn( data );
     if( celestialID == 0 )
         return CelestialObjectRef();
-    return CelestialObject::Load( factory, celestialID );
+    return CelestialObject::Load( celestialID );
 }
 
-uint32 CelestialObject::_Spawn(ItemFactory &factory,
+uint32 CelestialObject::_Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
     // make sure it's a ship
-    const ItemType *item = factory.GetType(data.typeID);
+    const ItemType *item = ItemFactory::GetType(data.typeID);
     if( !(item->categoryID() == EVEDB::invCategories::Celestial) )
         return 0;
 
     // store item data
-    uint32 celestialID = InventoryItem::_Spawn(factory, data);
+    uint32 celestialID = InventoryItem::_Spawn(data);
     if( celestialID == 0 )
         return 0;
 

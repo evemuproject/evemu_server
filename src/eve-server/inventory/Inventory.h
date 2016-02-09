@@ -50,8 +50,8 @@ public:
      * Contents management:
      */
     bool ContentsLoaded() const { return mContentsLoaded; }
-    bool LoadContents(ItemFactory &factory);
-    void DeleteContents(ItemFactory &factory);
+    bool LoadContents();
+    void DeleteContents();
 
     bool Contains(uint32 itemID) const { return mContents.find( itemID ) != mContents.end(); }
     InventoryItemRef GetByID(uint32 id) const;
@@ -96,7 +96,7 @@ protected:
     virtual void AddItem(InventoryItemRef item);
     virtual void RemoveItem(InventoryItemRef item);
 
-    virtual bool GetItems(ItemFactory &factory, std::vector<uint32> &into) const { return InventoryDB::GetItemContents( inventoryID(), into ); }
+    virtual bool GetItems(std::vector<uint32> &into) const { return InventoryDB::GetItemContents( inventoryID(), into ); }
 
     bool mContentsLoaded;
     std::map<uint32, InventoryItemRef> mContents;    //maps item ID to its instance. we own a ref to all of these.

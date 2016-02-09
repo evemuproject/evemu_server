@@ -25,6 +25,7 @@
 
 #include "eve-server.h"
 
+#include "ServiceDB.h"
 #include "apiserver/APIServiceManager.h"
 #include "PyServiceMgr.h"
 

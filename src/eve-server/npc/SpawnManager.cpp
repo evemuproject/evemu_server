@@ -224,7 +224,7 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr) {
                 flagAutoFit
             );
 
-            InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
+            InventoryItemRef i = ItemFactory::SpawnItem(idata);
             if( !i ) {
                 _log(SPAWN__ERROR, "Failed to spawn item with type %u for group %u.", cur->npcTypeID, cur->spawnGroupID);
                 continue;

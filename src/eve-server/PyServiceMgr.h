@@ -27,8 +27,6 @@
 #ifndef __PYSERVICEMGR_H_INCL__
 #define __PYSERVICEMGR_H_INCL__
 
-#include "inventory/ItemFactory.h"
-
 class PyService;
 class PyCallable;
 class PyBoundObject;
@@ -39,14 +37,13 @@ class PySubStruct;
 class EntityList;
 class ObjCacheService;
 class DBcore;
-class ItemFactory;
 
 class LSCService;
 
 class PyServiceMgr
 {
 public:
-    static void Init(uint32 nodeID, ItemFactory *ifactory);
+    static void Init(uint32 nodeID);
     static void Shutdown();
 
     static void Process();
@@ -64,8 +61,6 @@ public:
     static PyBoundObject *FindBoundObject(uint32 bindID);
     static void ClearBoundObject(uint32 bindID);
     static void ClearBoundObjects(Client *who);
-
-    static ItemFactory *item_factory; //here for anybody to use. we do not own this.
 
     //Area to access services by name. This isn't ideal, but it avoids casting.
     //these may be NULL during service init, but should never be after that.

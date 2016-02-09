@@ -136,7 +136,7 @@ Inventory *Inventory::Cast(InventoryItemRef item)
     return NULL;
 }
 
-bool Inventory::LoadContents(ItemFactory &factory)
+bool Inventory::LoadContents()
 {
     // check if the contents has already been loaded...
     if( !IsStation(this->inventoryID()) )
@@ -151,7 +151,7 @@ bool Inventory::LoadContents(ItemFactory &factory)
 
     //load the list of items we need
     std::vector<uint32> items;
-    if( !GetItems( factory, items ) )
+    if( !GetItems( items ) )
     {
         sLog.Error("Inventory", "Failed  to get items of %u", inventoryID() );
         return false;
@@ -171,26 +171,26 @@ bool Inventory::LoadContents(ItemFactory &factory)
         // and if not, then do not "get" the entire contents of this for() loop for that item, except in the case that
         // this item is located in space or belongs to this character's corporation:
         InventoryDB::GetItem( *cur, into );
-        if( factory.GetUsingClient() != NULL )
+        if (ItemFactory::GetUsingClient() != NULL)
         {
-            characterID = factory.GetUsingClient()->GetCharacterID();
-            corporationID = factory.GetUsingClient()->GetCorporationID();
-            locationID = factory.GetUsingClient()->GetLocationID();
+            characterID = ItemFactory::GetUsingClient()->GetCharacterID();
+            corporationID = ItemFactory::GetUsingClient()->GetCorporationID();
+            locationID = ItemFactory::GetUsingClient()->GetLocationID();
         }
         else
             sLog.Error( "Inventory::LoadContents()", "Failed to resolve pointer to Client object currently using the ItemFactory." );
         if( (into.ownerID == characterID) || (characterID == 0) || (into.ownerID == corporationID) )// || (into.locationID == locationID) )
-        //    || (factory.GetUsingClient() == NULL) )
+            //    || (ItemFactory::GetUsingClient() == NULL) )
         {
             // Continue to GetItem() if the client calling this is owned by the character that owns this item
             // --OR--
             // The characterID == 0, which means this is attempting to load the character of this client for the first time.
             // --OR--
             // The pointer to the client object currently "using" the ItemFactory is NULL, meaning no client is using it at the moment.
-            if( factory.GetUsingClient() == NULL )
+            if (ItemFactory::GetUsingClient() == NULL)
                 sLog.Error( "Inventory::LoadContents()", "WARNING! Loading Contents while ItemFactory::GetUsingClient() returned NULL!" );
 
-            InventoryItemRef i = factory.GetItem( *cur );
+            InventoryItemRef i = ItemFactory::GetItem(*cur);
             if( !i )
             {
                 sLog.Error("Inventory::LoadContents()", "Failed to load item %u contained in %u. Skipping.", *cur, inventoryID() );
@@ -205,9 +205,9 @@ bool Inventory::LoadContents(ItemFactory &factory)
     return true;
 }
 
-void Inventory::DeleteContents(ItemFactory &factory)
+void Inventory::DeleteContents()
 {
-    LoadContents( factory );
+    LoadContents(  );
 
     std::map<uint32, InventoryItemRef>::iterator cur, end;
     cur = mContents.begin();

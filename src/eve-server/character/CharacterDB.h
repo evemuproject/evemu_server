@@ -31,7 +31,6 @@
 class PyObject;
 class PyString;
 class CharacterAppearance;
-class ItemFactory;
 class InventoryItem;
 class Client;
 

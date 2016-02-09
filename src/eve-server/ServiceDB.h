@@ -33,8 +33,6 @@
  *
  */
 
-class ItemFactory;
-
 class EntityList;
 class Client;
 class CharacterData;

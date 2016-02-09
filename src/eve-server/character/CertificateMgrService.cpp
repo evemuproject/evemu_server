@@ -188,7 +188,7 @@ PyResult CertificateMgrService::Handle_GetCertificatesByCharacter( PyCallArgs& c
         return NULL;
     }
 
-    CharacterRef ch = PyServiceMgr::item_factory->GetCharacter(arg.arg);
+    CharacterRef ch = ItemFactory::GetCharacter(arg.arg);
     Character::Certificates crt;
     ch->GetCertificates( crt );
 

@@ -173,7 +173,7 @@ PyResult DogmaIMBound::Handle_ItemGetInfo(PyCallArgs &call) {
         return NULL;
     }
 
-    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(args.arg);
+    InventoryItemRef item = ItemFactory::GetItem(args.arg);
     if( !item ) {
         codelog(SERVICE__ERROR, "Unable to load item %u", args.arg);
         return NULL;
@@ -275,7 +275,7 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	InventoryItemRef chargeRef;
 
 	if( !(args.chargeList.empty()))
-        chargeRef = PyServiceMgr::item_factory->GetItem(args.chargeList.at(0));
+        chargeRef = ItemFactory::GetItem(args.chargeList.at(0));
 
 	// Move Charge into Ship's Inventory and change the Charge's flag to match flag of Module
 	uint32 loadedChargeID = shipRef->AddItem( moduleFlag, chargeRef );
@@ -330,16 +330,16 @@ PyResult DogmaIMBound::Handle_Activate( PyCallArgs& call )
                 switch( effect )
                 {
                     case 649:
-                        //call.client->Destiny()->SendContainerUnanchor( call.client->services().item_factory->GetCargoContainer( itemID ) );
+                        //call.client->Destiny()->SendContainerUnanchor( ItemFactory::GetCargoContainer( itemID ) );
                         break;
                     case 1022:
-                        //call.client->Destiny()->SendStructureUnanchor( call.client->services().item_factory->GetStructure( itemID ) );
+                        //call.client->Destiny()->SendStructureUnanchor( ItemFactory::GetStructure( itemID ) );
                         break;
                     case 650:
-                        //call.client->Destiny()->SendContainerAnchor( call.client->services().item_factory->GetCargoContainer( itemID ) );
+                        //call.client->Destiny()->SendContainerAnchor( ItemFactory::GetCargoContainer( itemID ) );
                         break;
                     case 1023:
-                        //call.client->Destiny()->SendStructureAnchor( call.client->services().item_factory->GetStructure( itemID ) );
+                        //call.client->Destiny()->SendStructureAnchor( ItemFactory::GetStructure( itemID ) );
                         break;
                     default:
                         break;

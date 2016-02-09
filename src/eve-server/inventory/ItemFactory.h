@@ -42,27 +42,29 @@ class Inventory;
 
 class ItemFactory
 {
-    friend class InventoryItem;    //only for access to _DeleteItem
+    friend class InventoryItem; //only for access to _DeleteItem
+private:
+    ItemFactory() = delete;
+
 public:
-    ItemFactory();
-    ~ItemFactory();
+    static void Shutdown();
 
     /*
      * Category stuff
      */
-    const ItemCategory *GetCategory(EVEItemCategories category);
+    static const ItemCategory *GetCategory(EVEItemCategories category);
 
     /*
      * Group stuff
      */
-    const ItemGroup *GetGroup(uint32 groupID);
+    static const ItemGroup *GetGroup(uint32 groupID);
 
     /*
      * Type stuff
      */
-    const ItemType *GetType(uint32 typeID);
+    static const ItemType *GetType(uint32 typeID);
 
-    const BlueprintType *GetBlueprintType(uint32 blueprintTypeID);
+    static const BlueprintType *GetBlueprintType(uint32 blueprintTypeID);
 
     /**
      * Loads character type, caches it and returns it.
@@ -70,14 +72,14 @@ public:
      * @param[in] characterTypeID Character type to be returned.
      * @return Pointer to character type data container; NULL if fails.
      */
-    const CharacterType *GetCharacterType(uint32 characterTypeID);
+    static const CharacterType *GetCharacterType(uint32 characterTypeID);
     /**
      * Loads character type, caches it and returns it.
      *
      * @param[in] characterTypeID Character type to be returned.
      * @return Pointer to character type data container; NULL if fails.
      */
-    const CharacterType *GetCharacterTypeByBloodline(uint32 bloodlineID);
+    static const CharacterType *GetCharacterTypeByBloodline(uint32 bloodlineID);
 
     /**
      * Loads ship type, caches it and returns it.
@@ -85,7 +87,7 @@ public:
      * @param[in] shipTypeID ID of ship type.
      * @return Pointer to ship type data container; NULL if fails.
      */
-    const ShipType *GetShipType(uint32 shipTypeID);
+    static const ShipType *GetShipType(uint32 shipTypeID);
 
     /**
      * Loads station type, caches it and returns it.
@@ -93,14 +95,14 @@ public:
      * @param[in] stationTypeID ID of station type to load.
      * @return Pointer to StationType object; NULL if fails.
      */
-    const StationType *GetStationType(uint32 stationTypeID);
+    static const StationType *GetStationType(uint32 stationTypeID);
 
     /*
      * Item stuff
      */
-    InventoryItemRef GetItem(uint32 itemID);
+    static InventoryItemRef GetItem(uint32 itemID);
 
-    BlueprintRef GetBlueprint(uint32 blueprintID);
+    static BlueprintRef GetBlueprint(uint32 blueprintID);
 
     /**
      * Loads character.
@@ -108,7 +110,7 @@ public:
      * @param[in] character ID of character to load.
      * @return Pointer to Character object; NULL if load failed.
      */
-    CharacterRef GetCharacter(uint32 characterID);
+    static CharacterRef GetCharacter(uint32 characterID);
 
     /**
      * Loads ship.
@@ -116,7 +118,7 @@ public:
      * @param[in] shipID ID of ship to load.
      * @return Pointer to Ship object; NULL if failed.
      */
-    ShipRef GetShip(uint32 shipID);
+    static ShipRef GetShip(uint32 shipID);
 
     /**
      * Loads celestial object.
@@ -124,7 +126,7 @@ public:
      * @param[in] celestialID ID of celestial object to load.
      * @return Pointer to CelestialObject; NULL if fails.
      */
-    CelestialObjectRef GetCelestialObject(uint32 celestialID);
+    static CelestialObjectRef GetCelestialObject(uint32 celestialID);
 
     /**
      * Loads solar system.
@@ -132,7 +134,7 @@ public:
      * @param[in] solarSystemID ID of solar system to load.
      * @return Pointer to solar system object; NULL if failed.
      */
-    SolarSystemRef GetSolarSystem(uint32 solarSystemID);
+    static SolarSystemRef GetSolarSystem(uint32 solarSystemID);
 
     /**
      * Loads station.
@@ -140,7 +142,7 @@ public:
      * @param[in] stationID ID of station to load.
      * @return Pointer to Station object; NULL if fails.
      */
-    StationRef GetStation(uint32 stationID);
+    static StationRef GetStation(uint32 stationID);
 
     /**
      * Loads skill.
@@ -148,7 +150,7 @@ public:
      * @param[in] skillID ID of skill to load.
      * @return Pointer to Skill object; NULL if fails.
      */
-    SkillRef GetSkill(uint32 skillID);
+    static SkillRef GetSkill(uint32 skillID);
 
     /**
      * Loads owner.
@@ -156,7 +158,7 @@ public:
      * @param[in] ownerID ID of owner to load.
      * @return Ref to Owner object.
      */
-    OwnerRef GetOwner(uint32 ownerID);
+    static OwnerRef GetOwner(uint32 ownerID);
 
     /**
      * Loads structure object.
@@ -164,7 +166,7 @@ public:
      * @param[in] structureID ID of structure object to load.
      * @return Pointer to Structure; NULL if fails.
      */
-    StructureRef GetStructure(uint32 structureID);
+    static StructureRef GetStructure(uint32 structureID);
 
     /**
      * Loads cargo container object.
@@ -172,11 +174,11 @@ public:
      * @param[in] containerID ID of cargo container object to load.
      * @return Pointer to CargoContainer; NULL if fails.
      */
-    CargoContainerRef GetCargoContainer(uint32 containerID);
+    static CargoContainerRef GetCargoContainer(uint32 containerID);
 
     //spawn a new item with the specified information, creating it in the DB as well.
-    InventoryItemRef SpawnItem(ItemData &data);
-    BlueprintRef SpawnBlueprint(ItemData &data, BlueprintData &bpData);
+    static InventoryItemRef SpawnItem(ItemData &data);
+    static BlueprintRef SpawnBlueprint(ItemData &data, BlueprintData &bpData);
     /**
      * Spawns new character, caches it and returns it.
      *
@@ -186,84 +188,84 @@ public:
      * @param[in] corpData Character's corporation-membership data.
      * @return Pointer to new Character object; NULL if spawn failed.
      */
-    CharacterRef SpawnCharacter(ItemData &data, CharacterData &charData, CorpMemberInfo &corpData);
+    static CharacterRef SpawnCharacter(ItemData &data, CharacterData &charData, CorpMemberInfo &corpData);
     /**
      * Spawns new ship.
      *
      * @param[in] data Item data for ship.
      * @return Pointer to Ship object; NULL if failed.
      */
-    ShipRef SpawnShip(ItemData &data);
+    static ShipRef SpawnShip(ItemData &data);
     /**
      * Spawns new skill.
      *
      * @param[in] data Item data for skill.
      * @return Pointer to new Skill object; NULL if fails.
      */
-    SkillRef SpawnSkill(ItemData &data);
+    static SkillRef SpawnSkill(ItemData &data);
     /**
      * Spawns new owner.
      *
      * @param[in] data Item data for owner.
      * @return Ref to new Owner object.
      */
-    OwnerRef SpawnOwner(ItemData &data);
+    static OwnerRef SpawnOwner(ItemData &data);
     /**
      * Spawns new structure.
      *
      * @param[in] data Item data for structure.
      * @return Ref to new Structure object.
      */
-    StructureRef SpawnStructure(ItemData &data);
+    static StructureRef SpawnStructure(ItemData &data);
     /**
      * Spawns new cargo container.
      *
      * @param[in] data Item data for cargo container.
      * @return Ref to new CargoContainer object.
      */
-    CargoContainerRef SpawnCargoContainer(ItemData &data);
+    static CargoContainerRef SpawnCargoContainer(ItemData &data);
 
     /*
      * Inventory stuff
      */
-    Inventory *GetInventory(uint32 inventoryID, bool load=true);
+    static Inventory *GetInventory(uint32 inventoryID, bool load = true);
 
-    void SetUsingClient(Client *pClient);
+    static void SetUsingClient(Client *pClient);
 
-    Client * GetUsingClient();
+    static Client * GetUsingClient();
 
-    void UnsetUsingClient();
+    static void UnsetUsingClient();
 
     /*
-	 * ID Authority Functions:
+     * ID Authority Functions:
      */
-	uint32 GetNextEntityID();
+    static uint32 GetNextEntityID();
 
 protected:
-    Client * m_pClient;     // pointer to client currently using the ItemFactory, we do not own this
+    static Client * m_pClient; // pointer to client currently using the ItemFactory, we do not own this
 
     /*
      * Member functions and variables:
      */
     // Categories:
-    std::map<EVEItemCategories, ItemCategory *> m_categories;
+    static std::map<EVEItemCategories, ItemCategory *> m_categories;
 
     // Groups:
-    std::map<uint32, ItemGroup *> m_groups;
+    static std::map<uint32, ItemGroup *> m_groups;
 
     // Types:
     template<class _Ty>
-    const _Ty *_GetType(uint32 typeID);
+    static const _Ty *_GetType(uint32 typeID);
 
-    std::map<uint32, ItemType *> m_types;
+    static std::map<uint32, ItemType *> m_types;
 
     // Items:
     template<class _Ty>
-    RefPtr<_Ty> _GetItem(uint32 itemID);
+    static RefPtr<_Ty> _GetItem(uint32 itemID);
 
-    void _DeleteItem(uint32 itemID);
+    static void _DeleteItem(uint32 itemID);
 
-    std::map<uint32, InventoryItemRef> m_items;
+    static std::map<uint32, InventoryItemRef> m_items;
 
 	// ID Authority:
 	static uint32 m_nextEntityID;		// holds the next valid ID for in-memory only objects of EVEDB::invCategories::Entity

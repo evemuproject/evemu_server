@@ -76,13 +76,13 @@ StationType::StationType(
     assert(_data.groupID == EVEDB::invGroups::Station);
 }
 
-StationType *StationType::Load(ItemFactory &factory, uint32 stationTypeID)
+StationType *StationType::Load(uint32 stationTypeID)
 {
-    return ItemType::Load<StationType>( factory, stationTypeID );
+    return ItemType::Load<StationType>( stationTypeID );
 }
 
 template<class _Ty>
-_Ty *StationType::_LoadStationType(ItemFactory &factory, uint32 stationTypeID,
+_Ty *StationType::_LoadStationType(uint32 stationTypeID,
     // ItemType stuff:
     const ItemGroup &group, const TypeData &data,
     // StationType stuff:
@@ -119,7 +119,6 @@ StationData::StationData(
  * Station
  */
 Station::Station(
-    ItemFactory &_factory,
     uint32 _stationID,
     // InventoryItem stuff:
     const StationType &_type,
@@ -128,7 +127,7 @@ Station::Station(
     const CelestialObjectData &_cData,
     // Station stuff:
     const StationData &_stData)
-: CelestialObject(_factory, _stationID, _type, _data, _cData),
+: CelestialObject(_stationID, _type, _data, _cData),
   m_stationType(_type),
   m_security(_stData.security),
   m_dockingCostPerVolume(_stData.dockingCostPerVolume),
@@ -141,13 +140,13 @@ Station::Station(
 {
 }
 
-StationRef Station::Load(ItemFactory &factory, uint32 stationID)
+StationRef Station::Load(uint32 stationID)
 {
-    return InventoryItem::Load<Station>( factory, stationID );
+    return InventoryItem::Load<Station>( stationID );
 }
 
 template<class _Ty>
-RefPtr<_Ty> Station::_LoadStation(ItemFactory &factory, uint32 stationID,
+RefPtr<_Ty> Station::_LoadStation(uint32 stationID,
     // InventoryItem stuff:
     const StationType &type, const ItemData &data,
     // CelestialObject stuff:
@@ -156,29 +155,29 @@ RefPtr<_Ty> Station::_LoadStation(ItemFactory &factory, uint32 stationID,
     const StationData &stData)
 {
     // ready to create
-    return StationRef( new Station( factory, stationID, type, data, cData, stData ) );
+    return StationRef( new Station( stationID, type, data, cData, stData ) );
 }
 
 bool Station::_Load()
 {
     // load contents
-    if( !LoadContents( m_factory ) )
+    if( !LoadContents() )
         return false;
 
     return CelestialObject::_Load();
 }
 
-uint32 Station::_Spawn(ItemFactory &factory,
+uint32 Station::_Spawn(
     // InventoryItem stuff:
     ItemData &data
 ) {
     // make sure it's a Station
-    const ItemType *item = factory.GetType(data.typeID);
+    const ItemType *item = ItemFactory::GetType(data.typeID);
     if( !(item->categoryID() == EVEDB::invCategories::Station) )
         return 0;
 
     // store item data
-    uint32 stationID = InventoryItem::_Spawn(factory, data);
+    uint32 stationID = InventoryItem::_Spawn(data);
     if( stationID == 0 )
         return 0;
 

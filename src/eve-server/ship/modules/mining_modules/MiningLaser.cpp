@@ -288,7 +288,7 @@ void MiningLaser::_ProcessCycle()
 					oreUnitsToPull
 				);
 
-                InventoryItemRef ore = PyServiceMgr::item_factory->SpawnItem(idata);
+                InventoryItemRef ore = ItemFactory::SpawnItem(idata);
 				if( ore )
 				{
 					//ore->Move(m_Ship->itemID(), flagCargoHold);

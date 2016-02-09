@@ -33,16 +33,16 @@
  * LOADING INVOKATION EXPLANATION:
  * ItemCategory, ItemGroup, ItemType and InventoryItem classes and their children have special loading. Every such type has following methods:
  *
- *  static Load(ItemFactory &factory, <identifier>):
+ *  static Load(<identifier>):
  *    Merges static and virtual loading trees.
  *    First calls static _Load() to create desired object and
  *    then calls its virtual _Load() (if the type has any).
  *
- *  static _Load(ItemFactory &factory, <identifier>[, <data-argument>, ...]):
+ *  static _Load(<identifier>[, <data-argument>, ...]):
  *    These functions gradually, one by one, load any data needed to create desired
  *    type and in the end they create the type object.
  *
- *  virtual _Load(ItemFactory &factory) (optional):
+ *  virtual _Load() (optional):
  *    Performs any post-construction loading.
  */
 
@@ -71,7 +71,7 @@ public:
     /*
      * Factory method:
      */
-    static ItemCategory *Load(ItemFactory &factory, EVEItemCategories category);
+    static ItemCategory *Load(EVEItemCategories category);
 
     /*
      * Access methods
@@ -92,9 +92,9 @@ protected:
     /*
      * Member functions
      */
-    static ItemCategory *_Load(ItemFactory &factory, EVEItemCategories category
+    static ItemCategory *_Load(EVEItemCategories category
     );
-    static ItemCategory *_Load(ItemFactory &factory, EVEItemCategories category,
+    static ItemCategory *_Load(EVEItemCategories category,
         // ItemCategory stuff:
         const CategoryData &data
     );
@@ -150,7 +150,7 @@ public:
     /*
      * Factory method:
      */
-    static ItemGroup *Load(ItemFactory &factory, uint32 groupID);
+    static ItemGroup *Load(uint32 groupID);
 
     /*
      * Access methods:
@@ -181,9 +181,9 @@ protected:
     /*
      * Member functions
      */
-    static ItemGroup *_Load(ItemFactory &factory, uint32 groupID
+    static ItemGroup *_Load(uint32 groupID
     );
-    static ItemGroup *_Load(ItemFactory &factory, uint32 groupID,
+    static ItemGroup *_Load(uint32 groupID,
         // ItemGroup stuff:
         const ItemCategory &category, const GroupData &data
     );
@@ -253,11 +253,10 @@ public:
     /**
      * Loads type from DB.
      *
-     * @param[in] factory
      * @param[in] typeID ID of type to load.
      * @return Pointer to new ItemType object; NULL if failed.
      */
-    static ItemType *Load(ItemFactory &factory, uint32 typeID);
+    static ItemType *Load(uint32 typeID);
 
     /*
      * Attributes:
@@ -310,15 +309,15 @@ protected:
      */
     // Template helper:
     template<class _Ty>
-    static _Ty *Load(ItemFactory &factory, uint32 typeID)
+    static _Ty *Load(uint32 typeID)
     {
         // static load
-        _Ty *t = _Ty::template _Load<_Ty>( factory, typeID );
+        _Ty *t = _Ty::template _Load<_Ty>( typeID );
         if( t == NULL )
             return NULL;
 
         // dynamic load
-        if( !t->_Load(factory) )
+        if( !t->_Load() )
         {
             delete t;
             return NULL;
@@ -330,7 +329,7 @@ protected:
 
     // Template loader:
     template<class _Ty>
-    static _Ty *_Load(ItemFactory &factory, uint32 typeID)
+    static _Ty *_Load(uint32 typeID)
     {
         // pull data
         TypeData data;
@@ -338,21 +337,21 @@ protected:
             return NULL;
 
         // obtain group
-        const ItemGroup *g = factory.GetGroup( data.groupID );
+        const ItemGroup *g = ItemFactory::GetGroup(data.groupID);
         if( g == NULL )
             return NULL;
 
-        return _Ty::template _LoadType<_Ty>( factory, typeID, *g, data );
+        return _Ty::template _LoadType<_Ty>( typeID, *g, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
-    static _Ty *_LoadType(ItemFactory &factory, uint32 typeID,
+    static _Ty *_LoadType(uint32 typeID,
         // ItemType stuff:
         const ItemGroup &group, const TypeData &data
     );
 
-    virtual bool _Load(ItemFactory &factory);
+    virtual bool _Load();
 
     /*
      * Data members

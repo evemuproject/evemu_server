@@ -214,7 +214,7 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const G
                     "",    //name
                     position );
 
-    InventoryItemRef i = system->itemFactory().SpawnItem( idata );
+    InventoryItemRef i = ItemFactory::SpawnItem(idata);
     if( !i )
         throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 

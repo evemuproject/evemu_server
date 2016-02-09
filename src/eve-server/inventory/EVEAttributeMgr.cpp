@@ -129,8 +129,8 @@ bool TypeAttributeMgr::Load() {
 /*
  * ItemAttributeMgr
  */
-ItemAttributeMgr::ItemAttributeMgr( ItemFactory &factory, const InventoryItem &item, bool save, bool notify) :
-    m_factory(factory), m_item(item), m_save(save), m_notify(notify) {}
+ItemAttributeMgr::ItemAttributeMgr( const InventoryItem &item, bool save, bool notify) :
+    m_item(item), m_save(save), m_notify(notify) {}
 
 ItemAttributeMgr::real_t ItemAttributeMgr::GetReal(Attr attr) const {
     real_t v;
@@ -487,7 +487,7 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
     else
     {
         Client *client = EntityList::FindCharacter(mItem.ownerID());
-        //Client *client = this->mItem.GetItemFactory()->GetUsingClient();
+        //Client *client = ItemFactory::GetUsingClient();
 
         if (client == NULL)
         {

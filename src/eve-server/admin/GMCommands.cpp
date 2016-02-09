@@ -83,7 +83,7 @@ PyResult Command_create( Client* who, const Seperator& args )
         qty
     );
 
-    InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
+    InventoryItemRef i = ItemFactory::SpawnItem(idata);
     if( !i )
         throw PyException( MakeCustomError( "Unable to create item of type %s.", args.arg( 1 ).c_str() ) );
 
@@ -140,7 +140,7 @@ PyResult Command_createitem( Client* who, const Seperator& args )
         qty
     );
 
-    InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
+    InventoryItemRef i = ItemFactory::SpawnItem(idata);
     if( !i )
         throw PyException( MakeCustomError( "Unable to create item of type %s.", args.arg( 1 ).c_str() ) );
 
@@ -518,7 +518,7 @@ PyResult Command_spawnn( Client* who, const Seperator& args )
         loc
     );
 
-    item = PyServiceMgr::item_factory->SpawnItem(idata);
+    item = ItemFactory::SpawnItem(idata);
     if( !item )
         throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 
@@ -653,7 +653,7 @@ PyResult Command_spawn( Client* who, const Seperator& args )
 			loc
 		);
 
-        item = PyServiceMgr::item_factory->SpawnItem(idata);
+        item = ItemFactory::SpawnItem(idata);
 		if( !item )
 			throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
 
@@ -771,7 +771,7 @@ PyResult Command_setbpattr( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "Argument 5 must be remaining licensed production runs. (got %s)", args.arg( 5 ).c_str() ) );
     const uint32 licensedProductionRunsRemaining = atoi( args.arg( 5 ).c_str() );
 
-    BlueprintRef bp = PyServiceMgr::item_factory->GetBlueprint(blueprintID);
+    BlueprintRef bp = ItemFactory::GetBlueprint(blueprintID);
     if( !bp )
         throw PyException( MakeCustomError( "Failed to load blueprint %u.", blueprintID ) );
 
@@ -809,7 +809,7 @@ PyResult Command_getattr( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "2nd argument must be attributeID (got %s).", args.arg( 2 ).c_str() ) );
     const ItemAttributeMgr::Attr attribute = (ItemAttributeMgr::Attr)atoi( args.arg( 2 ).c_str() );
 
-    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
+    InventoryItemRef item = ItemFactory::GetItem(itemID);
     if( !item )
         throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
@@ -851,7 +851,7 @@ PyResult Command_setattr( Client* who, const Seperator& args )
     if( itemID < EVEMU_MINIMUM_ID )
         throw PyException( MakeCustomError( "1st argument must be a valid 'entity' table itemID (got %s) that MUST be larger >= 140000000.", args.arg( 1 ).c_str() ) );
 
-    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
+    InventoryItemRef item = ItemFactory::GetItem(itemID);
     if( !item )
         throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
@@ -915,7 +915,7 @@ PyResult Command_fit(Client* who, const Seperator& args )
             qty
         );
 
-        InventoryItemRef i = PyServiceMgr::item_factory->SpawnItem(idata);
+        InventoryItemRef i = ItemFactory::SpawnItem(idata);
         if( !i )
             throw PyException( MakeCustomError( "Unable to create item of type %u.", typeID ) );
 
@@ -1013,7 +1013,7 @@ PyResult Command_giveallskills( Client* who, const Seperator& args )
 					gty
 				);
 
-                InventoryItemRef item = PyServiceMgr::item_factory->SpawnItem(idata);
+                InventoryItemRef item = ItemFactory::SpawnItem(idata);
 				skill = SkillRef::StaticCast( item );
 
 				if( !item )
@@ -1120,7 +1120,7 @@ PyResult Command_giveskill( Client* who, const Seperator& args )
                 1
             );
 
-            InventoryItemRef item = PyServiceMgr::item_factory->SpawnItem(idata);
+            InventoryItemRef item = ItemFactory::SpawnItem(idata);
 
             if( !item )
             {
@@ -1313,7 +1313,7 @@ PyResult Command_unspawn( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "You must be in space to unspawn things." ) );
 
     // Search for the itemRef for itemID:
-    InventoryItemRef itemRef = PyServiceMgr::item_factory->GetItem(itemID);
+    InventoryItemRef itemRef = ItemFactory::GetItem(itemID);
     SystemEntity * entityRef = who->System()->get( itemID );
 
     // Actually do the unspawn using SystemManager's RemoveEntity:
@@ -1356,7 +1356,7 @@ PyResult Command_dogma( Client* who, const Seperator& args )
     double attributeValue = atof( args.arg( 4 ).c_str() );
 
     //get item
-    InventoryItemRef item = PyServiceMgr::item_factory->GetItem(itemID);
+    InventoryItemRef item = ItemFactory::GetItem(itemID);
 
     //get attributeID
     uint32 attributeID = CommandDB::GetAttributeID(attributeName);
@@ -1504,7 +1504,7 @@ PyResult Command_kill( Client* who, const Seperator& args )
             }
         uint32 entity = atoi( args.arg( 1 ).c_str() );
 
-        InventoryItemRef itemRef = PyServiceMgr::item_factory->GetShip(entity);
+        InventoryItemRef itemRef = ItemFactory::GetShip(entity);
         if( itemRef.get() == NULL )
             throw PyException( MakeCustomError("/kill NOT supported on non-ship types at this time") );
 
