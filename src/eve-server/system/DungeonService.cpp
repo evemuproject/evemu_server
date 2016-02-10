@@ -37,16 +37,13 @@ public:
     PyCallable_Make_Dispatcher(DungeonBound)
 
     DungeonBound(DungeonDB *db)
-    : PyBoundObject(mgr, "DungeonBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject("DungeonBound", new Dispatcher(this))
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(DungeonBound, )
         PyCallable_REG_CALL(DungeonBound, )
     }
-    virtual ~DungeonBound() { delete m_dispatch; }
+    virtual ~DungeonBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -57,25 +54,21 @@ public:
 
 protected:
     DungeonDB *const m_db;
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 */
 
 PyCallable_Make_InnerDispatcher(DungeonService)
 
 DungeonService::DungeonService()
-: PyService("dungeon"),
-  m_dispatch(new Dispatcher(this))
+: PyService("dungeon", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(DungeonService, DEGetFactions)
     PyCallable_REG_CALL(DungeonService, DEGetDungeons)
     PyCallable_REG_CALL(DungeonService, DEGetRooms)
 }
 
 DungeonService::~DungeonService() {
-    delete m_dispatch;
 }
 
 

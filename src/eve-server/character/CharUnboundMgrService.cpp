@@ -35,12 +35,9 @@
 PyCallable_Make_InnerDispatcher(CharUnboundMgrService)
 
 CharUnboundMgrService::CharUnboundMgrService()
-: PyService("charUnboundMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("charUnboundMgr", new Dispatcher(this))
 {
     CharacterDB::Init();
-
-    _SetCallDispatcher(m_dispatch);
 
     PyCallable_REG_CALL(CharUnboundMgrService, SelectCharacterID)
     PyCallable_REG_CALL(CharUnboundMgrService, GetCharacterToSelect)
@@ -57,7 +54,6 @@ CharUnboundMgrService::CharUnboundMgrService()
 }
 
 CharUnboundMgrService::~CharUnboundMgrService() {
-    delete m_dispatch;
 }
 
 void CharUnboundMgrService::GetCharacterData(uint32 characterID, std::map<std::string, uint32> &characterDataMap)

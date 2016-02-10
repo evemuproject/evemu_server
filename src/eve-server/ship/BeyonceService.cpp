@@ -43,11 +43,8 @@ public:
     PyCallable_Make_Dispatcher(BeyonceBound)
 
     BeyonceBound(Client *c)
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "BeyonceBound";
 
         PyCallable_REG_CALL(BeyonceBound, CmdFollowBall)
@@ -66,7 +63,7 @@ public:
         if(c->Destiny() != NULL)
             c->Destiny()->SendSetState(c->Bubble());
     }
-    virtual ~BeyonceBound() {delete m_dispatch;}
+    virtual ~BeyonceBound() {}
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -86,23 +83,19 @@ public:
     PyCallable_DECL_CALL(CmdWarpToStuffAutopilot)
 
 protected:
-    Dispatcher *const m_dispatch;
+
 };
 
 PyCallable_Make_InnerDispatcher(BeyonceService)
 
 BeyonceService::BeyonceService()
-: PyService("beyonce"),
-  m_dispatch(new Dispatcher(this))
+: PyService("beyonce", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     //PyCallable_REG_CALL(BeyonceService, )
     PyCallable_REG_CALL(BeyonceService, GetFormations)
 }
 
 BeyonceService::~BeyonceService() {
-    delete m_dispatch;
 }
 
 

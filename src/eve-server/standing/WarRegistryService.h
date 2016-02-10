@@ -37,7 +37,7 @@ public:
 
 private:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 };
 
 #endif /* __WAR_REGISTRY_SERVICE__H__INCL__ */

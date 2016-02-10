@@ -27,13 +27,14 @@
 
 #include "PyCallable.h"
 
-PyCallable::PyCallable()
-: m_serviceDispatch(NULL)
+PyCallable::PyCallable(CallDispatcher *disp)
+: m_serviceDispatch(disp)
 {
 }
 
 PyCallable::~PyCallable()
 {
+    delete m_serviceDispatch;
 }
 
 PyResult PyCallable::Call(const std::string &method, PyCallArgs &args) {

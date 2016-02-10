@@ -36,16 +36,13 @@ public:
     PyCallable_Make_Dispatcher(PetitionerBound)
 
     PetitionerBound(PetitionerDB *db)
-    : PyBoundObject(mgr, "PetitionerBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject( "PetitionerBound", new Dispatcher(this)),
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(PetitionerBound, )
         PyCallable_REG_CALL(PetitionerBound, )
     }
-    virtual ~PetitionerBound() { delete m_dispatch; }
+    virtual ~PetitionerBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -56,26 +53,22 @@ public:
 
 protected:
     PetitionerDB *const m_db;
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 */
 
 PyCallable_Make_InnerDispatcher(PetitionerService)
 
 PetitionerService::PetitionerService()
-: PyService("petitioner"),
-  m_dispatch(new Dispatcher(this))
+: PyService("petitioner", new Dispatcher(this))
 //m_db(db)
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(PetitionerService, GetCategories)
     PyCallable_REG_CALL(PetitionerService, GetCategoryHierarchicalInfo)
     PyCallable_REG_CALL(PetitionerService, GetUnreadMessages)
 }
 
 PetitionerService::~PetitionerService() {
-    delete m_dispatch;
 }
 
 

@@ -34,18 +34,14 @@
 PyCallable_Make_InnerDispatcher(FactoryService)
 
 FactoryService::FactoryService()
-: PyService("factory"),
-  m_dispatch(new Dispatcher(this))
+: PyService("factory", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(FactoryService, GetBlueprintAttributes);
     PyCallable_REG_CALL(FactoryService, GetMaterialsForTypeWithActivity);
     PyCallable_REG_CALL(FactoryService, GetMaterialCompositionOfItemType);
 }
 
 FactoryService::~FactoryService() {
-    delete m_dispatch;
 }
 
 PyResult FactoryService::Handle_GetBlueprintAttributes(PyCallArgs &call) {

@@ -38,12 +38,9 @@ public:
     PyCallable_Make_Dispatcher(InvBrokerBound)
 
     InvBrokerBound(uint32 entityID)
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this)),
+    : PyBoundObject(new Dispatcher(this)),
       m_entityID(entityID)
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "InvBrokerBound";
 
 		PyCallable_REG_CALL(InvBrokerBound, GetContainerContents);
@@ -54,7 +51,6 @@ public:
     }
     virtual ~InvBrokerBound()
     {
-        delete m_dispatch;
     }
 
     virtual void Release() {
@@ -70,20 +66,19 @@ public:
 
 
 protected:
-    Dispatcher *const m_dispatch;
-
     uint32 m_entityID;
 };
 
 PyCallable_Make_InnerDispatcher(InvBrokerService)
 
 InvBrokerService::InvBrokerService()
-: PyService("invbroker"),
-  m_dispatch(new Dispatcher(this))
+: PyService("invbroker", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(InvBrokerService, GetItemDescriptor)
+}
+
+InvBrokerService::~InvBrokerService()
+{
 }
 
 PyResult InvBrokerService::Handle_GetItemDescriptor(PyCallArgs &call)
@@ -108,10 +103,6 @@ PyResult InvBrokerService::Handle_GetItemDescriptor(PyCallArgs &call)
 
     //header->AddColumn( "singleton",  DBTYPE_BOOL );
     return header;
-}
-
-InvBrokerService::~InvBrokerService() {
-    delete m_dispatch;
 }
 
 

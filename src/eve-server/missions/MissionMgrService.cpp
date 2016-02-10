@@ -37,16 +37,13 @@ public:
     PyCallable_Make_Dispatcher(MissionMgrBound)
 
     MissionMgrBound(MissionMgrDB *db)
-    : PyBoundObject(mgr, "MissionMgrBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(mgr, "MissionMgrBound", new Dispatcher(this)),
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(MissionMgrBound, )
         PyCallable_REG_CALL(MissionMgrBound, )
     }
-    virtual ~MissionMgrBound() { delete m_dispatch; }
+    virtual ~MissionMgrBound() {}
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -57,23 +54,19 @@ public:
 
 protected:
     MissionMgrDB *const m_db;
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 */
 
 PyCallable_Make_InnerDispatcher(MissionMgrService)
 
 MissionMgrService::MissionMgrService()
-: PyService("missionMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("missionMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(MissionMgrService, GetMyCourierMissions)
 }
 
 MissionMgrService::~MissionMgrService() {
-    delete m_dispatch;
 }
 
 

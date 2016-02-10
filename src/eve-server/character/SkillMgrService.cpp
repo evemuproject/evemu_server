@@ -34,14 +34,11 @@ PyCallable_Make_InnerDispatcher(SkillMgrService)
 PyCallable_Make_InnerDispatcher(SkillMgrBound)
 
 SkillMgrService::SkillMgrService()
-: PyService("skillMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("skillMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
 }
 
 SkillMgrService::~SkillMgrService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *SkillMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
@@ -52,11 +49,8 @@ PyBoundObject *SkillMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
 }
 
 SkillMgrBound::SkillMgrBound()
-: PyBoundObject(),
-  m_dispatch(new Dispatcher(this))
+: PyBoundObject(new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     m_strBoundObjectName = "SkillMgrBound";
 
     PyCallable_REG_CALL(SkillMgrBound, InjectSkillIntoBrain)
@@ -77,7 +71,6 @@ SkillMgrBound::SkillMgrBound()
 
 SkillMgrBound::~SkillMgrBound()
 {
-    delete m_dispatch;
 }
 
 // TODO: redesign this so this is not needed

@@ -43,12 +43,9 @@ public:
     };
 
     LookupSvcBound(LookupSvcDB *db)
-    : PyBoundObject(mgr, "LookupSvcBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(mgr, "LookupSvcBound", new Dispatcher(this)),
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(LookupSvcBound, )
         PyCallable_REG_CALL(LookupSvcBound, )
     }
@@ -63,18 +60,15 @@ public:
 
 protected:
     LookupSvcDB *const m_db;
-    Dispatcher *const m_dispatch;
+
 };
 */
 
 PyCallable_Make_InnerDispatcher(LookupService)
 
 LookupService::LookupService()
-: PyService("lookupSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("lookupSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(LookupService, LookupCharacters)
     PyCallable_REG_CALL(LookupService, LookupOwners)
     PyCallable_REG_CALL(LookupService, LookupPlayerCharacters)
@@ -89,7 +83,6 @@ LookupService::LookupService()
 }
 
 LookupService::~LookupService() {
-    delete m_dispatch;
 }
 
 

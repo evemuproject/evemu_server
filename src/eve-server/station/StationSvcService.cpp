@@ -44,12 +44,9 @@ public:
     };
 
     StationSvcBound(StationSvcDB *db)
-    : PyBoundObject(mgr, "StationSvcBound"),
+    : PyBoundObject(mgr, "StationSvcBound", new Dispatcher(this))
       m_db(db),
-      m_dispatch(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(StationSvcBound, )
         PyCallable_REG_CALL(StationSvcBound, )
     }
@@ -64,18 +61,15 @@ public:
 
 protected:
     StationSvcDB *const m_db;
-    Dispatcher *const m_dispatch;
+
 };
 */
 
 PyCallable_Make_InnerDispatcher(StationSvcService)
 
 StationSvcService::StationSvcService()
-: PyService("stationSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("stationSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(StationSvcService, GetStationItemBits)
     PyCallable_REG_CALL(StationSvcService, GetSolarSystem)
     PyCallable_REG_CALL(StationSvcService, GetStation)
@@ -83,7 +77,6 @@ StationSvcService::StationSvcService()
 }
 
 StationSvcService::~StationSvcService() {
-    delete m_dispatch;
 }
 
 /*

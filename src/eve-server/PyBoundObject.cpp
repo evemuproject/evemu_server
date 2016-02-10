@@ -27,8 +27,9 @@
 
 #include "PyBoundObject.h"
 
-PyBoundObject::PyBoundObject()
-: m_nodeID(0),
+PyBoundObject::PyBoundObject(CallDispatcher *disp)
+: PyCallable(disp),
+m_nodeID(0),
   m_bindID(0)
 {
     m_strBoundObjectName = "PyBoundObject";

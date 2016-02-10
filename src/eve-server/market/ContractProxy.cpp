@@ -31,19 +31,15 @@
 // crap
 PyCallable_Make_InnerDispatcher(ContractProxyService)
 
-ContractProxyService::ContractProxyService(  )
-: PyService("contractProxy"),
-  m_dispatch(new Dispatcher(this))
+ContractProxyService::ContractProxyService()
+: PyService("contractProxy", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(ContractProxyService, GetLoginInfo)
     PyCallable_REG_CALL(ContractProxyService, GetMyExpiredContractList)
 }
 
 ContractProxyService::~ContractProxyService()
 {
-    delete m_dispatch;
 }
 
 PyResult ContractProxyService::Handle_GetMyExpiredContractList(PyCallArgs &call) {

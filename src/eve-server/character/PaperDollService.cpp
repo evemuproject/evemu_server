@@ -32,11 +32,8 @@
 PyCallable_Make_InnerDispatcher(PaperDollService)
 
 PaperDollService::PaperDollService()
-: PyService("paperDollServer"),
-  m_dispatch(new Dispatcher(this))
+: PyService("paperDollServer", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(PaperDollService, GetPaperDollData)
     PyCallable_REG_CALL(PaperDollService, ConvertAndSavePaperDoll)
     PyCallable_REG_CALL(PaperDollService, UpdateExistingCharacterFull)
@@ -46,7 +43,6 @@ PaperDollService::PaperDollService()
 }
 
 PaperDollService::~PaperDollService() {
-    delete m_dispatch;
 }
 
 PyResult PaperDollService::Handle_GetPaperDollData(PyCallArgs &call) {

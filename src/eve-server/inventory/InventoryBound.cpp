@@ -32,13 +32,10 @@
 PyCallable_Make_InnerDispatcher(InventoryBound)
 
 InventoryBound::InventoryBound( Inventory &inventory, EVEItemFlags flag)
-: PyBoundObject(),
-  m_dispatch(new Dispatcher(this)),
+: PyBoundObject(new Dispatcher(this)),
   mInventory(inventory),
   mFlag(flag)
 {
-    _SetCallDispatcher(m_dispatch);
-
     m_strBoundObjectName = "InventoryBound";
 
     PyCallable_REG_CALL(InventoryBound, List)
@@ -58,7 +55,6 @@ InventoryBound::InventoryBound( Inventory &inventory, EVEItemFlags flag)
 
 InventoryBound::~InventoryBound()
 {
-    delete m_dispatch;
 }
 
 PyResult InventoryBound::Handle_List(PyCallArgs &call) {

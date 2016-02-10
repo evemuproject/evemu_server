@@ -35,17 +35,13 @@
 PyCallable_Make_InnerDispatcher(CorpBookmarkMgrService)
 
 CorpBookmarkMgrService::CorpBookmarkMgrService()
-: PyService("corpBookmarkMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("corpBookmarkMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(CorpBookmarkMgrService, GetBookmarks);
 }
 
 CorpBookmarkMgrService::~CorpBookmarkMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult CorpBookmarkMgrService::Handle_GetBookmarks(PyCallArgs& call)

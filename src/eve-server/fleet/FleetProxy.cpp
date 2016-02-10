@@ -33,11 +33,8 @@
 PyCallable_Make_InnerDispatcher(FleetProxyService)
 
 FleetProxyService::FleetProxyService()
-: PyService("fleetProxy"),
-  m_dispatch(new Dispatcher(this))
+: PyService("fleetProxy", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(FleetProxyService, GetAvailableFleets);
     PyCallable_REG_CALL(FleetProxyService, ApplyToJoinFleet);
     PyCallable_REG_CALL(FleetProxyService, AddFleetFinderAdvert);
@@ -48,7 +45,6 @@ FleetProxyService::FleetProxyService()
 
 FleetProxyService::~FleetProxyService()
 {
-    delete m_dispatch;
 }
 
 PyResult FleetProxyService::Handle_GetAvailableFleets(PyCallArgs &call) {

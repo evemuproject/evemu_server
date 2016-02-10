@@ -33,17 +33,13 @@
 PyCallable_Make_InnerDispatcher(DungeonExplorationMgrService)
 
 DungeonExplorationMgrService::DungeonExplorationMgrService()
-: PyService("dungeonExplorationMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("dungeonExplorationMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(DungeonExplorationMgrService, GetMyEscalatingPathDetails);
 }
 
 DungeonExplorationMgrService::~DungeonExplorationMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult DungeonExplorationMgrService::Handle_GetMyEscalatingPathDetails(PyCallArgs &call) {

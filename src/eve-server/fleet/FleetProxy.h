@@ -38,7 +38,7 @@ class FleetProxyService
 
   protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(GetAvailableFleets);
     PyCallable_DECL_CALL(AddFleetFinderAdvert);

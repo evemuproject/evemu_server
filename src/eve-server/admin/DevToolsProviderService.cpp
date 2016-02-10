@@ -31,17 +31,13 @@
 PyCallable_Make_InnerDispatcher(DevToolsProviderService)
 
 DevToolsProviderService::DevToolsProviderService()
-: PyService("devToolsProvider"),
-  m_dispatch(new Dispatcher(this))
+: PyService("devToolsProvider", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(DevToolsProviderService, GetLoader);
 }
 
 DevToolsProviderService::~DevToolsProviderService()
 {
-    delete m_dispatch;
 }
 
 PyResult DevToolsProviderService::Handle_GetLoader(PyCallArgs& call)

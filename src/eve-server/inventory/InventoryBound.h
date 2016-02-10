@@ -57,7 +57,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     Inventory &mInventory;
     EVEItemFlags mFlag;

@@ -30,17 +30,13 @@
 
 PyCallable_Make_InnerDispatcher(BulkMgrService)
 
-BulkMgrService::BulkMgrService(  )
-: PyService("bulkMgr"),
-  m_dispatch(new Dispatcher(this))
+BulkMgrService::BulkMgrService()
+: PyService("bulkMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(BulkMgrService, UpdateBulk);
 }
 
 BulkMgrService::~BulkMgrService() {
-    delete m_dispatch;
 }
 
 PyResult BulkMgrService::Handle_UpdateBulk(PyCallArgs &call)

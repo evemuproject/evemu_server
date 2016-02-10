@@ -37,7 +37,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(GetFactionInfo)
     PyCallable_DECL_CALL(GetCorpInfo)

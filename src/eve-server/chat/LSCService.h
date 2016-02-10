@@ -83,7 +83,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     CommandDispatcher *const m_commandDispatch;
 

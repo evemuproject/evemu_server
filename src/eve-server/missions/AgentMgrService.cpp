@@ -51,12 +51,9 @@ public:
     PyCallable_Make_Dispatcher(AgentMgrBound)
 
     AgentMgrBound(Agent *agt)
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this)),
+    : PyBoundObject(new Dispatcher(this)),
       m_agent(agt)
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "AgentMgrBound";
 
         PyCallable_REG_CALL(AgentMgrBound, GetInfoServiceDetails)
@@ -66,7 +63,7 @@ public:
         PyCallable_REG_CALL(AgentMgrBound, GetAgentLocationWrap)
         PyCallable_REG_CALL(AgentMgrBound, GetMissionObjectiveInfo)
     }
-    virtual ~AgentMgrBound() { delete m_dispatch; }
+    virtual ~AgentMgrBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -80,18 +77,15 @@ public:
     PyCallable_DECL_CALL(GetMissionObjectiveInfo)
 
 protected:
-    Dispatcher *const m_dispatch;    //we own this
+       //we own this
     Agent *const m_agent;    //we do not own this.
 };
 
 PyCallable_Make_InnerDispatcher(AgentMgrService)
 
 AgentMgrService::AgentMgrService()
-: PyService("agentMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("agentMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(AgentMgrService, GetAgents)
     PyCallable_REG_CALL(AgentMgrService, GetMyJournalDetails)
     PyCallable_REG_CALL(AgentMgrService, GetMyEpicJournalDetails)
@@ -99,7 +93,6 @@ AgentMgrService::AgentMgrService()
 }
 
 AgentMgrService::~AgentMgrService() {
-    delete m_dispatch;
     std::map<uint32, Agent *>::iterator cur, end;
     cur = m_agents.begin();
     end = m_agents.end();

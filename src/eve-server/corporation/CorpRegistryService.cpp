@@ -41,11 +41,8 @@ public:
     PyCallable_Make_Dispatcher(CorpRegistryBound)
 
     CorpRegistryBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "CorpRegistryBound";
 
         //PyCall_REG_CALL
@@ -76,10 +73,8 @@ public:
         PyCallable_REG_CALL(CorpRegistryBound, SetAccountKey)
         PyCallable_REG_CALL(CorpRegistryBound, PayoutDividend)
         PyCallable_REG_CALL(CorpRegistryBound, GetVoteCasesByCorporation)
-
-
     }
-    virtual ~CorpRegistryBound() { delete m_dispatch; }
+    virtual ~CorpRegistryBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -119,7 +114,7 @@ protected:
     bool JoinCorporation(Client *who, uint32 newCorpID, const CorpMemberInfo &roles);
     static void FillOCApplicationChange(Notify_OnCorporationApplicationChanged & OCAC, const ApplicationInfo & Old, const ApplicationInfo & New);
 
-    Dispatcher *const m_dispatch;
+
 };
 
 class SparseCorpOfficeListBound
@@ -130,16 +125,13 @@ public:
     PyCallable_Make_Dispatcher(SparseCorpOfficeListBound)
 
     SparseCorpOfficeListBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(SparseCorpOfficeListBound, Fetch)
         //PyCallable_REG_CALL(SparseCorpOfficeListBound, FetchByKey)
         //PyCallable_REG_CALL(SparseCorpOfficeListBound, GetByKey)
     }
-    virtual ~SparseCorpOfficeListBound() {delete m_dispatch;}
+    virtual ~SparseCorpOfficeListBound() {}
     virtual void Release() {
         delete this;
     }
@@ -150,23 +142,19 @@ public:
 
 
 protected:
-    Dispatcher *const m_dispatch;
+
 
 };
 
 PyCallable_Make_InnerDispatcher(CorpRegistryService)
 
 CorpRegistryService::CorpRegistryService()
-: PyService("corpRegistry"),
-  m_dispatch(new Dispatcher(this))
+: PyService("corpRegistry", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     //PyCallable_REG_CALL(CorpRegistryService, GetEveOwners)
 }
 
 CorpRegistryService::~CorpRegistryService() {
-    delete m_dispatch;
 }
 
 

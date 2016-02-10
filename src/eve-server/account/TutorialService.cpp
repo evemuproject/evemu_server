@@ -32,11 +32,8 @@
 PyCallable_Make_InnerDispatcher(TutorialService)
 
 TutorialService::TutorialService()
-: PyService("tutorialSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("tutorialSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(TutorialService, GetTutorialInfo)
     PyCallable_REG_CALL(TutorialService, GetTutorials)
     PyCallable_REG_CALL(TutorialService, GetCriterias)
@@ -48,7 +45,6 @@ TutorialService::TutorialService()
 }
 
 TutorialService::~TutorialService() {
-    delete m_dispatch;
 }
 
 PyResult TutorialService::Handle_GetTutorialInfo(PyCallArgs &call) {

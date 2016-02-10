@@ -46,7 +46,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
     uint32 nextBookmarkID;
 
     PyCallable_DECL_CALL(GetBookmarks)

@@ -39,12 +39,9 @@ const uint32 LSCService::MAX_CHANNEL_ID = 0xFFFFFFFF;
 PyCallable_Make_InnerDispatcher(LSCService)
 
 LSCService::LSCService(CommandDispatcher* cd)
-: PyService("LSC"),
-  m_dispatch(new Dispatcher(this)),
+: PyService("LSC", new Dispatcher(this)),
   m_commandDispatch(cd)
 {
-    _SetCallDispatcher(m_dispatch);
-
     //make sure you edit the header file too
     PyCallable_REG_CALL(LSCService, GetChannels)
     PyCallable_REG_CALL(LSCService, GetRookieHelpChannel)
@@ -71,7 +68,6 @@ LSCService::LSCService(CommandDispatcher* cd)
 
 
 LSCService::~LSCService() {
-    delete m_dispatch;
     std::map<uint32, LSCChannel *>::iterator cur, end;
     cur = m_channels.begin();
     end = m_channels.end();

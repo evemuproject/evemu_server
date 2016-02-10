@@ -33,17 +33,14 @@
 PyCallable_Make_InnerDispatcher(NetService)
 
 NetService::NetService()
-: PyService("machoNet"),
-  m_dispatch(new Dispatcher(this))
+: PyService("machoNet", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
 
     PyCallable_REG_CALL(NetService, GetInitVals)
     PyCallable_REG_CALL(NetService, GetTime)
 }
 
 NetService::~NetService() {
-    delete m_dispatch;
 }
 
 PyResult NetService::Handle_GetInitVals(PyCallArgs &call) {

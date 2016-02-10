@@ -97,7 +97,7 @@ protected:
     static const uint32 CharCreateNewExtraCachableObjectCount;
 
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     std::string m_cacheDir;
     CachedObjectMgr m_cache;

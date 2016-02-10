@@ -39,12 +39,9 @@ public:
     PyCallable_Make_Dispatcher(CorpStationMgrIMBound)
 
     CorpStationMgrIMBound(uint32 station_id)
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this)),
+    : PyBoundObject(new Dispatcher(this)),
       m_stationID(station_id)
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "CorpStationMgrIMBound";
 
         PyCallable_REG_CALL(CorpStationMgrIMBound, GetEveOwners)
@@ -60,7 +57,7 @@ public:
         //testing
         PyCallable_REG_CALL(CorpStationMgrIMBound, GetCorporateStationOffice)
     }
-    virtual ~CorpStationMgrIMBound() { delete m_dispatch; }
+    virtual ~CorpStationMgrIMBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -80,7 +77,7 @@ public:
     PyCallable_DECL_CALL(GetCorporateStationOffice)
 
 protected:
-    Dispatcher *const m_dispatch;
+
 
     const uint32 m_stationID;
 };
@@ -88,16 +85,12 @@ protected:
 PyCallable_Make_InnerDispatcher(CorpStationMgrService)
 
 CorpStationMgrService::CorpStationMgrService()
-: PyService("corpStationMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("corpStationMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     //PyCallable_REG_CALL(CorpStationMgrService, MachoBindObject)
 }
 
 CorpStationMgrService::~CorpStationMgrService() {
-    delete m_dispatch;
 }
 
 

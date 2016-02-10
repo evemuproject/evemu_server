@@ -36,16 +36,13 @@ public:
     PyCallable_Make_Dispatcher(ScenarioBound)
 
     ScenarioBound(ScenarioDB *db)
-    : PyBoundObject(mgr, "ScenarioBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject("ScenarioBound", new Dispatcher(this))
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(ScenarioBound, )
         PyCallable_REG_CALL(ScenarioBound, )
     }
-    virtual ~ScenarioBound() { delete m_dispatch; }
+    virtual ~ScenarioBound() {  }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -56,23 +53,19 @@ public:
 
 protected:
     ScenarioDB *const m_db;
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 */
 
 PyCallable_Make_InnerDispatcher(ScenarioService)
 
 ScenarioService::ScenarioService()
-: PyService("scenario"),
-  m_dispatch(new Dispatcher(this))
+: PyService("scenario", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(ScenarioService, ResetD)
 }
 
 ScenarioService::~ScenarioService() {
-    delete m_dispatch;
 }
 
 

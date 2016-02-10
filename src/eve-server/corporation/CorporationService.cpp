@@ -32,11 +32,8 @@
 PyCallable_Make_InnerDispatcher(CorporationService)
 
 CorporationService::CorporationService()
-: PyService("corporationSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("corporationSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(CorporationService, GetFactionInfo)
     PyCallable_REG_CALL(CorporationService, GetCorpInfo)
     PyCallable_REG_CALL(CorporationService, GetNPCDivisions)
@@ -55,7 +52,6 @@ CorporationService::CorporationService()
 }
 
 CorporationService::~CorporationService() {
-    delete m_dispatch;
 }
 
 PyResult CorporationService::Handle_GetFactionInfo(PyCallArgs &call) {

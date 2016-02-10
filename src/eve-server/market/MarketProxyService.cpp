@@ -35,11 +35,8 @@
 PyCallable_Make_InnerDispatcher(MarketProxyService)
 
 MarketProxyService::MarketProxyService()
-: PyService("marketProxy"),
-  m_dispatch(new Dispatcher(this))
+: PyService("marketProxy", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(MarketProxyService, GetStationAsks)
     PyCallable_REG_CALL(MarketProxyService, GetSystemAsks)
     PyCallable_REG_CALL(MarketProxyService, GetRegionBest)
@@ -57,7 +54,6 @@ MarketProxyService::MarketProxyService()
 }
 
 MarketProxyService::~MarketProxyService() {
-    delete m_dispatch;
 }
 
 

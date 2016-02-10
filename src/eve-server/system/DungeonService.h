@@ -37,7 +37,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(DEGetFactions)
     PyCallable_DECL_CALL(DEGetDungeons)

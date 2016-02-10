@@ -31,16 +31,12 @@
 PyCallable_Make_InnerDispatcher(RepairService)
 
 RepairService::RepairService()
-: PyService("repairSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("repairSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(RepairService, UnasembleItems);
 }
 
 RepairService::~RepairService() {
-    delete m_dispatch;
 }
 
 PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {

@@ -40,11 +40,8 @@ public:
     PyCallable_Make_Dispatcher(DogmaIMBound)
 
     DogmaIMBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "DogmaIMBound";
 
         PyCallable_REG_CALL(DogmaIMBound, ShipGetInfo)
@@ -68,7 +65,7 @@ public:
         PyCallable_REG_CALL(DogmaIMBound, RemoveTarget)
         PyCallable_REG_CALL(DogmaIMBound, ClearTargets)
     }
-    virtual ~DogmaIMBound() {delete m_dispatch;}
+    virtual ~DogmaIMBound() {}
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -98,22 +95,18 @@ public:
 
 
 protected:
-    Dispatcher *const m_dispatch;
+
 };
 
 PyCallable_Make_InnerDispatcher(DogmaIMService)
 
 DogmaIMService::DogmaIMService()
-: PyService("dogmaIM"),
-  m_dispatch(new Dispatcher(this))
+: PyService("dogmaIM", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(DogmaIMService, GetAttributeTypes)
 }
 
 DogmaIMService::~DogmaIMService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *DogmaIMService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

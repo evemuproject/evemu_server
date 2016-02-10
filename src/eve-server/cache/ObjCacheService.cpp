@@ -137,8 +137,7 @@ const uint32 ObjCacheService::CharCreateNewExtraCachableObjectCount = sizeof(Obj
 PyCallable_Make_InnerDispatcher(ObjCacheService)
 
 ObjCacheService::ObjCacheService(const char *cacheDir)
-: PyService("objectCaching"),
-  m_dispatch(new Dispatcher(this)),
+: PyService("objectCaching", new Dispatcher(this)),
   m_cacheDir(cacheDir)
 {
 	/*
@@ -150,8 +149,6 @@ ObjCacheService::ObjCacheService(const char *cacheDir)
         _basePath += "/";
 
 	CreateDirectory(_basePath.c_str(), NULL);
-
-    _SetCallDispatcher(m_dispatch);
 
     PyCallable_REG_CALL(ObjCacheService, GetCachableObject)
 
@@ -250,7 +247,6 @@ ObjCacheService::ObjCacheService(const char *cacheDir)
 }
 
 ObjCacheService::~ObjCacheService() {
-    delete m_dispatch;
 }
 
 PyResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {

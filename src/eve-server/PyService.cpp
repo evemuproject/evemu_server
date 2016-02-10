@@ -30,8 +30,9 @@
 #include "PyService.h"
 #include "PyServiceMgr.h"
 
-PyService::PyService(const char *serviceName)
-: m_name(serviceName)
+PyService::PyService(const char *serviceName, CallDispatcher *disp)
+: PyCallable(disp),
+m_name(serviceName)
 {
 }
 

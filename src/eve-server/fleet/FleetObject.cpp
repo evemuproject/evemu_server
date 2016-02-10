@@ -38,17 +38,14 @@ public:
     PyCallable_Make_Dispatcher(FleetBound)
 
     FleetBound(Client *c)
-    : PyBoundObject(),
-    m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "FleetBound";
 
         PyCallable_REG_CALL(FleetBound, Init);
 
     }
-    virtual ~FleetBound() {delete m_dispatch;}
+    virtual ~FleetBound() {}
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -57,17 +54,14 @@ public:
     PyCallable_DECL_CALL(Init);
 
 protected:
-    Dispatcher *const m_dispatch;
+
 };
 
 PyCallable_Make_InnerDispatcher(FleetObject)
 
 FleetObject::FleetObject()
-: PyService("fleetObjectHandler"),
-  m_dispatch(new Dispatcher(this))
+: PyService("fleetObjectHandler", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(FleetObject, CreateFleet);
     PyCallable_REG_CALL(FleetObject, CreateWing);
     PyCallable_REG_CALL(FleetObject, CreateSquad);
@@ -85,7 +79,6 @@ FleetObject::FleetObject()
 
 FleetObject::~FleetObject()
 {
-    delete m_dispatch;
 }
 
 PyBoundObject* FleetObject::_CreateBoundObject( Client* c, const PyRep* bind_args )

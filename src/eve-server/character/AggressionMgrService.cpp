@@ -38,10 +38,8 @@ public:
     PyCallable_Make_Dispatcher(AggressionMgrBound)
 
     AggressionMgrBound()
-    : PyBoundObject(), m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "AggressionMgrBound";
 
         PyCallable_REG_CALL(AggressionMgrBound, GetCriminalTimeStamps)
@@ -50,7 +48,6 @@ public:
 
     virtual ~AggressionMgrBound()
     {
-        delete m_dispatch;
     }
 
     virtual void Release()
@@ -63,7 +60,7 @@ protected:
     PyCallable_DECL_CALL(GetCriminalTimeStamps)
     PyCallable_DECL_CALL(CheckLootRightExceptions)
 
-    Dispatcher *const m_dispatch;
+
 };
 
 PyResult AggressionMgrBound::Handle_GetCriminalTimeStamps(PyCallArgs &call)
@@ -94,14 +91,12 @@ PyResult AggressionMgrBound::Handle_CheckLootRightExceptions(PyCallArgs &call)
 }
 
 AggressionMgrService::AggressionMgrService()
-: PyService("aggressionMgr"), m_dispatch(new Dispatcher(this))
+: PyService("aggressionMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
 }
 
 AggressionMgrService::~AggressionMgrService()
 {
-    delete m_dispatch;
 }
 
 PyBoundObject *AggressionMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args)

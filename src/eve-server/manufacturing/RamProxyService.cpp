@@ -34,11 +34,8 @@
 PyCallable_Make_InnerDispatcher(RamProxyService)
 
 RamProxyService::RamProxyService()
-: PyService("ramProxy"),
-  m_dispatch(new Dispatcher(this))
+: PyService("ramProxy", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(RamProxyService, GetJobs2);
     PyCallable_REG_CALL(RamProxyService, AssemblyLinesSelect);
     PyCallable_REG_CALL(RamProxyService, AssemblyLinesGet);
@@ -51,7 +48,6 @@ RamProxyService::RamProxyService()
 }
 
 RamProxyService::~RamProxyService() {
-    delete m_dispatch;
 }
 
 PyResult RamProxyService::Handle_AssemblyLinesSelectPublic(PyCallArgs &call) {

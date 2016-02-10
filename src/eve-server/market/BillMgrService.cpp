@@ -34,11 +34,8 @@
 PyCallable_Make_InnerDispatcher(BillMgrService)
 
 BillMgrService::BillMgrService()
-: PyService("billMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("billMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(BillMgrService, GetBillTypes)
     PyCallable_REG_CALL(BillMgrService, GetCorporationBills)
     PyCallable_REG_CALL(BillMgrService, GetCorporationBillsReceivable)
@@ -46,7 +43,6 @@ BillMgrService::BillMgrService()
 }
 
 BillMgrService::~BillMgrService() {
-    delete m_dispatch;
 }
 
 

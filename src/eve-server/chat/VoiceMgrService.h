@@ -37,7 +37,7 @@ public:
 
 private:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 };
 
 #endif /* __VOICE_MGR__H__INCL__ */

@@ -32,12 +32,9 @@
 PyCallable_Make_InnerDispatcher(CharMgrService)
 
 CharMgrService::CharMgrService()
-: PyService("charMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("charMgr", new Dispatcher(this))
 {
     CharacterDB::Init();
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo)
     PyCallable_REG_CALL(CharMgrService, GetPublicInfo3)
     PyCallable_REG_CALL(CharMgrService, GetTopBounties)
@@ -65,7 +62,6 @@ CharMgrService::CharMgrService()
 }
 
 CharMgrService::~CharMgrService() {
-    delete m_dispatch;
 }
 
 PyResult CharMgrService::Handle_GetContactList(PyCallArgs &call)

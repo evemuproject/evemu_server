@@ -31,17 +31,13 @@
 PyCallable_Make_InnerDispatcher(ClientStatsMgr)
 
 ClientStatsMgr::ClientStatsMgr()
-: PyService("clientStatsMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("clientStatsMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(ClientStatsMgr, SubmitStats);
 }
 
 ClientStatsMgr::~ClientStatsMgr()
 {
-    delete m_dispatch;
 }
 
 /** client submitting stats.... unknown content

@@ -34,11 +34,8 @@
 PyCallable_Make_InnerDispatcher(MapService)
 
 MapService::MapService()
-: PyService("map"),
-  m_dispatch(new Dispatcher(this))
+: PyService("map", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(MapService, GetStationExtraInfo)
     PyCallable_REG_CALL(MapService, GetSolarSystemPseudoSecurities)
     PyCallable_REG_CALL(MapService, GetSolarSystemVisits)
@@ -63,7 +60,6 @@ MapService::MapService()
 }
 
 MapService::~MapService() {
-    delete m_dispatch;
 }
 
 PyResult MapService::Handle_GetStationExtraInfo(PyCallArgs &call) {

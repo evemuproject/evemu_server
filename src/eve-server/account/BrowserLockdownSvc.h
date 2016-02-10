@@ -35,7 +35,7 @@ public:
     ~BrowserLockdownService();
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(GetFlaggedSitesHash)
     PyCallable_DECL_CALL(GetFlaggedSitesList)

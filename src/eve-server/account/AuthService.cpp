@@ -32,17 +32,13 @@
 PyCallable_Make_InnerDispatcher(AuthService)
 
 AuthService::AuthService()
-: PyService("authentication"),
-m_dispatch(new Dispatcher(this))
+: PyService("authentication", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(AuthService, Ping)
     PyCallable_REG_CALL(AuthService, GetPostAuthenticationMessage)
 }
 
 AuthService::~AuthService() {
-    delete m_dispatch;
 }
 
 

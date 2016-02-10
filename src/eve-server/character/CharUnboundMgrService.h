@@ -48,7 +48,7 @@ public:
 
 private:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(SelectCharacterID)
 

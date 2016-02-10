@@ -39,11 +39,8 @@ public:
     PyCallable_Make_Dispatcher(KeeperBound)
 
     KeeperBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "KeeperBound";
 
 //        PyCallable_REG_CALL(KeeperBound, EditDungeon)
@@ -51,7 +48,7 @@ public:
 //        PyCallable_REG_CALL(KeeperBound, Reset)
 //        PyCallable_REG_CALL(KeeperBound, GotoRoom) //(int room)
     }
-    virtual ~KeeperBound() { delete m_dispatch; }
+    virtual ~KeeperBound() {  }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -60,23 +57,19 @@ public:
     //PyCallable_DECL_CALL()
 
 protected:
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 
 PyCallable_Make_InnerDispatcher(KeeperService)
 
 KeeperService::KeeperService()
-: PyService("keeper"),
-  m_dispatch(new Dispatcher(this))
+: PyService("keeper", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
 	PyCallable_REG_CALL(KeeperService, ActivateAccelerationGate)
     PyCallable_REG_CALL(KeeperService, GetLevelEditor)
 }
 
 KeeperService::~KeeperService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *KeeperService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

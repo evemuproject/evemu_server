@@ -32,11 +32,8 @@
 PyCallable_Make_InnerDispatcher(CorpMgrService)
 
 CorpMgrService::CorpMgrService()
-: PyService("corpmgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("corpmgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(CorpMgrService, GetPublicInfo)
     PyCallable_REG_CALL(CorpMgrService, GetCorporations)
     PyCallable_REG_CALL(CorpMgrService, GetAssetInventory)
@@ -46,7 +43,6 @@ CorpMgrService::CorpMgrService()
 }
 
 CorpMgrService::~CorpMgrService() {
-    delete m_dispatch;
 }
 
 PyResult CorpMgrService::Handle_GetPublicInfo(PyCallArgs &call) {

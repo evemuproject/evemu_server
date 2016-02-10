@@ -40,18 +40,14 @@ public:
     PyCallable_Make_Dispatcher(TradeBound)
 
     TradeBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "TradeBound";
 
         PyCallable_REG_CALL(TradeBound, List)
     }
     virtual ~TradeBound()
     {
-        delete m_dispatch;
     }
 
     virtual void Release() {
@@ -62,22 +58,18 @@ public:
     PyCallable_DECL_CALL(List)
 
 protected:
-    Dispatcher *const m_dispatch;
+
 
 };
 
 
 TradeService::TradeService()
-: PyService("trademgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("trademgr",new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(TradeService, InitiateTrade)
 }
 
 TradeService::~TradeService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *TradeService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

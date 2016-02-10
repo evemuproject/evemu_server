@@ -36,18 +36,15 @@ public:
     PyCallable_Make_Dispatcher(JumpCloneBound)
 
     JumpCloneBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "JumpCloneBound";
 
         PyCallable_REG_CALL(JumpCloneBound, GetCloneState)
         PyCallable_REG_CALL(JumpCloneBound, InstallCloneInStation)
         PyCallable_REG_CALL(JumpCloneBound, GetPriceForClone)
     }
-    virtual ~JumpCloneBound() { delete m_dispatch; }
+    virtual ~JumpCloneBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -58,22 +55,18 @@ public:
     PyCallable_DECL_CALL(GetPriceForClone)
 
 protected:
-    Dispatcher *const m_dispatch;    //we own this
+       //we own this
 };
 
 PyCallable_Make_InnerDispatcher(JumpCloneService)
 
 JumpCloneService::JumpCloneService()
-: PyService("jumpCloneSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("jumpCloneSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(JumpCloneService, GetShipCloneState)
 }
 
 JumpCloneService::~JumpCloneService() {
-    delete m_dispatch;
 }
 
 PyBoundObject* JumpCloneService::_CreateBoundObject( Client* c, const PyRep* bind_args )

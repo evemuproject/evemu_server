@@ -31,17 +31,13 @@
 PyCallable_Make_InnerDispatcher(ContractMgrService)
 
 ContractMgrService::ContractMgrService()
-: PyService("contractMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("contractMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(ContractMgrService, NumRequiringAttention);
 }
 
 ContractMgrService::~ContractMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult ContractMgrService::Handle_NumRequiringAttention( PyCallArgs& call )

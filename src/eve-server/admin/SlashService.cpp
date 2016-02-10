@@ -40,16 +40,13 @@ public:
     PyCallable_Make_Dispatcher(SlashBound)
 
     SlashBound(SlashDB *db)
-    : PyBoundObject(mgr, "SlashBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject("SlashBound", new Dispatcher(this)),
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(SlashBound, )
         PyCallable_REG_CALL(SlashBound, )
     }
-    virtual ~SlashBound() { delete m_dispatch; }
+    virtual ~SlashBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -60,24 +57,20 @@ public:
 
 protected:
     SlashDB *const m_db;
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 */
 
 PyCallable_Make_InnerDispatcher(SlashService)
 
 SlashService::SlashService(CommandDispatcher *cd)
-: PyService("slash"),
-  m_dispatch(new Dispatcher(this)),
+: PyService("slash", new Dispatcher(this)),
   m_commandDispatch(cd)
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(SlashService, SlashCmd)
 }
 
 SlashService::~SlashService() {
-    delete m_dispatch;
 }
 
 

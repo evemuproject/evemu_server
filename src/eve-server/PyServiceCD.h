@@ -72,7 +72,7 @@ protected:   //_MAY_ consume args
 };
 
 //convenience macro, you do not HAVE to use this
-#define PyCallable_REG_CALL(c,m) m_dispatch->RegisterCall(#m, &c::Handle_##m);
+#define PyCallable_REG_CALL(c,m) ((PyCallableDispatcher<c> *)m_serviceDispatch)->RegisterCall(#m, &c::Handle_##m);
 
 //macro of a template... nice.
 #define PyCallable_Make_Dispatcher(objname) \

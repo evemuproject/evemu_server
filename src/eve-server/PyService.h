@@ -44,7 +44,7 @@ class EntityList;
 
 class PyService : public PyCallable {
 public:
-    PyService(const char *serviceName);
+    PyService(const char *serviceName, CallDispatcher *disp);
     virtual ~PyService();
 
     //overload Callable for binding:
@@ -53,7 +53,8 @@ public:
     const char *GetName() const { return(m_name.c_str()); }
 
 protected:
-    typedef enum {    //enum to make sure the caller uses legit values.
+    typedef enum
+    { //enum to make sure the caller uses legit values.
         check_Always = 0,
         check_Never,
         check_in_year,

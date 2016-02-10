@@ -37,18 +37,15 @@ public:
     PyCallable_Make_Dispatcher(InsuranceBound)
 
     InsuranceBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(InsuranceBound, GetContracts)
         PyCallable_REG_CALL(InsuranceBound, GetInsurancePrice)
 
         m_strBoundObjectName = "InsuranceBound";
     }
 
-    virtual ~InsuranceBound() { delete m_dispatch; }
+    virtual ~InsuranceBound() { }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -58,24 +55,20 @@ public:
     PyCallable_DECL_CALL(GetInsurancePrice)
 
 protected:
-    Dispatcher *const m_dispatch;
+
 };
 
 PyCallable_Make_InnerDispatcher(InsuranceService)
 
 InsuranceService::InsuranceService()
-: PyService("insuranceSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("insuranceSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(InsuranceService, GetContractForShip)
     PyCallable_REG_CALL(InsuranceService, InsureShip)
     PyCallable_REG_CALL(InsuranceService, GetInsurancePrice)
 }
 
 InsuranceService::~InsuranceService() {
-    delete m_dispatch;
 }
 
 PyBoundObject* InsuranceService::_CreateBoundObject( Client* c, const PyRep* bind_args )

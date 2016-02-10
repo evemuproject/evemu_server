@@ -36,16 +36,13 @@ public:
     PyCallable_Make_Dispatcher(LanguageBound)
 
     LanguageBound(LanguageDB *db)
-    : PyBoundObject(mgr, "LanguageBound"),
-      m_db(db),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject("LanguageBound", new Dispatcher(this)),
+      m_db(db)
     {
-        _SetCallDispatcher(m_dispatch);
-
         PyCallable_REG_CALL(LanguageBound, )
         PyCallable_REG_CALL(LanguageBound, )
     }
-    virtual ~LanguageBound() { delete m_dispatch; }
+    virtual ~LanguageBound() {  }
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -56,24 +53,20 @@ public:
 
 protected:
     LanguageDB *const m_db;
-    Dispatcher *const m_dispatch;   //we own this
+      //we own this
 };
 */
 
 PyCallable_Make_InnerDispatcher(LanguageService)
 
 LanguageService::LanguageService()
-: PyService("languageSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("languageSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(LanguageService, GetLanguages)
     PyCallable_REG_CALL(LanguageService, GetTextsForGroup)
 }
 
 LanguageService::~LanguageService() {
-    delete m_dispatch;
 }
 
 

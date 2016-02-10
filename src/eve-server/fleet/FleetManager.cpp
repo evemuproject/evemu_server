@@ -33,11 +33,8 @@
 PyCallable_Make_InnerDispatcher(FleetManager)
 
 FleetManager::FleetManager()
-: PyService("fleetMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("fleetMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(FleetManager, ForceLeaveFleet);
     PyCallable_REG_CALL(FleetManager, AddToWatchlist);
     PyCallable_REG_CALL(FleetManager, RemoveFromWatchlist);
@@ -49,7 +46,6 @@ FleetManager::FleetManager()
 
 FleetManager::~FleetManager()
 {
-    delete m_dispatch;
 }
 
 PyResult FleetManager::Handle_ForceLeaveFleet(PyCallArgs &call) {

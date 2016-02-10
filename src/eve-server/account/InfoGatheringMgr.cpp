@@ -31,18 +31,14 @@
 PyCallable_Make_InnerDispatcher(InfoGatheringMgr)
 
 InfoGatheringMgr::InfoGatheringMgr()
-: PyService("infoGatheringMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("infoGatheringMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(InfoGatheringMgr, GetStateAndConfig);
     PyCallable_REG_CALL(InfoGatheringMgr, LogInfoEventsFromClient);
 
 }
 
 InfoGatheringMgr::~InfoGatheringMgr() {
-    delete m_dispatch;
 }
 
 PyResult InfoGatheringMgr::Handle_GetStateAndConfig(PyCallArgs &call) {

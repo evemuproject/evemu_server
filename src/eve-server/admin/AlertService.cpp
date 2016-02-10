@@ -31,15 +31,12 @@
 PyCallable_Make_InnerDispatcher(AlertService)
 
 AlertService::AlertService()
-: PyService("alert"),
-  m_dispatch(new Dispatcher(this)),
+: PyService("alert", new Dispatcher(this)),
   traceLogger(NULL)
 {
-    _SetCallDispatcher(m_dispatch);
-
-    m_dispatch->RegisterCall("BeanCount", &AlertService::Handle_BeanCount);
-    m_dispatch->RegisterCall("BeanDelivery", &AlertService::Handle_BeanDelivery);
-    m_dispatch->RegisterCall("SendClientStackTraceAlert", &AlertService::Handle_SendClientStackTraceAlert);
+    PyCallable_REG_CALL(AlertService, BeanCount);
+    PyCallable_REG_CALL(AlertService, BeanDelivery);
+    PyCallable_REG_CALL(AlertService, SendClientStackTraceAlert);
 
 #ifdef DEV_DEBUG_TREAT
     traceLogger = new PyTraceLog("evemu_client_stack_trace.txt", true, true);
@@ -48,7 +45,6 @@ AlertService::AlertService()
 
 AlertService::~AlertService()
 {
-    delete m_dispatch;
 }
 
 /** Basically BeanCount means that a error has occurred in the client python code, and it asks

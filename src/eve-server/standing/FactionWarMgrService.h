@@ -46,7 +46,7 @@ public:
 
 private:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
 };
 

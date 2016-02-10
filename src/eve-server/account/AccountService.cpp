@@ -35,11 +35,8 @@
 PyCallable_Make_InnerDispatcher(AccountService)
 
 AccountService::AccountService()
-: PyService("account"),
-  m_dispatch(new Dispatcher(this))
+: PyService("account", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(AccountService, GetCashBalance)
     PyCallable_REG_CALL(AccountService, GetEntryTypes)
     PyCallable_REG_CALL(AccountService, GetKeyMap)
@@ -50,7 +47,6 @@ AccountService::AccountService()
 }
 
 AccountService::~AccountService() {
-    delete m_dispatch;
 }
 
 PyResult AccountService::Handle_GetCashBalance(PyCallArgs &call) {

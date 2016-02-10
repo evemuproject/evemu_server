@@ -31,18 +31,14 @@
 PyCallable_Make_InnerDispatcher(UserService)
 
 UserService::UserService()
-: PyService("userSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("userSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(UserService, GetRedeemTokens)
     PyCallable_REG_CALL(UserService, GetCreateDate)
     PyCallable_REG_CALL(UserService, ReportISKSpammer)
 }
 
 UserService::~UserService() {
-    delete m_dispatch;
 }
 
 PyResult UserService::Handle_GetRedeemTokens( PyCallArgs& call )

@@ -33,16 +33,12 @@
 PyCallable_Make_InnerDispatcher(CharFittingMgrService)
 
 CharFittingMgrService::CharFittingMgrService()
-: PyService("charFittingMgr"),
-m_dispatch(new Dispatcher(this))
+: PyService("charFittingMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(CharFittingMgrService, GetFittings);
 }
 
 CharFittingMgrService::~CharFittingMgrService() {
-    delete m_dispatch;
 }
 
 PyResult CharFittingMgrService::Handle_GetFittings(PyCallArgs &call) {

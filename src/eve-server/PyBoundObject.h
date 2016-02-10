@@ -31,7 +31,7 @@
 class PyBoundObject
 : public PyCallable {
 public:
-    PyBoundObject();
+    PyBoundObject(CallDispatcher *disp);
     virtual ~PyBoundObject();
 
     virtual void Release() = 0;

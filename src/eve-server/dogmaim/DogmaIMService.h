@@ -40,7 +40,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(GetAttributeTypes)
     //overloaded in order to support bound objects:

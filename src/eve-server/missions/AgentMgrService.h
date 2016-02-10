@@ -39,7 +39,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     //for now this lives here, might want to move eventually.
     std::map<uint32, Agent *> m_agents;    //we own these

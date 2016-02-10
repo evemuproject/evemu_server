@@ -36,19 +36,15 @@ public:
     PyCallable_Make_Dispatcher(WarRegistryBound)
 
     WarRegistryBound(uint32 corporationID)
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this)),
+    : PyBoundObject(new Dispatcher(this)),
       m_corporationID(corporationID)
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "WarRegistryBound";
 
         PyCallable_REG_CALL(WarRegistryBound, GetWars);
     }
     ~WarRegistryBound()
     {
-        delete m_dispatch;
     }
 
     void Release() {
@@ -59,7 +55,7 @@ public:
     PyCallable_DECL_CALL(GetWars)
 
 private:
-    Dispatcher *const m_dispatch;
+
 
     uint32 m_corporationID;
 };
@@ -67,15 +63,12 @@ private:
 PyCallable_Make_InnerDispatcher(WarRegistryService)
 
 WarRegistryService::WarRegistryService()
-: PyService("warRegistry"),
-  m_dispatch(new Dispatcher(this))
+: PyService("warRegistry", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
 }
 
 WarRegistryService::~WarRegistryService()
 {
-    delete m_dispatch;
 }
 
 PyBoundObject *WarRegistryService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

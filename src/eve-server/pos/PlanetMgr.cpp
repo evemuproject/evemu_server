@@ -40,10 +40,8 @@ public:
     PyCallable_Make_Dispatcher(PlanetMgrBound)
 
     PlanetMgrBound(uint32 planetID, uint32 charID)
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this)), m_planetID(planetID)
+    : PyBoundObject(new Dispatcher(this)), m_planetID(planetID)
     {
-        _SetCallDispatcher(m_dispatch);
         m_colony = new Colony(charID, m_planetID);
         m_strBoundObjectName = "PlanetMgrBound";
 
@@ -64,7 +62,7 @@ public:
         PyCallable_REG_CALL(PlanetMgrBound, UserTransferCommodities)
         PyCallable_REG_CALL(PlanetMgrBound, UserUpdateNetwork)
     }
-    virtual ~PlanetMgrBound() { delete m_dispatch; }
+    virtual ~PlanetMgrBound() { }
     virtual void Release() {
         //He hates this statement
         delete this;
@@ -88,7 +86,7 @@ public:
     PyCallable_DECL_CALL(UserUpdateNetwork)
 
 protected:
-    Dispatcher *const m_dispatch;
+
     const uint32 m_planetID;
     Colony *m_colony;
 };
@@ -96,17 +94,13 @@ protected:
 PyCallable_Make_InnerDispatcher(PlanetMgrService)
 
 PlanetMgrService::PlanetMgrService()
-: PyService("planetMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("planetMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(PlanetMgrService, GetPlanetsForChar)
     PyCallable_REG_CALL(PlanetMgrService, GetMyLaunchesDetails)
 }
 
 PlanetMgrService::~PlanetMgrService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *PlanetMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

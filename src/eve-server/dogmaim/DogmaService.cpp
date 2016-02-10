@@ -33,17 +33,13 @@
 
 PyCallable_Make_InnerDispatcher(DogmaService)
 
-DogmaService::DogmaService(  )
-: PyService("dogma"),
-  m_dispatch(new Dispatcher(this))
+DogmaService::DogmaService()
+: PyService("dogma", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(DogmaService, GetOperandsForChar);
 }
 
 DogmaService::~DogmaService() {
-    delete m_dispatch;
 }
 
 PyResult DogmaService::Handle_GetOperandsForChar(PyCallArgs &call)

@@ -34,11 +34,8 @@
 PyCallable_Make_InnerDispatcher(Standing2Service)
 
 Standing2Service::Standing2Service()
-: PyService("standing2"),
-  m_dispatch(new Dispatcher(this))
+: PyService("standing2", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(Standing2Service, GetMyKillRights)
     PyCallable_REG_CALL(Standing2Service, GetNPCNPCStandings)
     PyCallable_REG_CALL(Standing2Service, GetMyStandings)
@@ -50,7 +47,6 @@ Standing2Service::Standing2Service()
 }
 
 Standing2Service::~Standing2Service() {
-    delete m_dispatch;
 }
 
 

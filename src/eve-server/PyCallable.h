@@ -89,17 +89,14 @@ public:
         virtual PyResult Dispatch( const std::string& method_name, PyCallArgs& call ) = 0;
     };
 
-    PyCallable();
+    PyCallable(CallDispatcher *disp);
     virtual ~PyCallable();
 
     //returns ownership:
     virtual PyResult Call( const std::string& method, PyCallArgs& args );
 
 protected:
-    void _SetCallDispatcher( CallDispatcher* d ) { m_serviceDispatch = d; }
-
-private:
-    CallDispatcher* m_serviceDispatch;    //must not be NULL after constructor, we do not own this.
+    CallDispatcher * const m_serviceDispatch; //must not be NULL after constructor, we own this.
 };
 
 #endif // __PYCALLABLE_H__

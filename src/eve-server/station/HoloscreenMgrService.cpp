@@ -31,11 +31,8 @@
 PyCallable_Make_InnerDispatcher(HoloscreenMgrService)
 
 HoloscreenMgrService::HoloscreenMgrService()
-: PyService("holoscreenMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("holoscreenMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(HoloscreenMgrService, GetTwoHourCache)
     PyCallable_REG_CALL(HoloscreenMgrService, GetRecentEpicArcCompletions)
     PyCallable_REG_CALL(HoloscreenMgrService, GetRuntimeCache)
@@ -43,7 +40,6 @@ HoloscreenMgrService::HoloscreenMgrService()
 
 HoloscreenMgrService::~HoloscreenMgrService()
 {
-    delete m_dispatch;
 }
 
 //those objects should be cached

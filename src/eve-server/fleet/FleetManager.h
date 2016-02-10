@@ -38,7 +38,7 @@ public:
 protected:
 
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyCallable_DECL_CALL(ForceLeaveFleet);
     PyCallable_DECL_CALL(AddToWatchlist);

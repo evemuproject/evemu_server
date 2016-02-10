@@ -33,16 +33,12 @@
 PyCallable_Make_InnerDispatcher(SovereigntyMgrService)
 
 SovereigntyMgrService::SovereigntyMgrService()
-: PyService("sovMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("sovMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(SovereigntyMgrService, GetSystemSovereigntyInfo)
 }
 
 SovereigntyMgrService::~SovereigntyMgrService() {
-    delete m_dispatch;
 }
 
 PyResult SovereigntyMgrService::Handle_GetSystemSovereigntyInfo(PyCallArgs &call) {

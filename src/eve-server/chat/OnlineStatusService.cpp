@@ -31,17 +31,13 @@
 PyCallable_Make_InnerDispatcher(OnlineStatusService)
 
 OnlineStatusService::OnlineStatusService()
-: PyService("onlineStatus"),
-m_dispatch(new Dispatcher(this))
+: PyService("onlineStatus", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(OnlineStatusService, GetInitialState)
     PyCallable_REG_CALL(OnlineStatusService, GetOnlineStatus)
 }
 
 OnlineStatusService::~OnlineStatusService() {
-    delete m_dispatch;
 }
 
 PyResult OnlineStatusService::Handle_GetInitialState(PyCallArgs &call) {

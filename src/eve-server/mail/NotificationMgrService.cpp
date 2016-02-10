@@ -31,11 +31,8 @@
 PyCallable_Make_InnerDispatcher(NotificationMgrService)
 
 NotificationMgrService::NotificationMgrService()
-: PyService("notificationMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("notificationMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(NotificationMgrService, GetByGroupID)
     PyCallable_REG_CALL(NotificationMgrService, GetUnprocessed)
     PyCallable_REG_CALL(NotificationMgrService, MarkGroupAsProcessed)
@@ -47,7 +44,6 @@ NotificationMgrService::NotificationMgrService()
 }
 
 NotificationMgrService::~NotificationMgrService() {
-    delete m_dispatch;
 }
 
 PyResult NotificationMgrService::Handle_GetByGroupID(PyCallArgs &call)

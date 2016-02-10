@@ -38,7 +38,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     virtual PyBoundObject *_CreateBoundObject(Client *c, const PyRep *bind_args);
 

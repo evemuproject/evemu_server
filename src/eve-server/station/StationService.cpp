@@ -33,17 +33,13 @@
 PyCallable_Make_InnerDispatcher(StationService)
 
 StationService::StationService()
-: PyService("station"),
-  m_dispatch(new Dispatcher(this))
+: PyService("station", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(StationService, GetGuests)
     PyCallable_REG_CALL(StationService, GetSolarSystem)
 }
 
 StationService::~StationService() {
-    delete m_dispatch;
 }
 
 PyResult StationService::Handle_GetSolarSystem(PyCallArgs &call) {

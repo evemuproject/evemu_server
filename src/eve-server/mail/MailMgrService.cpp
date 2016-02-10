@@ -32,11 +32,8 @@
 PyCallable_Make_InnerDispatcher(MailMgrService)
 
 MailMgrService::MailMgrService()
-: PyService("mailMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("mailMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(MailMgrService, SendMail);
     PyCallable_REG_CALL(MailMgrService, PrimeOwners);
     PyCallable_REG_CALL(MailMgrService, SyncMail);
@@ -69,7 +66,6 @@ MailMgrService::MailMgrService()
 }
 
 MailMgrService::~MailMgrService() {
-    delete m_dispatch;
 }
 
 PyResult MailMgrService::Handle_SendMail(PyCallArgs &call)

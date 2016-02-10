@@ -38,7 +38,7 @@ public:
 
 private:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     // verifying functions
     void _VerifyInstallJob_Call(const Call_InstallJob &args, InventoryItemRef installedItem, const PathElement &bomLocation, Client *const c);

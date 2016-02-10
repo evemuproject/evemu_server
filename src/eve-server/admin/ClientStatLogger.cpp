@@ -31,16 +31,12 @@
 PyCallable_Make_InnerDispatcher(ClientStatLogger)
 
 ClientStatLogger::ClientStatLogger()
-:PyService("clientStatLogger"),
-m_dispatch(new Dispatcher(this))
+: PyService("clientStatLogger", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(ClientStatLogger, LogString);
 }
 
 ClientStatLogger::~ClientStatLogger() {
-    delete m_dispatch;
 }
 
 PyResult ClientStatLogger::Handle_LogString(PyCallArgs &call) {

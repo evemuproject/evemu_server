@@ -32,19 +32,14 @@
 PyCallable_Make_InnerDispatcher(SearchMgrService)
 
 SearchMgrService::SearchMgrService()
-: PyService("search"),
-  m_dispatch(new Dispatcher(this))
+: PyService("search", new Dispatcher(this))
 {
-
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(SearchMgrService, QuickQuery);
     PyCallable_REG_CALL(SearchMgrService, Query);
 
 }
 
 SearchMgrService::~SearchMgrService() {
-    delete m_dispatch;
 }
 
 

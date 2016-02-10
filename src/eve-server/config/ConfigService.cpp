@@ -32,11 +32,8 @@
 PyCallable_Make_InnerDispatcher(ConfigService)
 
 ConfigService::ConfigService()
-: PyService("config"),
-  m_dispatch(new Dispatcher(this))
+: PyService("config", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(ConfigService, GetMultiOwnersEx)
     PyCallable_REG_CALL(ConfigService, GetMultiLocationsEx)
     PyCallable_REG_CALL(ConfigService, GetMultiAllianceShortNamesEx)
@@ -56,7 +53,6 @@ ConfigService::ConfigService()
 }
 
 ConfigService::~ConfigService() {
-    delete m_dispatch;
 }
 
 PyResult ConfigService::Handle_GetMultiOwnersEx(PyCallArgs &call) {

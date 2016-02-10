@@ -31,11 +31,8 @@
 PyCallable_Make_InnerDispatcher(LPService)
 
 LPService::LPService()
-: PyService("LPSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("LPSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(LPService, GetLPExchangeRates)
     PyCallable_REG_CALL(LPService, GetLPForCharacterCorp)
     PyCallable_REG_CALL(LPService, GetLPsForCharacter)
@@ -44,7 +41,6 @@ LPService::LPService()
 
 LPService::~LPService()
 {
-    delete m_dispatch;
 }
 
 PyResult LPService::Handle_GetLPExchangeRates( PyCallArgs& call )

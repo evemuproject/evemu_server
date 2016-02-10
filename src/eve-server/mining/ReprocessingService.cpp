@@ -49,7 +49,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+
 
     uint32 m_stationID;
     double m_staEfficiency;
@@ -64,14 +64,11 @@ PyCallable_Make_InnerDispatcher(ReprocessingServiceBound)
 PyCallable_Make_InnerDispatcher(ReprocessingService)
 
 ReprocessingService::ReprocessingService()
-: PyService("reprocessingSvc"),
-  m_dispatch(new Dispatcher(this))
+: PyService("reprocessingSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
 }
 
 ReprocessingService::~ReprocessingService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
@@ -99,14 +96,11 @@ PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *b
 //******************************************************************************
 
 ReprocessingServiceBound::ReprocessingServiceBound(uint32 stationID)
-: PyBoundObject(),
-  m_dispatch(new Dispatcher(this)),
+: PyBoundObject(new Dispatcher(this)),
   m_stationID(stationID),
   m_staEfficiency(0.0),
   m_tax(0.0)
 {
-    _SetCallDispatcher(m_dispatch);
-
     m_strBoundObjectName = "ReprocessingServiceBound";
 
     PyCallable_REG_CALL(ReprocessingServiceBound, GetOptionsForItemTypes)

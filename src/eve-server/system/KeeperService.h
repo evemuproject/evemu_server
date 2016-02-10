@@ -37,7 +37,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
 	PyCallable_DECL_CALL(ActivateAccelerationGate)
     PyCallable_DECL_CALL(GetLevelEditor)

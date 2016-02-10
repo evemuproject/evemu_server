@@ -34,11 +34,8 @@
 PyCallable_Make_InnerDispatcher(FactionWarMgrService)
 
 FactionWarMgrService::FactionWarMgrService()
-: PyService("facWarMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("facWarMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(FactionWarMgrService, GetWarFactions)
     PyCallable_REG_CALL(FactionWarMgrService, GetFWSystems)
     PyCallable_REG_CALL(FactionWarMgrService, GetMyCharacterRankOverview)
@@ -51,7 +48,6 @@ FactionWarMgrService::FactionWarMgrService()
 
 FactionWarMgrService::~FactionWarMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult FactionWarMgrService::Handle_GetWarFactions(PyCallArgs &call) {

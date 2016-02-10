@@ -30,18 +30,14 @@
 
 PyCallable_Make_InnerDispatcher(LocalizationServerService)
 
-LocalizationServerService::LocalizationServerService(  )
-: PyService("localizationServer"),
-  m_dispatch(new Dispatcher(this))
+LocalizationServerService::LocalizationServerService()
+: PyService("localizationServer", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(LocalizationServerService, GetAllTextChanges);
     PyCallable_REG_CALL(LocalizationServerService, UpdateLocalizationQASettings);
 }
 
 LocalizationServerService::~LocalizationServerService() {
-    delete m_dispatch;
 }
 
 PyResult LocalizationServerService::Handle_GetAllTextChanges(PyCallArgs &call)

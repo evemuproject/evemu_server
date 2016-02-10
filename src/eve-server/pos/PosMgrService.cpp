@@ -37,10 +37,8 @@ public:
     PyCallable_Make_Dispatcher(PosMgrServiceBound)
 
     PosMgrServiceBound()
-            : PyBoundObject(),
-              m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
         m_strBoundObjectName = "PosMgrServiceBound";
 
         PyCallable_REG_CALL(PosMgrServiceBound, SetShipPassword)
@@ -66,7 +64,7 @@ public:
          */
 
     }
-    virtual ~PosMgrServiceBound() { delete m_dispatch; }
+    virtual ~PosMgrServiceBound() { }
     virtual void Release() {
         delete this;
     }
@@ -74,17 +72,14 @@ public:
     PyCallable_DECL_CALL(SetShipPassword)
 
 protected:
-    Dispatcher *const m_dispatch;
+
 };
 
 PyCallable_Make_InnerDispatcher(PosMgrService)
 
 PosMgrService::PosMgrService()
-: PyService("posMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("posMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(PosMgrService, GetControlTowerFuelRequirements)
     /* //TODO, Verify that these are all unbound calls.
      * GetControlTowerFuelRequirements
@@ -95,7 +90,6 @@ PosMgrService::PosMgrService()
 }
 
 PosMgrService::~PosMgrService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *PosMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

@@ -43,11 +43,8 @@ public:
     PyCallable_Make_Dispatcher(ShipBound)
 
     ShipBound()
-    : PyBoundObject(),
-      m_dispatch(new Dispatcher(this))
+    : PyBoundObject(new Dispatcher(this))
     {
-        _SetCallDispatcher(m_dispatch);
-
         m_strBoundObjectName = "ShipBound";
 
         PyCallable_REG_CALL(ShipBound, Board)
@@ -64,7 +61,7 @@ public:
         PyCallable_REG_CALL(ShipBound, SelfDestruct)
     }
 
-    virtual ~ShipBound() {delete m_dispatch;}
+    virtual ~ShipBound() {}
     virtual void Release() {
         //I hate this statement
         delete this;
@@ -84,22 +81,18 @@ public:
     PyCallable_DECL_CALL(SelfDestruct)
 
 protected:
-    Dispatcher *const m_dispatch;
+
 };
 
 PyCallable_Make_InnerDispatcher(ShipService)
 
 ShipService::ShipService()
-: PyService("ship"),
-  m_dispatch(new Dispatcher(this))
+: PyService("ship", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
 //  PyCallable_REG_CALL(ShipService, )
 }
 
 ShipService::~ShipService() {
-    delete m_dispatch;
 }
 
 PyBoundObject *ShipService::_CreateBoundObject(Client *c, const PyRep *bind_args) {

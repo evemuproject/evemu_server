@@ -31,17 +31,13 @@
 PyCallable_Make_InnerDispatcher(VoiceMgrService)
 
 VoiceMgrService::VoiceMgrService()
-: PyService("voiceMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("voiceMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(VoiceMgrService, VoiceEnabled);
 }
 
 VoiceMgrService::~VoiceMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult VoiceMgrService::Handle_VoiceEnabled(PyCallArgs &call) {

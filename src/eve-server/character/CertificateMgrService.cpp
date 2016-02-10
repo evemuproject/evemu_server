@@ -34,11 +34,8 @@
 PyCallable_Make_InnerDispatcher(CertificateMgrService)
 
 CertificateMgrService::CertificateMgrService()
-: PyService("certificateMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("certificateMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(CertificateMgrService, GetMyCertificates)
     PyCallable_REG_CALL(CertificateMgrService, GetCertificateCategories)
     PyCallable_REG_CALL(CertificateMgrService, GetAllShipCertificateRecommendations)
@@ -51,7 +48,6 @@ CertificateMgrService::CertificateMgrService()
 
 CertificateMgrService::~CertificateMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult CertificateMgrService::Handle_GetMyCertificates(PyCallArgs &call) {

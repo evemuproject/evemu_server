@@ -31,11 +31,8 @@
 PyCallable_Make_InnerDispatcher(MailingListMgrService)
 
 MailingListMgrService::MailingListMgrService()
-: PyService("mailingListsMgr"),
-  m_dispatch(new Dispatcher(this))
+: PyService("mailingListsMgr", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(MailingListMgrService, GetJoinedLists)
     PyCallable_REG_CALL(MailingListMgrService, Create)
     PyCallable_REG_CALL(MailingListMgrService, Join)
@@ -59,7 +56,6 @@ MailingListMgrService::MailingListMgrService()
 
 MailingListMgrService::~MailingListMgrService()
 {
-    delete m_dispatch;
 }
 
 PyResult MailingListMgrService::Handle_GetJoinedLists(PyCallArgs& call)

@@ -41,7 +41,7 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher *const m_dispatch;
+   
 
     PyResult Handle_BeanCount(PyCallArgs &call);
     PyResult Handle_BeanDelivery(PyCallArgs &call);

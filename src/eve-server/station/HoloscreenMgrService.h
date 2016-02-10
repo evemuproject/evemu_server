@@ -36,7 +36,6 @@ public:
 
 protected:
     class Dispatcher;
-    Dispatcher* const m_dispatch;
 
     PyCallable_DECL_CALL(GetTwoHourCache)
     PyCallable_DECL_CALL(GetRecentEpicArcCompletions)

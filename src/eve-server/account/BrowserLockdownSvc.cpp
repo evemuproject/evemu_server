@@ -31,12 +31,9 @@
 // crap
 PyCallable_Make_InnerDispatcher(BrowserLockdownService)
 
-BrowserLockdownService::BrowserLockdownService(  )
-: PyService("browserLockdownSvc"),
-  m_dispatch(new Dispatcher(this))
+BrowserLockdownService::BrowserLockdownService()
+: PyService("browserLockdownSvc", new Dispatcher(this))
 {
-    _SetCallDispatcher(m_dispatch);
-
     PyCallable_REG_CALL(BrowserLockdownService, GetFlaggedSitesHash)
     PyCallable_REG_CALL(BrowserLockdownService, GetFlaggedSitesList)
     PyCallable_REG_CALL(BrowserLockdownService, GetDefaultHomePage)
@@ -44,7 +41,6 @@ BrowserLockdownService::BrowserLockdownService(  )
 }
 
 BrowserLockdownService::~BrowserLockdownService() {
-    delete m_dispatch;
 }
 
 PyObject* GenerateLockdownCachedObject()
