@@ -32,6 +32,7 @@
 #include "python/PyVisitor.h"
 #include "python/PyRep.h"
 #include "python/PyDumpVisitor.h"
+#include "utils/crc32.h"
 #include "utils/EVEUtils.h"
 
 const uint32 CacheFileMagic = 0xFF886622;

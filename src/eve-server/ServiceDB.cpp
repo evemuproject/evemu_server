@@ -25,6 +25,7 @@
 
 #include "eve-server.h"
 
+#include "database/dbcore.h"
 #include "EVEServerConfig.h"
 #include "ServiceDB.h"
 

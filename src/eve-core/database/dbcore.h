@@ -31,7 +31,10 @@
 
 #include "database/dbtype.h"
 #include "threading/Mutex.h"
-#include "utils/Singleton.h"
+// MySQL
+#include <mysql.h>
+#include <mysqld_error.h>
+#include <errmsg.h>
 
 class DBcore;
 

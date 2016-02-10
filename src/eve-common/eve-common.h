@@ -43,7 +43,6 @@
 #include "network/TCPServer.h"
 // utils
 #include "utils/Buffer.h"
-#include "utils/crc32.h"
 #include "utils/Deflate.h"
 #include "utils/misc.h"
 #include "utils/RefPtr.h"

@@ -73,6 +73,8 @@
 #include "corporation/CorpRegistryService.h"
 #include "corporation/CorpStationMgrService.h"
 #include "corporation/LPService.h"
+// database
+#include "database/dbcore.h"
 // dogmaim services
 #include "dogmaim/DogmaIMService.h"
 #include "dogmaim/DogmaService.h"
@@ -104,6 +106,8 @@
 #include "missions/AgentMgrService.h"
 #include "missions/DungeonExplorationMgrService.h"
 #include "missions/MissionMgrService.h"
+// network
+#include "network/EVETCPServer.h"
 // pos services
 #include "pos/PlanetMgr.h"
 #include "pos/PosMgrService.h"

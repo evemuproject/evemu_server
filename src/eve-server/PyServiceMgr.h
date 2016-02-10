@@ -36,7 +36,6 @@ class PyRep;
 class PySubStruct;
 class EntityList;
 class ObjCacheService;
-class DBcore;
 
 class LSCService;
 

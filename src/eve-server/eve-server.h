@@ -31,13 +31,10 @@
 /************************************************************************/
 #include "eve-core.h"
 
-// database
-#include "database/dbcore.h"
 // log
 #include "log/LogNew.h"
 #include "log/logsys.h"
 #include "log/Basic_Log.h"
-#include "log/HTML_Log.h"
 // network
 #include "network/StreamPacketizer.h"
 #include "network/TCPConnection.h"
@@ -45,7 +42,6 @@
 // threading
 #include "threading/Mutex.h"
 // utils
-#include "utils/crc32.h"
 #include "utils/Deflate.h"
 #include "utils/EvilNumber.h"
 #include "utils/gpoint.h"

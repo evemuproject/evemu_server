@@ -136,13 +136,13 @@
 #endif /* !HAVE_WINDOWS_H */
 
 #ifdef HAVE_WINSOCK2_H
-#   include <winsock2.h>
+#include <winsock2.h>
 #else /* !HAVE_WINSOCK2_H */
-#   include <fcntl.h>
-#   include <netdb.h>
-#   include <arpa/inet.h>
-#   include <netinet/in.h>
-#   include <sys/socket.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #endif /* !HAVE_WINSOCK2_H */
 
 #ifndef HAVE_ASINH
@@ -158,10 +158,6 @@
 #include <GaPreReqs.h>
 #include <GaMath.h>
 #include <GaTypes.h>
-// MySQL
-#include <mysql.h>
-#include <mysqld_error.h>
-#include <errmsg.h>
 // TinyXML
 #include <tinyxml.h>
 // zlib
