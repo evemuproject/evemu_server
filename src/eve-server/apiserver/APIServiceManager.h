@@ -75,8 +75,8 @@ public:
     APIServiceManager();
 
     // Common call shared to all derived classes called via polymorphism
-    virtual std::tr1::shared_ptr<std::string> ProcessCall(const APICommandCall * pAPICommandCall);
-    std::tr1::shared_ptr<std::string> BuildErrorXMLResponse(std::string errorCode, std::string errorMessage);
+    virtual std::shared_ptr<std::string> ProcessCall(const APICommandCall * pAPICommandCall);
+    std::shared_ptr<std::string> BuildErrorXMLResponse(std::string errorCode, std::string errorMessage);
 
 protected:
     bool _AuthenticateUserNamePassword(std::string userName, std::string password);
@@ -95,7 +95,7 @@ protected:
     void _CloseXMLTag();
     void _BuildSingleXMLTag(std::string name, std::string param);
     void _BuildErrorXMLTag(std::string code, std::string param);
-    std::tr1::shared_ptr<std::string> _GetXMLDocumentString();
+    std::shared_ptr<std::string> _GetXMLDocumentString();
 
     APIServiceDB m_db;
 

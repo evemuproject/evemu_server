@@ -36,10 +36,10 @@
  * @author caytchen
  * @date April 2011
  */
-class ImageServerConnection : public std::tr1::enable_shared_from_this<ImageServerConnection>
+class ImageServerConnection : public std::enable_shared_from_this<ImageServerConnection>
 {
 public:
-    static std::tr1::shared_ptr<ImageServerConnection> create(boost::asio::io_service& io);
+    static std::shared_ptr<ImageServerConnection> create(boost::asio::io_service& io);
     void Process();
     boost::asio::ip::tcp::socket& socket();
 
@@ -63,7 +63,7 @@ private:
 
     boost::asio::streambuf _buffer;
     boost::asio::ip::tcp::socket _socket;
-    std::tr1::shared_ptr<std::vector<char> > _imageData;
+    std::shared_ptr<std::vector<char> > _imageData;
 
     static boost::asio::const_buffers_1 _responseOK;
     static boost::asio::const_buffers_1 _responseNotFound;

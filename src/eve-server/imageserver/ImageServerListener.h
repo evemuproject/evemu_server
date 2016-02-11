@@ -46,7 +46,7 @@ public:
 
 private:
     void StartAccept();
-    void HandleAccept(std::tr1::shared_ptr<ImageServerConnection> connection);
+    void HandleAccept(std::shared_ptr<ImageServerConnection> connection);
 
     boost::asio::ip::tcp::acceptor* _acceptor;
 };

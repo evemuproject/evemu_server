@@ -681,7 +681,7 @@ protected:
     };
 
 public:
-    typedef std::tr1::unordered_map<PyRep*, PyRep*, _hash, _comp>   storage_type;
+    typedef std::unordered_map<PyRep*, PyRep*, _hash, _comp>   storage_type;
     typedef storage_type::iterator                                  iterator;
     typedef storage_type::const_iterator                            const_iterator;
 

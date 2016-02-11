@@ -34,14 +34,14 @@ APIAccountManager::APIAccountManager()
 {
 }
 
-std::tr1::shared_ptr<std::string> APIAccountManager::ProcessCall(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIAccountManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
     sLog.Debug("APIAccountManager::ProcessCall()", "EVEmu API - Account Service Manager");
 
     if( pAPICommandCall->find( "servicehandler" ) == pAPICommandCall->end() )
     {
         sLog.Error( "APIAccountManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
-        return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::string>(new std::string(""));
     }
 
     if( pAPICommandCall->find( "servicehandler" )->second == "APIKeyRequest.xml.aspx" )
@@ -56,13 +56,13 @@ std::tr1::shared_ptr<std::string> APIAccountManager::ProcessCall(const APIComman
     {
         sLog.Error("APIAccountManager::ProcessCall()", "EVEmu API - Account Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
             pAPICommandCall->find("servicehandler")->second.c_str() );
-        return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::string>(new std::string(""));
     }
 
     return BuildErrorXMLResponse( "9999", "EVEmu API Server: Account Manager - Unknown call." );
 }
 
-std::tr1::shared_ptr<std::string> APIAccountManager::_APIKeyRequest(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIAccountManager::_APIKeyRequest(const APICommandCall * pAPICommandCall)
 {
     bool status = false;
     uint32 userID, apiRole;
@@ -200,7 +200,7 @@ std::tr1::shared_ptr<std::string> APIAccountManager::_APIKeyRequest(const APICom
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APIAccountManager::_Characters(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIAccountManager::_Characters(const APICommandCall * pAPICommandCall)
 {
 
     sLog.Error( "APIAccountManager::_Characters()", "TODO: Insert code to validate userID and apiKey" );
@@ -265,7 +265,7 @@ std::tr1::shared_ptr<std::string> APIAccountManager::_Characters(const APIComman
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APIAccountManager::_AccountStatus(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIAccountManager::_AccountStatus(const APICommandCall * pAPICommandCall)
 {
     sLog.Error( "APIAccountManager::_AccountStatus()", "TODO: Insert code to validate userID and apiKey" );
 

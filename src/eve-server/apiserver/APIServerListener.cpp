@@ -42,11 +42,11 @@ APIServerListener::~APIServerListener()
 
 void APIServerListener::StartAccept()
 {
-    std::tr1::shared_ptr<APIServerConnection> connection = APIServerConnection::create(_acceptor->get_io_service());
-    _acceptor->async_accept(connection->socket(), std::tr1::bind(&APIServerListener::HandleAccept, this, connection));
+    std::shared_ptr<APIServerConnection> connection = APIServerConnection::create(_acceptor->get_io_service());
+    _acceptor->async_accept(connection->socket(), std::bind(&APIServerListener::HandleAccept, this, connection));
 }
 
-void APIServerListener::HandleAccept(std::tr1::shared_ptr<APIServerConnection> connection)
+void APIServerListener::HandleAccept(std::shared_ptr<APIServerConnection> connection)
 {
     connection->Process();
     StartAccept();

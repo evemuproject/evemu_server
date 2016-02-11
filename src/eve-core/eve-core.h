@@ -84,23 +84,10 @@
 #include <string>
 #include <vector>
 
-/*
- * Technical Report 1 Standard Template Library includes
- * Note: my fellow developers please read 'http://en.wikipedia.org/wiki/Technical_Report_1'. I know its a wiki page
- *       but it gives you the general idea.
- */
-#ifdef HAVE_TR1_PREFIX
-#   include <tr1/functional>
-#   include <tr1/memory>
-#   include <tr1/tuple>
-#   include <tr1/unordered_map>
-#   include <tr1/unordered_set>
-#else /* !HAVE_TR1_PREFIX */
-#   include <functional>
-#   include <tuple>
-#   include <unordered_map>
-#   include <unordered_set>
-#endif /* !HAVE_TR1_PREFIX */
+#include <functional>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef HAVE_CRTDBG_H
 #   include <crtdbg.h>

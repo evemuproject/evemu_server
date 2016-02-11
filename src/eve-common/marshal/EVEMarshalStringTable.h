@@ -96,7 +96,7 @@ private:
         return hash;
     }
 
-    typedef std::tr1::unordered_map<uint32, uint8>  StringTableMap;
+    typedef std::unordered_map<uint32, uint8>  StringTableMap;
     typedef StringTableMap::iterator                StringTableMapItr;
     typedef StringTableMap::const_iterator          StringTableMapConstItr;
 

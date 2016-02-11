@@ -47,7 +47,7 @@ public:
     APIMapManager();
 
     // Common call shared to all derived classes called via polymorphism
-    std::tr1::shared_ptr<std::string> ProcessCall(const APICommandCall * pAPICommandCall);
+    std::shared_ptr<std::string> ProcessCall(const APICommandCall * pAPICommandCall);
 
 protected:
 

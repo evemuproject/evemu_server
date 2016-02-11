@@ -24,6 +24,8 @@
 */
 
 #include "eve-tool.h"
+// Utility for reading trifiles.
+#include "TriFile.h"
 
 #include "Commands.h"
 

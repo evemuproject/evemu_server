@@ -34,14 +34,14 @@ APIActiveObjectManager::APIActiveObjectManager()
 {
 }
 
-std::tr1::shared_ptr<std::string> APIActiveObjectManager::ProcessCall(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIActiveObjectManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
     sLog.Debug("APIActiveObjectManager::ProcessCall()", "EVEmu API - Active Object Service Manager");
 
     if( pAPICommandCall->find( "servicehandler" ) == pAPICommandCall->end() )
     {
         sLog.Error( "APIActiveObjectManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
-        return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::string>(new std::string(""));
     }
 /*
     if( pAPICommandCall->find( "servicehandler" )->second == "CharacterList.xml.aspx" )
@@ -70,13 +70,13 @@ std::tr1::shared_ptr<std::string> APIActiveObjectManager::ProcessCall(const APIC
     {
         sLog.Error("APIActiveObjectManager::ProcessCall()", "EVEmu API - Active Object Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
             pAPICommandCall->find("servicehandler")->second.c_str() );
-        return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::string>(new std::string(""));
     }
 */
     return BuildErrorXMLResponse( "9999", "EVEmu API Server: Active Object Manager - Unknown call." );
 }
 /*
-std::tr1::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICommandCall * pAPICommandCall)
 {
     bool status = false;
     uint32 userID, apiRole;
@@ -214,7 +214,7 @@ std::tr1::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const A
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APIActiveObjectManager::_Characters(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIActiveObjectManager::_Characters(const APICommandCall * pAPICommandCall)
 {
 
     sLog.Error( "APIActiveObjectManager::_Characters()", "TODO: Insert code to validate userID and apiKey" );
@@ -279,7 +279,7 @@ std::tr1::shared_ptr<std::string> APIActiveObjectManager::_Characters(const APIC
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APIActiveObjectManager::_AccountStatus(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIActiveObjectManager::_AccountStatus(const APICommandCall * pAPICommandCall)
 {
     sLog.Error( "APIActiveObjectManager::_AccountStatus()", "TODO: Insert code to validate userID and apiKey" );
 	\*

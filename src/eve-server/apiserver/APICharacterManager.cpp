@@ -33,14 +33,14 @@ APICharacterManager::APICharacterManager()
 {
 }
 
-std::tr1::shared_ptr<std::string> APICharacterManager::ProcessCall(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APICharacterManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
     sLog.Debug("APIAdminManager::ProcessCall()", "EVEmu API - Character Service Manager");
 
     if( pAPICommandCall->find( "servicehandler" ) == pAPICommandCall->end() )
     {
         sLog.Error( "APICharacterManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
-        return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::string>(new std::string(""));
     }
 
     if( pAPICommandCall->find( "servicehandler" )->second == "CharacterSheet.xml.aspx" )
@@ -55,14 +55,14 @@ std::tr1::shared_ptr<std::string> APICharacterManager::ProcessCall(const APIComm
     {
         sLog.Error("APIAdminManager::ProcessCall()", "EVEmu API - Admin Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
             pAPICommandCall->find("servicehandler")->second.c_str() );
-        return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::string>(new std::string(""));
     }
     sLog.Debug("APICharacterManager::ProcessCall()", "EVEmu API - Character Service Manager");
 
     return BuildErrorXMLResponse( "9999", "EVEmu API Server: Character Manager - Unknown call." );
 }
 
-std::tr1::shared_ptr<std::string> APICharacterManager::_CharacterSheet(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APICharacterManager::_CharacterSheet(const APICommandCall * pAPICommandCall)
 {
     size_t i;
 
@@ -227,7 +227,7 @@ std::tr1::shared_ptr<std::string> APICharacterManager::_CharacterSheet(const API
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APICharacterManager::_SkillQueue(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APICharacterManager::_SkillQueue(const APICommandCall * pAPICommandCall)
 {
     size_t i;
 
@@ -353,7 +353,7 @@ std::tr1::shared_ptr<std::string> APICharacterManager::_SkillQueue(const APIComm
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APICharacterManager::_SkillInTraining(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APICharacterManager::_SkillInTraining(const APICommandCall * pAPICommandCall)
 {
     sLog.Error( "APICharacterManager::_SkillInTraining()", "TODO: Insert code to validate userID and apiKey" );
 

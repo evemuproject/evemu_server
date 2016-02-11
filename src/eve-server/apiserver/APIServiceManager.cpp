@@ -36,7 +36,7 @@ APIServiceManager::APIServiceManager()
     _CurrentRowSetColumnString = "";
 }
 
-std::tr1::shared_ptr<std::string> APIServiceManager::ProcessCall(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::string> APIServiceManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
     sLog.Debug("APIServiceManager::ProcessCall()", "EVEmu API - Default Service Manager");
 
@@ -129,7 +129,7 @@ std::tr1::shared_ptr<std::string> APIServiceManager::ProcessCall(const APIComman
     return _GetXMLDocumentString();
 }
 
-std::tr1::shared_ptr<std::string> APIServiceManager::BuildErrorXMLResponse(std::string errorCode, std::string errorMessage)
+std::shared_ptr<std::string> APIServiceManager::BuildErrorXMLResponse(std::string errorCode, std::string errorMessage)
 {
     _BuildXMLHeader();
     {
@@ -343,10 +343,10 @@ void APIServiceManager::_CloseXMLTag()
     }
 }
 
-std::tr1::shared_ptr<std::string> APIServiceManager::_GetXMLDocumentString()
+std::shared_ptr<std::string> APIServiceManager::_GetXMLDocumentString()
 {
     TiXmlPrinter xmlPrinter;
     _XmlDoc.Accept( &xmlPrinter );
 
-    return std::tr1::shared_ptr<std::string>(new std::string(xmlPrinter.CStr()));
+    return std::shared_ptr<std::string>(new std::string(xmlPrinter.CStr()));
 }

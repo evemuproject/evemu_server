@@ -51,7 +51,7 @@ public:
 
     std::string& url();
 
-    std::tr1::shared_ptr<std::vector<char> > GetXML(const APICommandCall * pAPICommandCall);
+    std::shared_ptr<std::vector<char> > GetXML(const APICommandCall * pAPICommandCall);
 
     // used when the ImageServer can't find the image requested
     // this way we don't have to transfer over all the static NPC images
@@ -68,7 +68,7 @@ private:
     boost::asio::detail::mutex _limboLock;
     bool runonce;
 
-    std::tr1::shared_ptr<std::string> m_xmlString;
+    std::shared_ptr<std::string> m_xmlString;
 
     std::map<std::string, APIServiceManager *> m_APIServiceManagers;    // We own these
 

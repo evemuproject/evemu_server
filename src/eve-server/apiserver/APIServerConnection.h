@@ -38,10 +38,10 @@
  * @author Aknor Jaden
  * @date July 2011
  */
-class APIServerConnection : public std::tr1::enable_shared_from_this<APIServerConnection>
+class APIServerConnection : public std::enable_shared_from_this<APIServerConnection>
 {
 public:
-    static std::tr1::shared_ptr<APIServerConnection> create(boost::asio::io_service& io);
+    static std::shared_ptr<APIServerConnection> create(boost::asio::io_service& io);
     void Process();
     boost::asio::ip::tcp::socket& socket();
 
@@ -68,7 +68,7 @@ private:
     boost::asio::streambuf _buffer;
     boost::asio::streambuf _postBuffer;
     boost::asio::ip::tcp::socket _socket;
-    std::tr1::shared_ptr<std::vector<char> > _xmlData;
+    std::shared_ptr<std::vector<char> > _xmlData;
 
     static boost::asio::const_buffers_1 _responseOK;
     static boost::asio::const_buffers_1 _responseNotFound;

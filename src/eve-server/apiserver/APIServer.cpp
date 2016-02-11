@@ -64,14 +64,14 @@ void APIServer::CreateServices()
     runonce = true;
 }
 
-std::tr1::shared_ptr<std::vector<char> > APIServer::GetXML(const APICommandCall * pAPICommandCall)
+std::shared_ptr<std::vector<char> > APIServer::GetXML(const APICommandCall * pAPICommandCall)
 {
     //if( m_APIServiceManagers.find(pAPICommandCall->at(0).first) != m_APIServiceManagers.end() )
     if( pAPICommandCall->find( "service" ) == pAPICommandCall->end() )
     {
         sLog.Error( "APIserver::GetXML()", "Cannot find 'service' specifier in pAPICommandCall packet" );
-        return std::tr1::shared_ptr<std::vector<char> >(new std::vector<char>() );
-        //return std::tr1::shared_ptr<std::string>(new std::string(""));
+        return std::shared_ptr<std::vector<char> >(new std::vector<char>() );
+        //return std::shared_ptr<std::string>(new std::string(""));
     }
 
     if( m_APIServiceManagers.find(pAPICommandCall->find( "service" )->second) != m_APIServiceManagers.end() )
@@ -81,7 +81,7 @@ std::tr1::shared_ptr<std::vector<char> > APIServer::GetXML(const APICommandCall 
         m_xmlString = m_APIServiceManagers.find( pAPICommandCall->find( "service" )->second )->second->ProcessCall( pAPICommandCall );
 
         // Convert the std::string to the std::vector<char>:
-        std::tr1::shared_ptr<std::vector<char> > ret = std::tr1::shared_ptr<std::vector<char> >(new std::vector<char>());
+        std::shared_ptr<std::vector<char> > ret = std::shared_ptr<std::vector<char> >(new std::vector<char>());
         unsigned long len = m_xmlString->length();
         for(size_t i=0; i<m_xmlString->length(); i++)
             ret->push_back(m_xmlString->at(i));
@@ -91,7 +91,7 @@ std::tr1::shared_ptr<std::vector<char> > APIServer::GetXML(const APICommandCall 
     else
     {
         // Service call not found, so return NULL:
-        return std::tr1::shared_ptr<std::vector<char> >(new std::vector<char>() );
+        return std::shared_ptr<std::vector<char> >(new std::vector<char>() );
         //return NULL;
         //m_xmlString = m_APIServiceManagers.find("base")->second->ProcessCall(pAPICommandCall);
     }
@@ -104,7 +104,7 @@ std::string& APIServer::url()
 
 void APIServer::Run()
 {
-    _ioThread = std::unique_ptr<boost::asio::detail::thread>(new boost::asio::detail::thread(std::tr1::bind(&APIServer::RunInternal, this)));
+    _ioThread = std::unique_ptr<boost::asio::detail::thread>(new boost::asio::detail::thread(std::bind(&APIServer::RunInternal, this)));
 }
 
 void APIServer::Stop()

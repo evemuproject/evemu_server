@@ -46,7 +46,7 @@ public:
 
 private:
     void StartAccept();
-    void HandleAccept(std::tr1::shared_ptr<APIServerConnection> connection);
+    void HandleAccept(std::shared_ptr<APIServerConnection> connection);
 
     boost::asio::ip::tcp::acceptor* _acceptor;
 };
