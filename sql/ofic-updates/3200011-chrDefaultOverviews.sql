@@ -15,11 +15,12 @@ CREATE TABLE chrDefaultOverviews (
     INDEX dataID (dataID)
 );
 
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (3, 'PvP', 'defaultpvp', 59570, 16533082);
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (4, 'Mining', 'defaultmining', 59571, 16533083);
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (5, 'WarpTo', 'defaultwarpto', 59572, 16533084);
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (6, 'Loot', 'defaultloot', 59573, 16533085);
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (8, 'All', 'defaultall', 59574, 16533086);
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (12, 'Drones', 'defaultdrones', 59575, 16533087);
-INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES (13, 'General', 'default', 59576, 16533088);
+INSERT INTO chrDefaultOverviews (overviewID, overviewName, overviewShortName, overviewNameID, dataID) VALUES
+(3, 'PvP', 'defaultpvp', 59570, 16533082),
+(4, 'Mining', 'defaultmining', 59571, 16533083),
+(5, 'WarpTo', 'defaultwarpto', 59572, 16533084),
+(6, 'Loot', 'defaultloot', 59573, 16533085),
+(8, 'All', 'defaultall', 59574, 16533086),
+(12, 'Drones', 'defaultdrones', 59575, 16533087),
+(13, 'General', 'default', 59576, 16533088);
 

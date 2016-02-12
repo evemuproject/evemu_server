@@ -1,133 +1,134 @@
 -- Source: Code_Red
 
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30188, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30188, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30188, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30189, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30189, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30189, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30190, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30190, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30190, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30191, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30191, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30191, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30191, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30192, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30192, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30192, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30192, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30193, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30193, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30193, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30193, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30194, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30194, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30194, 3852);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30194, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30195, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30195, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30195, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30195, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30195, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30195, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30196, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30196, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30196, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30196, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30196, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30196, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30197, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30197, 1982);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30197, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30197, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30198, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30198, 3852);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30198, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30198, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30199, 2197);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30199, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30199, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30199, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30199, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30199, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30200, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30200, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30200, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30201, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30201, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30201, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30201, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30202, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30202, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30202, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30203, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30203, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30203, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30204, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30204, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30204, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30204, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30204, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30205, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30205, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30205, 3852);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30205, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30206, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30206, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30206, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30206, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30207, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30207, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30207, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30207, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30207, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30207, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30208, 2196);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30208, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30208, 3852);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30208, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30209, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30209, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30209, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30210, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30210, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30210, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30210, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30211, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30211, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30211, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30211, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30212, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30212, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30212, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30212, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32013, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32013, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32013, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32013, 3852);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32013, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30214, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30214, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30214, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30214, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30214, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32014, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32015, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32015, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32015, 575);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32015, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32015, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32016, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32016, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32016, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32016, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (32016, 3852);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30217, 2195);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30217, 569);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30217, 1872);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30217, 10);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30217, 563);
-INSERT INTO dgmTypeEffects (typeID, effectID) VALUES (30217, 575);
+INSERT INTO dgmTypeEffects (typeID, effectID) VALUES
+(30188, 2197),
+(30188, 569),
+(30188, 10),
+(30189, 2197),
+(30189, 569),
+(30189, 10),
+(30190, 2197),
+(30190, 569),
+(30190, 10),
+(30191, 2197),
+(30191, 1872),
+(30191, 569),
+(30191, 10),
+(30192, 2197),
+(30192, 569),
+(30192, 575),
+(30192, 10),
+(30193, 2197),
+(30193, 1872),
+(30193, 569),
+(30193, 10),
+(30194, 2197),
+(30194, 569),
+(30194, 3852),
+(30194, 10),
+(30195, 2197),
+(30195, 1872),
+(30195, 563),
+(30195, 569),
+(30195, 575),
+(30195, 10),
+(30196, 2197),
+(30196, 1872),
+(30196, 563),
+(30196, 569),
+(30196, 575),
+(30196, 10),
+(30197, 2197),
+(30197, 1982),
+(30197, 569),
+(30197, 10),
+(30198, 2197),
+(30198, 3852),
+(30198, 569),
+(30198, 10),
+(30199, 2197),
+(30199, 563),
+(30199, 569),
+(30199, 1872),
+(30199, 575),
+(30199, 10),
+(30200, 2196),
+(30200, 569),
+(30200, 10),
+(30201, 2196),
+(30201, 1872),
+(30201, 569),
+(30201, 10),
+(30202, 2196),
+(30202, 569),
+(30202, 10),
+(30203, 2196),
+(30203, 569),
+(30203, 10),
+(30204, 2196),
+(30204, 1872),
+(30204, 569),
+(30204, 575),
+(30204, 10),
+(30205, 2196),
+(30205, 569),
+(30205, 3852),
+(30205, 10),
+(30206, 2196),
+(30206, 569),
+(30206, 575),
+(30206, 10),
+(30207, 2196),
+(30207, 1872),
+(30207, 569),
+(30207, 575),
+(30207, 10),
+(30207, 563),
+(30208, 2196),
+(30208, 569),
+(30208, 3852),
+(30208, 10),
+(30209, 2195),
+(30209, 569),
+(30209, 10),
+(30210, 2195),
+(30210, 1872),
+(30210, 569),
+(30210, 10),
+(30211, 2195),
+(30211, 569),
+(30211, 575),
+(30211, 10),
+(30212, 2195),
+(30212, 569),
+(30212, 575),
+(30212, 10),
+(32013, 2195),
+(32013, 1872),
+(32013, 569),
+(32013, 3852),
+(32013, 10),
+(30214, 2195),
+(30214, 1872),
+(30214, 569),
+(30214, 575),
+(30214, 10),
+(32014, 563),
+(32015, 2195),
+(32015, 569),
+(32015, 575),
+(32015, 10),
+(32015, 563),
+(32016, 2195),
+(32016, 1872),
+(32016, 569),
+(32016, 10),
+(32016, 3852),
+(30217, 2195),
+(30217, 569),
+(30217, 1872),
+(30217, 10),
+(30217, 563),
+(30217, 575);
 
 

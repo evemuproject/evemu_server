@@ -12,602 +12,603 @@ CREATE TABLE chrBloodlineNames (
     INDEX bloodlineID (bloodlineID)
 );
 
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (1, 5, 'Dimaloun');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (2, 5, 'Amilupar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (3, 5, 'Hemanseh');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (4, 5, 'Bukandara');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (5, 5, 'Bheskagor');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (6, 5, 'Kadeyooh');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (7, 5, 'Khurelem');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (8, 5, 'Omaristos');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (9, 5, 'Zanjoahir');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (10, 5, 'Umangiar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (11, 5, 'Shayiskhun');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (12, 5, 'Mahyisti');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (13, 5, 'Pahineh');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (14, 5, 'Badasaz');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (15, 5, 'Yassavi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (16, 5, 'Minayin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (17, 5, 'Hemah');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (18, 5, 'Olacar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (19, 5, 'Fehrnah');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (20, 5, 'Semah');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (21, 5, 'Nalelmir');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (22, 5, 'Altol');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (23, 5, 'Omanid');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (24, 5, 'Zateki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (25, 5, 'Arareb');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (26, 5, 'Bathana');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (27, 5, 'Shardani');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (28, 5, 'Dethahal');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (29, 5, 'Jaynara');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (30, 5, 'Rinah');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (31, 5, 'Daphiti');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (32, 5, 'Khamsi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (33, 5, 'Ahashion');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (34, 5, 'Estidal');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (35, 5, 'Kahoudi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (36, 5, 'Shouna');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (37, 5, 'Khardula');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (38, 5, 'Secheh');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (39, 5, 'Davaham');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (40, 5, 'Sabezan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (41, 5, 'Azizora');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (42, 5, 'Makbema');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (43, 5, 'Niminen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (44, 5, 'Tazinas');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (45, 5, 'Shazih');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (46, 5, 'Raholan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (47, 5, 'Amelana');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (48, 5, 'Zamayid');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (49, 5, 'Arkaral');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (50, 5, 'Shimaya');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (51, 6, 'Puhkastu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (52, 6, 'Pava');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (53, 6, 'Natinde');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (54, 6, 'Boma');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (55, 6, 'Ohu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (56, 6, 'Dian');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (57, 6, 'Aya');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (58, 6, 'Yeva');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (59, 6, 'Parvi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (60, 6, 'Vokan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (61, 6, 'Kelmalu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (62, 6, 'Rayl');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (63, 6, 'Ozran');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (64, 6, 'Izia');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (65, 6, 'Niam');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (66, 6, 'Mabebu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (67, 6, 'Ataru');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (68, 6, 'Hamu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (69, 6, 'Moussou');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (70, 6, 'Hamabu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (71, 6, 'Habalu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (72, 6, 'Deka');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (73, 6, 'Qirna');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (74, 6, 'Pares');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (75, 6, 'Janau');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (76, 6, 'Visteen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (77, 6, 'Molou');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (78, 6, 'Nabali');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (79, 6, 'Meza');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (80, 6, 'Doshu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (81, 6, 'Sharvas');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (82, 6, 'Tichim');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (83, 6, 'Amphal');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (84, 6, 'Ghekon');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (85, 6, 'Shana');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (86, 6, 'Pareka');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (87, 6, 'Khema');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (88, 6, 'Chipri');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (89, 6, 'Oumis');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (90, 6, 'Sarain');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (91, 6, 'Nosha');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (92, 6, 'Sinak');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (93, 6, 'Anthar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (94, 6, 'Nakrar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (95, 6, 'Rova');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (96, 6, 'Fera');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (97, 6, 'Dahma');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (98, 6, 'Avada');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (99, 6, 'Tsasa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (100, 13, 'Chakaid');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (101, 13, 'Nebail');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (102, 13, 'Hibra');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (103, 13, 'Khashour');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (104, 13, 'Pedel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (105, 13, 'Irvam');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (106, 13, 'Sertan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (107, 13, 'Arzi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (108, 13, 'Uanid');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (109, 13, 'Thara');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (110, 13, 'Amouh');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (111, 13, 'Sazas');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (112, 13, 'Kafshaz');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (113, 13, 'Noban');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (114, 13, 'Pserad');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (115, 13, 'Darmazaf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (116, 13, 'Hanaya');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (117, 13, 'Arody');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (118, 13, 'Umid');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (119, 13, 'Uhad');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (120, 13, 'Azaph');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (121, 13, 'Kavees');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (122, 13, 'Xadi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (123, 13, 'Nahrnid');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (124, 13, 'Shahni');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (125, 13, 'Hadah');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (126, 13, 'Khagah');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (127, 13, 'Taredi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (128, 13, 'Yazria');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (129, 13, 'Sharisa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (130, 13, 'Acami');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (131, 13, 'Lazair');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (132, 13, 'Mieyli');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (133, 13, 'Tzash');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (134, 13, 'Hashur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (135, 13, 'Alar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (136, 13, 'Zirud');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (137, 13, 'Tzestu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (138, 13, 'Khamez');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (139, 13, 'Shaile');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (140, 13, 'Mishi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (141, 13, 'Kuha');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (142, 13, 'Ghasha');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (143, 13, 'Munba');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (144, 13, 'Shakiel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (145, 13, 'Terona');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (146, 13, 'Mena');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (147, 13, 'Houssa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (148, 13, 'Noud');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (149, 13, 'Depran');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (150, 2, 'Panala');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (151, 2, 'Enaka');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (152, 2, 'Muvila');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (153, 2, 'Arji');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (154, 2, 'Saken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (155, 2, 'Kion');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (156, 2, 'Uitoh');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (157, 2, 'Isu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (158, 2, 'Uitra');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (159, 2, 'Funaila');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (160, 2, 'Virpio');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (161, 2, 'Koraka');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (162, 2, 'Hakaari');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (163, 2, 'Mikakka');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (164, 2, 'Orti');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (165, 2, 'Erata');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (166, 2, 'Uta');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (167, 2, 'Igunen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (168, 2, 'Eto');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (169, 2, 'Utrigas');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (170, 2, 'Saisima');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (171, 2, 'Udan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (172, 2, 'Hakoke');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (173, 2, 'Kanjus');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (174, 2, 'Parmala');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (175, 2, 'Nolen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (176, 2, 'Ernaga');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (177, 2, 'Sotken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (178, 2, 'Okaski');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (179, 2, 'Ijonen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (180, 2, 'Aurilen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (181, 2, 'Anneto');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (182, 2, 'Itinen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (183, 2, 'Ikkala');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (184, 2, 'Inkura');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (185, 2, 'Hekki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (186, 2, 'Otsito');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (187, 2, 'Sasen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (188, 2, 'Yaken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (189, 2, 'Penken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (190, 2, 'Katelo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (191, 2, 'Uisen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (192, 2, 'Rin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (193, 2, 'Hinken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (194, 2, 'Kado');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (195, 2, 'Aivo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (196, 2, 'Onzo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (197, 2, 'Poljus');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (198, 2, 'Oriki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (199, 2, 'Utama');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (200, 1, 'Hilanen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (201, 1, 'Taranogas');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (202, 1, 'Kashuken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (203, 1, 'Muutaras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (204, 1, 'Tsutola');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (205, 1, 'Jovakko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (206, 1, 'Heleneto');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (207, 1, 'Barviainen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (208, 1, 'Erkkinen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (209, 1, 'Uchonela');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (210, 1, 'Eistiras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (211, 1, 'Kurvora');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (212, 1, 'Inkunen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (213, 1, 'Haginen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (214, 1, 'Kalkoken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (215, 1, 'Jouhinen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (216, 1, 'Hakomairos');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (217, 1, 'Anninen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (218, 1, 'Purvanen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (219, 1, 'Koskanaiken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (220, 1, 'Paaltomo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (221, 1, 'Otomeya');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (222, 1, 'Makanen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (223, 1, 'Odunen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (224, 1, 'Enderas');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (225, 1, 'Huunuras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (226, 1, 'Toralen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (227, 1, 'Askiras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (228, 1, 'Sukarala');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (229, 1, 'Outamon');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (230, 1, 'Hanomaa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (231, 1, 'Oksaras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (232, 1, 'Tsurpalen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (233, 1, 'Aivoras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (234, 1, 'Yatolila');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (235, 1, 'Otsolen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (236, 1, 'Oramara');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (237, 1, 'Talvanen');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (238, 1, 'Ohmiras');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (239, 1, 'Tokila');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (240, 1, 'Pirkibo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (241, 1, 'Risalo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (242, 1, 'Itonula');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (243, 1, 'Maken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (244, 1, 'Tsero');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (245, 1, 'Kouvo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (246, 1, 'Anzomi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (247, 1, 'Naari');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (248, 1, 'Mabata');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (249, 1, 'Kautsuo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (250, 7, 'Ormand');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (251, 7, 'Cadelanne');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (252, 7, 'Audeles');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (253, 7, 'Severasse');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (254, 7, 'Estemaire');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (255, 7, 'Amatin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (256, 7, 'Ellecon');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (257, 7, 'Andedare');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (258, 7, 'Ambraelle');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (259, 7, 'Thiesant');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (260, 7, 'Echerie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (261, 7, 'Padecain');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (262, 7, 'Gaterau');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (263, 7, 'Vyvorant');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (264, 7, 'Lennelluc');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (265, 7, 'Arthie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (266, 7, 'Achasse');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (267, 7, 'Patrouette');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (268, 7, 'Pappotte');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (269, 7, 'Crendraven');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (270, 7, 'Ambramotte');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (271, 7, 'Mileghere');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (272, 7, 'Alabel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (273, 7, 'Aldent');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (274, 7, 'Annages');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (275, 7, 'Tivianne');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (276, 7, 'Antollare');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (277, 7, 'Nardieu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (278, 7, 'Dallocort');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (279, 7, 'Cesaille');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (280, 7, 'Orlenard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (281, 7, 'Lafisques');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (282, 7, 'Adoudel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (283, 7, 'Deninard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (284, 7, 'Athonille');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (285, 7, 'Solette');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (286, 7, 'Aideron');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (287, 7, 'Yvormes');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (288, 7, 'Fonulique');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (289, 7, 'Maricadie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (290, 7, 'Erquilenne');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (291, 7, 'Rotineque');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (292, 7, 'Maulerant');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (293, 7, 'Boirelle');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (294, 7, 'Miromme');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (295, 7, 'Charante');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (296, 7, 'Chelien');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (297, 7, 'Saissore');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (298, 7, 'Thellere');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (299, 7, 'Madullier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (300, 8, 'Aurgnet');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (301, 8, 'Auscent');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (302, 8, 'Chieve');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (303, 8, 'en Tilavine');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (304, 8, 'en Chalune');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (305, 8, 'Chanlin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (306, 8, 'Plaude');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (307, 8, 'en Welle');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (308, 8, 'Breau');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (309, 8, 'Dorgiers');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (310, 8, 'Buelle');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (311, 8, 'en Divalone');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (312, 8, 'Viliana');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (313, 8, 'Vynneve');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (314, 8, 'Alleile');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (315, 8, 'Riraille');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (316, 8, 'Audene');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (317, 8, 'en Gravonere');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (318, 8, 'Binchiette');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (319, 8, 'Schereau');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (320, 8, 'Allier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (321, 8, 'Aucie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (322, 8, 'en Bauldry');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (323, 8, 'Aubaris');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (324, 8, 'Olerie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (325, 8, 'Adoulin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (326, 8, 'Stetille');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (327, 8, 'Brinalle');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (328, 8, 'Ambrye');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (329, 8, 'Aulmais');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (330, 8, 'en Daire');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (331, 8, 'en Chasteaux');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (332, 8, 'Vaille');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (333, 8, 'Podiene');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (334, 8, 'Issier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (335, 8, 'en Marland');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (336, 8, 'Rollard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (337, 8, 'Arnerette');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (338, 8, 'Audanie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (339, 8, 'Heluene');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (340, 8, 'Pollard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (341, 8, 'en Distel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (342, 8, 'en Cedoulain');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (343, 8, 'en Thielles');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (344, 8, 'Agittain');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (345, 8, 'Arnolles');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (346, 8, 'Chastot');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (347, 8, 'Preldent');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (348, 8, 'Ovaert');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (349, 8, 'Lemmont');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (350, 12, 'Moennan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (351, 12, 'Ahrire');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (352, 12, 'Abre-Kai');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (353, 12, 'Edier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (354, 12, 'Loutte');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (355, 12, 'Panacan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (356, 12, 'Chent-Shi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (357, 12, 'Esubria');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (358, 12, 'Hariere');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (359, 12, 'Allas-Rui');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (360, 12, 'Assene');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (361, 12, 'Creire-Geng');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (362, 12, 'Codie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (363, 12, 'Pacht-Feng');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (364, 12, 'Chancel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (365, 12, 'Wessette');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (366, 12, 'Eyrou');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (367, 12, 'Dacella');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (368, 12, 'Auffrie');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (369, 12, 'Cavin-Guang');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (370, 12, 'Serine');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (371, 12, 'Vemane');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (372, 12, 'Kansene');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (373, 12, 'Caderu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (374, 12, 'Hucel-Ge');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (375, 12, 'Aylet');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (376, 12, 'Aulx-Gao');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (377, 12, 'Gidrine');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (378, 12, 'Ekanon');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (379, 12, 'Agnon');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (380, 12, 'Benuse');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (381, 12, 'Dunier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (382, 12, 'Jasmone');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (383, 12, 'Arnoux');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (384, 12, 'Pareleru');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (385, 12, 'Pellion');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (386, 12, 'Audier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (387, 12, 'Actault');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (388, 12, 'Stenier-Tian');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (389, 12, 'Codolle');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (390, 12, 'Donier');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (391, 12, 'Cobon-Han');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (392, 12, 'Talie-Kuo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (393, 12, 'Eullon');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (394, 12, 'Asques');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (395, 12, 'Tissant');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (396, 12, 'Drovotet');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (397, 12, 'Stareine');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (398, 12, 'Charen-Teng');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (399, 12, 'Nalliery');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (400, 4, 'Apol');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (401, 4, 'Baboli');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (402, 4, 'Regyri');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (403, 4, 'Melkan');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (404, 4, 'Firn');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (405, 4, 'Freir');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (406, 4, 'Skor');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (407, 4, 'Garsk');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (408, 4, 'Arnst');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (409, 4, 'Atram');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (410, 4, 'Sklor');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (411, 4, 'Skjem');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (412, 4, 'Enat');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (413, 4, 'Adtur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (414, 4, 'Okel');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (415, 4, 'Ostus');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (416, 4, 'Armer');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (417, 4, 'Hekard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (418, 4, 'Onnlin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (419, 4, 'Bastanold');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (420, 4, 'Arjar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (421, 4, 'Attor');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (422, 4, 'Ottig');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (423, 4, 'Elarik');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (424, 4, 'Vuld');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (425, 4, 'Nolm');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (426, 4, 'Arran');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (427, 4, 'Atild');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (428, 4, 'Tian');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (429, 4, 'Hakuli');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (430, 4, 'Kring');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (431, 4, 'Esil');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (432, 4, 'Silf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (433, 4, 'Taron');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (434, 4, 'Hendar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (435, 4, 'Illat');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (436, 4, 'Trild');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (437, 4, 'Arsten');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (438, 4, 'Isagar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (439, 4, 'Skord');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (440, 4, 'Boloskarl');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (441, 4, 'Sarn');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (442, 4, 'Hirl');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (443, 4, 'Skir');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (444, 4, 'Aele');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (445, 4, 'Trald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (446, 4, 'Haklar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (447, 4, 'Andven');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (448, 4, 'Belvar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (449, 3, 'Ongrard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (450, 3, 'Atavuli');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (451, 3, 'Dadunur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (452, 3, 'Aldard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (453, 3, 'Ornulf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (454, 3, 'Eriker');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (455, 3, 'Naskingar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (456, 3, 'Egivand');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (457, 3, 'Madeveda');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (458, 3, 'Aumer');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (459, 3, 'Algaert');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (460, 3, 'Eginald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (461, 3, 'Askulf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (462, 3, 'Oskold');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (463, 3, 'Mangeiri');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (464, 3, 'Jakuard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (465, 3, 'Olgidar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (466, 3, 'Malukker');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (467, 3, 'Elongur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (468, 3, 'Egnald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (469, 3, 'Alland');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (470, 3, 'Gengod');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (471, 3, 'Egdald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (472, 3, 'Aldeland');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (473, 3, 'Mernher');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (474, 3, 'Askold');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (475, 3, 'Austrene');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (476, 3, 'Alduin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (477, 3, 'Arbosa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (478, 3, 'Artrald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (479, 3, 'Fidard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (480, 3, 'Atruin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (481, 3, 'Ituin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (482, 3, 'Huren');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (483, 3, 'Joringer');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (484, 3, 'Kanenald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (485, 3, 'Sokarad');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (486, 3, 'Agalder');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (487, 3, 'Kaundur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (488, 3, 'Midumulf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (489, 3, 'Anstian');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (490, 3, 'Ronuken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (491, 3, 'Aldurald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (492, 3, 'Renalard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (493, 3, 'Andrard');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (494, 3, 'Auduin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (495, 3, 'Alfrir');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (496, 3, 'Sinulf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (497, 3, 'Beldrulf');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (498, 3, 'Bererund');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (499, 14, 'Avuli');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (500, 14, 'Kalfren');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (501, 14, 'Artwik');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (502, 14, 'Beddelver');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (503, 14, 'Ostus');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (504, 14, 'Evotori');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (505, 14, 'Hegirin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (506, 14, 'Simalia');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (507, 14, 'Stasarik');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (508, 14, 'Evingod');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (509, 14, 'Hurtini');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (510, 14, 'Gemulus');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (511, 14, 'Hamalia');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (512, 14, 'Metesur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (513, 14, 'Hilitari');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (514, 14, 'Deudigren');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (515, 14, 'Musana');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (516, 14, 'Gogiko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (517, 14, 'Geten');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (518, 14, 'Ogeko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (519, 14, 'Hastmena');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (520, 14, 'Leusten');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (521, 14, 'Bolmara');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (522, 14, 'Kondur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (523, 14, 'Andomer');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (524, 14, 'Hareka');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (525, 14, 'Laduko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (526, 14, 'Todako');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (527, 14, 'Bedala');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (528, 14, 'Darine');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (529, 14, 'Opper');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (530, 14, 'Penshar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (531, 14, 'Huren');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (532, 14, 'Avalhar');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (533, 14, 'Moliko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (534, 14, 'Onren');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (535, 14, 'Helugo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (536, 14, 'Garemoko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (537, 14, 'Afuran');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (538, 14, 'Anstian');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (539, 14, 'Albosa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (540, 14, 'Ronuken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (541, 14, 'Krividus');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (542, 14, 'Adestur');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (543, 14, 'Usoko');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (544, 14, 'Berodald');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (545, 14, 'Ibruin');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (546, 14, 'Marstolt');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (547, 14, 'Eoner');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (548, 14, 'Sirober');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (549, 11, 'Kishunuba');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (550, 11, 'Ahishatsu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (551, 11, 'Itovuo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (552, 11, 'Shi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (553, 11, 'Airuta');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (554, 11, 'Hita');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (555, 11, 'Otichoda');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (556, 11, 'Togenada');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (557, 11, 'Aishai');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (558, 11, 'Aakiwa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (559, 11, 'Endashi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (560, 11, 'Isayeki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (561, 11, 'Sunji');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (562, 11, 'Motsu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (563, 11, 'Yotosala');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (564, 11, 'Tadaruwa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (565, 11, 'Ichosira');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (566, 11, 'Saraki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (567, 11, 'Kasenumi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (568, 11, 'Shaishi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (569, 11, 'Mayaki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (570, 11, 'Kusoni');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (571, 11, 'Shiyurida');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (572, 11, 'Kugisa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (573, 11, 'Keikira');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (574, 11, 'Kashada');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (575, 11, 'Tsuruomo');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (576, 11, 'Momaki');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (577, 11, 'Akachi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (578, 11, 'Aihaken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (579, 11, 'Ishikela');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (580, 11, 'Otsada');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (581, 11, 'Iwaira');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (582, 11, 'Soikutsu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (583, 11, 'Shihari');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (584, 11, 'Akiga');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (585, 11, 'Tekitsu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (586, 11, 'Kumamato');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (587, 11, 'Tsukaya');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (588, 11, 'Shikkoken');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (589, 11, 'Yanumano');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (590, 11, 'Rotsuda');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (591, 11, 'Tawate');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (592, 11, 'Ozuwara');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (593, 11, 'Isimazu');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (594, 11, 'Ohaya');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (595, 11, 'Fumimasa');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (596, 11, 'Asanari');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (597, 11, 'Ichinumi');
-INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES (598, 11, 'Okanata');
+INSERT INTO chrBloodlineNames (nameID, bloodlineID, lastName) VALUES
+(1, 5, 'Dimaloun'),
+(2, 5, 'Amilupar'),
+(3, 5, 'Hemanseh'),
+(4, 5, 'Bukandara'),
+(5, 5, 'Bheskagor'),
+(6, 5, 'Kadeyooh'),
+(7, 5, 'Khurelem'),
+(8, 5, 'Omaristos'),
+(9, 5, 'Zanjoahir'),
+(10, 5, 'Umangiar'),
+(11, 5, 'Shayiskhun'),
+(12, 5, 'Mahyisti'),
+(13, 5, 'Pahineh'),
+(14, 5, 'Badasaz'),
+(15, 5, 'Yassavi'),
+(16, 5, 'Minayin'),
+(17, 5, 'Hemah'),
+(18, 5, 'Olacar'),
+(19, 5, 'Fehrnah'),
+(20, 5, 'Semah'),
+(21, 5, 'Nalelmir'),
+(22, 5, 'Altol'),
+(23, 5, 'Omanid'),
+(24, 5, 'Zateki'),
+(25, 5, 'Arareb'),
+(26, 5, 'Bathana'),
+(27, 5, 'Shardani'),
+(28, 5, 'Dethahal'),
+(29, 5, 'Jaynara'),
+(30, 5, 'Rinah'),
+(31, 5, 'Daphiti'),
+(32, 5, 'Khamsi'),
+(33, 5, 'Ahashion'),
+(34, 5, 'Estidal'),
+(35, 5, 'Kahoudi'),
+(36, 5, 'Shouna'),
+(37, 5, 'Khardula'),
+(38, 5, 'Secheh'),
+(39, 5, 'Davaham'),
+(40, 5, 'Sabezan'),
+(41, 5, 'Azizora'),
+(42, 5, 'Makbema'),
+(43, 5, 'Niminen'),
+(44, 5, 'Tazinas'),
+(45, 5, 'Shazih'),
+(46, 5, 'Raholan'),
+(47, 5, 'Amelana'),
+(48, 5, 'Zamayid'),
+(49, 5, 'Arkaral'),
+(50, 5, 'Shimaya'),
+(51, 6, 'Puhkastu'),
+(52, 6, 'Pava'),
+(53, 6, 'Natinde'),
+(54, 6, 'Boma'),
+(55, 6, 'Ohu'),
+(56, 6, 'Dian'),
+(57, 6, 'Aya'),
+(58, 6, 'Yeva'),
+(59, 6, 'Parvi'),
+(60, 6, 'Vokan'),
+(61, 6, 'Kelmalu'),
+(62, 6, 'Rayl'),
+(63, 6, 'Ozran'),
+(64, 6, 'Izia'),
+(65, 6, 'Niam'),
+(66, 6, 'Mabebu'),
+(67, 6, 'Ataru'),
+(68, 6, 'Hamu'),
+(69, 6, 'Moussou'),
+(70, 6, 'Hamabu'),
+(71, 6, 'Habalu'),
+(72, 6, 'Deka'),
+(73, 6, 'Qirna'),
+(74, 6, 'Pares'),
+(75, 6, 'Janau'),
+(76, 6, 'Visteen'),
+(77, 6, 'Molou'),
+(78, 6, 'Nabali'),
+(79, 6, 'Meza'),
+(80, 6, 'Doshu'),
+(81, 6, 'Sharvas'),
+(82, 6, 'Tichim'),
+(83, 6, 'Amphal'),
+(84, 6, 'Ghekon'),
+(85, 6, 'Shana'),
+(86, 6, 'Pareka'),
+(87, 6, 'Khema'),
+(88, 6, 'Chipri'),
+(89, 6, 'Oumis'),
+(90, 6, 'Sarain'),
+(91, 6, 'Nosha'),
+(92, 6, 'Sinak'),
+(93, 6, 'Anthar'),
+(94, 6, 'Nakrar'),
+(95, 6, 'Rova'),
+(96, 6, 'Fera'),
+(97, 6, 'Dahma'),
+(98, 6, 'Avada'),
+(99, 6, 'Tsasa'),
+(100, 13, 'Chakaid'),
+(101, 13, 'Nebail'),
+(102, 13, 'Hibra'),
+(103, 13, 'Khashour'),
+(104, 13, 'Pedel'),
+(105, 13, 'Irvam'),
+(106, 13, 'Sertan'),
+(107, 13, 'Arzi'),
+(108, 13, 'Uanid'),
+(109, 13, 'Thara'),
+(110, 13, 'Amouh'),
+(111, 13, 'Sazas'),
+(112, 13, 'Kafshaz'),
+(113, 13, 'Noban'),
+(114, 13, 'Pserad'),
+(115, 13, 'Darmazaf'),
+(116, 13, 'Hanaya'),
+(117, 13, 'Arody'),
+(118, 13, 'Umid'),
+(119, 13, 'Uhad'),
+(120, 13, 'Azaph'),
+(121, 13, 'Kavees'),
+(122, 13, 'Xadi'),
+(123, 13, 'Nahrnid'),
+(124, 13, 'Shahni'),
+(125, 13, 'Hadah'),
+(126, 13, 'Khagah'),
+(127, 13, 'Taredi'),
+(128, 13, 'Yazria'),
+(129, 13, 'Sharisa'),
+(130, 13, 'Acami'),
+(131, 13, 'Lazair'),
+(132, 13, 'Mieyli'),
+(133, 13, 'Tzash'),
+(134, 13, 'Hashur'),
+(135, 13, 'Alar'),
+(136, 13, 'Zirud'),
+(137, 13, 'Tzestu'),
+(138, 13, 'Khamez'),
+(139, 13, 'Shaile'),
+(140, 13, 'Mishi'),
+(141, 13, 'Kuha'),
+(142, 13, 'Ghasha'),
+(143, 13, 'Munba'),
+(144, 13, 'Shakiel'),
+(145, 13, 'Terona'),
+(146, 13, 'Mena'),
+(147, 13, 'Houssa'),
+(148, 13, 'Noud'),
+(149, 13, 'Depran'),
+(150, 2, 'Panala'),
+(151, 2, 'Enaka'),
+(152, 2, 'Muvila'),
+(153, 2, 'Arji'),
+(154, 2, 'Saken'),
+(155, 2, 'Kion'),
+(156, 2, 'Uitoh'),
+(157, 2, 'Isu'),
+(158, 2, 'Uitra'),
+(159, 2, 'Funaila'),
+(160, 2, 'Virpio'),
+(161, 2, 'Koraka'),
+(162, 2, 'Hakaari'),
+(163, 2, 'Mikakka'),
+(164, 2, 'Orti'),
+(165, 2, 'Erata'),
+(166, 2, 'Uta'),
+(167, 2, 'Igunen'),
+(168, 2, 'Eto'),
+(169, 2, 'Utrigas'),
+(170, 2, 'Saisima'),
+(171, 2, 'Udan'),
+(172, 2, 'Hakoke'),
+(173, 2, 'Kanjus'),
+(174, 2, 'Parmala'),
+(175, 2, 'Nolen'),
+(176, 2, 'Ernaga'),
+(177, 2, 'Sotken'),
+(178, 2, 'Okaski'),
+(179, 2, 'Ijonen'),
+(180, 2, 'Aurilen'),
+(181, 2, 'Anneto'),
+(182, 2, 'Itinen'),
+(183, 2, 'Ikkala'),
+(184, 2, 'Inkura'),
+(185, 2, 'Hekki'),
+(186, 2, 'Otsito'),
+(187, 2, 'Sasen'),
+(188, 2, 'Yaken'),
+(189, 2, 'Penken'),
+(190, 2, 'Katelo'),
+(191, 2, 'Uisen'),
+(192, 2, 'Rin'),
+(193, 2, 'Hinken'),
+(194, 2, 'Kado'),
+(195, 2, 'Aivo'),
+(196, 2, 'Onzo'),
+(197, 2, 'Poljus'),
+(198, 2, 'Oriki'),
+(199, 2, 'Utama'),
+(200, 1, 'Hilanen'),
+(201, 1, 'Taranogas'),
+(202, 1, 'Kashuken'),
+(203, 1, 'Muutaras'),
+(204, 1, 'Tsutola'),
+(205, 1, 'Jovakko'),
+(206, 1, 'Heleneto'),
+(207, 1, 'Barviainen'),
+(208, 1, 'Erkkinen'),
+(209, 1, 'Uchonela'),
+(210, 1, 'Eistiras'),
+(211, 1, 'Kurvora'),
+(212, 1, 'Inkunen'),
+(213, 1, 'Haginen'),
+(214, 1, 'Kalkoken'),
+(215, 1, 'Jouhinen'),
+(216, 1, 'Hakomairos'),
+(217, 1, 'Anninen'),
+(218, 1, 'Purvanen'),
+(219, 1, 'Koskanaiken'),
+(220, 1, 'Paaltomo'),
+(221, 1, 'Otomeya'),
+(222, 1, 'Makanen'),
+(223, 1, 'Odunen'),
+(224, 1, 'Enderas'),
+(225, 1, 'Huunuras'),
+(226, 1, 'Toralen'),
+(227, 1, 'Askiras'),
+(228, 1, 'Sukarala'),
+(229, 1, 'Outamon'),
+(230, 1, 'Hanomaa'),
+(231, 1, 'Oksaras'),
+(232, 1, 'Tsurpalen'),
+(233, 1, 'Aivoras'),
+(234, 1, 'Yatolila'),
+(235, 1, 'Otsolen'),
+(236, 1, 'Oramara'),
+(237, 1, 'Talvanen'),
+(238, 1, 'Ohmiras'),
+(239, 1, 'Tokila'),
+(240, 1, 'Pirkibo'),
+(241, 1, 'Risalo'),
+(242, 1, 'Itonula'),
+(243, 1, 'Maken'),
+(244, 1, 'Tsero'),
+(245, 1, 'Kouvo'),
+(246, 1, 'Anzomi'),
+(247, 1, 'Naari'),
+(248, 1, 'Mabata'),
+(249, 1, 'Kautsuo'),
+(250, 7, 'Ormand'),
+(251, 7, 'Cadelanne'),
+(252, 7, 'Audeles'),
+(253, 7, 'Severasse'),
+(254, 7, 'Estemaire'),
+(255, 7, 'Amatin'),
+(256, 7, 'Ellecon'),
+(257, 7, 'Andedare'),
+(258, 7, 'Ambraelle'),
+(259, 7, 'Thiesant'),
+(260, 7, 'Echerie'),
+(261, 7, 'Padecain'),
+(262, 7, 'Gaterau'),
+(263, 7, 'Vyvorant'),
+(264, 7, 'Lennelluc'),
+(265, 7, 'Arthie'),
+(266, 7, 'Achasse'),
+(267, 7, 'Patrouette'),
+(268, 7, 'Pappotte'),
+(269, 7, 'Crendraven'),
+(270, 7, 'Ambramotte'),
+(271, 7, 'Mileghere'),
+(272, 7, 'Alabel'),
+(273, 7, 'Aldent'),
+(274, 7, 'Annages'),
+(275, 7, 'Tivianne'),
+(276, 7, 'Antollare'),
+(277, 7, 'Nardieu'),
+(278, 7, 'Dallocort'),
+(279, 7, 'Cesaille'),
+(280, 7, 'Orlenard'),
+(281, 7, 'Lafisques'),
+(282, 7, 'Adoudel'),
+(283, 7, 'Deninard'),
+(284, 7, 'Athonille'),
+(285, 7, 'Solette'),
+(286, 7, 'Aideron'),
+(287, 7, 'Yvormes'),
+(288, 7, 'Fonulique'),
+(289, 7, 'Maricadie'),
+(290, 7, 'Erquilenne'),
+(291, 7, 'Rotineque'),
+(292, 7, 'Maulerant'),
+(293, 7, 'Boirelle'),
+(294, 7, 'Miromme'),
+(295, 7, 'Charante'),
+(296, 7, 'Chelien'),
+(297, 7, 'Saissore'),
+(298, 7, 'Thellere'),
+(299, 7, 'Madullier'),
+(300, 8, 'Aurgnet'),
+(301, 8, 'Auscent'),
+(302, 8, 'Chieve'),
+(303, 8, 'en Tilavine'),
+(304, 8, 'en Chalune'),
+(305, 8, 'Chanlin'),
+(306, 8, 'Plaude'),
+(307, 8, 'en Welle'),
+(308, 8, 'Breau'),
+(309, 8, 'Dorgiers'),
+(310, 8, 'Buelle'),
+(311, 8, 'en Divalone'),
+(312, 8, 'Viliana'),
+(313, 8, 'Vynneve'),
+(314, 8, 'Alleile'),
+(315, 8, 'Riraille'),
+(316, 8, 'Audene'),
+(317, 8, 'en Gravonere'),
+(318, 8, 'Binchiette'),
+(319, 8, 'Schereau'),
+(320, 8, 'Allier'),
+(321, 8, 'Aucie'),
+(322, 8, 'en Bauldry'),
+(323, 8, 'Aubaris'),
+(324, 8, 'Olerie'),
+(325, 8, 'Adoulin'),
+(326, 8, 'Stetille'),
+(327, 8, 'Brinalle'),
+(328, 8, 'Ambrye'),
+(329, 8, 'Aulmais'),
+(330, 8, 'en Daire'),
+(331, 8, 'en Chasteaux'),
+(332, 8, 'Vaille'),
+(333, 8, 'Podiene'),
+(334, 8, 'Issier'),
+(335, 8, 'en Marland'),
+(336, 8, 'Rollard'),
+(337, 8, 'Arnerette'),
+(338, 8, 'Audanie'),
+(339, 8, 'Heluene'),
+(340, 8, 'Pollard'),
+(341, 8, 'en Distel'),
+(342, 8, 'en Cedoulain'),
+(343, 8, 'en Thielles'),
+(344, 8, 'Agittain'),
+(345, 8, 'Arnolles'),
+(346, 8, 'Chastot'),
+(347, 8, 'Preldent'),
+(348, 8, 'Ovaert'),
+(349, 8, 'Lemmont'),
+(350, 12, 'Moennan'),
+(351, 12, 'Ahrire'),
+(352, 12, 'Abre-Kai'),
+(353, 12, 'Edier'),
+(354, 12, 'Loutte'),
+(355, 12, 'Panacan'),
+(356, 12, 'Chent-Shi'),
+(357, 12, 'Esubria'),
+(358, 12, 'Hariere'),
+(359, 12, 'Allas-Rui'),
+(360, 12, 'Assene'),
+(361, 12, 'Creire-Geng'),
+(362, 12, 'Codie'),
+(363, 12, 'Pacht-Feng'),
+(364, 12, 'Chancel'),
+(365, 12, 'Wessette'),
+(366, 12, 'Eyrou'),
+(367, 12, 'Dacella'),
+(368, 12, 'Auffrie'),
+(369, 12, 'Cavin-Guang'),
+(370, 12, 'Serine'),
+(371, 12, 'Vemane'),
+(372, 12, 'Kansene'),
+(373, 12, 'Caderu'),
+(374, 12, 'Hucel-Ge'),
+(375, 12, 'Aylet'),
+(376, 12, 'Aulx-Gao'),
+(377, 12, 'Gidrine'),
+(378, 12, 'Ekanon'),
+(379, 12, 'Agnon'),
+(380, 12, 'Benuse'),
+(381, 12, 'Dunier'),
+(382, 12, 'Jasmone'),
+(383, 12, 'Arnoux'),
+(384, 12, 'Pareleru'),
+(385, 12, 'Pellion'),
+(386, 12, 'Audier'),
+(387, 12, 'Actault'),
+(388, 12, 'Stenier-Tian'),
+(389, 12, 'Codolle'),
+(390, 12, 'Donier'),
+(391, 12, 'Cobon-Han'),
+(392, 12, 'Talie-Kuo'),
+(393, 12, 'Eullon'),
+(394, 12, 'Asques'),
+(395, 12, 'Tissant'),
+(396, 12, 'Drovotet'),
+(397, 12, 'Stareine'),
+(398, 12, 'Charen-Teng'),
+(399, 12, 'Nalliery'),
+(400, 4, 'Apol'),
+(401, 4, 'Baboli'),
+(402, 4, 'Regyri'),
+(403, 4, 'Melkan'),
+(404, 4, 'Firn'),
+(405, 4, 'Freir'),
+(406, 4, 'Skor'),
+(407, 4, 'Garsk'),
+(408, 4, 'Arnst'),
+(409, 4, 'Atram'),
+(410, 4, 'Sklor'),
+(411, 4, 'Skjem'),
+(412, 4, 'Enat'),
+(413, 4, 'Adtur'),
+(414, 4, 'Okel'),
+(415, 4, 'Ostus'),
+(416, 4, 'Armer'),
+(417, 4, 'Hekard'),
+(418, 4, 'Onnlin'),
+(419, 4, 'Bastanold'),
+(420, 4, 'Arjar'),
+(421, 4, 'Attor'),
+(422, 4, 'Ottig'),
+(423, 4, 'Elarik'),
+(424, 4, 'Vuld'),
+(425, 4, 'Nolm'),
+(426, 4, 'Arran'),
+(427, 4, 'Atild'),
+(428, 4, 'Tian'),
+(429, 4, 'Hakuli'),
+(430, 4, 'Kring'),
+(431, 4, 'Esil'),
+(432, 4, 'Silf'),
+(433, 4, 'Taron'),
+(434, 4, 'Hendar'),
+(435, 4, 'Illat'),
+(436, 4, 'Trild'),
+(437, 4, 'Arsten'),
+(438, 4, 'Isagar'),
+(439, 4, 'Skord'),
+(440, 4, 'Boloskarl'),
+(441, 4, 'Sarn'),
+(442, 4, 'Hirl'),
+(443, 4, 'Skir'),
+(444, 4, 'Aele'),
+(445, 4, 'Trald'),
+(446, 4, 'Haklar'),
+(447, 4, 'Andven'),
+(448, 4, 'Belvar'),
+(449, 3, 'Ongrard'),
+(450, 3, 'Atavuli'),
+(451, 3, 'Dadunur'),
+(452, 3, 'Aldard'),
+(453, 3, 'Ornulf'),
+(454, 3, 'Eriker'),
+(455, 3, 'Naskingar'),
+(456, 3, 'Egivand'),
+(457, 3, 'Madeveda'),
+(458, 3, 'Aumer'),
+(459, 3, 'Algaert'),
+(460, 3, 'Eginald'),
+(461, 3, 'Askulf'),
+(462, 3, 'Oskold'),
+(463, 3, 'Mangeiri'),
+(464, 3, 'Jakuard'),
+(465, 3, 'Olgidar'),
+(466, 3, 'Malukker'),
+(467, 3, 'Elongur'),
+(468, 3, 'Egnald'),
+(469, 3, 'Alland'),
+(470, 3, 'Gengod'),
+(471, 3, 'Egdald'),
+(472, 3, 'Aldeland'),
+(473, 3, 'Mernher'),
+(474, 3, 'Askold'),
+(475, 3, 'Austrene'),
+(476, 3, 'Alduin'),
+(477, 3, 'Arbosa'),
+(478, 3, 'Artrald'),
+(479, 3, 'Fidard'),
+(480, 3, 'Atruin'),
+(481, 3, 'Ituin'),
+(482, 3, 'Huren'),
+(483, 3, 'Joringer'),
+(484, 3, 'Kanenald'),
+(485, 3, 'Sokarad'),
+(486, 3, 'Agalder'),
+(487, 3, 'Kaundur'),
+(488, 3, 'Midumulf'),
+(489, 3, 'Anstian'),
+(490, 3, 'Ronuken'),
+(491, 3, 'Aldurald'),
+(492, 3, 'Renalard'),
+(493, 3, 'Andrard'),
+(494, 3, 'Auduin'),
+(495, 3, 'Alfrir'),
+(496, 3, 'Sinulf'),
+(497, 3, 'Beldrulf'),
+(498, 3, 'Bererund'),
+(499, 14, 'Avuli'),
+(500, 14, 'Kalfren'),
+(501, 14, 'Artwik'),
+(502, 14, 'Beddelver'),
+(503, 14, 'Ostus'),
+(504, 14, 'Evotori'),
+(505, 14, 'Hegirin'),
+(506, 14, 'Simalia'),
+(507, 14, 'Stasarik'),
+(508, 14, 'Evingod'),
+(509, 14, 'Hurtini'),
+(510, 14, 'Gemulus'),
+(511, 14, 'Hamalia'),
+(512, 14, 'Metesur'),
+(513, 14, 'Hilitari'),
+(514, 14, 'Deudigren'),
+(515, 14, 'Musana'),
+(516, 14, 'Gogiko'),
+(517, 14, 'Geten'),
+(518, 14, 'Ogeko'),
+(519, 14, 'Hastmena'),
+(520, 14, 'Leusten'),
+(521, 14, 'Bolmara'),
+(522, 14, 'Kondur'),
+(523, 14, 'Andomer'),
+(524, 14, 'Hareka'),
+(525, 14, 'Laduko'),
+(526, 14, 'Todako'),
+(527, 14, 'Bedala'),
+(528, 14, 'Darine'),
+(529, 14, 'Opper'),
+(530, 14, 'Penshar'),
+(531, 14, 'Huren'),
+(532, 14, 'Avalhar'),
+(533, 14, 'Moliko'),
+(534, 14, 'Onren'),
+(535, 14, 'Helugo'),
+(536, 14, 'Garemoko'),
+(537, 14, 'Afuran'),
+(538, 14, 'Anstian'),
+(539, 14, 'Albosa'),
+(540, 14, 'Ronuken'),
+(541, 14, 'Krividus'),
+(542, 14, 'Adestur'),
+(543, 14, 'Usoko'),
+(544, 14, 'Berodald'),
+(545, 14, 'Ibruin'),
+(546, 14, 'Marstolt'),
+(547, 14, 'Eoner'),
+(548, 14, 'Sirober'),
+(549, 11, 'Kishunuba'),
+(550, 11, 'Ahishatsu'),
+(551, 11, 'Itovuo'),
+(552, 11, 'Shi'),
+(553, 11, 'Airuta'),
+(554, 11, 'Hita'),
+(555, 11, 'Otichoda'),
+(556, 11, 'Togenada'),
+(557, 11, 'Aishai'),
+(558, 11, 'Aakiwa'),
+(559, 11, 'Endashi'),
+(560, 11, 'Isayeki'),
+(561, 11, 'Sunji'),
+(562, 11, 'Motsu'),
+(563, 11, 'Yotosala'),
+(564, 11, 'Tadaruwa'),
+(565, 11, 'Ichosira'),
+(566, 11, 'Saraki'),
+(567, 11, 'Kasenumi'),
+(568, 11, 'Shaishi'),
+(569, 11, 'Mayaki'),
+(570, 11, 'Kusoni'),
+(571, 11, 'Shiyurida'),
+(572, 11, 'Kugisa'),
+(573, 11, 'Keikira'),
+(574, 11, 'Kashada'),
+(575, 11, 'Tsuruomo'),
+(576, 11, 'Momaki'),
+(577, 11, 'Akachi'),
+(578, 11, 'Aihaken'),
+(579, 11, 'Ishikela'),
+(580, 11, 'Otsada'),
+(581, 11, 'Iwaira'),
+(582, 11, 'Soikutsu'),
+(583, 11, 'Shihari'),
+(584, 11, 'Akiga'),
+(585, 11, 'Tekitsu'),
+(586, 11, 'Kumamato'),
+(587, 11, 'Tsukaya'),
+(588, 11, 'Shikkoken'),
+(589, 11, 'Yanumano'),
+(590, 11, 'Rotsuda'),
+(591, 11, 'Tawate'),
+(592, 11, 'Ozuwara'),
+(593, 11, 'Isimazu'),
+(594, 11, 'Ohaya'),
+(595, 11, 'Fumimasa'),
+(596, 11, 'Asanari'),
+(597, 11, 'Ichinumi'),
+(598, 11, 'Okanata');
 

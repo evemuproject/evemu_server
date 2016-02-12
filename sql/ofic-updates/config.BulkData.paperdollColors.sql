@@ -11,29 +11,30 @@ CREATE TABLE paperdollColors (
     PRIMARY KEY (colorID)
 );
 
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (2, 'topouter', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (3, 'makeup/implants', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (4, 'accessories/earslow', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (5, 'skintone', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (6, 'hair', 1, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (7, 'makeup/eyes', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (8, 'makeup/lipstick', 0, 1, 1);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (9, 'makeup/blush', 0, 1, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (10, 'makeup/eyeshadow', 1, 1, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (11, 'outer', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (12, 'accessories/nose', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (13, 'accessories/nostril', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (14, 'accessories/lips', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (15, 'beard', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (16, 'makeup/eyeliner', 0, 1, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (17, 'topmiddle', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (18, 'accessories/earshigh', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (19, 'makeup/eyebrows', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (20, 'accessories/glasses', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (21, 'feet', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (22, 'bottominner', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (23, 'bottomouter', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (24, 'accessories/brow', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (25, 'topinner', 0, 0, 0);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (26, 'tattoo/head', 0, 1, 1);
-INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES (27, 'accessories/piercings', 0, 0, 0);
+INSERT INTO paperdollColors (colorID, colorKey, hasSecondary, hasWeight, hasGloss) VALUES
+(2, 'topouter', 0, 0, 0),
+(3, 'makeup/implants', 0, 0, 0),
+(4, 'accessories/earslow', 0, 0, 0),
+(5, 'skintone', 0, 0, 0),
+(6, 'hair', 1, 0, 0),
+(7, 'makeup/eyes', 0, 0, 0),
+(8, 'makeup/lipstick', 0, 1, 1),
+(9, 'makeup/blush', 0, 1, 0),
+(10, 'makeup/eyeshadow', 1, 1, 0),
+(11, 'outer', 0, 0, 0),
+(12, 'accessories/nose', 0, 0, 0),
+(13, 'accessories/nostril', 0, 0, 0),
+(14, 'accessories/lips', 0, 0, 0),
+(15, 'beard', 0, 0, 0),
+(16, 'makeup/eyeliner', 0, 1, 0),
+(17, 'topmiddle', 0, 0, 0),
+(18, 'accessories/earshigh', 0, 0, 0),
+(19, 'makeup/eyebrows', 0, 0, 0),
+(20, 'accessories/glasses', 0, 0, 0),
+(21, 'feet', 0, 0, 0),
+(22, 'bottominner', 0, 0, 0),
+(23, 'bottomouter', 0, 0, 0),
+(24, 'accessories/brow', 0, 0, 0),
+(25, 'topinner', 0, 0, 0),
+(26, 'tattoo/head', 0, 1, 1),
+(27, 'accessories/piercings', 0, 0, 0);

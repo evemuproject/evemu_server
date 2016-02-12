@@ -31,3 +31,4 @@ CREATE TABLE IF NOT EXISTS `salvageLootGroup` (
 INSERT INTO salvageLootGroup (typeID,salvagelootGroupID,dropChance) VALUES
 -- Small Guristas wreck
 ('26573', '1', '1.00'); -- 100% chance of salvage on **successful** salvage attempt
+

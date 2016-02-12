@@ -12,930 +12,931 @@ CREATE TABLE chrDefaultOverviewGroups (
     INDEX groupID (groupID)
 );
 
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 10);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 15);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 25);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 26);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 27);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 28);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 29);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 30);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 31);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 90);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 237);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 310);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 324);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 335);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 358);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 361);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 365);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 366);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 380);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 381);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 419);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 420);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 463);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 479);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 485);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 492);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 513);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 540);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 541);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 543);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 547);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 548);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 659);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 830);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 831);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 832);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 833);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 834);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 863);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 864);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 883);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 893);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 894);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 897);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 898);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 900);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 902);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 906);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 922);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 925);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 941);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 963);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 988);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 1003);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 1004);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 1005);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 1012);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (3, 1022);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 12);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 90);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 97);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 180);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 185);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 286);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 287);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 299);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 311);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 335);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 337);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 340);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 361);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 365);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 383);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 435);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 450);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 451);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 452);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 453);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 454);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 455);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 456);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 457);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 458);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 459);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 460);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 461);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 462);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 465);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 467);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 468);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 469);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 470);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 471);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 494);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 495);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 519);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 520);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 522);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 523);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 527);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 533);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 534);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 545);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 548);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 550);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 551);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 552);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 553);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 554);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 555);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 556);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 557);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 558);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 559);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 560);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 561);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 562);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 563);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 564);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 565);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 566);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 567);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 568);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 569);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 570);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 571);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 572);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 573);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 574);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 575);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 576);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 577);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 578);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 579);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 580);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 581);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 582);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 583);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 584);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 593);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 594);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 595);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 596);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 597);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 602);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 603);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 604);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 605);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 606);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 611);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 612);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 613);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 614);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 615);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 620);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 621);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 622);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 623);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 624);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 629);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 630);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 631);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 632);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 633);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 665);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 666);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 667);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 668);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 669);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 670);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 671);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 672);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 673);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 674);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 675);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 676);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 677);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 678);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 679);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 680);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 681);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 682);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 683);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 684);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 685);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 686);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 687);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 688);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 689);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 690);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 691);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 692);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 693);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 694);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 695);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 696);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 697);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 698);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 699);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 700);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 701);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 702);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 703);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 704);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 705);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 706);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 755);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 756);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 757);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 758);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 759);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 760);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 761);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 789);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 790);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 791);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 792);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 793);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 794);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 795);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 796);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 797);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 798);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 799);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 800);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 801);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 802);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 803);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 804);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 805);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 806);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 807);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 808);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 809);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 810);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 811);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 812);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 813);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 814);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 816);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 817);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 818);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 819);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 820);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 821);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 822);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 823);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 824);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 825);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 826);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 827);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 828);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 829);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 843);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 844);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 845);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 846);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 847);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 848);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 849);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 850);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 851);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 852);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 861);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 863);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 864);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 865);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 866);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 867);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 868);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 875);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 897);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 903);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 924);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 927);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 959);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 960);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 961);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 982);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 983);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 984);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 985);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 986);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 987);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 1004);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 1006);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (4, 1007);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 6);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 7);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 10);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 15);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 310);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 361);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 366);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 548);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 988);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 1003);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (5, 1025);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 12);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 90);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 186);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 306);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 335);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 340);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 361);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 365);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 496);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 548);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 649);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 863);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 864);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 934);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 952);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (6, 1004);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 6);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 7);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 8);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 9);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 10);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 12);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 14);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 15);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 25);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 26);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 27);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 28);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 29);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 30);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 31);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 90);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 99);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 100);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 101);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 180);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 182);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 185);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 186);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 226);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 237);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 279);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 286);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 287);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 288);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 297);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 298);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 301);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 306);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 307);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 310);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 311);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 318);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 319);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 323);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 324);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 336);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 337);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 340);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 358);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 361);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 363);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 365);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 366);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 380);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 381);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 383);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 397);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 404);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 411);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 413);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 416);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 417);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 419);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 420);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 426);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 430);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 435);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 438);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 439);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 440);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 441);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 443);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 444);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 446);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 448);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 449);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 450);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 451);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 452);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 453);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 454);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 455);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 456);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 457);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 458);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 459);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 460);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 461);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 462);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 463);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 465);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 467);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 468);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 469);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 471);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 473);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 479);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 485);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 492);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 494);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 495);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 496);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 513);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 517);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 520);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 522);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 523);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 527);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 533);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 534);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 540);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 541);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 543);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 544);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 547);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 548);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 549);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 550);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 551);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 552);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 553);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 554);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 555);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 556);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 557);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 558);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 559);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 560);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 561);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 562);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 563);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 564);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 565);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 566);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 567);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 568);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 569);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 570);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 571);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 572);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 573);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 574);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 575);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 576);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 577);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 578);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 579);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 580);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 581);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 582);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 583);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 584);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 593);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 594);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 595);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 596);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 597);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 602);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 603);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 604);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 605);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 606);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 611);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 612);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 613);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 614);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 615);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 620);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 621);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 622);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 623);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 624);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 629);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 630);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 631);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 632);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 633);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 639);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 640);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 641);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 649);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 659);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 665);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 666);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 667);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 668);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 669);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 670);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 671);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 672);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 673);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 674);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 675);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 676);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 677);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 678);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 679);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 680);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 681);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 682);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 683);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 684);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 685);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 686);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 687);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 688);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 689);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 690);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 691);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 692);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 693);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 694);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 695);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 696);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 697);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 698);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 699);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 700);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 701);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 702);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 703);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 704);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 705);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 706);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 707);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 709);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 711);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 715);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 755);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 756);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 757);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 758);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 759);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 760);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 761);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 784);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 789);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 790);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 791);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 792);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 793);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 794);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 795);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 796);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 797);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 798);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 799);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 800);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 801);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 802);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 803);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 804);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 805);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 806);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 807);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 808);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 809);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 810);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 811);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 812);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 813);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 814);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 816);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 817);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 818);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 819);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 820);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 821);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 822);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 823);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 824);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 825);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 826);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 827);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 828);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 829);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 830);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 831);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 832);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 833);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 834);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 835);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 836);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 837);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 838);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 839);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 843);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 844);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 845);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 846);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 847);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 848);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 849);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 850);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 851);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 852);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 861);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 863);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 864);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 865);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 866);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 867);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 868);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 874);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 875);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 883);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 893);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 894);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 897);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 898);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 900);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 902);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 906);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 920);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 922);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 924);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 925);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 927);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 941);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 952);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 959);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 960);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 961);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 963);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 982);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 983);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 984);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 985);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 986);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 987);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 988);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1003);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1005);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1006);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1007);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1012);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1022);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1023);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1025);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1051);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1052);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1053);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1054);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1056);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (8, 1071);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 100);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 101);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 544);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 549);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 639);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 640);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 641);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (12, 1023);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 10);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 12);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 15);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 25);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 26);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 27);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 28);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 29);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 30);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 31);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 90);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 180);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 185);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 237);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 286);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 287);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 306);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 310);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 324);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 335);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 337);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 340);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 358);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 361);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 365);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 366);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 380);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 381);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 383);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 419);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 420);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 435);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 463);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 479);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 485);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 492);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 494);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 495);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 496);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 513);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 520);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 522);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 523);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 527);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 533);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 534);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 540);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 541);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 543);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 547);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 548);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 550);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 551);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 552);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 553);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 554);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 555);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 556);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 557);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 558);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 559);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 560);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 561);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 562);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 563);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 564);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 565);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 566);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 567);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 568);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 569);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 570);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 571);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 572);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 573);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 574);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 575);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 576);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 577);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 578);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 579);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 580);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 581);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 582);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 583);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 584);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 593);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 594);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 595);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 596);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 597);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 602);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 603);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 604);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 605);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 606);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 611);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 612);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 613);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 614);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 615);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 620);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 621);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 622);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 623);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 624);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 629);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 630);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 631);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 632);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 633);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 649);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 659);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 665);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 666);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 667);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 668);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 669);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 670);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 671);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 672);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 673);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 674);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 675);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 676);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 677);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 678);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 679);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 680);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 681);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 682);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 683);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 684);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 685);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 686);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 687);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 688);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 689);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 690);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 691);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 692);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 693);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 694);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 695);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 696);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 697);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 698);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 699);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 700);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 701);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 702);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 703);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 704);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 705);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 706);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 755);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 756);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 757);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 758);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 759);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 760);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 761);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 789);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 790);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 791);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 792);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 793);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 794);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 795);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 796);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 797);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 798);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 799);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 800);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 801);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 802);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 803);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 804);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 805);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 806);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 807);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 808);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 809);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 810);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 811);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 812);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 813);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 814);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 816);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 817);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 818);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 819);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 820);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 821);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 822);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 823);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 824);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 825);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 826);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 827);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 828);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 829);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 830);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 831);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 832);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 833);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 834);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 843);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 844);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 845);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 846);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 847);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 848);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 849);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 850);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 851);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 852);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 861);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 863);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 864);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 865);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 866);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 867);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 868);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 875);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 883);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 893);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 894);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 897);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 898);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 900);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 902);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 906);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 922);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 924);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 925);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 927);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 934);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 941);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 952);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 959);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 960);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 961);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 963);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 982);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 983);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 984);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 985);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 986);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 987);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 988);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1003);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1004);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1005);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1006);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1007);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1012);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1022);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1025);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1051);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1052);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1053);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1054);
-INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES (13, 1056);
+INSERT INTO chrDefaultOverviewGroups (overviewID, groupID) VALUES
+(3, 10),
+(3, 15),
+(3, 25),
+(3, 26),
+(3, 27),
+(3, 28),
+(3, 29),
+(3, 30),
+(3, 31),
+(3, 90),
+(3, 237),
+(3, 310),
+(3, 324),
+(3, 335),
+(3, 358),
+(3, 361),
+(3, 365),
+(3, 366),
+(3, 380),
+(3, 381),
+(3, 419),
+(3, 420),
+(3, 463),
+(3, 479),
+(3, 485),
+(3, 492),
+(3, 513),
+(3, 540),
+(3, 541),
+(3, 543),
+(3, 547),
+(3, 548),
+(3, 659),
+(3, 830),
+(3, 831),
+(3, 832),
+(3, 833),
+(3, 834),
+(3, 863),
+(3, 864),
+(3, 883),
+(3, 893),
+(3, 894),
+(3, 897),
+(3, 898),
+(3, 900),
+(3, 902),
+(3, 906),
+(3, 922),
+(3, 925),
+(3, 941),
+(3, 963),
+(3, 988),
+(3, 1003),
+(3, 1004),
+(3, 1005),
+(3, 1012),
+(3, 1022),
+(4, 12),
+(4, 90),
+(4, 97),
+(4, 180),
+(4, 185),
+(4, 286),
+(4, 287),
+(4, 299),
+(4, 311),
+(4, 335),
+(4, 337),
+(4, 340),
+(4, 361),
+(4, 365),
+(4, 383),
+(4, 435),
+(4, 450),
+(4, 451),
+(4, 452),
+(4, 453),
+(4, 454),
+(4, 455),
+(4, 456),
+(4, 457),
+(4, 458),
+(4, 459),
+(4, 460),
+(4, 461),
+(4, 462),
+(4, 465),
+(4, 467),
+(4, 468),
+(4, 469),
+(4, 470),
+(4, 471),
+(4, 494),
+(4, 495),
+(4, 519),
+(4, 520),
+(4, 522),
+(4, 523),
+(4, 527),
+(4, 533),
+(4, 534),
+(4, 545),
+(4, 548),
+(4, 550),
+(4, 551),
+(4, 552),
+(4, 553),
+(4, 554),
+(4, 555),
+(4, 556),
+(4, 557),
+(4, 558),
+(4, 559),
+(4, 560),
+(4, 561),
+(4, 562),
+(4, 563),
+(4, 564),
+(4, 565),
+(4, 566),
+(4, 567),
+(4, 568),
+(4, 569),
+(4, 570),
+(4, 571),
+(4, 572),
+(4, 573),
+(4, 574),
+(4, 575),
+(4, 576),
+(4, 577),
+(4, 578),
+(4, 579),
+(4, 580),
+(4, 581),
+(4, 582),
+(4, 583),
+(4, 584),
+(4, 593),
+(4, 594),
+(4, 595),
+(4, 596),
+(4, 597),
+(4, 602),
+(4, 603),
+(4, 604),
+(4, 605),
+(4, 606),
+(4, 611),
+(4, 612),
+(4, 613),
+(4, 614),
+(4, 615),
+(4, 620),
+(4, 621),
+(4, 622),
+(4, 623),
+(4, 624),
+(4, 629),
+(4, 630),
+(4, 631),
+(4, 632),
+(4, 633),
+(4, 665),
+(4, 666),
+(4, 667),
+(4, 668),
+(4, 669),
+(4, 670),
+(4, 671),
+(4, 672),
+(4, 673),
+(4, 674),
+(4, 675),
+(4, 676),
+(4, 677),
+(4, 678),
+(4, 679),
+(4, 680),
+(4, 681),
+(4, 682),
+(4, 683),
+(4, 684),
+(4, 685),
+(4, 686),
+(4, 687),
+(4, 688),
+(4, 689),
+(4, 690),
+(4, 691),
+(4, 692),
+(4, 693),
+(4, 694),
+(4, 695),
+(4, 696),
+(4, 697),
+(4, 698),
+(4, 699),
+(4, 700),
+(4, 701),
+(4, 702),
+(4, 703),
+(4, 704),
+(4, 705),
+(4, 706),
+(4, 755),
+(4, 756),
+(4, 757),
+(4, 758),
+(4, 759),
+(4, 760),
+(4, 761),
+(4, 789),
+(4, 790),
+(4, 791),
+(4, 792),
+(4, 793),
+(4, 794),
+(4, 795),
+(4, 796),
+(4, 797),
+(4, 798),
+(4, 799),
+(4, 800),
+(4, 801),
+(4, 802),
+(4, 803),
+(4, 804),
+(4, 805),
+(4, 806),
+(4, 807),
+(4, 808),
+(4, 809),
+(4, 810),
+(4, 811),
+(4, 812),
+(4, 813),
+(4, 814),
+(4, 816),
+(4, 817),
+(4, 818),
+(4, 819),
+(4, 820),
+(4, 821),
+(4, 822),
+(4, 823),
+(4, 824),
+(4, 825),
+(4, 826),
+(4, 827),
+(4, 828),
+(4, 829),
+(4, 843),
+(4, 844),
+(4, 845),
+(4, 846),
+(4, 847),
+(4, 848),
+(4, 849),
+(4, 850),
+(4, 851),
+(4, 852),
+(4, 861),
+(4, 863),
+(4, 864),
+(4, 865),
+(4, 866),
+(4, 867),
+(4, 868),
+(4, 875),
+(4, 897),
+(4, 903),
+(4, 924),
+(4, 927),
+(4, 959),
+(4, 960),
+(4, 961),
+(4, 982),
+(4, 983),
+(4, 984),
+(4, 985),
+(4, 986),
+(4, 987),
+(4, 1004),
+(4, 1006),
+(4, 1007),
+(5, 6),
+(5, 7),
+(5, 10),
+(5, 15),
+(5, 310),
+(5, 361),
+(5, 366),
+(5, 548),
+(5, 988),
+(5, 1003),
+(5, 1025),
+(6, 12),
+(6, 90),
+(6, 186),
+(6, 306),
+(6, 335),
+(6, 340),
+(6, 361),
+(6, 365),
+(6, 496),
+(6, 548),
+(6, 649),
+(6, 863),
+(6, 864),
+(6, 934),
+(6, 952),
+(6, 1004),
+(8, 6),
+(8, 7),
+(8, 8),
+(8, 9),
+(8, 10),
+(8, 12),
+(8, 14),
+(8, 15),
+(8, 25),
+(8, 26),
+(8, 27),
+(8, 28),
+(8, 29),
+(8, 30),
+(8, 31),
+(8, 90),
+(8, 99),
+(8, 100),
+(8, 101),
+(8, 180),
+(8, 182),
+(8, 185),
+(8, 186),
+(8, 226),
+(8, 237),
+(8, 279),
+(8, 286),
+(8, 287),
+(8, 288),
+(8, 297),
+(8, 298),
+(8, 301),
+(8, 306),
+(8, 307),
+(8, 310),
+(8, 311),
+(8, 318),
+(8, 319),
+(8, 323),
+(8, 324),
+(8, 336),
+(8, 337),
+(8, 340),
+(8, 358),
+(8, 361),
+(8, 363),
+(8, 365),
+(8, 366),
+(8, 380),
+(8, 381),
+(8, 383),
+(8, 397),
+(8, 404),
+(8, 411),
+(8, 413),
+(8, 416),
+(8, 417),
+(8, 419),
+(8, 420),
+(8, 426),
+(8, 430),
+(8, 435),
+(8, 438),
+(8, 439),
+(8, 440),
+(8, 441),
+(8, 443),
+(8, 444),
+(8, 446),
+(8, 448),
+(8, 449),
+(8, 450),
+(8, 451),
+(8, 452),
+(8, 453),
+(8, 454),
+(8, 455),
+(8, 456),
+(8, 457),
+(8, 458),
+(8, 459),
+(8, 460),
+(8, 461),
+(8, 462),
+(8, 463),
+(8, 465),
+(8, 467),
+(8, 468),
+(8, 469),
+(8, 471),
+(8, 473),
+(8, 479),
+(8, 485),
+(8, 492),
+(8, 494),
+(8, 495),
+(8, 496),
+(8, 513),
+(8, 517),
+(8, 520),
+(8, 522),
+(8, 523),
+(8, 527),
+(8, 533),
+(8, 534),
+(8, 540),
+(8, 541),
+(8, 543),
+(8, 544),
+(8, 547),
+(8, 548),
+(8, 549),
+(8, 550),
+(8, 551),
+(8, 552),
+(8, 553),
+(8, 554),
+(8, 555),
+(8, 556),
+(8, 557),
+(8, 558),
+(8, 559),
+(8, 560),
+(8, 561),
+(8, 562),
+(8, 563),
+(8, 564),
+(8, 565),
+(8, 566),
+(8, 567),
+(8, 568),
+(8, 569),
+(8, 570),
+(8, 571),
+(8, 572),
+(8, 573),
+(8, 574),
+(8, 575),
+(8, 576),
+(8, 577),
+(8, 578),
+(8, 579),
+(8, 580),
+(8, 581),
+(8, 582),
+(8, 583),
+(8, 584),
+(8, 593),
+(8, 594),
+(8, 595),
+(8, 596),
+(8, 597),
+(8, 602),
+(8, 603),
+(8, 604),
+(8, 605),
+(8, 606),
+(8, 611),
+(8, 612),
+(8, 613),
+(8, 614),
+(8, 615),
+(8, 620),
+(8, 621),
+(8, 622),
+(8, 623),
+(8, 624),
+(8, 629),
+(8, 630),
+(8, 631),
+(8, 632),
+(8, 633),
+(8, 639),
+(8, 640),
+(8, 641),
+(8, 649),
+(8, 659),
+(8, 665),
+(8, 666),
+(8, 667),
+(8, 668),
+(8, 669),
+(8, 670),
+(8, 671),
+(8, 672),
+(8, 673),
+(8, 674),
+(8, 675),
+(8, 676),
+(8, 677),
+(8, 678),
+(8, 679),
+(8, 680),
+(8, 681),
+(8, 682),
+(8, 683),
+(8, 684),
+(8, 685),
+(8, 686),
+(8, 687),
+(8, 688),
+(8, 689),
+(8, 690),
+(8, 691),
+(8, 692),
+(8, 693),
+(8, 694),
+(8, 695),
+(8, 696),
+(8, 697),
+(8, 698),
+(8, 699),
+(8, 700),
+(8, 701),
+(8, 702),
+(8, 703),
+(8, 704),
+(8, 705),
+(8, 706),
+(8, 707),
+(8, 709),
+(8, 711),
+(8, 715),
+(8, 755),
+(8, 756),
+(8, 757),
+(8, 758),
+(8, 759),
+(8, 760),
+(8, 761),
+(8, 784),
+(8, 789),
+(8, 790),
+(8, 791),
+(8, 792),
+(8, 793),
+(8, 794),
+(8, 795),
+(8, 796),
+(8, 797),
+(8, 798),
+(8, 799),
+(8, 800),
+(8, 801),
+(8, 802),
+(8, 803),
+(8, 804),
+(8, 805),
+(8, 806),
+(8, 807),
+(8, 808),
+(8, 809),
+(8, 810),
+(8, 811),
+(8, 812),
+(8, 813),
+(8, 814),
+(8, 816),
+(8, 817),
+(8, 818),
+(8, 819),
+(8, 820),
+(8, 821),
+(8, 822),
+(8, 823),
+(8, 824),
+(8, 825),
+(8, 826),
+(8, 827),
+(8, 828),
+(8, 829),
+(8, 830),
+(8, 831),
+(8, 832),
+(8, 833),
+(8, 834),
+(8, 835),
+(8, 836),
+(8, 837),
+(8, 838),
+(8, 839),
+(8, 843),
+(8, 844),
+(8, 845),
+(8, 846),
+(8, 847),
+(8, 848),
+(8, 849),
+(8, 850),
+(8, 851),
+(8, 852),
+(8, 861),
+(8, 863),
+(8, 864),
+(8, 865),
+(8, 866),
+(8, 867),
+(8, 868),
+(8, 874),
+(8, 875),
+(8, 883),
+(8, 893),
+(8, 894),
+(8, 897),
+(8, 898),
+(8, 900),
+(8, 902),
+(8, 906),
+(8, 920),
+(8, 922),
+(8, 924),
+(8, 925),
+(8, 927),
+(8, 941),
+(8, 952),
+(8, 959),
+(8, 960),
+(8, 961),
+(8, 963),
+(8, 982),
+(8, 983),
+(8, 984),
+(8, 985),
+(8, 986),
+(8, 987),
+(8, 988),
+(8, 1003),
+(8, 1005),
+(8, 1006),
+(8, 1007),
+(8, 1012),
+(8, 1022),
+(8, 1023),
+(8, 1025),
+(8, 1051),
+(8, 1052),
+(8, 1053),
+(8, 1054),
+(8, 1056),
+(8, 1071),
+(12, 100),
+(12, 101),
+(12, 544),
+(12, 549),
+(12, 639),
+(12, 640),
+(12, 641),
+(12, 1023),
+(13, 10),
+(13, 12),
+(13, 15),
+(13, 25),
+(13, 26),
+(13, 27),
+(13, 28),
+(13, 29),
+(13, 30),
+(13, 31),
+(13, 90),
+(13, 180),
+(13, 185),
+(13, 237),
+(13, 286),
+(13, 287),
+(13, 306),
+(13, 310),
+(13, 324),
+(13, 335),
+(13, 337),
+(13, 340),
+(13, 358),
+(13, 361),
+(13, 365),
+(13, 366),
+(13, 380),
+(13, 381),
+(13, 383),
+(13, 419),
+(13, 420),
+(13, 435),
+(13, 463),
+(13, 479),
+(13, 485),
+(13, 492),
+(13, 494),
+(13, 495),
+(13, 496),
+(13, 513),
+(13, 520),
+(13, 522),
+(13, 523),
+(13, 527),
+(13, 533),
+(13, 534),
+(13, 540),
+(13, 541),
+(13, 543),
+(13, 547),
+(13, 548),
+(13, 550),
+(13, 551),
+(13, 552),
+(13, 553),
+(13, 554),
+(13, 555),
+(13, 556),
+(13, 557),
+(13, 558),
+(13, 559),
+(13, 560),
+(13, 561),
+(13, 562),
+(13, 563),
+(13, 564),
+(13, 565),
+(13, 566),
+(13, 567),
+(13, 568),
+(13, 569),
+(13, 570),
+(13, 571),
+(13, 572),
+(13, 573),
+(13, 574),
+(13, 575),
+(13, 576),
+(13, 577),
+(13, 578),
+(13, 579),
+(13, 580),
+(13, 581),
+(13, 582),
+(13, 583),
+(13, 584),
+(13, 593),
+(13, 594),
+(13, 595),
+(13, 596),
+(13, 597),
+(13, 602),
+(13, 603),
+(13, 604),
+(13, 605),
+(13, 606),
+(13, 611),
+(13, 612),
+(13, 613),
+(13, 614),
+(13, 615),
+(13, 620),
+(13, 621),
+(13, 622),
+(13, 623),
+(13, 624),
+(13, 629),
+(13, 630),
+(13, 631),
+(13, 632),
+(13, 633),
+(13, 649),
+(13, 659),
+(13, 665),
+(13, 666),
+(13, 667),
+(13, 668),
+(13, 669),
+(13, 670),
+(13, 671),
+(13, 672),
+(13, 673),
+(13, 674),
+(13, 675),
+(13, 676),
+(13, 677),
+(13, 678),
+(13, 679),
+(13, 680),
+(13, 681),
+(13, 682),
+(13, 683),
+(13, 684),
+(13, 685),
+(13, 686),
+(13, 687),
+(13, 688),
+(13, 689),
+(13, 690),
+(13, 691),
+(13, 692),
+(13, 693),
+(13, 694),
+(13, 695),
+(13, 696),
+(13, 697),
+(13, 698),
+(13, 699),
+(13, 700),
+(13, 701),
+(13, 702),
+(13, 703),
+(13, 704),
+(13, 705),
+(13, 706),
+(13, 755),
+(13, 756),
+(13, 757),
+(13, 758),
+(13, 759),
+(13, 760),
+(13, 761),
+(13, 789),
+(13, 790),
+(13, 791),
+(13, 792),
+(13, 793),
+(13, 794),
+(13, 795),
+(13, 796),
+(13, 797),
+(13, 798),
+(13, 799),
+(13, 800),
+(13, 801),
+(13, 802),
+(13, 803),
+(13, 804),
+(13, 805),
+(13, 806),
+(13, 807),
+(13, 808),
+(13, 809),
+(13, 810),
+(13, 811),
+(13, 812),
+(13, 813),
+(13, 814),
+(13, 816),
+(13, 817),
+(13, 818),
+(13, 819),
+(13, 820),
+(13, 821),
+(13, 822),
+(13, 823),
+(13, 824),
+(13, 825),
+(13, 826),
+(13, 827),
+(13, 828),
+(13, 829),
+(13, 830),
+(13, 831),
+(13, 832),
+(13, 833),
+(13, 834),
+(13, 843),
+(13, 844),
+(13, 845),
+(13, 846),
+(13, 847),
+(13, 848),
+(13, 849),
+(13, 850),
+(13, 851),
+(13, 852),
+(13, 861),
+(13, 863),
+(13, 864),
+(13, 865),
+(13, 866),
+(13, 867),
+(13, 868),
+(13, 875),
+(13, 883),
+(13, 893),
+(13, 894),
+(13, 897),
+(13, 898),
+(13, 900),
+(13, 902),
+(13, 906),
+(13, 922),
+(13, 924),
+(13, 925),
+(13, 927),
+(13, 934),
+(13, 941),
+(13, 952),
+(13, 959),
+(13, 960),
+(13, 961),
+(13, 963),
+(13, 982),
+(13, 983),
+(13, 984),
+(13, 985),
+(13, 986),
+(13, 987),
+(13, 988),
+(13, 1003),
+(13, 1004),
+(13, 1005),
+(13, 1006),
+(13, 1007),
+(13, 1012),
+(13, 1022),
+(13, 1025),
+(13, 1051),
+(13, 1052),
+(13, 1053),
+(13, 1054),
+(13, 1056);
 

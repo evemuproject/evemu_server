@@ -9,55 +9,56 @@ CREATE TABLE paperdollSculptingLocations (
     PRIMARY KEY (sculptLocationID)
 );
 
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (2, 'bodyShapes', 'shoulders');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (3, 'bodyShapes', 'neck');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (4, 'bodyShapes', 'muscular');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (5, 'bodyShapes', 'fat');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (6, 'bodyShapes', 'feet');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (7, 'bodyShapes', 'pinchchest');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (8, 'bodyShapes', 'chest');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (9, 'bodyShapes', 'abs');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (10, 'bodyShapes', 'thin');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (11, 'bodyShapes', 'pelvis');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (12, 'bodyShapes', 'legs');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (13, 'faceModifiers', 'eyes');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (14, 'faceModifiers', 'nosebone');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (15, 'faceModifiers', 'jawcheek');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (16, 'faceModifiers', 'upperlip');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (17, 'faceModifiers', 'nostrils');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (18, 'faceModifiers', 'jaw');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (19, 'faceModifiers', 'outerbrow');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (20, 'faceModifiers', 'eyesouter');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (21, 'faceModifiers', 'eyesinner');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (22, 'faceModifiers', 'nosetip');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (23, 'faceModifiers', 'chin');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (24, 'faceModifiers', 'lowerlip');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (25, 'faceModifiers', 'innerbrow');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (26, 'faceModifiers', 'cheeksupper');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (27, 'faceModifiers', 'nose');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (28, 'faceModifiers', 'mouthcorner');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (29, 'faceModifiers', 'cheeksmiddle');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (30, 'faceModifiers', 'ears');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (31, 'utilityShapes', 'pinchhem');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (32, 'utilityShapes', 'pinchchest');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (33, 'utilityShapes', 'pinchdrapehide');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (34, 'utilityShapes', 'pinchforearmhigh');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (35, 'utilityShapes', 'pinchdrapefull');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (36, 'utilityShapes', 'pincharmhigh');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (37, 'utilityShapes', 'pinchbootankle');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (38, 'utilityShapes', 'pantstuckknee');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (39, 'utilityShapes', 'pinchdrape');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (40, 'utilityShapes', 'pinchforearmlow');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (41, 'utilityShapes', 'pantstuckmedium');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (42, 'utilityShapes', 'pinchboothighshin');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (43, 'utilityShapes', 'pinchbootknee');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (44, 'utilityShapes', 'pinchtuck');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (45, 'utilityShapes', 'pincharmlow');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (46, 'utilityShapes', 'pantstuckshin');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (47, 'utilityShapes', 'pinchhips');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (48, 'utilityShapes', 'pantstucklow');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (49, 'utilityShapes', 'pinchdfull');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (50, 'utilityShapes', 'pantstuckhigh');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (51, 'utilityShapes', 'pinchinner');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (52, 'utilityShapes', 'pantstuckxhigh');
-INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES (53, 'utilityShapes', 'pinchbootlowshin');
+INSERT INTO paperdollSculptingLocations (sculptLocationID, weightKeyCategory, weightKeyPrefix) VALUES
+(2, 'bodyShapes', 'shoulders'),
+(3, 'bodyShapes', 'neck'),
+(4, 'bodyShapes', 'muscular'),
+(5, 'bodyShapes', 'fat'),
+(6, 'bodyShapes', 'feet'),
+(7, 'bodyShapes', 'pinchchest'),
+(8, 'bodyShapes', 'chest'),
+(9, 'bodyShapes', 'abs'),
+(10, 'bodyShapes', 'thin'),
+(11, 'bodyShapes', 'pelvis'),
+(12, 'bodyShapes', 'legs'),
+(13, 'faceModifiers', 'eyes'),
+(14, 'faceModifiers', 'nosebone'),
+(15, 'faceModifiers', 'jawcheek'),
+(16, 'faceModifiers', 'upperlip'),
+(17, 'faceModifiers', 'nostrils'),
+(18, 'faceModifiers', 'jaw'),
+(19, 'faceModifiers', 'outerbrow'),
+(20, 'faceModifiers', 'eyesouter'),
+(21, 'faceModifiers', 'eyesinner'),
+(22, 'faceModifiers', 'nosetip'),
+(23, 'faceModifiers', 'chin'),
+(24, 'faceModifiers', 'lowerlip'),
+(25, 'faceModifiers', 'innerbrow'),
+(26, 'faceModifiers', 'cheeksupper'),
+(27, 'faceModifiers', 'nose'),
+(28, 'faceModifiers', 'mouthcorner'),
+(29, 'faceModifiers', 'cheeksmiddle'),
+(30, 'faceModifiers', 'ears'),
+(31, 'utilityShapes', 'pinchhem'),
+(32, 'utilityShapes', 'pinchchest'),
+(33, 'utilityShapes', 'pinchdrapehide'),
+(34, 'utilityShapes', 'pinchforearmhigh'),
+(35, 'utilityShapes', 'pinchdrapefull'),
+(36, 'utilityShapes', 'pincharmhigh'),
+(37, 'utilityShapes', 'pinchbootankle'),
+(38, 'utilityShapes', 'pantstuckknee'),
+(39, 'utilityShapes', 'pinchdrape'),
+(40, 'utilityShapes', 'pinchforearmlow'),
+(41, 'utilityShapes', 'pantstuckmedium'),
+(42, 'utilityShapes', 'pinchboothighshin'),
+(43, 'utilityShapes', 'pinchbootknee'),
+(44, 'utilityShapes', 'pinchtuck'),
+(45, 'utilityShapes', 'pincharmlow'),
+(46, 'utilityShapes', 'pantstuckshin'),
+(47, 'utilityShapes', 'pinchhips'),
+(48, 'utilityShapes', 'pantstucklow'),
+(49, 'utilityShapes', 'pinchdfull'),
+(50, 'utilityShapes', 'pantstuckhigh'),
+(51, 'utilityShapes', 'pinchinner'),
+(52, 'utilityShapes', 'pantstuckxhigh'),
+(53, 'utilityShapes', 'pinchbootlowshin');
