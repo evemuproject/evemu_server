@@ -151,7 +151,7 @@ void log_toggle( LogType t )
 bool log_open_logfile( const char* filename )
 {
     MutexLock lock(mLogSys);
-    if (NULL == logsys_log_file)
+    if (NULL != logsys_log_file)
     {
         if (!log_close_logfile())
             return false;
