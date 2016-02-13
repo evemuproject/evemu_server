@@ -402,9 +402,10 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
     else
     {
         // ONLY output ERROR message for a "missing" attributeID if it is not in the list of commonly "not found" attributes:
-        switch( attributeId )
+        switch( attributeId)
         {
-			case AttrQuantity:
+            case AttrCapacity:
+            case AttrQuantity:
             case AttrRequiredSkill2:
             case AttrRequiredSkill3:
             case AttrRequiredSkill4:
