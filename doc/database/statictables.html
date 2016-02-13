@@ -1,0 +1,431 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>EVEmu Developer documentation</title>
+
+    <!-- jQuery & QUnit -->
+    <script type="text/javascript" src="../js/jquery-1.4.2.js"></script>
+    <script type="text/javascript" src="../js/qunit.js"></script>
+    <link type="text/css" rel="stylesheet" href="js/qunit.css"/>
+    <!-- SyntaxHighlighter -->
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shCore.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushBash.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushCpp.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushDiff.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushPython.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushSql.js"></script>
+    <script type="text/javascript" src="../syntaxhighlighter_3.0.83/scripts/shBrushXml.js"></script>
+
+    <link type="text/css" rel="stylesheet" href="../syntaxhighlighter_3.0.83/styles/shCoreDefault.css"/>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body>
+    <h3>Static tables</h3>
+    tables from evemu_static-dump.sql
+    <table border="1">
+      <tr>
+        <td>table</td>
+        <td>columns</td>
+</tr><tr><td>agtMissionGroups</td><td>
+      corporationID<br/>
+      divisionID<br/>
+      level<br/>
+      missionID<br/>
+</td></tr><tr><td>agtMissions</td><td>
+      missionID<br/>
+      missionName<br/>
+      missionLevel<br/>
+      missionTypeID<br/>
+      importantMission<br/>
+</td></tr><tr><td>agtMissionTypes</td><td>
+      missionTypeID<br/>
+      missionTypeName<br/>
+</td></tr><tr><td>agtOfferGroups</td><td>
+      corporationID<br/>
+      divisionID<br/>
+      level<br/>
+      offerID<br/>
+</td></tr><tr><td>agtOfferRequired</td><td>
+      offerID<br/>
+      typeID<br/>
+      quantity<br/>
+</td></tr><tr><td>agtOfferReward</td><td>
+      offerID<br/>
+      typeID<br/>
+      quantity<br/>
+</td></tr><tr><td>agtOffers</td><td>
+      offerID<br/>
+      offerName<br/>
+      offerLevel<br/>
+      loyaltyPoints<br/>
+      requiredISK<br/>
+      rewardISK<br/>
+      offerText<br/>
+      offerAcceptedText<br/>
+</td></tr><tr><td>billTypes</td><td>
+      billTypeID<br/>
+      billTypeName<br/>
+      description<br/>
+</td></tr><tr><td>bloodlineTypes</td><td>
+      bloodlineID<br/>
+      typeID<br/>
+</td></tr><tr><td>channels</td><td>
+      channelID<br/>
+      ownerID<br/>
+      displayName<br/>
+      motd<br/>
+      comparisonKey<br/>
+      memberless<br/>
+      password<br/>
+      mailingList<br/>
+      cspa<br/>
+      temporary<br/>
+      mode<br/>
+      subscribed<br/>
+      estimatedMemberCount<br/>
+</td></tr><tr><td>channelTypes</td><td>
+      channelTypeID<br/>
+      channelTypeName<br/>
+      defaultName<br/>
+</td></tr><tr><td>characterStatic</td><td>
+      characterID<br/>
+      characterName<br/>
+      accountID<br/>
+      title<br/>
+      description<br/>
+      bounty<br/>
+      balance<br/>
+      securityRating<br/>
+      petitionMessage<br/>
+      logonMinutes<br/>
+      corporationID<br/>
+      corporationDateTime<br/>
+      startDateTime<br/>
+      createDateTime<br/>
+      typeID<br/>
+      ancestryID<br/>
+      careerID<br/>
+      schoolID<br/>
+      careerSpecialityID<br/>
+      gender<br/>
+      accessoryID<br/>
+      beardID<br/>
+      costumeID<br/>
+      decoID<br/>
+      eyebrowsID<br/>
+      eyesID<br/>
+      hairID<br/>
+      lipstickID<br/>
+      makeupID<br/>
+      skinID<br/>
+      backgroundID<br/>
+      lightID<br/>
+      headRotation1<br/>
+      headRotation2<br/>
+      headRotation3<br/>
+      eyeRotation1<br/>
+      eyeRotation2<br/>
+      eyeRotation3<br/>
+      camPos1<br/>
+      camPos2<br/>
+      camPos3<br/>
+      morph1e<br/>
+      morph1n<br/>
+      morph1s<br/>
+      morph1w<br/>
+      morph2e<br/>
+      morph2n<br/>
+      morph2s<br/>
+      morph2w<br/>
+      morph3e<br/>
+      morph3n<br/>
+      morph3s<br/>
+      morph3w<br/>
+      morph4e<br/>
+      morph4n<br/>
+      morph4s<br/>
+      morph4w<br/>
+      stationID<br/>
+      solarSystemID<br/>
+      constellationID<br/>
+      regionID<br/>
+</td></tr><tr><td>chrAccessories</td><td>
+      accessoryID<br/>
+      accessoryName<br/>
+</td></tr><tr><td>chrBackgrounds</td><td>
+      backgroundID<br/>
+      backgroundName<br/>
+</td></tr><tr><td>chrBeards</td><td>
+      beardID<br/>
+      beardName<br/>
+</td></tr><tr><td>chrBLAccessories</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      accessoryID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLBackgrounds</td><td>
+      backgroundID<br/>
+      backgroundName<br/>
+</td></tr><tr><td>chrBLBeards</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      beardID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLCostumes</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      costumeID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLDecos</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      decoID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLEyebrows</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      eyebrowsID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLEyes</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      eyesID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLHairs</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      hairID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLLights</td><td>
+      lightID<br/>
+      lightName<br/>
+</td></tr><tr><td>chrBLLipsticks</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      lipstickID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLMakeups</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      makeupID<br/>
+      npc<br/>
+</td></tr><tr><td>chrBLSkins</td><td>
+      bloodlineID<br/>
+      gender<br/>
+      skinID<br/>
+      npc<br/>
+</td></tr><tr><td>chrCostumes</td><td>
+      costumeID<br/>
+      costumeName<br/>
+</td></tr><tr><td>chrDecos</td><td>
+      decoID<br/>
+      decoName<br/>
+</td></tr><tr><td>chrDepartments</td><td>
+      schoolID<br/>
+      departmentID<br/>
+      departmentName<br/>
+      description<br/>
+      skillTypeID1<br/>
+      skillTypeID2<br/>
+      skillTypeID3<br/>
+      graphicID<br/>
+</td></tr><tr><td>chrEyebrows</td><td>
+      eyebrowsID<br/>
+      eyebrowsName<br/>
+</td></tr><tr><td>chrEyes</td><td>
+      eyesID<br/>
+      eyesName<br/>
+</td></tr><tr><td>chrHairs</td><td>
+      hairID<br/>
+      hairName<br/>
+</td></tr><tr><td>chrLights</td><td>
+      lightID<br/>
+      lightName<br/>
+</td></tr><tr><td>chrLipsticks</td><td>
+      lipstickID<br/>
+      lipstickName<br/>
+</td></tr><tr><td>chrMakeups</td><td>
+      makeupID<br/>
+      makeupName<br/>
+</td></tr><tr><td>chrSkins</td><td>
+      skinID<br/>
+      skinName<br/>
+</td></tr><tr><td>corporationStatic</td><td>
+      corporationID<br/>
+      corporationName<br/>
+      description<br/>
+      tickerName<br/>
+      url<br/>
+      taxRate<br/>
+      minimumJoinStanding<br/>
+      corporationType<br/>
+      hasPlayerPersonnelManager<br/>
+      sendCharTerminationMessage<br/>
+      creatorID<br/>
+      ceoID<br/>
+      stationID<br/>
+      raceID<br/>
+      allianceID<br/>
+      shares<br/>
+      memberCount<br/>
+      memberLimit<br/>
+      allowedMemberRaceIDs<br/>
+      graphicID<br/>
+      shape1<br/>
+      shape2<br/>
+      shape3<br/>
+      color1<br/>
+      color2<br/>
+      color3<br/>
+      typeface<br/>
+      division1<br/>
+      division2<br/>
+      division3<br/>
+      division4<br/>
+      division5<br/>
+      division6<br/>
+      division7<br/>
+      walletDivision1<br/>
+      walletDivision2<br/>
+      walletDivision3<br/>
+      walletDivision4<br/>
+      walletDivision5<br/>
+      walletDivision6<br/>
+      walletDivision7<br/>
+      balance<br/>
+      deleted<br/>
+      isRecruiting<br/>
+      warFactionID<br/>
+</td></tr><tr><td>entityStatic</td><td>
+      itemID<br/>
+      itemName<br/>
+      typeID<br/>
+      ownerID<br/>
+      locationID<br/>
+      flag<br/>
+      contraband<br/>
+      singleton<br/>
+      quantity<br/>
+      x<br/>
+      y<br/>
+      z<br/>
+      customInfo<br/>
+</td></tr><tr><td>eveMailMimeType</td><td>
+      mimeTypeID<br/>
+      mimeType<br/>
+      binary<br/>
+</td></tr><tr><td>eveStaticLocations</td><td>
+      locationID<br/>
+      locationName<br/>
+      x<br/>
+      y<br/>
+      z<br/>
+</td></tr><tr><td>eveStaticOwners</td><td>
+      ownerID<br/>
+      ownerName<br/>
+      typeID<br/>
+</td></tr><tr><td>factionRaces</td><td>
+      factionID<br/>
+      raceID<br/>
+</td></tr><tr><td>intro</td><td>
+      langID<br/>
+      textgroup<br/>
+      textLabel<br/>
+      text<br/>
+</td></tr><tr><td>languages</td><td>
+      languageID<br/>
+      languageName<br/>
+      translatedLanguageName<br/>
+</td></tr><tr><td>market_keyMap</td><td>
+      accountKey<br/>
+      accountType<br/>
+      accountName<br/>
+      description<br/>
+</td></tr><tr><td>market_refTypes</td><td>
+      refTypeID<br/>
+      refTypeText<br/>
+      description<br/>
+</td></tr><tr><td>ramCompletedStatuses</td><td>
+      completedStatusID<br/>
+      completedStatusName<br/>
+      completedStatusText<br/>
+</td></tr><tr><td>ramInstallationTypeDefaultContents</td><td>
+      installationTypeID<br/>
+      assemblyLineTypeID<br/>
+      UIGroupingID<br/>
+      quantity<br/>
+      costInstall<br/>
+      costPerHour<br/>
+      restrictionMask<br/>
+      discountPerGoodStandingPoint<br/>
+      surchargePerBadStandingPoint<br/>
+      minimumStanding<br/>
+      minimumCharSecurity<br/>
+      minimumCorpSecurity<br/>
+      maximumCharSecurity<br/>
+      maximumCorpSecurity<br/>
+</td></tr><tr><td>roidDistribution</td><td>
+      systemSec<br/>
+      roidID<br/>
+      percent<br/>
+</td></tr><tr><td>spawnBounds</td><td>
+      spawnID<br/>
+      pointIndex<br/>
+      x<br/>
+      y<br/>
+      z<br/>
+</td></tr><tr><td>spawnGroupEntries</td><td>
+      spawnGroupID<br/>
+      npcTypeID<br/>
+      quantity<br/>
+      probability<br/>
+      ownerID<br/>
+      corporationID<br/>
+</td></tr><tr><td>spawnGroups</td><td>
+      spawnGroupID<br/>
+      spawnGroupName<br/>
+      formation<br/>
+</td></tr><tr><td>spawns</td><td>
+      spawnID<br/>
+      solarSystemID<br/>
+      spawnGroupID<br/>
+      spawnBoundType<br/>
+      spawnTimer<br/>
+      respawnTimeMin<br/>
+      respawnTimeMax<br/>
+</td></tr><tr><td>tutorial_categories</td><td>
+      categoryID<br/>
+      categoryName<br/>
+      description<br/>
+</td></tr><tr><td>tutorial_criteria</td><td>
+      criteriaID<br/>
+      criteriaName<br/>
+      messageText<br/>
+      audioPath<br/>
+</td></tr><tr><td>tutorial_page_criteria</td><td>
+      pageID<br/>
+      criteriaID<br/>
+</td></tr><tr><td>tutorial_pages</td><td>
+      pageID<br/>
+      pageNumber<br/>
+      pageName<br/>
+      text<br/>
+      imagePath<br/>
+      audioPath<br/>
+      tutorialID<br/>
+</td></tr><tr><td>tutorials</td><td>
+      tutorialID<br/>
+      tutorialName<br/>
+      nextTutorialID<br/>
+      categoryID<br/>
+</td></tr><tr><td>tutorials_criterias</td><td>
+      tutorialID<br/>
+      criteriaID<br/>
+      </tr>
+    </table>
+  </body>
+</html>
