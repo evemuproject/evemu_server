@@ -85,6 +85,7 @@ public:
 class InventoryItem
 : public RefObject
 {
+    friend class Inventory;
 public:
     /**
      * Loads item from DB.

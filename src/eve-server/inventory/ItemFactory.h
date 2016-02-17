@@ -43,6 +43,7 @@ class Inventory;
 class ItemFactory
 {
     friend class InventoryItem; //only for access to _DeleteItem
+    friend class Inventory; //only for access to _DeleteItem
 private:
     ItemFactory() = delete;
 

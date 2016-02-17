@@ -447,26 +447,88 @@ void Inventory::RemoveItem(InventoryItemRef item)
 
 void Inventory::StackAll(EVEItemFlags locFlag, uint32 forOwner)
 {
-    std::map<uint32, InventoryItemRef> types;
-
-    std::map<uint32, InventoryItemRef>::iterator cur, end;
-    cur = mContents.begin();
-    end = mContents.end();
-    for(; cur != end; )
+    std::vector<InventoryItemRef> toStack;
+    for (auto entry : mContents)
     {
-        // Iterator becomes invalid when the item
-        // is moved out; we have to increment before
-        // calling Merge().
-        InventoryItemRef i = cur->second;
-        cur++;
-
-        if( !i->singleton() && ( forOwner == 0 || forOwner == i->ownerID() ) )
+        InventoryItemRef item = entry.second;
+        // Ignore all singletons and non owned items.
+        if (!item->singleton() && (forOwner == 0 || forOwner == item->ownerID()))
         {
-            std::map<uint32, InventoryItemRef>::iterator res = types.find( i->typeID() );
-            if( res == types.end() )
-                types.insert( std::make_pair( i->typeID(), i ) );
+            // Not a singleton and belongs to our owner. List it for stacking.
+            toStack.push_back(item);
+        }
+    }
+    if (toStack.empty())
+    {
+        // No stackable items.
+        return;
+    }
+
+    std::vector<InventoryItemRef>::iterator cur;
+    while ((cur = toStack.begin()) != toStack.end())
+    {
+        InventoryItemRef item = *cur;
+        // Remove from waiting to stack list.
+        toStack.erase(cur);
+
+        uint32 typeID = item->typeID();
+        std::vector<InventoryItemRef> toMerge;
+        cur = toStack.begin();
+        // Stack this type.
+        while (cur != toStack.end())
+        {
+            InventoryItemRef merge = *cur;
+            if (merge->typeID() == typeID)
+            {
+                // Same type save it to list.
+                toMerge.push_back(merge);
+                // Remove it from to stack list as it will already be stacked.
+                cur = toStack.erase(cur);
+            }
             else
-                res->second->Merge( i );
+            {
+                // Not same type, continue searching.
+                cur++;
+            }
+        }
+        if (!toMerge.empty())
+        {
+            // We found other instances of this type.
+            std::string itemIDs;
+            std::string nItem = " itemID=";
+            uint32 stackAmount = 0;
+            for (auto merge : toMerge)
+            {
+                // Add itemID to database condition list.
+                itemIDs += nItem + std::string(itoa(merge->itemID()));
+                nItem = " OR itemID=";
+                // Remove item from container.
+                mContents.erase(merge->itemID());
+                // Remove item from factory.
+                ItemFactory::_DeleteItem(merge->itemID());
+                // Get quantity to merge.
+                stackAmount += merge->quantity();
+                // Issue changes notice to client.
+                uint32 ownerID = merge->ownerID();
+                std::map<int32, PyRep *> changes;
+                changes[ixLocationID] = new PyInt(merge->locationID());
+                changes[ixOwnerID] = new PyInt(ownerID);
+                // Set new owner and location.
+                merge->m_ownerID = 2;
+                merge->m_locationID = 6;
+                merge->SendItemChange(ownerID, changes); //changes is consumed
+            }
+            // Alter amount.
+            item->AlterQuantity(stackAmount);
+            // Remove all entries from database.
+            DBerror err;
+            if (!DBcore::RunQuery(err, "DELETE FROM entity WHERE %s;"
+                                  "DELETE FROM entity_default_attributes WHERE %s;"
+                                  "DELETE FROM entity_attributes WHERE %s;",
+                                  itemIDs.c_str(), itemIDs.c_str(), itemIDs.c_str()))
+            {
+                codelog(DATABASE__ERROR, "Failed to delete stacked items %s: %s", itemIDs.c_str(), err.c_str());
+            }
         }
     }
 }
