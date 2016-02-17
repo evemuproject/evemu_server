@@ -665,15 +665,25 @@ uint32 InventoryItem::_SpawnEntity(
 void InventoryItem::Delete() {
     //first, get out of client's sight.
     //this also removes us from our inventory.
-    Move( 6 );
-    ChangeOwner( 2 );
+    uint32 ownerID = m_ownerID;
+    std::map<int32, PyRep *> changes;
+    changes[ixLocationID] = new PyInt(m_locationID);
+    changes[ixOwnerID] = new PyInt(m_ownerID);
+    // Set new owner and location.
+    m_ownerID = 2;
+    m_locationID = 6;
+    // Issue changes notice to client.
+    SendItemChange(ownerID, changes); //changes is consumed
 
     //take ourself out of the DB
-    //attributes.Delete();
-    InventoryDB::DeleteItem( itemID() );
-
-    mAttributeMap.Delete();
-    mDefaultAttributeMap.Delete();
+    DBerror err;
+    if (!DBcore::RunQuery(err, "DELETE FROM entity WHERE itemID=%u;"
+                          "DELETE FROM entity_default_attributes WHERE itemID=%u;"
+                          "DELETE FROM entity_attributes WHERE itemID=%u;",
+                          m_itemID, m_itemID, m_itemID))
+    {
+        codelog(DATABASE__ERROR, "Failed to delete item %u: %s", m_itemID, err.c_str());
+    }
 
     //delete ourselves from factory cache
     ItemFactory::_DeleteItem(itemID());
