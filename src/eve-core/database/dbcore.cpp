@@ -327,8 +327,8 @@ bool DBcore::Open_locked(int32* errnum, char* errbuf) {
     Quagmire - added CLIENT_FOUND_ROWS flag to the connect
     otherwise DB update calls would say 0 rows affected when the value already equaled
     what the function was trying to set it to, therefore the function would think it failed
-    */
-    int32 flags = CLIENT_FOUND_ROWS;
+     */
+    int32 flags = CLIENT_FOUND_ROWS | CLIENT_MULTI_STATEMENTS;
     if (pCompress)
         flags |= CLIENT_COMPRESS;
     if (pSSL)

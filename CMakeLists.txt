@@ -178,8 +178,6 @@ CHECK_CXX_SYMBOL_EXISTS( localtime_s "ctime" HAVE_LOCALTIME_S )
 ############
 INCLUDE( "BuildPackage" )
 
-FIND_PACKAGE( "Doxygen" )
-
 BUILD_PACKAGE( "Boost" )
 BUILD_PACKAGE( "MySQL" )
 BUILD_PACKAGE( "TinyXML" )
