@@ -84,8 +84,8 @@ IF( MSVC )
   #   C4355: 'this' used in base member initializer list
   SET( CMAKE_CXX_FLAGS "/wd4244 /wd4355 ${CMAKE_CXX_FLAGS}" )
 ELSEIF( CMAKE_COMPILER_IS_GNUCXX )
-  # Switch to the C++0x standard (required)
-  SET( CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}" )
+  # Switch to the C++11 standard (required)
+  SET(CMAKE_CXX_FLAGS "-std=c++11")
 ENDIF( MSVC )
 
 #
