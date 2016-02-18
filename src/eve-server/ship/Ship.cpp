@@ -955,6 +955,29 @@ void Ship::RemoveItem(InventoryItemRef item, uint32 inventoryID, EVEItemFlags fl
 	}
 }
 
+bool Ship::AlterCargoQty(InventoryItemRef item, int qtyChange)
+{
+    // Make sure we actually contain this item!
+    if (!Contains(item->itemID()))
+    {
+        // We don't contain it, sorry!
+        return false;
+    }
+    // Calculate total volume needed.
+    double volumeNeed = item->GetAttribute(AttrVolume).get_float() * qtyChange;
+    // Get remaining volume.
+    double remain = GetRemainingCapacity(item->flag());
+    if (remain >= volumeNeed)
+    {
+        // We have enough space remaining, add the items.
+        item->AlterQuantity(qtyChange);
+        // Adjust the remaining volume.
+        _IncreaseCargoHoldsUsedVolume(item->flag(), volumeNeed);
+        return true;
+    }
+    return false;
+}
+
 void Ship::UpdateModules()
 {
 	// List of callees to put this function into context as to what it should be doing:

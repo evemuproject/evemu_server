@@ -236,7 +236,14 @@ public:
     EvilNumber GetMaxTurrentHardpoints() { return GetAttribute(AttrTurretSlotsLeft); }
     EvilNumber GetMaxLauncherHardpoints() { return GetAttribute(AttrLauncherSlotsLeft); }
     uint32 AddItem( EVEItemFlags flag, InventoryItemRef item);
-    void RemoveItem( InventoryItemRef item, uint32 inventoryID, EVEItemFlags flag );
+    void RemoveItem(InventoryItemRef item, uint32 inventoryID, EVEItemFlags flag);
+    /**
+     * Alter the quantity of an item in the ships cargo.
+     * @param item The item to alter.
+     * @param qtyChange The amount to change.
+     * @return True if the change was successful.
+     */
+    bool AlterCargoQty(InventoryItemRef item, int qtyChange);
     void UpdateModules();
     void UnloadModule(uint32 itemID);
     void UnloadAllModules();

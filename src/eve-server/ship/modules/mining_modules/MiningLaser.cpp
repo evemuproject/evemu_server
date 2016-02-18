@@ -261,73 +261,89 @@ void MiningLaser::_ProcessCycle()
 	}
 	oreUnitsToPull = floor(oreUnitsToPull);
 
-	if( oreUnitsToPull > remainingOreUnits )
-		oreUnitsToPull = remainingOreUnits;
+    if (oreUnitsToPull > remainingOreUnits)
+    {
+        oreUnitsToPull = remainingOreUnits;
+    }
 
-	if( oreUnitsToPull > 0.0 )
-	{
-		if( remainingOreUnits > 0 )
-		{
-			// Verify room left in flagCargoHold
-			remainingCargoVolume = m_Ship->GetRemainingVolumeByFlag(flagCargoHold);
+    if (oreUnitsToPull > 0.0)
+    {
+        if (remainingOreUnits > 0)
+        {
+            // Verify room left in flagCargoHold
+            remainingCargoVolume = m_Ship->GetRemainingVolumeByFlag(flagCargoHold);
 
-			if( remainingCargoVolume >= oreUnitVolume )
-			{
-				// There's room for at least one unit of ore, let's find out how many we can put into cargo hold,
-				// then make a stack for them:
-				if( remainingCargoVolume < (oreUnitsToPull * oreUnitVolume) )
-				{
-					oreUnitsToPull =  floor(remainingCargoVolume / oreUnitVolume);
-				}
+            if (remainingCargoVolume >= oreUnitVolume)
+            {
+                // There's room for at least one unit of ore, let's find out how many we can put into cargo hold,
+                // then make a stack for them:
+                if (remainingCargoVolume < (oreUnitsToPull * oreUnitVolume))
+                {
+                    oreUnitsToPull = floor(remainingCargoVolume / oreUnitVolume);
+                }
+                // Check for an existing ore item in the cargo.
+                InventoryItemRef existing = m_Ship->GetByTypeFlag(asteroidRef->typeID(), flagCargoHold);
+                if (existing.get() != nullptr)
+                {
+                    // We have an existing ore sample, add to it.
+                    m_Ship->AlterCargoQty(existing, oreUnitsToPull);
+                    asteroidRef->SetAttribute(AttrQuantity, (remainingOreUnits - oreUnitsToPull));
+                    remainingOreUnits -= oreUnitsToPull;
+                }
+                else
+                {
+                    // No existing ore sample, create one.
+                    ItemData idata(
+                                   asteroidRef->typeID(),
+                                   m_Ship->ownerID(),
+                                   0, //temp location
+                                   flagCargoHold,
+                                   oreUnitsToPull
+                                   );
 
-				ItemData idata(
-					asteroidRef->typeID(),
-					m_Ship->ownerID(),
-					0, //temp location
-					flagCargoHold,
-					oreUnitsToPull
-				);
+                    InventoryItemRef ore = ItemFactory::SpawnItem(idata);
+                    if (ore)
+                    {
+                        //ore->Move(m_Ship->itemID(), flagCargoHold);
+                        m_Ship->AddItem(flagCargoHold, ore);
+                        // Finally, reduce the amount of ore in the asteroid by how much we took out:
+                        remainingOreUnits -= oreUnitsToPull;
+                        asteroidRef->SetAttribute(AttrQuantity, remainingOreUnits);
+                    }
+                    else
+                    {
+                        sLog.Error("MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_Ship->itemName().c_str(), m_Ship->itemID());
+                        ore->Delete();
+                    }
+                }
+            }
+            else
+            {
+                // Not enough cargo space, so module should deactivate and not pull anymore ore from the asteroid
 
-                InventoryItemRef ore = ItemFactory::SpawnItem(idata);
-				if( ore )
-				{
-					//ore->Move(m_Ship->itemID(), flagCargoHold);
-					m_Ship->AddItem(flagCargoHold, ore);
-					// Finally, reduce the amount of ore in the asteroid by how much we took out:
-					asteroidRef->SetAttribute( AttrQuantity, (remainingOreUnits - oreUnitsToPull) );
-					remainingOreUnits -= oreUnitsToPull;
-				}
-				else
-				{
-					sLog.Error( "MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_Ship->itemName().c_str(), m_Ship->itemID() );
-					ore->Delete();
-				}
-			}
-			else
-			{
-				// Not enough cargo space, so module should deactivate and not pull anymore ore from the asteroid
+                // nothing to do here yet, it seems
+            }
+        }
 
-				// nothing to do here yet, it seems
-			}
-		}
+        remainingCargoVolume = m_Ship->GetRemainingVolumeByFlag(flagCargoHold);
+        if ((remainingCargoVolume < oreUnitVolume) || (remainingOreUnits == 0))
+        {
+            // Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!
+            m_ModuleState = MOD_DEACTIVATING;
+            m_ActiveModuleProc->AbortCycle();
+        }
 
-		remainingCargoVolume = m_Ship->GetRemainingVolumeByFlag(flagCargoHold);
-		if( (remainingCargoVolume < oreUnitVolume) || (remainingOreUnits == 0) )
-		{
-			// Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!
-			m_ModuleState = MOD_DEACTIVATING;
-			m_ActiveModuleProc->AbortCycle();
-		}
-
-		if( remainingOreUnits == 0 )
-		{
-			// Asteroid is empty now, so remove it
-			m_targetEntity->Bubble()->Remove(m_targetEntity);
-			m_targetEntity->Item()->Delete();
-		}
-	}
-	else
-		sLog.Warning( "MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID() );
+        if (remainingOreUnits == 0)
+        {
+            // Asteroid is empty now, so remove it
+            m_targetEntity->Bubble()->Remove(m_targetEntity);
+            m_targetEntity->Item()->Delete();
+        }
+    }
+    else
+    {
+        sLog.Warning("MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID());
+    }
 }
 
 void MiningLaser::_ShowCycle()
