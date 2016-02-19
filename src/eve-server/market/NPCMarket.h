@@ -25,138 +25,48 @@
 
 /*
  * example usage:
- *     NPCMarket::CreateNPCMarketFromFile("/etc/npcMarket.xml");
- * This starts a worker thread as it can potentially take a VERY long time to complete.
+ *     // Seed NPC market.
+ *     sLog.Log("Server Init", "NPC market seeding started.");
+ *     NPCMarket::CreateNPCMarket();
+ *     sLog.Log("Server Init", "NPC market seeding finished.");
  *
- * Format for the xml file as follows.
+ *     // Seed NPC market in a region.
+ *     NPCMarket::CreateNPCMarketForRegion(regionID);
  *
- * <npcMarketOrders>
- *   <Station>
- *     <StationID>60000004</StationID>
- *     <Order>
- *       <TypeID>41</TypeID>
- *       <Qty>23572</Qty>
- *       <Price>25.52</Price>
- *       <Bid>0</Bid>
- *     </Order>
- *     <Order>
- *       <TypeID>43</TypeID>
- *       <Qty>59656</Qty>
- *       <Price>333.96</Price>
- *       <Bid>1</Bid>
- *     </Order>
- *     ....
- *   </station>
- *   <station>
- *     ....
- *   </station>
- * </npcMarketOrders>
+ * Manually seeding the market.
+ * DELETE FROM market_orders WHERE duration > 90;
+ * INSERT INTO market_orders
+ *  (typeID, charID, regionID, stationID, `range`, bid, price, volEntered, volRemaining, issued, orderState, minVolume, contraband, accountID, duration, isCorp, solarSystemID, escrow, jumps )
+ *  SELECT market_npc.typeID, '0' AS charID,
+ *  (SELECT staStations.regionID FROM staStations WHERE staStations.stationID=market_npc.stationID) AS regionID,
+ *  market_npc.stationID, '0' AS `range`, market_npc.bid, market_npc.price, market_npc.volEntered,
+ *  market_npc.volEntered,
+ *  '123456789' AS issued, '1' AS orderState, '1' AS minVolume, '0' AS contraband,
+ *  '0' AS accountID, '365' AS duration, '0' AS isCorp,
+ *  (SELECT staStations.solarSystemID FROM staStations WHERE staStations.stationID=market_npc.stationID) AS solarSystemID,
+ *  '0' AS escrow, '-1' AS jumps FROM market_npc;
+ *
+ * replacing '123456789' with the current time.
  */
 
 #ifndef NPCMARKET_H
-#define	NPCMARKET_H
+#define NPCMARKET_H
 
 class NPCMarket
-: public XMLParserEx
 {
-private:
-    NPCMarket();
 public:
 
     /**
-     * Process an xml file to create NPC market orders.
-     * @param filename the file to process, path relative to the server root directory.
-     * @param verbose Should the seeder print non-error messages to the server log?
+     * Create the NPC market orders for the specified region.
+     * @param regionID The region to generate orders for.
      */
-    static void CreateNPCMarketFromFile(std::string filename, bool verbose = true);
+    static void CreateNPCMarketForRegion(uint32 regionID);
 
     /**
-     * Stop any running seeding task.
+     * Create the NPC market orders for the ALL regions.
      */
-    static void StopSeeding();
+    static void CreateNPCMarket();
 
-private:
-    /**
-     * The retrieved station ID.
-     */
-    uint32 StationID;
-
-    /**
-     * Container for the retrieve market order data.
-     */
-    struct stationOrder
-    {
-        /**
-         * The item type.
-         */
-        uint32 TypeID;
-        /**
-         * The quantity of items.
-         */
-        uint32 Qty;
-        /**
-         * The price of the item.
-         */
-        double Price;
-        /**
-         * Flag indicating a buy / sell order.
-         */
-        uint32 Bid;
-    } order;
-    /**
-     * A list of orders retrieved for the current station.
-     */
-    std::list<stationOrder> newOrders;
-
-    /**
-     * Process the NPC Orders from the xml document.
-     * @param ele the xml element to process.
-     * @return true if successful, false on error.
-     */
-    bool ProcessNPCOrders(const TiXmlElement* ele);
-    /**
-     * Process the station entries from the xml document.
-     * @param ele the xml element to process.
-     * @return true if successful, false on error.
-     */
-    bool ProcessStation(const TiXmlElement* ele);
-    /**
-     * Process the order entries from the xml document.
-     * @param ele the xml element to process.
-     * @return true if successful, false on error.
-     */
-    bool ProcessOrder(const TiXmlElement* ele);
-
-    /**
-     * Entry point for the market seeder thread.
-     * @param arg The NPCMarket object to use.
-     * @return The result state of the task.
-     */
-#ifdef HAVE_WINDOWS_H
-    static DWORD WINAPI NPCMarketTask(LPVOID arg);
-#else /* !HAVE_WINDOWS_H */
-    static void* NPCMarketTask(void* arg);
-#endif /* !HAVE_WINDOWS_H */
-
-    /**
-     * The file to parse.
-     */
-    std::string marketFile;
-
-    /**
-     * Should the seeder print to the log?
-     */
-    bool _verbose;
-
-    /**
-     * Protect against multiple runs.
-     */
-    static Mutex mMarket;
-
-    /**
-     * Do the actual market seeding.
-     */
-    void NPCMarketTask();
 };
 
 #endif	/* NPCMARKET_H */

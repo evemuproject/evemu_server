@@ -40,6 +40,12 @@
 #include "system/SystemManager.h"
 #include "system/SystemBubble.h"
 #include "PyServiceMgr.h"
+#include "market/NPCMarket.h"
+#include "network/packet_types.h"
+
+#include <vector>
+#include <algorithm>
+
 
 PyResult Command_create( Client* who, const Seperator& args )
 {
@@ -1595,3 +1601,44 @@ PyResult Command_cloak( Client* who, const Seperator& args )
     return NULL;
 }
 
+PyResult Command_seedmarket(Client* who, const Seperator& args)
+{
+    if (args.argCount() == 0)
+    {
+        throw PyException(MakeCustomError("Must specify a regionID or 'this' to seed current region or 'all' to seed all regions."));
+    }
+    std::vector<uint32> regions;
+    for (int i = 0; i < args.argCount(); i++)
+    {
+        std::string arg = args.arg(i);
+        std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
+        if (arg == "all")
+        {
+            // Seed all regions, should do this in a thread as it can take a long time.
+            NPCMarket::CreateNPCMarket();
+            return NULL;
+        }
+        uint32 regionID = atoi(arg.c_str());
+        if (arg == "this")
+        {
+            // Get current region.
+            regionID = who->GetRegionID();
+        }
+        if (IsRegion(regionID))
+        {
+            // Check to make sure region is not repeated.
+            if (std::find(regions.begin(), regions.end(), regionID) == regions.end())
+            {
+                // Add region to list.
+                regions.push_back(regionID);
+            }
+        }
+    }
+    for (uint32 regionID : regions)
+    {
+        sLog.Log("GMCommands - command_seedmarket()", "NPC market seeding started for region: %d", regionID);
+        NPCMarket::CreateNPCMarketForRegion(regionID);
+        sLog.Log("GMCommands - command_seedmarket()", "NPC market seeding finished for region: %d", regionID);
+    }
+    return NULL;
+}

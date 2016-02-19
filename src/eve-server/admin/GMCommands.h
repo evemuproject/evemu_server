@@ -67,6 +67,8 @@ COMMAND( killallnpcs, ROLE_ADMIN,
         " - insta-pops all NPC ships in the current bubble")
 COMMAND( cloak, ROLE_ADMIN,
 		" - instantly and unconditionally toggles cloak state of your vessel")
+COMMAND(seedmarket, ROLE_ADMIN,
+        "(regionID) - seed the NPC market in the provided region(s) or current region if 'this' or all regions if 'All' specified.")
 /*COMMAND( entity, ROLE_ADMIN,
         "(entityID) - unknown" )
 COMMAND( chatban, ROLE_ADMIN,

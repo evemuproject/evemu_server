@@ -99,7 +99,6 @@
 #include "market/ContractMgrService.h"
 #include "market/ContractProxy.h"
 #include "market/MarketProxyService.h"
-#include "market/NPCMarket.h"
 // mining services
 #include "mining/ReprocessingService.h"
 // missions services
@@ -377,9 +376,6 @@ int main( int argc, char* argv[] )
   }
 #endif /* HAVE_UNISTD_H */
 
-    // Seed NPC market.  This would probably be better in a GM command?
-    //    NPCMarket::CreateNPCMarketFromFile(EVEMU_ROOT "/etc/npcMarket.xml", false);
-
     sLog.Success("Server Init", "Initialisation finished");
 
   /////////////////////////////////////////////////////////////////////////////////////
@@ -435,9 +431,6 @@ int main( int argc, char* argv[] )
     // Shutting down EVE Client TCP listener
     tcps.Close();
     sLog.Log("Server Shutdown", "TCP listener stopped." );
-
-    // Stop any running market seeder.
-    NPCMarket::StopSeeding();
 
     // Shutting down API Server:
     sAPIServer.Stop();
