@@ -42,6 +42,97 @@ RepairService::~RepairService() {
 PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {
 
     sLog.Log("RepairService", "Called UnasembleItems stub.");
-
+    if (call.tuple->size() == 2)
+    {
+        bool repackDamaged = false;
+        // Call contains dictionary and empty list, get the dictionary.
+        PyDict *dict = call.tuple->GetItem(0)->AsDict();
+        PyDict::const_iterator cur = dict->begin();
+        for (; cur != dict->end(); cur++)
+        {
+            // Dictionary is of Int as a locationID and list of item entries.
+            //PyInt *pInt = cur->first->AsInt();
+            // Location is irrelevant so get list.
+            PyList *pList = cur->second->AsList();
+            if (pList != nullptr)
+            {
+                //uint32 locationID = pInt->value();
+                // Iterate through list.
+                PyList::const_iterator itemItr = pList->begin();
+                for (; itemItr != pList->end(); itemItr++)
+                {
+                    // List is tuples of itemID, LocationID pairs.
+                    PyTuple *tuple = (*itemItr)->AsTuple();
+                    if (tuple != nullptr)
+                    {
+                        // Get the itemID.
+                        PyInt *itemInt = tuple->GetItem(0)->AsInt();
+                        //PyInt *itemLocation = tuple->GetItem(1)->AsInt();
+                        if (itemInt != nullptr)
+                        {
+                            // Get the item itself.
+                            uint32 itemID = itemInt->value();
+                            InventoryItemRef item = ItemFactory::GetItem(itemID);
+                            if (item.get() != nullptr)
+                            {
+                                // Add type exceptions here.
+                                if (item->type().categoryID() == EVEItemCategories::Blueprint ||
+                                        item->type().categoryID() == EVEItemCategories::Skill ||
+                                        item->type().categoryID() == EVEItemCategories::Material)
+                                {
+                                    // Item cannot be repackaged once used!
+                                    continue;
+                                }
+                                if (item->GetAttribute(AttrDamage) == 0)
+                                {
+                                    item->ChangeSingleton(false);
+                                }
+                                else
+                                {
+                                    repackDamaged = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (repackDamaged)
+        {
+            throw PyException(MakeCustomError("Cannot repackage damaged items."));
+        }
+    }
     return NULL;
 }
+
+/*
+17:54:04 [Debug]   Call Arguments:
+17:54:04 [Debug]       Tuple: 2 elements
+17:54:04 [Debug]         [ 0] Dictionary: 1 entries
+17:54:04 [Debug]         [ 0]   [ 0] Key: Integer field: 60014779
+17:54:04 [Debug]         [ 0]   [ 0] Value: List: 1 elements
+17:54:04 [Debug]         [ 0]   [ 0] Value:   [ 0] Tuple: 2 elements
+17:54:04 [Debug]         [ 0]   [ 0] Value:   [ 0]   [ 0] Integer field: 140000118
+17:54:04 [Debug]         [ 0]   [ 0] Value:   [ 0]   [ 1] Integer field: 60014779
+17:54:04 [Debug]         [ 1] List: Empty
+17:54:04 [Debug]   Call Named Arguments:
+17:54:04 [Debug]     Argument 'machoVersion':
+17:54:04 [Debug]         Integer field: 1
+ *
+17:54:27 [Debug]   Call Arguments:
+17:54:27 [Debug]       Tuple: 2 elements
+17:54:27 [Debug]         [ 0] Dictionary: 1 entries
+17:54:27 [Debug]         [ 0]   [ 0] Key: Integer field: 60014779
+17:54:27 [Debug]         [ 0]   [ 0] Value: List: 2 elements
+17:54:27 [Debug]         [ 0]   [ 0] Value:   [ 0] Tuple: 2 elements
+17:54:27 [Debug]         [ 0]   [ 0] Value:   [ 0]   [ 0] Integer field: 140000117
+17:54:27 [Debug]         [ 0]   [ 0] Value:   [ 0]   [ 1] Integer field: 60014779
+17:54:27 [Debug]         [ 0]   [ 0] Value:   [ 1] Tuple: 2 elements
+17:54:27 [Debug]         [ 0]   [ 0] Value:   [ 1]   [ 0] Integer field: 140000118
+17:54:27 [Debug]         [ 0]   [ 0] Value:   [ 1]   [ 1] Integer field: 60014779
+17:54:27 [Debug]         [ 1] List: Empty
+17:54:27 [Debug]   Call Named Arguments:
+17:54:27 [Debug]     Argument 'machoVersion':
+17:54:27 [Debug]         Integer field: 1
+
+ */
