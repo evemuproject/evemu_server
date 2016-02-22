@@ -662,9 +662,15 @@ uint32 InventoryItem::_SpawnEntity(
     return ItemFactory::GetNextEntityID();
 }
 
-void InventoryItem::Delete() {
+void InventoryItem::Delete()
+{
+    // Remove us from our inventory.
+    Inventory *inventory = ItemFactory::GetInventory(m_locationID, false);
+    if (inventory != nullptr)
+    {
+        inventory->RemoveItem(InventoryItemRef(this));
+    }
     //first, get out of client's sight.
-    //this also removes us from our inventory.
     uint32 ownerID = m_ownerID;
     std::map<int32, PyRep *> changes;
     changes[ixLocationID] = new PyInt(m_locationID);

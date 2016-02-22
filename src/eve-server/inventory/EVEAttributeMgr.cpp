@@ -404,6 +404,16 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
         // ONLY output ERROR message for a "missing" attributeID if it is not in the list of commonly "not found" attributes:
         switch( attributeId)
         {
+            case AttrCustomCharismaBonus:
+            case AttrCustomWillpowerBonus:
+            case AttrCustomPerceptionBonus:
+            case AttrCustomMemoryBonus:
+            case AttrCustomIntelligenceBonus:
+            case AttrCharismaBonus:
+            case AttrIntelligenceBonus:
+            case AttrMemoryBonus:
+            case AttrPerceptionBonus:
+            case AttrWillpowerBonus:
             case AttrCapacity:
             case AttrQuantity:
             case AttrRequiredSkill2:
@@ -730,7 +740,7 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 /* we should save skills */
 bool AttributeMap::Save()
 {
-	bool success = false;
+    bool success = false;
 
     /* if nothing changed... it means this action has been successful we return true... */
     if (mChanged == false)
@@ -738,47 +748,45 @@ bool AttributeMap::Save()
 
     AttrMapItr itr = mAttributes.begin();
     AttrMapItr itr_end = mAttributes.end();
+    std::string values;
     for (; itr != itr_end; itr++)
     {
-        if ( itr->second.get_type() == evil_number_int ) {
+        char buf[1024];
+        if (itr->second.get_type() == evil_number_int)
+        {
+            std::sprintf(buf, "(%u, %u, %" PRId64 ", NULL)",
+                         mItem.itemID(), itr->first, itr->second.get_int());
+        }
+        else if (itr->second.get_type() == evil_number_float)
+        {
+            std::sprintf(buf, "(%u, %u, NULL, %f)",
+                         mItem.itemID(), itr->first, itr->second.get_float());
+        }
+        if (values.length() > 0)
+        {
+            values += ", ";
+        }
+        values += buf;
+    }
+    if (values.length() > 0)
+    {
+        DBerror err;
+        if (mDefault)
+        {
+            success = DBcore::RunQuery(err,
+                                       "REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES %s",
+                                       values.c_str());
+        }
+        else
+        {
+            success = DBcore::RunQuery(err,
+                                       "REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES %s",
+                                       values.c_str());
+        }
 
-            DBerror err;
-
-			if(mDefault)
-            {
-                success = DBcore::RunQuery(err,
-					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
-					mItem.itemID(), itr->first, itr->second.get_int());
-			}
-			else
-            {
-                success = DBcore::RunQuery(err,
-					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, %" PRId64 ", NULL)",
-					mItem.itemID(), itr->first, itr->second.get_int());
-			}
-
-            if (!success)
-                sLog.Error("AttributeMap", "unable to save attribute");
-
-        } else if (itr->second.get_type() == evil_number_float ) {
-
-            DBerror err;
-
-			if(mDefault)
-            {
-                success = DBcore::RunQuery(err,
-					"REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
-					mItem.itemID(), itr->first, itr->second.get_float());
-			}
-			else
-            {
-                success = DBcore::RunQuery(err,
-					"REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES (%u, %u, NULL, %f)",
-					mItem.itemID(), itr->first, itr->second.get_float());
-			}
-
-            if (!success)
-                sLog.Error("AttributeMap", "unable to save attribute");
+        if (!success)
+        {
+            sLog.Error("AttributeMap", "unable to save attribute");
         }
     }
 
