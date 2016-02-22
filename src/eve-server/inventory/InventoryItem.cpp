@@ -818,17 +818,40 @@ PyObject * InventoryItem::ItemGetInfo()
     return(result.Encode());
 }
 
-void InventoryItem::Rename(const char *to) {
+void InventoryItem::Rename(const char *to)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return;
+    }
 
     m_itemName = to;
-    SaveItem();
+    std::string nameEsc;
+    DBcore::DoEscapeString(nameEsc, m_itemName);
+
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET itemName = '%s' WHERE itemID = %u",
+                          nameEsc.c_str(), m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return;
+    }
 }
 
 void InventoryItem::MoveInto(Inventory &new_home, EVEItemFlags _flag, bool notify) {
     Move( new_home.inventoryID(), _flag, notify );
 }
 
-void InventoryItem::Move(uint32 new_location, EVEItemFlags new_flag, bool notify) {
+void InventoryItem::Move(uint32 new_location, EVEItemFlags new_flag, bool notify)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return;
+    }
+
     uint32 old_location = locationID();
     EVEItemFlags old_flag = flag();
 
@@ -848,7 +871,14 @@ void InventoryItem::Move(uint32 new_location, EVEItemFlags new_flag, bool notify
     if( new_inventory != NULL )
         new_inventory->AddItem( InventoryItemRef( this ) ); //makes a new ref
 
-    SaveItem();
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET locationID = %u, flag = %u WHERE itemID = %u",
+                          m_locationID, uint32(m_flag), m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return;
+    }
 
     //notify about the changes.
     if( notify )
@@ -878,7 +908,14 @@ bool InventoryItem::AlterQuantity(int32 qty_change, bool notify) {
     return(SetQuantity(new_qty, notify));
 }
 
-bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
+bool InventoryItem::SetQuantity(uint32 qty_new, bool notify)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return false;
+    }
+
     //if an object has its singleton set then it shouldn't be able to add/remove qty
     if(m_singleton) {
         //Print error
@@ -891,7 +928,14 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 
     m_quantity = qty_new;
 
-    SaveItem();
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET quantity = %u WHERE itemID = %u",
+                          m_quantity, m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return false;
+    }
 
     //notify about the changes.
     if(notify) {
@@ -904,18 +948,32 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify) {
 
     return true;
 }
-bool InventoryItem::SetFlag(EVEItemFlags new_flag, bool notify) {
+bool InventoryItem::SetFlag(EVEItemFlags new_flag, bool notify)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return false;
+    }
+
     EVEItemFlags old_flag = m_flag;
     m_flag = new_flag;
 
-    SaveItem();
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET flag = %u WHERE itemID = %u",
+                          uint32(m_flag), m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return false;
+    }
 
     if(notify) {
         std::map<int32, PyRep *> changes;
 
-	//send the notify to the new owner.
-	changes[ixFlag] = new PyInt(new_flag);
-	SendItemChange(m_ownerID, changes); //changes is consumed
+        //send the notify to the new owner.
+        changes[ixFlag] = new PyInt(new_flag);
+        SendItemChange(m_ownerID, changes); //changes is consumed
     }
     return true;
 }
@@ -975,7 +1033,14 @@ bool InventoryItem::Merge(InventoryItemRef to_merge, int32 qty, bool notify) {
     return true;
 }
 
-bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify) {
+bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return false;
+    }
+
     bool old_singleton = m_singleton;
 
     if(new_singleton == old_singleton)
@@ -983,7 +1048,14 @@ bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify) {
 
     m_singleton = new_singleton;
 
-    SaveItem();
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET singleton = %u WHERE itemID = %u",
+                          uint32(m_singleton), m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return false;
+    }
 
     //notify about the changes.
     if(notify) {
@@ -995,7 +1067,14 @@ bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify) {
     return true;
 }
 
-void InventoryItem::ChangeOwner(uint32 new_owner, bool notify) {
+void InventoryItem::ChangeOwner(uint32 new_owner, bool notify)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return;
+    }
+
     uint32 old_owner = m_ownerID;
 
     if(new_owner == old_owner)
@@ -1003,7 +1082,14 @@ void InventoryItem::ChangeOwner(uint32 new_owner, bool notify) {
 
     m_ownerID = new_owner;
 
-    SaveItem();
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET ownerID = %u WHERE itemID = %u",
+                          m_ownerID, m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return;
+    }
 
     //notify about the changes.
     if(notify) {
@@ -1153,21 +1239,53 @@ void InventoryItem::SetActive(bool active, uint32 effectID, double duration, boo
     c->SendNotification("OnMultiEvent", "clientID", &tmp);
 }
 
-void InventoryItem::SetCustomInfo(const char *ci) {
-    if(ci == NULL)
+void InventoryItem::SetCustomInfo(const char *ci)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return;
+    }
+
+    if (ci == NULL)
         m_customInfo = "";
     else
         m_customInfo = ci;
-    SaveItem();
+
+    std::string customInfoEsc;
+    DBcore::DoEscapeString(customInfoEsc, m_customInfo);
+
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET customInfo = '%s' WHERE itemID = %u",
+                          customInfoEsc.c_str(), m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return;
+    }
 }
 
-void InventoryItem::Relocate(const GPoint &pos) {
-    if(m_position == pos)
+void InventoryItem::Relocate(const GPoint &pos)
+{
+    if (IsStaticMapItem(m_itemID))
+    {
+        _log(DATABASE__ERROR, "Refusing to modify static map object %u.", m_itemID);
+        return;
+    }
+
+    if (m_position == pos)
         return;
 
     m_position = pos;
 
-    SaveItem();
+    DBerror err;
+    if (!DBcore::RunQuery(err,
+                          "UPDATE entity SET x = %f, y = %f, z = %f WHERE itemID = %u",
+                          m_position.x, m_position.y, m_position.z, m_itemID))
+    {
+        _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
+        return;
+    }
 }
 
 bool InventoryItem::SetAttribute( uint32 attributeID, int64 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
