@@ -42,7 +42,7 @@
 
 // this represents 1 attribute modifier
 #pragma pack(push,1)
-class DmgTypeAttribute
+class DgmTypeAttribute
 {
 public:
     uint16 attributeID;
@@ -58,7 +58,7 @@ public:
     ~DgmTypeAttributeSet();
 
     // a set is a collection of pointers...
-    typedef std::list<DmgTypeAttribute *> AttrSet;
+    typedef std::list<DgmTypeAttribute *> AttrSet;
     typedef AttrSet::iterator AttrSetItr;
 
     // wrap these functions so its cleaner..
@@ -86,7 +86,7 @@ public:
     dgmtypeattributemgr(); // also do init stuff, db loading
     ~dgmtypeattributemgr();
 
-    DgmTypeAttributeSet* GetDmgTypeAttributeSet(uint32 typeID);
+    DgmTypeAttributeSet* GetDgmTypeAttributeSet(uint32 typeID);
 private:
     DgmTypeAttributeMap mDgmTypeAttrInfo;
 };

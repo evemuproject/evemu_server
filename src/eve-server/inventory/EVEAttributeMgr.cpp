@@ -559,7 +559,7 @@ bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
 bool AttributeMap::Load()
 {
     /* First, we load default attributes values using existing attribute system */
-    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
+    DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDgmTypeAttributeSet( mItem.typeID() );
     if (attr_set == NULL)
         return false;
 
@@ -645,7 +645,7 @@ bool AttributeMap::Load()
         // This item was NOT found in the 'entity_attributes' table, so let's assume that
         // this item was just created.
         // 1) Get complete list of attributes with default values from dgmTypeAttributes table using the item's typeID:
-        DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDmgTypeAttributeSet( mItem.typeID() );
+        DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDgmTypeAttributeSet( mItem.typeID() );
         if (attr_set == NULL)
             return false;
 

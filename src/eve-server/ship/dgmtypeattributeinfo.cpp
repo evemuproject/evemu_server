@@ -55,7 +55,7 @@ dgmtypeattributemgr::dgmtypeattributemgr()
             mDgmTypeAttrInfo.insert(std::make_pair(currentID, entry));
         }
 
-        DmgTypeAttribute * attr_entry = new DmgTypeAttribute();
+        DgmTypeAttribute * attr_entry = new DgmTypeAttribute();
         attr_entry->attributeID = row.GetUInt(1);
         if (row.IsNull(2) == true) {
             attr_entry->number = EvilNumber(row.GetFloat(3));
@@ -76,13 +76,13 @@ dgmtypeattributemgr::~dgmtypeattributemgr()
     }
 }
 
-DgmTypeAttributeSet* dgmtypeattributemgr::GetDmgTypeAttributeSet( uint32 typeID )
+DgmTypeAttributeSet* dgmtypeattributemgr::GetDgmTypeAttributeSet( uint32 typeID )
 {
     DgmTypeAttributeMapItr itr;
     itr = mDgmTypeAttrInfo.find(typeID);
     if (itr == mDgmTypeAttrInfo.end())
     {
-        sLog.Debug("DgmTypeAttrMgr", "INFO: No type attributes found for type %u.", typeID);
+        //sLog.Debug("DgmTypeAttrMgr", "INFO: No type attributes found for type %u.", typeID);
         return NULL;
     }
 

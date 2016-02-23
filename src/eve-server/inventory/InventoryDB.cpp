@@ -733,7 +733,7 @@ bool InventoryDB::LoadTypeAttributes(uint32 typeID, EVEAttributeMgr &into) {
     }
 #else
 
-    DgmTypeAttributeSet *attrset = sDgmTypeAttrMgr.GetDmgTypeAttributeSet(typeID);
+    DgmTypeAttributeSet *attrset = sDgmTypeAttrMgr.GetDgmTypeAttributeSet(typeID);
 
     // if not found return true because there can be items without attributes I guess
     if (attrset == NULL)
