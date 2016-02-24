@@ -453,6 +453,17 @@ public:
      */
     void ClearSkillQueue();
     /**
+     * Stop the current skill training.
+     */
+    void StopTraining();
+    /**
+     * Start the specified skill training.
+     * @param skillID The skillID of the still to start training.
+     * @param nextStartTime The start time to use or -1 for now.
+     * @return The currently training.
+     */
+    SkillRef StartTraining(uint32 skillID, EvilNumber nextStartTime = EvilNumber(-1));
+    /**
      * Updates skill queue.
      */
     void UpdateSkillQueue();
@@ -504,8 +515,10 @@ public:
      *
      * This will get the skills from the skill queue for a character.
      * @author xanarox
-    */
+     */
     PyTuple *GetSkillQueue();
+
+    InventoryItemRef GetImplant(uint32 slot);
 
     /*
      * Public fields:
@@ -575,6 +588,8 @@ public:
     void SaveCertificates() const;
     void SetActiveShip(uint32 shipID);
 
+    bool canUse(InventoryItemRef item);
+
 protected:
     Character(
         uint32 _characterID,
@@ -634,10 +649,16 @@ protected:
         // Character stuff:
         CharacterData &charData, CorpMemberInfo &corpData);
 
-    uint32 inventoryID() const { return itemID(); }
-    PyRep *GetItem() const { return GetItemRow(); }
+    uint32 inventoryID() const { return itemID();
+    }
+
+    PyRep *GetItem() const
+    {
+        return GetItemRow();
+    }
 
     void AddItem(InventoryItemRef item);
+    void RemoveItem(InventoryItemRef item);
 
     void _CalculateTotalSPTrained();
 
@@ -696,6 +717,9 @@ protected:
     EvilNumber m_totalSPtrained;
 
     Certificates m_certificates;
+
+    // Implants
+    std::map<uint32, InventoryItemRef> m_implants;
 };
 
 #endif /* !__CHARACTER__H__INCL__ */

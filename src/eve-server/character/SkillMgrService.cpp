@@ -79,17 +79,50 @@ void SkillMgrBound::Release()
     delete this;
 }
 
-PyResult SkillMgrBound::Handle_GetCharacterAttributeModifiers(PyCallArgs &call) {
-    // since we don't currently support implants (I think), just a dummy
-    // expected data: for (itemID, typeID, operation, value,) in modifiers:
-    return new PyTuple(0);
+PyResult SkillMgrBound::Handle_GetCharacterAttributeModifiers(PyCallArgs &call)
+{
+    // Called for Attribute re-mapping.
+    // expected data: (itemID, typeID, operation, value) in modifiers:
+    Call_SingleIntegerArg args;
+    if (!args.Decode(&call.tuple))
+    {
+        codelog(CLIENT__ERROR, "%s: failed to decode arguments", call.client->GetName());
+        return NULL;
+    }
+    uint32 bonusAttr = args.arg - AttrCharisma + AttrCharismaBonus;
+    PyList *list = new PyList;
+    // Check each slot.
+    for (uint32 slot = 1; slot <= 10; slot++)
+    {
+        // Get the implant for the slot.
+        InventoryItemRef item = call.client->GetChar()->GetImplant(slot);
+        if (item.get() == nullptr)
+        {
+            // No implant in this slot.
+            continue;
+        }
+        // Does this implant have the bonus we are looking for?
+        if (!item->HasAttribute(bonusAttr))
+        {
+            // No, continue.
+            continue;
+        }
+        // Add the implant to the list.
+        PyTuple *tuple = new PyTuple(4);
+        tuple->SetItem(0, new PyInt(item->itemID()));
+        tuple->SetItem(1, new PyInt(item->typeID()));
+        tuple->SetItem(2, new PyInt(EVECalculationType::CALC_ADDITION)); // operation?
+        tuple->SetItem(3, new PyInt(item->GetAttribute(bonusAttr).get_int()));
+        list->AddItem(tuple);
+    }
+    return list;
 }
 
 PyResult SkillMgrBound::Handle_CharStopTrainingSkill(PyCallArgs &call) {
     CharacterRef ch = call.client->GetChar();
 
     // clear & update ...
-    ch->ClearSkillQueue();
+    ch->StopTraining();
     ch->UpdateSkillQueue();
 
     return NULL;
@@ -156,7 +189,33 @@ PyResult SkillMgrBound::Handle_CharAddImplant( PyCallArgs& call )
         return NULL;
     }
 
-    sLog.Debug( "SkillMgrBound", "Called CharAddImplant stub." );
+    CharacterRef charRef = call.client->GetChar();
+    if (charRef->GetSkillInTraining().get() != nullptr)
+    {
+        // TO-DO: throw proper error.
+        throw (PyException(MakeUserError("RespecSkillInTraining")));
+    }
+    InventoryItemRef item = ItemFactory::GetItem(args.arg);
+    if (item.get() != nullptr)
+    {
+        if (!charRef->canUse(item))
+        {
+            // Do not have necessary skills.
+            return NULL;
+        }
+        if (item->quantity() > 1)
+        {
+            item = item->Split(1);
+        }
+        InventoryItemRef existing = charRef->GetImplant(item->GetAttribute(AttrImplantness).get_int());
+        if (existing.get() != nullptr && existing != item)
+        {
+            // We are replacing an existing implant!
+            // Delete Item,  Unplugged implants are destroyed!
+            item->Delete();
+        }
+        item->Move(charRef->itemID(), flagImplant);
+    }
 
     return NULL;
 }
@@ -171,7 +230,13 @@ PyResult SkillMgrBound::Handle_RemoveImplantFromCharacter( PyCallArgs& call )
         return NULL;
     }
 
-    sLog.Debug( "SkillMgrBound", "Called RemoveImplantFromCharacter stub." );
+    CharacterRef charRef = call.client->GetChar();
+    InventoryItemRef item = ItemFactory::GetItem(args.arg);
+    if (item.get() != nullptr)
+    {
+        // Delete Item,  Unplugged implants are destroyed!
+        item->Delete();
+    }
 
     return NULL;
 }
@@ -288,7 +353,9 @@ PyResult SkillMgrBound::Handle_CharStartTrainingSkillByTypeID( PyCallArgs& call 
         return NULL;
     }
 
-	sLog.Error("SkillMgrBound::Handle_CharStartTrainingSkillByTypeID()", "TODO: This is used on resuming skill queue, so should be implemented" );
+    CharacterRef charRef = call.client->GetChar();
+    charRef->StartTraining(args.arg);
+    //sLog.Error("SkillMgrBound::Handle_CharStartTrainingSkillByTypeID()", "TODO: This is used on resuming skill queue, so should be implemented");
     //sLog.Debug( "SkillMgrBound", "Called CharStartTrainingSkillByTypeID stub." );
 
     return NULL;
