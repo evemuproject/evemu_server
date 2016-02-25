@@ -337,7 +337,7 @@ bool EvilNumber::to_float()
     return true;
 }
 
-int64 EvilNumber::get_int()
+int64 EvilNumber::get_int() const
 {
     if( mType != evil_number_int ) {
         int64 temp = (int64)mValue.fVal;
@@ -351,7 +351,7 @@ int64 EvilNumber::get_int()
     return mValue.iVal;
 }
 
-double EvilNumber::get_float()
+double EvilNumber::get_float() const
 {
     if( mType != evil_number_float ) {
         double temp = (double)mValue.iVal;

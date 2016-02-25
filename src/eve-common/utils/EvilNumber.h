@@ -351,7 +351,7 @@ public:
      *
      * @return the text representative of the value.
      */
-    std::string to_str()
+    std::string to_str() const
     {
         char buff[32]; // max uint32 will result in a 10 char string, a float will result in a ? char string.
         if (mType == evil_number_int)
@@ -377,7 +377,7 @@ public:
     /* the math within the variant system to make sure we don't introduce   */
     /* extra errors into the math.( see warnings on get_int and get_float ) */
     /************************************************************************/
-    EVIL_NUMBER_TYPE get_type()
+    EVIL_NUMBER_TYPE get_type() const
     {
         return mType;
     }
@@ -385,8 +385,8 @@ public:
     bool to_int();
     bool to_float();
 
-    int64 get_int();
-    double get_float();
+    int64 get_int() const;
+    double get_float() const;
     /************************************************************************/
     /* end of old system support                                            */
     /************************************************************************/
