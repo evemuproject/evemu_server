@@ -376,9 +376,10 @@ bool AttributeMap::SetAttribute( uint32 attributeId, EvilNumber &num, bool nofit
         return true;
     }
 
-    // I dono if this should happen... in short... if nothing changes... do nothing
-    if (itr->second == num)
+    if (itr->second == num && itr->second.get_type() == num.get_type())
+    {
         return false;
+    }
 
     // notify dogma to change the attribute, if we are unable to queue the change
     // event. Don't change the value.
