@@ -276,6 +276,13 @@ PyResult SkillMgrBound::Handle_GetSkillQueueAndFreePoints(PyCallArgs &call) {
 
     ch->UpdateSkillQueue();
 
+    SkillRef first = ch->GetSkillInQueue(0);
+    if (first.get() != nullptr)
+    {
+        // Make sure first skill is training.
+        ch->StartTraining(first->typeID());
+    }
+
     return NULL;
  }
 
