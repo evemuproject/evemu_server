@@ -122,11 +122,9 @@ bool Client::ProcessNet()
 
     PyPacket *p;
     while((p = PopPacket())) {
-        {
-            _log(CLIENT__IN_ALL, "Received packet:");
-            PyLogDumpVisitor dumper(CLIENT__IN_ALL, CLIENT__IN_ALL);
-            p->Dump(CLIENT__IN_ALL, dumper);
-        }
+        _log(CLIENT__IN_ALL, "Received packet:");
+        PyLogDumpVisitor dumper(CLIENT__IN_ALL, CLIENT__IN_ALL);
+        p->Dump(CLIENT__IN_ALL, dumper);
 
         try
         {
@@ -139,6 +137,12 @@ bool Client::ProcessNet()
         }
 
         SafeDelete( p );
+    }
+
+    CharacterRef charRef = GetChar();
+    if (charRef.get() != nullptr)
+    {
+        GetChar()->UpdateSkillQueue();
     }
 
     // send queued updates
@@ -174,12 +178,6 @@ void Client::Process() {
     // Check Module Manager Save Timer Expiry:
     //if( mModulesMgr.CheckSaveTimer() )
     //    mModulesMgr.SaveModules();
-
-    if( m_timeEndTrain != 0 )
-    {
-        if( m_timeEndTrain <= EvilTimeNow() )    //Win32TimeNow()
-            GetChar()->UpdateSkillQueue();
-    }
 
     GetShip()->Process();
 
