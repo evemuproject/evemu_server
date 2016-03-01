@@ -27,10 +27,10 @@
 
 #include "ship/modules/ModuleEffects.h"
 
-std::map<uint32, MEffect *> DGM_Effects_Table::m_EffectsMap;
-std::map<uint32, TypeEffectsList *> DGM_Type_Effects_Table::m_TypeEffectsMap;
-std::map<uint32, SkillBonusModifier *> DGM_Skill_Bonus_Modifiers_Table::m_SkillBonusModifiersMap;
-std::map<uint32, ShipBonusModifier *> DGM_Ship_Bonus_Modifiers_Table::m_ShipBonusModifiersMap;
+std::map<uint32, std::shared_ptr<MEffect>> DGM_Effects_Table::m_EffectsMap;
+std::map<uint32, std::shared_ptr<TypeEffectsList>> DGM_Type_Effects_Table::m_TypeEffectsMap;
+std::map<uint32, std::shared_ptr<SkillBonusModifier>> DGM_Skill_Bonus_Modifiers_Table::m_SkillBonusModifiersMap;
+std::map<uint32, std::shared_ptr<ShipBonusModifier>> DGM_Ship_Bonus_Modifiers_Table::m_ShipBonusModifiersMap;
 
 // ////////////////// MEffect Class ///////////////////////////
 MEffect::MEffect(uint32 effectID)
@@ -561,8 +561,6 @@ void DGM_Effects_Table::_Populate()
     ModuleDB::GetAllDgmEffects(*res);
 
     //counter
-    MEffect * mEffectPtr;
-    mEffectPtr = NULL;
     uint32 effectID;
 
 	uint32 total_effect_count = 0;
@@ -573,9 +571,9 @@ void DGM_Effects_Table::_Populate()
     while( res->GetRow(row) )
     {
         effectID = row.GetInt(0);
-        mEffectPtr = new MEffect(effectID);
-		if( mEffectPtr->IsEffectLoaded() )
-			m_EffectsMap.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+        std::shared_ptr<MEffect> mEffectPtr = std::shared_ptr<MEffect>(new MEffect(effectID));
+		if( mEffectPtr->IsEffectLoaded())
+            m_EffectsMap.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
 		else
 			error_count++;
 
@@ -592,19 +590,17 @@ void DGM_Effects_Table::_Populate()
     res = NULL;
 }
 
-MEffect * DGM_Effects_Table::GetEffect(uint32 effectID)
+std::shared_ptr<MEffect> DGM_Effects_Table::GetEffect(uint32 effectID)
 {
     // return MEffect * corresponding to effectID from m_EffectsMap
-    MEffect * mEffectPtr = NULL;
-    std::map<uint32, MEffect *>::iterator mEffectMapIterator;
+    std::shared_ptr<MEffect> mEffectPtr;
+    std::map<uint32, std::shared_ptr < MEffect>>::iterator mEffectMapIterator;
 
-    if( (mEffectMapIterator = m_EffectsMap.find(effectID)) == m_EffectsMap.end() )
-        return NULL;
-    else
+    if ((mEffectMapIterator = m_EffectsMap.find(effectID)) != m_EffectsMap.end())
     {
         mEffectPtr = mEffectMapIterator->second;
-        return mEffectPtr;
     }
+    return mEffectPtr;
 }
 
 
@@ -631,18 +627,15 @@ void DGM_Type_Effects_Table::_Populate()
     ModuleDB::GetAllTypeIDs(*res);
 
     //counter
-	TypeEffectsList * typeEffectsListPtr;
 	uint32 total_type_count = 0;
-	uint32 error_count = 0;
+    uint32 error_count = 0;
 
     DBResultRow row;
-    while( res->GetRow(row) )
+    while (res->GetRow(row))
     {
-		typeEffectsListPtr = new TypeEffectsList(row.GetUInt(0));
-		if( typeEffectsListPtr->GetEffectCount() > 0 )
-			m_TypeEffectsMap.insert(std::pair<uint32, TypeEffectsList *>(row.GetUInt(0),typeEffectsListPtr));
-		else
-			delete typeEffectsListPtr;
+        std::shared_ptr<TypeEffectsList> typeEffectsListPtr = std::shared_ptr<TypeEffectsList>(new TypeEffectsList(row.GetUInt(0)));
+		if( typeEffectsListPtr->GetEffectCount() > 0)
+            m_TypeEffectsMap.insert(std::pair<uint32, std::shared_ptr < TypeEffectsList >> (row.GetUInt(0), typeEffectsListPtr));
 
 		total_type_count++;
     }
@@ -657,19 +650,17 @@ void DGM_Type_Effects_Table::_Populate()
     res = NULL;
 }
 
-TypeEffectsList * DGM_Type_Effects_Table::GetTypeEffectsList(uint32 typeID)
+std::shared_ptr<TypeEffectsList> DGM_Type_Effects_Table::GetTypeEffectsList(uint32 typeID)
 {
     // return TypeEffectsList * corresponding to effectID from m_EffectsMap
-    TypeEffectsList * mTypeEffectsPtr = NULL;
-    std::map<uint32, TypeEffectsList *>::iterator mTypeEffectMapIterator;
+    std::shared_ptr<TypeEffectsList> mTypeEffectsPtr;
+    std::map<uint32, std::shared_ptr < TypeEffectsList>>::iterator mTypeEffectMapIterator;
 
-    if( (mTypeEffectMapIterator = m_TypeEffectsMap.find(typeID)) == m_TypeEffectsMap.end() )
-        return NULL;
-    else
+    if ((mTypeEffectMapIterator = m_TypeEffectsMap.find(typeID)) != m_TypeEffectsMap.end())
     {
         mTypeEffectsPtr = mTypeEffectMapIterator->second;
-        return mTypeEffectsPtr;
     }
+    return mTypeEffectsPtr;
 }
 
 
@@ -697,7 +688,7 @@ void DGM_Skill_Bonus_Modifiers_Table::_Populate()
     ModuleDB::GetAllDgmSkillBonusModifiers(*res);
 
     //counter
-    SkillBonusModifier * mSkillBonusModifierPtr;
+    std::shared_ptr<SkillBonusModifier> mSkillBonusModifierPtr;
     mSkillBonusModifierPtr = NULL;
     uint32 skillID;
 
@@ -709,9 +700,9 @@ void DGM_Skill_Bonus_Modifiers_Table::_Populate()
     while( res->GetRow(row) )
     {
         skillID = row.GetInt(0);
-        mSkillBonusModifierPtr = new SkillBonusModifier(skillID);
-		if( mSkillBonusModifierPtr->IsModifierLoaded() )
-			m_SkillBonusModifiersMap.insert(std::pair<uint32, SkillBonusModifier *>(skillID,mSkillBonusModifierPtr));
+        mSkillBonusModifierPtr.reset(new SkillBonusModifier(skillID));
+		if( mSkillBonusModifierPtr->IsModifierLoaded())
+            m_SkillBonusModifiersMap.insert(std::pair<uint32, std::shared_ptr < SkillBonusModifier >> (skillID, mSkillBonusModifierPtr));
 		else
 			error_count++;
 
@@ -728,19 +719,17 @@ void DGM_Skill_Bonus_Modifiers_Table::_Populate()
     res = NULL;
 }
 
-SkillBonusModifier * DGM_Skill_Bonus_Modifiers_Table::GetSkillModifier(uint32 skillID)
+std::shared_ptr<SkillBonusModifier> DGM_Skill_Bonus_Modifiers_Table::GetSkillModifier(uint32 skillID)
 {
     // return SkillBonusModifier * corresponding to skillID from m_SkillBonusModifiersMap
-    SkillBonusModifier * mSkillBonusModifierPtr = NULL;
-    std::map<uint32, SkillBonusModifier *>::iterator skillBonusModifierMapIterator;
+    std::shared_ptr<SkillBonusModifier> mSkillBonusModifierPtr;
+    std::map<uint32, std::shared_ptr < SkillBonusModifier>>::iterator skillBonusModifierMapIterator;
 
-    if( (skillBonusModifierMapIterator = m_SkillBonusModifiersMap.find(skillID)) == m_SkillBonusModifiersMap.end() )
-        return NULL;
-    else
+    if ((skillBonusModifierMapIterator = m_SkillBonusModifiersMap.find(skillID)) != m_SkillBonusModifiersMap.end())
     {
         mSkillBonusModifierPtr = skillBonusModifierMapIterator->second;
-        return mSkillBonusModifierPtr;
     }
+    return mSkillBonusModifierPtr;
 }
 
 
@@ -768,8 +757,7 @@ void DGM_Ship_Bonus_Modifiers_Table::_Populate()
     ModuleDB::GetAllDgmShipBonusModifiers(*res);
 
     //counter
-    ShipBonusModifier * mShipBonusModifierPtr;
-    mShipBonusModifierPtr = NULL;
+    std::shared_ptr<ShipBonusModifier> mShipBonusModifierPtr;
     uint32 shipID;
 
 	uint32 total_modifier_count = 0;
@@ -780,9 +768,9 @@ void DGM_Ship_Bonus_Modifiers_Table::_Populate()
     while( res->GetRow(row) )
     {
         shipID = row.GetInt(0);
-        mShipBonusModifierPtr = new ShipBonusModifier(shipID);
-		if( mShipBonusModifierPtr->IsModifierLoaded() )
-			m_ShipBonusModifiersMap.insert(std::pair<uint32, ShipBonusModifier *>(shipID,mShipBonusModifierPtr));
+        mShipBonusModifierPtr.reset(new ShipBonusModifier(shipID));
+		if( mShipBonusModifierPtr->IsModifierLoaded())
+            m_ShipBonusModifiersMap.insert(std::pair<uint32, std::shared_ptr < ShipBonusModifier >> (shipID, mShipBonusModifierPtr));
 		else
 			error_count++;
 
@@ -799,19 +787,17 @@ void DGM_Ship_Bonus_Modifiers_Table::_Populate()
     res = NULL;
 }
 
-ShipBonusModifier * DGM_Ship_Bonus_Modifiers_Table::GetShipModifier(uint32 shipID)
+std::shared_ptr<ShipBonusModifier> DGM_Ship_Bonus_Modifiers_Table::GetShipModifier(uint32 shipID)
 {
     // return ShipBonusModifier * corresponding to shipID from m_ShipBonusModifiersMap
-    ShipBonusModifier * mShipBonusModifierPtr = NULL;
-    std::map<uint32, ShipBonusModifier *>::iterator shipBonusModifierMapIterator;
+    std::shared_ptr<ShipBonusModifier> mShipBonusModifierPtr;
+    std::map<uint32, std::shared_ptr < ShipBonusModifier>>::iterator shipBonusModifierMapIterator;
 
-    if( (shipBonusModifierMapIterator = m_ShipBonusModifiersMap.find(shipID)) == m_ShipBonusModifiersMap.end() )
-        return NULL;
-    else
+    if ((shipBonusModifierMapIterator = m_ShipBonusModifiersMap.find(shipID)) != m_ShipBonusModifiersMap.end())
     {
         mShipBonusModifierPtr = shipBonusModifierMapIterator->second;
-        return mShipBonusModifierPtr;
     }
+    return mShipBonusModifierPtr;
 }
 
 
@@ -901,7 +887,7 @@ bool ModuleEffects::isLowSlot()
 
 bool ModuleEffects::HasEffect(uint32 effectID)
 {
-    std::map<uint32, MEffect *>::const_iterator cur, end;
+    std::map<uint32, std::shared_ptr < MEffect>>::const_iterator cur, end;
 
     if( m_OnlineEffects.find(effectID) != m_OnlineEffects.end() )
         return true;
@@ -915,11 +901,11 @@ bool ModuleEffects::HasEffect(uint32 effectID)
     return false;
 }
 
-MEffect * ModuleEffects::GetEffect(uint32 effectID)
+std::shared_ptr<MEffect> ModuleEffects::GetEffect(uint32 effectID)
 {
     // WARNING: This function MUST be defined!
-	MEffect * effectPtr = NULL;
-    std::map<uint32, MEffect *>::const_iterator cur, end;
+    std::shared_ptr<MEffect> effectPtr = NULL;
+    std::map<uint32, std::shared_ptr < MEffect>>::const_iterator cur, end;
 
     if( (cur = m_OnlineEffects.find(effectID)) != m_OnlineEffects.end() )
 		return cur->second;
@@ -940,7 +926,7 @@ void ModuleEffects::_populate(uint32 typeID)
 {
     //first get list of all of the effects associated with the typeID
     DBQueryResult *res = new DBQueryResult();
-	TypeEffectsList * myTypeEffectsListPtr = DGM_Type_Effects_Table::GetTypeEffectsList(typeID);
+    std::shared_ptr<TypeEffectsList> myTypeEffectsListPtr = DGM_Type_Effects_Table::GetTypeEffectsList(typeID);
 
 	// TODO: Instead of the above commented-out line, we need to get our list of effectIDs some other way NOT querying the DB,
 	// in other words, using the new sDGM_Type_Effects_Table object, then take that list of effectIDs to loop through and create
@@ -950,8 +936,7 @@ void ModuleEffects::_populate(uint32 typeID)
 	myTypeEffectsListPtr->GetEffectsList(&effectsList);
 
     //counter
-    MEffect * mEffectPtr;
-    mEffectPtr = NULL;
+    std::shared_ptr<MEffect> mEffectPtr;
     m_defaultEffect = NULL;     // Set this to NULL until the default effect is found, if there is any
     uint32 effectID;
     uint32 isDefault;
@@ -963,9 +948,9 @@ void ModuleEffects::_populate(uint32 typeID)
     for(; cur != end; cur++)
     {
 		effectID = (*cur).first;
-		mEffectPtr = new MEffect(effectID);
+        mEffectPtr.reset(new MEffect(effectID));
 
-		if( mEffectPtr != NULL )
+        if (mEffectPtr)
 		{
 			if( mEffectPtr->IsEffectLoaded() )
 			{
@@ -976,17 +961,16 @@ void ModuleEffects::_populate(uint32 typeID)
 					case 12:    // hiPower
 					case 13:    // medPower
 						// We do not need to make MEffect objects these effectIDs, since they do nothing
-						delete mEffectPtr;
-						mEffectPtr = NULL;
+                        mEffectPtr.reset();
 						break;
 
 					default:
-						mEffectPtr = DGM_Effects_Table::GetEffect(effectID);
+                        mEffectPtr = DGM_Effects_Table::GetEffect(effectID);
 						break;
 				}
 
 				// Just in case our 'mEffectPtr' gets deleted above for certain cases, let's not proceed further lest we crash!
-				if( mEffectPtr != NULL )
+				if( mEffectPtr )
 				{
 					if( isDefault > 0 )
 						m_defaultEffect = mEffectPtr;
@@ -1001,20 +985,20 @@ void ModuleEffects::_populate(uint32 typeID)
 					if( moduleStateWhenEffectApplied & MOD_OFFLINE )
 						;	// nothing
 
-					if( moduleStateWhenEffectApplied & MOD_ONLINE )
-						m_OnlineEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+					if( moduleStateWhenEffectApplied & MOD_ONLINE)
+                        m_OnlineEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
 
-					if( moduleStateWhenEffectApplied & MOD_ACTIVATED )
-						m_ActiveEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+					if( moduleStateWhenEffectApplied & MOD_ACTIVATED)
+                        m_ActiveEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
 
-					if( moduleStateWhenEffectApplied & MOD_OVERLOADED )
-						m_OverloadEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+					if( moduleStateWhenEffectApplied & MOD_OVERLOADED)
+                        m_OverloadEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
 
-					if( moduleStateWhenEffectApplied & MOD_GANG )
-						m_GangEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+					if( moduleStateWhenEffectApplied & MOD_GANG)
+                        m_GangEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
 
-					if( moduleStateWhenEffectApplied & MOD_FLEET )
-						m_FleetEffects.insert(std::pair<uint32, MEffect *>(effectID,mEffectPtr));
+					if( moduleStateWhenEffectApplied & MOD_FLEET)
+                        m_FleetEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
 
 					if( moduleStateWhenEffectApplied & MOD_DEACTIVATING )
 						;	// nothing

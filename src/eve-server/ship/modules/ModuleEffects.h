@@ -29,6 +29,8 @@
 #include "ship/modules/ModuleDB.h"
 #include "ship/modules/ModuleDefs.h"
 
+#include <memory>
+
 // ////////////////////// Effects Class ////////////////////////////
 typedef std::vector<uint32> typeTargetGroupIDlist;
 
@@ -251,12 +253,12 @@ public:
     static int Initialize();
 
     // Returns pointer to MEffect object corresponding to the effectID supplied:
-    static MEffect * GetEffect(uint32 effectID);
+    static std::shared_ptr<MEffect> GetEffect(uint32 effectID);
 
 protected:
     static void _Populate();
 
-    static std::map<uint32, MEffect *> m_EffectsMap;
+    static std::map<uint32, std::shared_ptr<MEffect>> m_EffectsMap;
 };
 
 // -----------------------------------------------------------------------
@@ -274,12 +276,12 @@ public:
     static int Initialize();
 
     // Returns list of effectIDs for the given typeID:
-    static TypeEffectsList * GetTypeEffectsList(uint32 typeID);
+    static std::shared_ptr<TypeEffectsList> GetTypeEffectsList(uint32 typeID);
 
 protected:
     static void _Populate();
 
-    static std::map<uint32, TypeEffectsList *> m_TypeEffectsMap;
+    static std::map<uint32, std::shared_ptr<TypeEffectsList>> m_TypeEffectsMap;
 };
 
 // -----------------------------------------------------------------------
@@ -297,12 +299,12 @@ public:
     static int Initialize();
 
     // Returns pointer to SkillBonusModifier object corresponding to the skillID supplied:
-    static SkillBonusModifier * GetSkillModifier(uint32 skillID);
+    static std::shared_ptr<SkillBonusModifier> GetSkillModifier(uint32 skillID);
 
 protected:
     static void _Populate();
 
-    static std::map<uint32, SkillBonusModifier *> m_SkillBonusModifiersMap;
+    static std::map<uint32, std::shared_ptr<SkillBonusModifier>> m_SkillBonusModifiersMap;
 };
 
 // -----------------------------------------------------------------------
@@ -320,12 +322,12 @@ public:
     static int Initialize();
 
     // Returns pointer to ShipBonusModifier object corresponding to the shipID supplied:
-    static ShipBonusModifier * GetShipModifier(uint32 shipID);
+    static std::shared_ptr<ShipBonusModifier> GetShipModifier(uint32 shipID);
 
 protected:
     static void _Populate();
 
-    static std::map<uint32, ShipBonusModifier *> m_ShipBonusModifiersMap;
+    static std::map<uint32, std::shared_ptr<ShipBonusModifier>> m_ShipBonusModifiersMap;
 };
 
 // -----------------------------------------------------------------------
@@ -359,27 +361,51 @@ public:
     bool isMediumSlot();
     bool isLowSlot();
     bool HasEffect(uint32 effectID);
-    bool HasDefaultEffect() { return ( (m_defaultEffect != NULL) ? true : false ); }
-    MEffect * GetDefaultEffect() { return m_defaultEffect; }
-    MEffect * GetEffect(uint32 effectID);
+    bool HasDefaultEffect() { return ( (m_defaultEffect != NULL) ? true : false );
+    }
 
-    std::map<uint32, MEffect *>::const_iterator GetOnlineEffectsConstIterator() { return m_OnlineEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetActiveEffectsConstIterator() { return m_ActiveEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetOverloadEffectsConstIterator() { return m_OverloadEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetGangEffectsConstIterator() { return m_GangEffects.begin(); }
-    std::map<uint32, MEffect *>::const_iterator GetFleetEffectsConstIterator() { return m_FleetEffects.begin(); }
+    std::shared_ptr<MEffect> GetDefaultEffect()
+    {
+        return m_defaultEffect;
+    }
+    std::shared_ptr<MEffect> GetEffect(uint32 effectID);
+
+    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetOnlineEffectsConstIterator()
+    {
+        return m_OnlineEffects.begin();
+    }
+
+    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetActiveEffectsConstIterator()
+    {
+        return m_ActiveEffects.begin();
+    }
+
+    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetOverloadEffectsConstIterator()
+    {
+        return m_OverloadEffects.begin();
+    }
+
+    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetGangEffectsConstIterator()
+    {
+        return m_GangEffects.begin();
+    }
+
+    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetFleetEffectsConstIterator()
+    {
+        return m_FleetEffects.begin();
+    }
 
 private:
 
     void _populate(uint32 typeID);
 
     //data members
-    std::map<uint32, MEffect *> m_OnlineEffects;
-    std::map<uint32, MEffect *> m_ActiveEffects;
-    std::map<uint32, MEffect *> m_OverloadEffects;
-    std::map<uint32, MEffect *> m_GangEffects;
-    std::map<uint32, MEffect *> m_FleetEffects;
-    MEffect * m_defaultEffect;
+    std::map<uint32, std::shared_ptr<MEffect>> m_OnlineEffects;
+    std::map<uint32, std::shared_ptr<MEffect>> m_ActiveEffects;
+    std::map<uint32, std::shared_ptr<MEffect>> m_OverloadEffects;
+    std::map<uint32, std::shared_ptr<MEffect>> m_GangEffects;
+    std::map<uint32, std::shared_ptr<MEffect>> m_FleetEffects;
+    std::shared_ptr<MEffect> m_defaultEffect;
 
     uint32 m_typeID;
 
