@@ -148,7 +148,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
 
             if( rangeToBoardShip <= 1500 )  // range to board ship must be less than 1500m
             {
-                if( boardShipRef->ValidateBoardShip( boardShipRef, call.client->GetChar()) )
+                if (call.client->GetChar()->canUse(boardShipRef))
                 {
                     // Remove the pod from the bubble manager:
                     // TODO: THIS DOES NOT REMOVE POD FROM SPACE.  POD IS STILL VISIBLE IN THIS CHARACTER'S CLIENT
@@ -220,7 +220,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
     }
     else
     {
-        if( boardShipRef->ValidateBoardShip( boardShipRef, call.client->GetChar()) )
+        if (call.client->GetChar()->canUse(boardShipRef))
         {
             call.client->BoardShip( boardShipRef );
 

@@ -214,11 +214,6 @@ public:
     PyDict *ShipGetState();
 
     /*
-     * Validates boarding ship
-     */
-    bool ValidateBoardShip(ShipRef ship, CharacterRef who);
-
-    /*
      * Saves the ship state
      */
     void SaveShip();

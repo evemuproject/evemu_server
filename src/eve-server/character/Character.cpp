@@ -668,7 +668,7 @@ bool Character::InjectSkillIntoBrain(SkillRef skill)
 
     // TODO: based on config options later, check to see if another character, owned by this characters account,
     // is training a skill.  If so, return. (flagID=61).
-    if( !skill->SkillPrereqsComplete( *this ) )
+    if (!canUse(skill))
     {
         // TODO: need to send back a response to the client.  need packet specs.
         _log( ITEM__TRACE, "%s (%u): Requested to train skill %u item %u but prereq not complete.", itemName().c_str(), itemID(), skill->typeID(), skill->itemID() );
@@ -1491,30 +1491,31 @@ void Character::SetActiveShip(uint32 shipID)
 
 bool Character::canUse(InventoryItemRef item)
 {
-    if (item->HasAttribute(AttrRequiredSkill1))
+    int requiredAttr[] = {AttrRequiredSkill1, AttrRequiredSkill2, AttrRequiredSkill3, AttrRequiredSkill4, AttrRequiredSkill5, AttrRequiredSkill6};
+    int requiredLevel[] = {AttrRequiredSkill1Level, AttrRequiredSkill2Level, AttrRequiredSkill3Level, AttrRequiredSkill4Level, AttrRequiredSkill5Level, AttrRequiredSkill6Level};
+
+    for (int i = 0; i < 6; i++)
     {
-        if (GetSkillLevel(item->GetAttribute(AttrRequiredSkill1).get_int()) < item->GetAttribute(AttrRequiredSkill1Level).get_int())
+        // Is there a required skill?
+        uint32 skillTypeID = item->GetAttribute(requiredAttr[i]).get_int();
+        if (skillTypeID != 0)
         {
-            // Do not have necessary skills.
-            return false;
+            // There is a required skill.
+            SkillRef requiredSkill = GetSkill(skillTypeID);
+            if (requiredSkill.get() == nullptr)
+            {
+                // We don't have the required skill.
+                return false;
+            }
+            // Do we have the required level?
+            if (requiredSkill->GetSkillLevel() < item->GetAttribute(requiredLevel[i]).get_int())
+            {
+                // We do not have necessary level.
+                return false;
+            }
         }
     }
-    if (item->HasAttribute(AttrRequiredSkill2))
-    {
-        if (GetSkillLevel(item->GetAttribute(AttrRequiredSkill2).get_int()) < item->GetAttribute(AttrRequiredSkill2Level).get_int())
-        {
-            // Do not have necessary skills.
-            return false;
-        }
-    }
-    if (item->HasAttribute(AttrRequiredSkill3))
-    {
-        if (GetSkillLevel(item->GetAttribute(AttrRequiredSkill3).get_int()) < item->GetAttribute(AttrRequiredSkill3Level).get_int())
-        {
-            // Do not have necessary skills.
-            return false;
-        }
-    }
+    // We have all skills needed.
     return true;
 }
 

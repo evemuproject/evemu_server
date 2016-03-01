@@ -496,11 +496,18 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
     }
     else if( (flag >= flagLowSlot0)  &&  (flag <= flagHiSlot7) )
     {
-        if( m_pOperator->IsClient() )
-            if(!Skill::FitModuleSkillCheck(item, character))        // SKIP THIS SKILL CHECK if Operator is NOT Client *
-                throw PyException( MakeCustomError( "You do not have the required skills to fit this \n%s", item->itemName().c_str() ) );
-        if(!ValidateItemSpecifics(item))
-            throw PyException( MakeCustomError( "Your ship cannot equip this module" ) );
+        if (m_pOperator->IsClient())
+        {
+            // SKIP THIS SKILL CHECK if Operator is NOT Client *
+            if (!character->canUse(item))
+            {
+                throw PyException(MakeCustomError("You do not have the required skills to fit this \n%s", item->itemName().c_str()));
+            }
+        }
+        if (!ValidateItemSpecifics(item))
+        {
+            throw PyException(MakeCustomError("Your ship cannot equip this module"));
+        }
         if(item->categoryID() == EVEDB::invCategories::Charge)
 		{
 			if( m_ModuleManager->GetModule(flag) != NULL )
@@ -513,21 +520,30 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
 					throw PyException( MakeCustomError( "Incorrect charge type for this module.") );
 
 				// NOTE: Module Manager will check for actual room to load charges and make stack splits, or reject loading altogether
-			}
-			else
-				throw PyException( MakeCustomError( "Module at flag '%u' does not exist!", flag ) );
+            }
+            else
+            {
+                throw PyException(MakeCustomError("Module at flag '%u' does not exist!", flag));
+            }
         }
 		else
-		{
-			if( m_ModuleManager->IsSlotOccupied(flag) )
-				throw PyException( MakeUserError( "SlotAlreadyOccupied" ) );
+        {
+            if (m_ModuleManager->IsSlotOccupied(flag))
+            {
+                throw PyException(MakeUserError("SlotAlreadyOccupied"));
+            }
 		}
     }
     else if( (flag >= flagRigSlot0)  &&  (flag <= flagRigSlot7) )
     {
-        if( m_pOperator->IsClient() )
-            if(!Skill::FitModuleSkillCheck(item, character))        // SKIP THIS SKILL CHECK if Operator is NOT Client *
-                throw PyException( MakeCustomError( "You do not have the required skills to fit this \n%s", item->itemName().c_str() ) );
+        if (m_pOperator->IsClient())
+        {
+            // SKIP THIS SKILL CHECK if Operator is NOT Client *
+            if (!character->canUse(item))
+            {
+                throw PyException(MakeCustomError("You do not have the required skills to fit this \n%s", item->itemName().c_str()));
+            }
+        }
         if(m_pOperator->GetShip()->GetAttribute(AttrRigSize) != item->GetAttribute(AttrRigSize))        // Operator assumed to be Client *
             throw PyException( MakeCustomError( "Your ship cannot fit this size module" ) );
         if( m_pOperator->GetShip()->GetAttribute(AttrUpgradeLoad) + item->GetAttribute(AttrUpgradeCost) > m_pOperator->GetShip()->GetAttribute(AttrUpgradeCapacity) )   // Operator assumed to be Client *
@@ -535,9 +551,14 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
     }
     else if( (flag >= flagSubSystem0)  &&  (flag <= flagSubSystem7) )
     {
-        if( m_pOperator->IsClient() )
-            if(!Skill::FitModuleSkillCheck(item, character))        // SKIP THIS SKILL CHECK if Operator is NOT Client *
-                throw PyException( MakeCustomError( "You do not have the required skills to fit this \n%s", item->itemName().c_str() ) );
+        if (m_pOperator->IsClient())
+        {
+            // SKIP THIS SKILL CHECK if Operator is NOT Client *
+            if (!character->canUse(item))
+            {
+                throw PyException(MakeCustomError("You do not have the required skills to fit this \n%s", item->itemName().c_str()));
+            }
+        }
     }
     else
     {
@@ -630,108 +651,6 @@ void Ship::AddItem(InventoryItemRef item)
         // make singleton
         item->ChangeSingleton( true );
     }
-}
-
-bool Ship::ValidateBoardShip(ShipRef ship, CharacterRef character)
-{
-
-    SkillRef requiredSkill;
-    uint32 skillTypeID = 0;
-
-    if( (skillTypeID = static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill1).get_int())) != 0)
-        if( !(character->HasSkillTrainedToLevel( skillTypeID, static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill1Level).get_int()) )) )
-            return false;
-
-    if( (skillTypeID = static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill2).get_int())) != 0)
-        if( !(character->HasSkillTrainedToLevel( skillTypeID, static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill2Level).get_int() ))) )
-            return false;
-
-    if( (skillTypeID = static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill3).get_int())) != 0)
-        if( !(character->HasSkillTrainedToLevel( skillTypeID, static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill3Level).get_int() ))) )
-            return false;
-
-    if( (skillTypeID = static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill4).get_int())) != 0)
-        if( !(character->HasSkillTrainedToLevel( skillTypeID, static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill4Level).get_int() ))) )
-            return false;
-
-    if( (skillTypeID = static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill5).get_int())) != 0)
-        if( !(character->HasSkillTrainedToLevel( skillTypeID, static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill5Level).get_int() )) ))
-            return false;
-
-    if( (skillTypeID = static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill6).get_int())) != 0)
-        if( !(character->HasSkillTrainedToLevel( skillTypeID, static_cast<uint32>(ship->GetAttribute(AttrRequiredSkill6Level).get_int() )) ))
-            return false;
-
-    return true;
-/*
-    //Primary Skill
-    if(ship->GetAttribute(AttrRequiredSkill1).get_int() != 0)
-    {
-        requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill1).get_int() );
-        if( !requiredSkill )
-            return false;
-
-        if( ship->GetAttribute(AttrRequiredSkill1Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
-            return false;
-    }
-
-    //Secondary Skill
-    if(ship->GetAttribute(AttrRequiredSkill2).get_int() != 0)
-    {
-        requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill2).get_int() );
-        if( !requiredSkill )
-            return false;
-
-        if( ship->GetAttribute(AttrRequiredSkill2Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
-            return false;
-    }
-
-    //Tertiary Skill
-    if(ship->GetAttribute(AttrRequiredSkill3).get_int() != 0)
-    {
-        requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill3).get_int() );
-        if( !requiredSkill )
-            return false;
-
-        if( ship->GetAttribute(AttrRequiredSkill3Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
-            return false;
-    }
-
-    //Quarternary Skill
-    if(ship->GetAttribute(AttrRequiredSkill4).get_int() != 0)
-    {
-        requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill4).get_int() );
-        if( !requiredSkill )
-            return false;
-
-        if( ship->GetAttribute(AttrRequiredSkill4Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
-            return false;
-    }
-
-    //Quinary Skill
-    if(ship->GetAttribute(AttrRequiredSkill5).get_int() != 0)
-    {
-        requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill5).get_int() );
-        if( !requiredSkill )
-            return false;
-
-        if( ship->GetAttribute(AttrRequiredSkill5Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
-            return false;
-    }
-
-    //Senary Skill
-    if(ship->GetAttribute(AttrRequiredSkill6).get_int() != 0)
-    {
-        requiredSkill = character->GetSkill( ship->GetAttribute(AttrRequiredSkill6).get_int() );
-        if( !requiredSkill )
-            return false;
-
-        if( ship->GetAttribute(AttrRequiredSkill6Level) > requiredSkill->GetAttribute(AttrSkillLevel) )
-            return false;
-    }
-
-    return true;
-*/
 }
 
 void Ship::SaveShip()

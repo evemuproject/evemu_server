@@ -67,18 +67,6 @@ public:
      * @return Amount of SP required.
      */
     double GetSPForLevel(int level);
-    /**
-     * Checks whether requirements of skill has been fulfilled.
-     *
-     * @param[in] ch Character which is checked.
-     * @return True if requirements are OK, false if not.
-     */
-    bool SkillPrereqsComplete(Character &ch);
-
-    /**
-     *Performs check on fitting items
-     */
-    static bool FitModuleSkillCheck(InventoryItemRef item, CharacterRef character);
 
     /**
      * Get the skills current level.
