@@ -21,7 +21,7 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:        Aknor Jaden, Luck
-*/
+ */
 
 #include "eve-server.h"
 
@@ -29,11 +29,10 @@
 
 void ModuleDB::GetAllTypeIDs(DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " typeID "
-        " FROM invTypes "
-        " WHERE 1 "))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " DISTINCT(typeID)"
+                          " FROM invTypes "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -41,11 +40,10 @@ void ModuleDB::GetAllTypeIDs(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmEffects(DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " effectID "
-        " FROM dgmEffects "
-        " WHERE 1 "))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " DISTINCT(effectID) "
+                          " FROM dgmEffects "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -53,11 +51,10 @@ void ModuleDB::GetAllDgmEffects(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmEffectsInfo(DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " effectID "
-        " FROM dgmEffectsInfo "
-        " WHERE 1 "))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " DISTINCT(effectID) "
+                          " FROM dgmEffectsInfo "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -65,11 +62,10 @@ void ModuleDB::GetAllDgmEffectsInfo(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmTypeEffects(DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " effectID "
-        " FROM dgmTypeEffects "
-        " WHERE 1 "))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " DISTINCT(effectID) "
+                          " FROM dgmTypeEffects "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -77,11 +73,10 @@ void ModuleDB::GetAllDgmTypeEffects(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmSkillBonusModifiers(DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " skillID "
-        " FROM dgmSkillBonusModifiers "
-        " WHERE 1 "))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " DISTINCT(skillID) "
+                          " FROM dgmSkillBonusModifiers "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -89,11 +84,10 @@ void ModuleDB::GetAllDgmSkillBonusModifiers(DBQueryResult &res)
 
 void ModuleDB::GetAllDgmShipBonusModifiers(DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " shipID "
-        " FROM dgmShipBonusModifiers "
-        " WHERE 1 "))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " DISTINCT(shipID) "
+                          " FROM dgmShipBonusModifiers "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -101,37 +95,37 @@ void ModuleDB::GetAllDgmShipBonusModifiers(DBQueryResult &res)
 
 void ModuleDB::GetDgmEffects(uint32 effectID, DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " effectName, "
-        " effectCategory, "
-        " preExpression, "
-        " postExpression, "
-        " description, "
-        " guid, "
-        " graphicID, "
-        " isOffensive, "
-        " isAssistance, "
-        " durationAttributeID, "
-        " trackingSpeedAttributeID, "
-        " dischargeAttributeID, "
-        " rangeAttributeID, "
-        " falloffAttributeID, "
-        " disallowAutoRepeat, "
-        " published, "
-        " displayName, "
-        " isWarpSafe, "
-        " rangeChance, "
-        " electronicChance, "
-        " propulsionChance, "
-        " distribution, "
-        " sfxName, "
-        " npcUsageChanceAttributeID, "
-        " npcActivationChanceAttributeID, "
-        " fittingUsageChanceAttributeID "
-        " FROM dgmEffects "
-        " WHERE effectID = '%u' ",
-        effectID))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " effectName, "
+                          " effectCategory, "
+                          " preExpression, "
+                          " postExpression, "
+                          " description, "
+                          " guid, "
+                          " graphicID, "
+                          " isOffensive, "
+                          " isAssistance, "
+                          " durationAttributeID, "
+                          " trackingSpeedAttributeID, "
+                          " dischargeAttributeID, "
+                          " rangeAttributeID, "
+                          " falloffAttributeID, "
+                          " disallowAutoRepeat, "
+                          " published, "
+                          " displayName, "
+                          " isWarpSafe, "
+                          " rangeChance, "
+                          " electronicChance, "
+                          " propulsionChance, "
+                          " distribution, "
+                          " sfxName, "
+                          " npcUsageChanceAttributeID, "
+                          " npcActivationChanceAttributeID, "
+                          " fittingUsageChanceAttributeID "
+                          " FROM dgmEffects "
+                          " WHERE effectID = '%u' ",
+                          effectID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -139,22 +133,22 @@ void ModuleDB::GetDgmEffects(uint32 effectID, DBQueryResult &res)
 
 void ModuleDB::GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " sourceAttributeID, "
-        " targetAttributeID, "
-        " calculationTypeID, "
-		" description, "
-        " reverseCalculationTypeID, "
-        " targetGroupIDs, "
-        " stackingPenaltyApplied, "
-        " effectAppliedInState, "
-        " affectingID, "
-        " affectingType, "
-        " affectedType "
-        " FROM dgmEffectsInfo "
-        " WHERE effectID = '%u' ",
-        effectID))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " sourceAttributeID, "
+                          " targetAttributeID, "
+                          " calculationTypeID, "
+                          " description, "
+                          " reverseCalculationTypeID, "
+                          " targetGroupIDs, "
+                          " stackingPenaltyApplied, "
+                          " effectAppliedInState, "
+                          " affectingID, "
+                          " affectingType, "
+                          " affectedType "
+                          " FROM dgmEffectsInfo "
+                          " WHERE effectID = '%u' ",
+                          effectID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -162,12 +156,12 @@ void ModuleDB::GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res)
 
 void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-        " effectID, "
-		" isDefault "
-        " FROM dgmTypeEffects "
-        " WHERE typeID = '%u' ", typeID))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " effectID, "
+                          " isDefault "
+                          " FROM dgmTypeEffects "
+                          " WHERE typeID = '%u' ", typeID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -175,22 +169,22 @@ void ModuleDB::GetDgmTypeEffects(uint32 typeID, DBQueryResult &res)
 
 void ModuleDB::GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-		" effectID, "
-        " sourceAttributeID, "
-        " targetAttributeID, "
-        " calculationTypeID, "
-		" description, "
-        " reverseCalculationTypeID, "
-        " targetGroupIDs, "
-        " targetChargeSize, "
-        " appliedPerLevel, "
-        " affectingType, "
-        " affectedType "
-        " FROM dgmSkillBonusModifiers "
-        " WHERE skillID = '%u' ",
-        skillID))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " effectID, "
+                          " sourceAttributeID, "
+                          " targetAttributeID, "
+                          " calculationTypeID, "
+                          " description, "
+                          " reverseCalculationTypeID, "
+                          " targetGroupIDs, "
+                          " targetChargeSize, "
+                          " appliedPerLevel, "
+                          " affectingType, "
+                          " affectedType "
+                          " FROM dgmSkillBonusModifiers "
+                          " WHERE skillID = '%u' ",
+                          skillID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -198,22 +192,22 @@ void ModuleDB::GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res)
 
 void ModuleDB::GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res)
 {
-    if( !DBcore::RunQuery(res,
-        " SELECT "
-		" effectID, "
-		" attributeSkillID, "
-        " sourceAttributeID, "
-        " targetAttributeID, "
-        " calculationTypeID, "
-		" description, "
-        " reverseCalculationTypeID, "
-        " targetGroupIDs, "
-        " appliedPerLevel, "
-        " affectingType, "
-        " affectedType "
-        " FROM dgmShipBonusModifiers "
-        " WHERE shipID = '%u' ",
-        shipID))
+    if (!DBcore::RunQuery(res,
+                          " SELECT "
+                          " effectID, "
+                          " attributeSkillID, "
+                          " sourceAttributeID, "
+                          " targetAttributeID, "
+                          " calculationTypeID, "
+                          " description, "
+                          " reverseCalculationTypeID, "
+                          " targetGroupIDs, "
+                          " appliedPerLevel, "
+                          " affectingType, "
+                          " affectedType "
+                          " FROM dgmShipBonusModifiers "
+                          " WHERE shipID = '%u' ",
+                          shipID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
