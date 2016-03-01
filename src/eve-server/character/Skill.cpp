@@ -29,6 +29,8 @@
 #include "character/Skill.h"
 #include "inventory/AttributeEnum.h"
 
+#define SKILL_BASE_POINTS 250
+
 /*
  * Skill
  */
@@ -85,15 +87,10 @@ uint32 Skill::_Spawn(ItemData &data)
     return InventoryItem::_Spawn( data );
 }
 
-//uint32 Skill::GetSPForLevel(uint8 level)
-//{
-//    return(SKILL_BASE_POINTS * skillTimeConstant() * pow(32, (level - 1) / 2.0));
-//}
-
-EvilNumber Skill::GetSPForLevel( EvilNumber level )
+double Skill::GetSPForLevel(int level)
 {
-    //return EVIL_SKILL_BASE_POINTS * GetAttribute(AttrSkillTimeConstant) * e_pow(32, (level - 1) / 2.0);
-    return EVIL_SKILL_BASE_POINTS * GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
+    double timeConst = GetAttribute(AttrSkillTimeConstant).get_float();
+    return (uint32) (SKILL_BASE_POINTS * timeConst * std::pow(2, (2.5 * (level - 1))));
 }
 
 bool Skill::SkillPrereqsComplete(Character &ch)
@@ -208,6 +205,30 @@ bool Skill::FitModuleSkillCheck(InventoryItemRef item, CharacterRef character)
     return true;
 }
 
+uint8 Skill::GetSkillLevel()
+{
+    return GetAttribute(AttrSkillLevel).get_int();
+}
 
+bool Skill::SetSkillLevel(uint8 level)
+{
+    if (level > 5 || level < 0)
+    {
+        return false;
+    }
+    return SetAttribute(AttrSkillLevel, level);
+}
 
+double Skill::GetSkillPoints()
+{
+    return GetAttribute(AttrSkillPoints).get_float();
+}
 
+bool Skill::SetSkillPoints(double points)
+{
+    if (points > GetSPForLevel(5) || points < 0)
+    {
+        return false;
+    }
+    return SetAttribute(AttrSkillPoints, points);
+}

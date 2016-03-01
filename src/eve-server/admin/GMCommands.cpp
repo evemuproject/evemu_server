@@ -1109,9 +1109,8 @@ PyResult Command_giveskill( Client* who, const Seperator& args )
             }
             else
             {
-                EvilNumber tmp = EVIL_SKILL_BASE_POINTS * skill->GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
                 skill->SetAttribute(AttrSkillLevel, level);
-                skill->SetAttribute(AttrSkillPoints, tmp);
+                skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
             }
         }
         else
@@ -1136,9 +1135,8 @@ PyResult Command_giveskill( Client* who, const Seperator& args )
             else
             {
                 skill = SkillRef::StaticCast( item );
-                EvilNumber tmp = EVIL_SKILL_BASE_POINTS * skill->GetAttribute(AttrSkillTimeConstant) * EvilNumber::pow(2, (2.5*(level - 1)));
                 skill->SetAttribute(AttrSkillLevel, level);
-                skill->SetAttribute(AttrSkillPoints, tmp);
+                skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
             }
         }
 

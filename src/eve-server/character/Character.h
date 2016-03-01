@@ -425,7 +425,7 @@ public:
      * @param[in] skill Skill for which the rate is calculated.
      * @return Skillpoints per minute rate.
      */
-    EvilNumber GetSPPerMin(SkillRef skill);
+    double GetSPPerMin(SkillRef skill);
     /**
      * @return Timestamp at which current skill training finishes.
      */
@@ -459,10 +459,10 @@ public:
     /**
      * Start the specified skill training.
      * @param skillID The skillID of the still to start training.
-     * @param nextStartTime The start time to use or -1 for now.
+     * @param nextStartTime The start time to use or 0 for now.
      * @return The currently training.
      */
-    SkillRef StartTraining(uint32 skillID, EvilNumber nextStartTime = EvilNumber(-1));
+    SkillRef StartTraining(uint32 skillID, uint64 nextStartTime = 0);
     /**
      * Updates skill queue.
      */
@@ -517,7 +517,18 @@ public:
      * @author xanarox
      */
     PyTuple *GetSkillQueue();
+    /**
+     * Get skill at queue index.
+     * @param index The index.
+     * @return The skill at that index.
+     */
+    SkillRef GetSkillInQueue(uint32 index);
 
+    /**
+     * Get implant in slot.
+     * @param slot The slot to look for the implant.
+     * @return The implant.
+     */
     InventoryItemRef GetImplant(uint32 slot);
 
     /*

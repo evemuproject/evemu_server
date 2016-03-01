@@ -66,7 +66,7 @@ public:
      * @param[in] level Level to calculate SP for.
      * @return Amount of SP required.
      */
-    EvilNumber GetSPForLevel(EvilNumber level);
+    double GetSPForLevel(int level);
     /**
      * Checks whether requirements of skill has been fulfilled.
      *
@@ -79,6 +79,29 @@ public:
      *Performs check on fitting items
      */
     static bool FitModuleSkillCheck(InventoryItemRef item, CharacterRef character);
+
+    /**
+     * Get the skills current level.
+     * @return The skill level.
+     */
+    uint8 GetSkillLevel();
+    /**
+     * Set the skills level.
+     * @param level The level to set.
+     * @return True if successful.
+     */
+    bool SetSkillLevel(uint8 level);
+    /**
+     * Get the skills current skill points.
+     * @return The current skill points.
+     */
+    double GetSkillPoints();
+    /**
+     * Set the skills skill points. (does not affect level)
+     * @param points The skill points to set.
+     * @return True if successful.
+     */
+    bool SetSkillPoints(double points);
 
 protected:
     Skill(

@@ -35,8 +35,6 @@
 #include "system/Celestial.h"
 #include "system/Container.h"
 
-//const uint32 SKILL_BASE_POINTS = 250;
-const EvilNumber EVIL_SKILL_BASE_POINTS(250);
 const int32 ITEM_DB_SAVE_TIMER_EXPIRY(10);
 
 /*
