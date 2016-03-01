@@ -198,9 +198,9 @@ protected:
 
 #ifdef HAVE_WINDOWS_H
     /// Handle to standard output stream.
-    const static HANDLE mStdOutHandle;
+    static HANDLE mStdOutHandle;
     /// Handle to standard error stream.
-    const static HANDLE mStdErrHandle;
+    static HANDLE mStdErrHandle;
 
     /// Color translation table.
     static const WORD COLOR_TABLE[ COLOR_COUNT ];

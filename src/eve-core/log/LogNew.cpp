@@ -72,9 +72,9 @@ bool SysLog::m_initialized = false;
 
 #ifdef HAVE_WINDOWS_H
 /// Handle to standard output stream.
-const SysLog::HANDLE mStdOutHandle;
+HANDLE SysLog::mStdOutHandle = nullptr;
 /// Handle to standard error stream.
-const SysLog::HANDLE mStdErrHandle;
+HANDLE SysLog::mStdErrHandle = nullptr;
 #endif /* !HAVE_WINDOWS_H */
 
 SysLog::SysLog()
