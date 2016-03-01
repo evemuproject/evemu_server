@@ -26,8 +26,6 @@
 #ifndef __IMAGESERVER__H__INCL__
 #define __IMAGESERVER__H__INCL__
 
-#include "utils/Singleton.h"
-
 class ImageServerListener;
 
 /**
@@ -41,20 +39,21 @@ class ImageServerListener;
  * @author caytchen
  * @date April 2011
  */
-class ImageServer : public Singleton<ImageServer>
+class ImageServer
 {
-public:
+private:
     ImageServer();
-    void Run();
-    void Stop();
+public:
+    static void Run();
+    static void Stop();
 
-    std::string& url();
+    static std::string& url();
 
-    void ReportNewImage(uint32 accountID, std::shared_ptr<std::vector<char> > imageData);
-    void ReportNewCharacter(uint32 creatorAccountID, uint32 characterID);
+    static void ReportNewImage(uint32 accountID, std::shared_ptr<std::vector<char> > imageData);
+    static void ReportNewCharacter(uint32 creatorAccountID, uint32 characterID);
 
-    std::string GetFilePath(std::string& category, uint32 id, uint32 size);
-    std::shared_ptr<std::vector<char> > GetImage(std::string& category, uint32 id, uint32 size);
+    static std::string GetFilePath(std::string& category, uint32 id, uint32 size);
+    static std::shared_ptr<std::vector<char> > GetImage(std::string& category, uint32 id, uint32 size);
 
     static const char *const Categories[];
     static const uint32 CategoryCount;
@@ -64,17 +63,17 @@ public:
     static const char *const FallbackURL;
 
 private:
-    void RunInternal();
-    bool ValidateCategory(std::string& category);
-    bool ValidateSize(std::string& category, uint32 size);
+    static void RunInternal();
+    static bool ValidateCategory(std::string& category);
+    static bool ValidateSize(std::string& category, uint32 size);
 
-    std::unordered_map<uint32 /*accountID*/, std::shared_ptr<std::vector<char> > /*imageData*/> _limboImages;
-    std::shared_ptr<boost::asio::detail::thread> _ioThread;
-    std::shared_ptr<boost::asio::io_service> _io;
-    std::shared_ptr<ImageServerListener> _listener;
-    std::string _url;
-    std::string _basePath;
-    boost::asio::detail::mutex _limboLock;
+    static std::unordered_map<uint32 /*accountID*/, std::shared_ptr<std::vector<char> > /*imageData*/> _limboImages;
+    static std::shared_ptr<boost::asio::detail::thread> _ioThread;
+    static std::shared_ptr<boost::asio::io_service> _io;
+    static std::shared_ptr<ImageServerListener> _listener;
+    static std::string _url;
+    static std::string _basePath;
+    static boost::asio::detail::mutex _limboLock;
 
     class Lock
     {
@@ -85,8 +84,5 @@ private:
         boost::asio::detail::mutex& _mutex;
     };
 };
-
-#define sImageServer \
-    ( ImageServer::get() )
 
 #endif // __IMAGESERVER__H__INCL__

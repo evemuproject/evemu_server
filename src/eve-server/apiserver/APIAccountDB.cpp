@@ -48,7 +48,7 @@ bool APIAccountDB::GetCharactersList(uint32 accountID, std::vector<std::string> 
         "   LEFT JOIN entity ON entity.itemID = character_.characterID "
         " WHERE `accountID` = %u ", accountID ))
     {
-        sLog.Error( "APIAccountDB::GetCharactersList()", "Cannot find accountID %u", accountID );
+        SysLog::Error( "APIAccountDB::GetCharactersList()", "Cannot find accountID %u", accountID );
         return false;
     }
 
@@ -80,14 +80,14 @@ bool APIAccountDB::GetAccountInfo(uint32 accountID, std::vector<std::string> & a
         " FROM account "
         " WHERE `accountID` = %u ", accountID ))
     {
-        sLog.Error( "APIAccountDB::GetAccountInfo()", "Cannot find accountID %u", accountID );
+        SysLog::Error( "APIAccountDB::GetAccountInfo()", "Cannot find accountID %u", accountID );
         return false;
     }
 
     DBResultRow row;
     if( !res.GetRow(row) )
     {
-        sLog.Error( "APIServiceDB::GetAccountInfo()", "res.GetRow(row) failed for unknown reason." );
+        SysLog::Error( "APIServiceDB::GetAccountInfo()", "res.GetRow(row) failed for unknown reason." );
         return false;
     }
 

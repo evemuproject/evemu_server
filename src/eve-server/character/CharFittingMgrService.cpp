@@ -43,7 +43,7 @@ CharFittingMgrService::~CharFittingMgrService() {
 
 PyResult CharFittingMgrService::Handle_GetFittings(PyCallArgs &call) {
 
-    sLog.Debug("Server", "Called GetFittigs Stub.");
+    SysLog::Debug("Server", "Called GetFittigs Stub.");
 
     return NULL;
 }

@@ -146,11 +146,11 @@ PyResult CharMgrService::Handle_GetPublicInfo3(PyCallArgs &call) {
 PyResult CharMgrService::Handle_AddToBounty( PyCallArgs& call ) {
     Call_TwoIntegerArgs args;
     if(!args.Decode(&call.tuple)) {
-        sLog.Error("CharMgrService", "AddToBounty Error decoding arguments for Call_TwoIntegerArgs");
+        SysLog::Error("CharMgrService", "AddToBounty Error decoding arguments for Call_TwoIntegerArgs");
         return NULL;
     }
     if(call.client->GetCharacterID() == args.arg1) {
-        sLog.Error("CharMgrService", "AddToBounty: Char %u tried to add bounty to themself", args.arg1);
+        SysLog::Error("CharMgrService", "AddToBounty: Char %u tried to add bounty to themself", args.arg1);
         call.client->SendNotifyMsg("You cannot add a bounty to yourself.");
         return NULL;
     }
@@ -163,7 +163,7 @@ PyResult CharMgrService::Handle_GetTopBounties( PyCallArgs& call )
 {
     PyRep *result = CharacterDB::GetTopBounties();
     if(result == NULL) {
-        sLog.Error("CharMgrService","GetTopBounties error, Failed to find bounties: %s", call.client->GetName());
+        SysLog::Error("CharMgrService","GetTopBounties error, Failed to find bounties: %s", call.client->GetName());
         return NULL;
     }
     return result;
@@ -177,7 +177,7 @@ PyResult CharMgrService::Handle_GetCloneTypeID( PyCallArgs& call )
 		// This should not happen, because a clone is created at char creation.
 		// We don't have a clone, so return a basic one. cloneTypeID = 9917 (Clone Grade Delta)
 		typeID = 9917;
-		sLog.Debug( "CharMgrService", "Returning a basic clone for Char %u of type %u", call.client->GetCharacterID(), typeID );
+		SysLog::Debug( "CharMgrService", "Returning a basic clone for Char %u of type %u", call.client->GetCharacterID(), typeID );
 	}
     return new PyInt(typeID);
 }
@@ -187,7 +187,7 @@ PyResult CharMgrService::Handle_GetHomeStation( PyCallArgs& call )
 	uint32 stationID;
     if (!CharacterDB::GetCharHomeStation(call.client->GetCharacterID(), stationID))
 	{
-		sLog.Debug( "CharMgrService", "Could't get the home station for Char %u", call.client->GetCharacterID() );
+		SysLog::Debug( "CharMgrService", "Could't get the home station for Char %u", call.client->GetCharacterID() );
 		return new PyNone;
 	}
     return new PyInt(stationID);
@@ -195,14 +195,14 @@ PyResult CharMgrService::Handle_GetHomeStation( PyCallArgs& call )
 
 PyResult CharMgrService::Handle_GetFactions( PyCallArgs& call )
 {
-    sLog.Debug( "CharMgrService", "Called GetFactions stub." );
+    SysLog::Debug( "CharMgrService", "Called GetFactions stub." );
 
     return NULL;
 }
 
 PyResult CharMgrService::Handle_SetActivityStatus( PyCallArgs& call )
 {
-    sLog.Debug( "CharMgrService", "Called SetActivityStatus stub." );
+    SysLog::Debug( "CharMgrService", "Called SetActivityStatus stub." );
 
     return NULL;
 }
@@ -210,8 +210,9 @@ PyResult CharMgrService::Handle_SetActivityStatus( PyCallArgs& call )
 PyResult CharMgrService::Handle_GetSettingsInfo( PyCallArgs& call )
 {
  PyTuple* res = new PyTuple( 2 );
- // type code? unknown what the value should be!
- res->items[ 0 ] = new PyInt( 0 );
+    // type code? unknown what the value should be!
+    // Value should be a string according to client exception in function UpdateSettingsStatistics
+    res->items[ 0 ] = new PyString(" ");
 
  // error code? 0 = no error
  // if called with any value other than zero the exception output will show 'Verified = False'

@@ -107,7 +107,7 @@ bool ModuleContainer::AddModule(uint32 flag, GenericModule * mod)
     switch(_checkBounds(flag))
     {
         case NaT:
-            sLog.Error("ModuleContainer::AddModule()","Flag Out of bounds");
+            SysLog::Error("ModuleContainer::AddModule()","Flag Out of bounds");
 			return false;
             break;
         case slotTypeSubSystem:
@@ -194,7 +194,7 @@ GenericModule * ModuleContainer::GetModule(EVEItemFlags flag)
     switch(_checkBounds(flag))
     {
         case NaT:
-            sLog.Error("ModuleContainer::GetModule()","Flag Out of bounds");
+            SysLog::Error("ModuleContainer::GetModule()","Flag Out of bounds");
             break;
         case slotTypeSubSystem:
             return m_SubSystemModules[flag - flagSubSystem0];
@@ -255,7 +255,7 @@ GenericModule * ModuleContainer::GetModule(uint32 itemID)
                 return m_RigModules[r];
     }
 
-    sLog.Warning("ModuleContainer::GetModule()","Search for itemID: %u yielded no results", itemID);
+    SysLog::Warning("ModuleContainer::GetModule()","Search for itemID: %u yielded no results", itemID);
 
     return NULL;  //we don't
 }
@@ -291,7 +291,7 @@ bool ModuleContainer::isSlotOccupied(EVEItemFlags flag)
     switch(_checkBounds(flag))
     {
     case NaT:
-        sLog.Error("ModuleContainer::isSlotOccupied()","Flag Out of bounds");
+        SysLog::Error("ModuleContainer::isSlotOccupied()","Flag Out of bounds");
 		return false;
         break;
     case slotTypeSubSystem:
@@ -325,7 +325,7 @@ bool ModuleContainer::isSlotOccupied(EVEItemFlags flag)
 			return true;
         break;
     default:
-        sLog.Error("ModuleContainer::isSlotOccupied()","Flag '%u' Out of bounds", flag);
+        SysLog::Error("ModuleContainer::isSlotOccupied()","Flag '%u' Out of bounds", flag);
 		return false;
         break;
     }
@@ -504,7 +504,7 @@ void ModuleContainer::_removeModule(EVEItemFlags flag, GenericModule * mod)
     switch(_checkBounds(flag))
     {
     case NaT:
-        sLog.Error("ModuleContainer::_removeModule()","Flag Out of bounds");
+        SysLog::Error("ModuleContainer::_removeModule()","Flag Out of bounds");
         break;
     case slotTypeSubSystem:
         m_SubSystemModules[flag-flagSubSystem0] = NULL;
@@ -522,7 +522,7 @@ void ModuleContainer::_removeModule(EVEItemFlags flag, GenericModule * mod)
         m_HighSlotModules[flag-flagHiSlot0] = NULL;
         break;
     default:
-        sLog.Error("ModuleContainer::_removeModule()","Flag '%u' Out of bounds", flag);
+        SysLog::Error("ModuleContainer::_removeModule()","Flag '%u' Out of bounds", flag);
         break;
     }
 
@@ -544,7 +544,7 @@ void ModuleContainer::_removeModule(EVEItemFlags flag, GenericModule * mod)
             m_ModulesFittedByGroupID.erase(mod->getItem()->groupID());
     }
     else
-        sLog.Error( "ModuleContainer::_removeModule()", "Removing Module from ship fit when it had NO entry in m_ModulesFittedByGroup !" );
+        SysLog::Error( "ModuleContainer::_removeModule()", "Removing Module from ship fit when it had NO entry in m_ModulesFittedByGroup !" );
 }
 
 void ModuleContainer::_process(processType p)
@@ -674,7 +674,7 @@ bool ModuleContainer::_isLowSlot(uint32 flag)
         if( (flag - flagLowSlot0) < m_LowSlots )
             return true;
         else
-            sLog.Error("ModuleContainer::_isLowSlot()", "this shouldn't happen");
+            SysLog::Error("ModuleContainer::_isLowSlot()", "this shouldn't happen");
     }
 
     return false;
@@ -687,7 +687,7 @@ bool ModuleContainer::_isMediumSlot(uint32 flag)
         if( (flag - flagMedSlot0) < m_MediumSlots )
             return true;
         else
-            sLog.Error("ModuleContainer::_isMediumSlot()", "this shouldn't happen");
+            SysLog::Error("ModuleContainer::_isMediumSlot()", "this shouldn't happen");
     }
 
     return false;
@@ -700,7 +700,7 @@ bool ModuleContainer::_isHighSlot(uint32 flag)
         if( (flag - flagHiSlot0) < m_HighSlots )
             return true;
         else
-            sLog.Error("ModuleContainer::_isHighSlot()", "this shouldn't happen");
+            SysLog::Error("ModuleContainer::_isHighSlot()", "this shouldn't happen");
     }
 
     return false;
@@ -713,7 +713,7 @@ bool ModuleContainer::_isRigSlot(uint32 flag)
         if( (flag - flagRigSlot0) < m_RigSlots )
             return true;
         else
-            sLog.Error("ModuleContainer::_isRigSlot()", "this shouldn't happen");
+            SysLog::Error("ModuleContainer::_isRigSlot()", "this shouldn't happen");
     }
 
     return false;
@@ -726,7 +726,7 @@ bool ModuleContainer::_isSubSystemSlot(uint32 flag)
         if( (flag - flagSubSystem0) < m_SubSystemSlots )
             return true;
         else
-            sLog.Error("ModuleContainer::_isSubSystemSlot()", "this shouldn't happen");
+            SysLog::Error("ModuleContainer::_isSubSystemSlot()", "this shouldn't happen");
     }
 
     return false;
@@ -785,9 +785,9 @@ ModuleManager::ModuleManager(Ship *const ship)
 
 	std::string logfilename = "On_Ship_" + m_Ship->itemName() + "_(" + std::string(itoa(m_Ship->itemID())) + ")";
 
-	m_pLog = new Basic_Log( sConfig.files.logDir, logsubdirectory, logfilename );
+	m_pLog = new Basic_Log( EVEServerConfig::files.logDir, logsubdirectory, logfilename );
 
-	m_pLog->InitializeLogging( sConfig.files.logDir, logsubdirectory, logfilename );
+	m_pLog->InitializeLogging( EVEServerConfig::files.logDir, logsubdirectory, logfilename );
 
     // Load modules, rigs and subsystems from Ship's inventory into ModuleContainer:
 	m_pLog->Log("ModuleManager", "Loading modules...");
@@ -824,7 +824,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 				}
 				else
 				{
-					sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit Low Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
+					SysLog::Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit Low Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
 					throw PyException( MakeCustomError( "ERROR! Cannot fit Low Slot module '%s'", moduleRef->itemName().c_str() ) );
 				}
 			}
@@ -863,7 +863,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 				}
 				else
 				{
-					sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit Med Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
+					SysLog::Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit Med Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
 					throw PyException( MakeCustomError( "ERROR! Cannot fit Med Slot module '%s'", moduleRef->itemName().c_str() ) );
 				}
 			}
@@ -901,7 +901,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 				}
 				else
 				{
-					sLog.Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit High Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
+					SysLog::Error( "ModuleManager::ModuleManager()", "ERROR: Cannot fit High Slot module '%s' (id %u)", moduleRef->itemName().c_str(), moduleRef->itemID() );
 					throw PyException( MakeCustomError( "ERROR! Cannot fit High Slot module '%s'", moduleRef->itemName().c_str() ) );
 				}
 			}
@@ -1009,7 +1009,7 @@ uint32 ModuleManager::GetAvailableSlotInBank(EveEffectEnum slotBank)
 void ModuleManager::_SendInfoMessage(const char *fmt, ...)
 {
     if( m_Ship->GetOperator() == NULL )     // Operator assumed to be Client *
-        sLog.Error("SendMessage","message should have been sent to character, but *m_Client is null.  Did you forget to call GetShip()->SetOwner(Client *c)?");
+        SysLog::Error("SendMessage","message should have been sent to character, but *m_Client is null.  Did you forget to call GetShip()->SetOwner(Client *c)?");
     else
     {
         va_list args;
@@ -1023,7 +1023,7 @@ void ModuleManager::_SendInfoMessage(const char *fmt, ...)
 void ModuleManager::_SendErrorMessage(const char *fmt, ...)
 {
     if( m_Ship->GetOperator() == NULL )     // Operator assumed to be Client *
-        sLog.Error("SendMessage","message should have been sent to character, but *m_Client is null.  Did you forget to call GetShip()->SetOwner(Client *c)?");
+        SysLog::Error("SendMessage","message should have been sent to character, but *m_Client is null.  Did you forget to call GetShip()->SetOwner(Client *c)?");
     else
     {
         va_list args;
@@ -1041,7 +1041,7 @@ bool ModuleManager::InstallRig(InventoryItemRef item, EVEItemFlags flag)
         return true;
     }
     else
-        sLog.Debug("ModuleManager","%s tried to fit item %u, which is not a rig", m_Ship->GetOperator()->GetName(), item->itemID());
+        SysLog::Debug("ModuleManager","%s tried to fit item %u, which is not a rig", m_Ship->GetOperator()->GetName(), item->itemID());
 
     return false;
 }
@@ -1061,7 +1061,7 @@ bool ModuleManager::SwapSubSystem(InventoryItemRef item, EVEItemFlags flag)
         return true;
     }
     else
-        sLog.Debug("ModuleManager","%s tried to fit item %u, which is not a subsystem", m_Ship->GetOperator()->GetName(), item->itemID());
+        SysLog::Debug("ModuleManager","%s tried to fit item %u, which is not a subsystem", m_Ship->GetOperator()->GetName(), item->itemID());
 
     return false;
 }
@@ -1079,7 +1079,7 @@ bool ModuleManager::FitModule(InventoryItemRef item, EVEItemFlags flag)
         }
     }
     else
-        sLog.Debug("ModuleManager","%s tried to fit item %u, which is not a module", m_Ship->GetOperator()->GetName(), item->itemID());
+        SysLog::Debug("ModuleManager","%s tried to fit item %u, which is not a module", m_Ship->GetOperator()->GetName(), item->itemID());
 
     return false;
 }
@@ -1218,7 +1218,7 @@ void ModuleManager::OfflineAll()
 
 int32 ModuleManager::Activate(uint32 itemID, std::string effectName, uint32 targetID, uint32 repeat)
 {
-    sLog.Debug("Activate","Needs to be implemented");
+    SysLog::Debug("Activate","Needs to be implemented");
     //return 1;
 
     GenericModule * mod = m_Modules->GetModule(itemID);
@@ -1478,21 +1478,21 @@ void ModuleManager::UnloadAllModules()
 
 void ModuleManager::CharacterLeavingShip()
 {
-    sLog.Debug("CharacterLeavingShip","Needs to be implemented");
+    SysLog::Debug("CharacterLeavingShip","Needs to be implemented");
     //this is complicated and im gonna leave it alone for now until
     //a few things become more clear
 }
 
 void ModuleManager::CharacterBoardingShip()
 {
-    sLog.Debug("CharacterBoardingShip","Needs to be implemented");
+    SysLog::Debug("CharacterBoardingShip","Needs to be implemented");
     //this is complicated and im gonna leave it alone for now until
     //a few things become more clear
 }
 
 void ModuleManager::ShipWarping()
 {
-    sLog.Debug("ShipWarping","Needs to be implemented");
+    SysLog::Debug("ShipWarping","Needs to be implemented");
     //need to remove targets and such
 }
 
@@ -1828,7 +1828,7 @@ void ModuleManager::_processExternalEffect(SubEffect * s)
                                                                              s->AppliedValue(), s->CalculationType()));
     }
     else //i have no idea what their targeting X_X
-        sLog.Error("ModuleManager", "Process external effect inconsistency.  This shouldn't happen");
+        SysLog::Error("ModuleManager", "Process external effect inconsistency.  This shouldn't happen");
 
 }
 

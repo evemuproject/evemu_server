@@ -27,6 +27,10 @@
 
 #include "ship/modules/ModuleEffects.h"
 
+std::map<uint32, MEffect *> DGM_Effects_Table::m_EffectsMap;
+std::map<uint32, TypeEffectsList *> DGM_Type_Effects_Table::m_TypeEffectsMap;
+std::map<uint32, SkillBonusModifier *> DGM_Skill_Bonus_Modifiers_Table::m_SkillBonusModifiersMap;
+std::map<uint32, ShipBonusModifier *> DGM_Ship_Bonus_Modifiers_Table::m_ShipBonusModifiersMap;
 
 // ////////////////// MEffect Class ///////////////////////////
 MEffect::MEffect(uint32 effectID)
@@ -100,8 +104,8 @@ void MEffect::_Populate(uint32 effectID)
 
     // First, get all general info on this effectID from the dgmEffects table:
     DBResultRow row1;
-    if( !res->GetRow(row1) )
-        sLog.Error("MEffect","Could not populate effect information for effectID: %u from the 'dgmEffects' table", effectID);
+    if( !res->GetRow(row1))
+        SysLog::Error("MEffect", "Could not populate effect information for effectID: %u from the 'dgmEffects' table", effectID);
     else
     {
         //get all the data from the query
@@ -216,7 +220,7 @@ void MEffect::_Populate(uint32 effectID)
 
 		if( count == 0 )
 		{
-			;//sLog.Error("MEffect","Could not populate effect information for effectID: %u from the 'dgmEffectsInfo' table as the SQL query returned ZERO rows", effectID);
+			;//Log::Error("MEffect","Could not populate effect information for effectID: %u from the 'dgmEffectsInfo' table as the SQL query returned ZERO rows", effectID);
 			m_EffectsInfoLoaded = false;
 		}
 		else
@@ -276,8 +280,8 @@ void SkillBonusModifier::_Populate(uint32 skillID)
 
     DBResultRow row1;
 	if( res->GetRowCount() == 0 )
-	{
-        sLog.Error("SkillBonusModifier","Could not populate skill bonus modifier information for skillID: %u from the 'dgmSkillBonusModifiers' table", skillID);
+    {
+        SysLog::Error("SkillBonusModifier", "Could not populate skill bonus modifier information for skillID: %u from the 'dgmSkillBonusModifiers' table", skillID);
 		m_ModifierLoaded = false;
 	}
     else
@@ -341,7 +345,7 @@ void SkillBonusModifier::_Populate(uint32 skillID)
 
 		if( count == 0 )
 		{
-			;//sLog.Error("SkillBonusModifier","Could not populate bonus modifier information for skillID: %u from the 'dgmSkillBonusModifiers' table as the SQL query returned ZERO rows", skillID);
+			;//Log::Error("SkillBonusModifier","Could not populate bonus modifier information for skillID: %u from the 'dgmSkillBonusModifiers' table as the SQL query returned ZERO rows", skillID);
 			m_ModifierLoaded = false;
 		}
 		else
@@ -398,8 +402,8 @@ void ShipBonusModifier::_Populate(uint32 shipID)
 
     DBResultRow row1;
 	if( res->GetRowCount() == 0 )
-	{
-        sLog.Error("ShipBonusModifier","Could not populate ship bonus modifier information for shipID: %u from the 'dgmShipBonusModifiers' table", shipID);
+    {
+        SysLog::Error("ShipBonusModifier", "Could not populate ship bonus modifier information for shipID: %u from the 'dgmShipBonusModifiers' table", shipID);
 		m_ModifierLoaded = false;
 	}
     else
@@ -463,7 +467,7 @@ void ShipBonusModifier::_Populate(uint32 shipID)
 
 		if( count == 0 )
 		{
-			;//sLog.Error("ShipBonusModifier","Could not populate bonus modifier information for shipID: %u from the 'dgmShipBonusModifiers' table as the SQL query returned ZERO rows", shipID);
+			;//Log::Error("ShipBonusModifier","Could not populate bonus modifier information for shipID: %u from the 'dgmShipBonusModifiers' table as the SQL query returned ZERO rows", shipID);
 			m_ModifierLoaded = false;
 		}
 		else
@@ -578,10 +582,10 @@ void DGM_Effects_Table::_Populate()
 		total_effect_count++;
     }
 
-	if( error_count > 0 )
-		sLog.Error("DGM_Effects_Table::_Populate()","ERROR Populating the DGM_Effects_Table memory object: %u of %u effects failed to load!", error_count, total_effect_count);
+	if( error_count > 0)
+        SysLog::Error("DGM_Effects_Table::_Populate()", "ERROR Populating the DGM_Effects_Table memory object: %u of %u effects failed to load!", error_count, total_effect_count);
 
-	sLog.Log("DGM_Effects_Table", "%u total effects objects loaded", total_effect_count);
+    SysLog::Log("DGM_Effects_Table", "%u total effects objects loaded", total_effect_count);
 
     //cleanup
     delete res;
@@ -643,10 +647,10 @@ void DGM_Type_Effects_Table::_Populate()
 		total_type_count++;
     }
 
-	if( error_count > 0 )
-		sLog.Error("DGM_Type_Effects_Table::_Populate()","ERROR Populating the DGM_Type_Effects_Table memory object: %u of %u types failed to load!", error_count, total_type_count);
+	if( error_count > 0)
+        SysLog::Error("DGM_Type_Effects_Table::_Populate()", "ERROR Populating the DGM_Type_Effects_Table memory object: %u of %u types failed to load!", error_count, total_type_count);
 
-	sLog.Log("DGM_Type_Effects_Table", "%u total type effect objects loaded", total_type_count);
+    SysLog::Log("DGM_Type_Effects_Table", "%u total type effect objects loaded", total_type_count);
 
     //cleanup
     delete res;
@@ -714,10 +718,10 @@ void DGM_Skill_Bonus_Modifiers_Table::_Populate()
 		total_modifier_count++;
     }
 
-	if( error_count > 0 )
-		sLog.Error("DGM_Skill_Bonus_Modifiers_Table::_Populate()","ERROR Populating the DGM_Skill_Bonus_Modifiers_Table memory object: %u of %u skill bonus modifiers failed to load!", error_count, total_modifier_count);
+	if( error_count > 0)
+        SysLog::Error("DGM_Skill_Bonus_Modifiers_Table::_Populate()", "ERROR Populating the DGM_Skill_Bonus_Modifiers_Table memory object: %u of %u skill bonus modifiers failed to load!", error_count, total_modifier_count);
 
-	sLog.Log("DGM_Skill_Bonus_Modifiers_Table", "%u total modifier objects loaded", total_modifier_count);
+    SysLog::Log("DGM_Skill_Bonus_Modifiers_Table", "%u total modifier objects loaded", total_modifier_count);
 
     //cleanup
     delete res;
@@ -785,10 +789,10 @@ void DGM_Ship_Bonus_Modifiers_Table::_Populate()
 		total_modifier_count++;
     }
 
-	if( error_count > 0 )
-		sLog.Error("DGM_Ship_Bonus_Modifiers_Table::_Populate()","ERROR Populating the DGM_Ship_Bonus_Modifiers_Table memory object: %u of %u ship bonus modifiers failed to load!", error_count, total_modifier_count);
+	if( error_count > 0)
+        SysLog::Error("DGM_Ship_Bonus_Modifiers_Table::_Populate()", "ERROR Populating the DGM_Ship_Bonus_Modifiers_Table memory object: %u of %u ship bonus modifiers failed to load!", error_count, total_modifier_count);
 
-	sLog.Log("DGM_Ship_Bonus_Modifiers_Table", "%u total modifier objects loaded", total_modifier_count);
+    SysLog::Log("DGM_Ship_Bonus_Modifiers_Table", "%u total modifier objects loaded", total_modifier_count);
 
     //cleanup
     delete res;
@@ -936,7 +940,7 @@ void ModuleEffects::_populate(uint32 typeID)
 {
     //first get list of all of the effects associated with the typeID
     DBQueryResult *res = new DBQueryResult();
-	TypeEffectsList * myTypeEffectsListPtr = sDGM_Type_Effects_Table.GetTypeEffectsList(typeID);
+	TypeEffectsList * myTypeEffectsListPtr = DGM_Type_Effects_Table::GetTypeEffectsList(typeID);
 
 	// TODO: Instead of the above commented-out line, we need to get our list of effectIDs some other way NOT querying the DB,
 	// in other words, using the new sDGM_Type_Effects_Table object, then take that list of effectIDs to loop through and create
@@ -977,7 +981,7 @@ void ModuleEffects::_populate(uint32 typeID)
 						break;
 
 					default:
-						mEffectPtr = sDGM_Effects_Table.GetEffect(effectID);
+						mEffectPtr = DGM_Effects_Table::GetEffect(effectID);
 						break;
 				}
 
@@ -991,8 +995,8 @@ void ModuleEffects::_populate(uint32 typeID)
 					// which should really be the case anyway, for every effectID, so we just check the list of attributes
 					// that are modified by this effect for which module state during which the effect is active:
 					uint32 moduleStateWhenEffectApplied = mEffectPtr->GetModuleStateWhenEffectApplied();
-					if( moduleStateWhenEffectApplied == MOD_UNFITTED )
-						sLog.Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", mEffectPtr->GetModuleStateWhenEffectApplied());
+					if( moduleStateWhenEffectApplied == MOD_UNFITTED)
+                        SysLog::Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", mEffectPtr->GetModuleStateWhenEffectApplied());
 
 					if( moduleStateWhenEffectApplied & MOD_OFFLINE )
 						;	// nothing

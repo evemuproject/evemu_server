@@ -141,7 +141,7 @@ protected:
     {
         // check we are really loading a character type
         if( group.id() != EVEDB::invGroups::Character ) {
-            sLog.Error("Character", "Load of character type %u requested, but it's %s.", typeID, group.name().c_str() );
+            SysLog::Error("Character", "Load of character type %u requested, but it's %s.", typeID, group.name().c_str() );
             return NULL;
         }
 
@@ -626,7 +626,7 @@ protected:
         // check it's a character
         if( type.groupID() != EVEDB::invGroups::Character )
         {
-            sLog.Error("Character", "Trying to load %s as Character.", type.group().name().c_str() );
+            SysLog::Error("Character", "Trying to load %s as Character.", type.group().name().c_str() );
             return RefPtr<_Ty>();
         }
         // cast the type

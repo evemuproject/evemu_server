@@ -56,9 +56,9 @@ void EVETCPConnection::QueueRep( const PyRep* rep )
     buf->ResizeAt( bufLen, 1 );
 
     if( !MarshalDeflate( rep, *buf ) )
-        sLog.Error( "Network", "Failed to marshal new packet." );
+        SysLog::Error( "Network", "Failed to marshal new packet." );
     else if( PACKET_SIZE_LIMIT < buf->size() )
-        sLog.Error( "Network", "Packet length %u exceeds hardcoded packet length limit %lu.", buf->size(), PACKET_SIZE_LIMIT );
+        SysLog::Error( "Network", "Packet length %u exceeds hardcoded packet length limit %lu.", buf->size(), PACKET_SIZE_LIMIT );
     else
     {
         //DumpBuffer( buf, PACKET_OUTBOUND );
@@ -85,7 +85,7 @@ PyRep* EVETCPConnection::PopRep()
     if( NULL != packet )
     {
         if( PACKET_SIZE_LIMIT < packet->size() )
-            sLog.Error( "Network", "Packet length %lu exceeds hardcoded packet length limit %u.", packet->size(), PACKET_SIZE_LIMIT );
+            SysLog::Error( "Network", "Packet length %lu exceeds hardcoded packet length limit %u.", packet->size(), PACKET_SIZE_LIMIT );
         else
         {
             //DumpBuffer( packet, PACKET_INBOUND );

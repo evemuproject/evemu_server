@@ -239,12 +239,12 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     idata.locationID = cdata.stationID; // Just so our starting items end up in the same place.
 
     // Change starting corperation based on value in XML file.
-    if( sConfig.character.startCorporation ) { // Skip if 0
-        if (CharacterDB::DoesCorporationExist(sConfig.character.startCorporation))
+    if( EVEServerConfig::character.startCorporation ) { // Skip if 0
+        if (CharacterDB::DoesCorporationExist(EVEServerConfig::character.startCorporation))
         {
-            cdata.corporationID = sConfig.character.startCorporation;
+            cdata.corporationID = EVEServerConfig::character.startCorporation;
         } else {
-            codelog(SERVICE__WARNING, "Could not find default Corporation ID %u. Using Career Defaults instead.", sConfig.character.startCorporation);
+            codelog(SERVICE__WARNING, "Could not find default Corporation ID %u. Using Career Defaults instead.", EVEServerConfig::character.startCorporation);
         }
     }
     else
@@ -261,10 +261,10 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     }
 
     // Added ability to set starting station in xml config by Pyrii
-    if( sConfig.character.startStation ) { // Skip if 0
-        if (!CharacterDB::GetLocationByStation(sConfig.character.startStation, cdata))
+    if( EVEServerConfig::character.startStation ) { // Skip if 0
+        if (!CharacterDB::GetLocationByStation(EVEServerConfig::character.startStation, cdata))
         {
-            codelog(SERVICE__WARNING, "Could not find default station ID %u. Using Career Defaults instead.", sConfig.character.startStation);
+            codelog(SERVICE__WARNING, "Could not find default station ID %u. Using Career Defaults instead.", EVEServerConfig::character.startStation);
         }
     }
     else
@@ -282,9 +282,9 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     }
 
     cdata.bounty = 0;
-    cdata.balance = sConfig.character.startBalance;
+    cdata.balance = EVEServerConfig::character.startBalance;
     cdata.aurBalance = 0; // TODO Add aurBalance to the database
-    cdata.securityRating = sConfig.character.startSecRating;
+    cdata.securityRating = EVEServerConfig::character.startSecRating;
     cdata.logonMinutes = 0;
     cdata.title = "No Title";
 
@@ -388,7 +388,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     _log( CLIENT__MESSAGE, "Sending char create ID %u as reply", char_item->itemID() );
 
     // we need to report the charID to the ImageServer so it can correctly assign a previously received image
-    sImageServer.ReportNewCharacter(call.client->GetAccountID(), char_item->itemID());
+    ImageServer::ReportNewCharacter(call.client->GetAccountID(), char_item->itemID());
 
     // Release the item factory now that the character is finished being accessed:
     ItemFactory::UnsetUsingClient();

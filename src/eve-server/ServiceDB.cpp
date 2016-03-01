@@ -30,9 +30,9 @@
 #include "ServiceDB.h"
 
 /**
- * @todo add auto account stuff ...//sConfig.account.autoAccountRole
- *       accountID = CreateNewAccount( login, pass, sConfig.account.autoAccountRole );
- *       role = sConfig.account.autoAccountRole;
+ * @todo add auto account stuff ...//EVEServerConfig::account.autoAccountRole
+ *       accountID = CreateNewAccount( login, pass, EVEServerConfig::account.autoAccountRole );
+ *       role = EVEServerConfig::account.autoAccountRole;
  */
 
 bool ServiceDB::GetAccountInformation( const char* username, const char* password, AccountInfo & account_info )
@@ -45,15 +45,15 @@ bool ServiceDB::GetAccountInformation( const char* username, const char* passwor
     DBQueryResult res;
     if( !DBcore::RunQuery( res, "SELECT accountID, password, hash, role, online, banned, logonCount, lastLogin FROM account WHERE accountName = '%s'", _escaped_username.c_str() ) )
     {
-        sLog.Error( "ServiceDB", "Error in query: %s.", res.error.c_str() );
+        SysLog::Error( "ServiceDB", "Error in query: %s.", res.error.c_str() );
         return false;
     }
 
     DBResultRow row;
     if (!res.GetRow( row )) {
 		// account not found, create new one if autoAccountRole is not zero (0)
-		if(sConfig.account.autoAccountRole > 0) {
-			uint32 accountID = CreateNewAccount( _username.c_str(), password, sConfig.account.autoAccountRole);
+		if(EVEServerConfig::account.autoAccountRole > 0) {
+			uint32 accountID = CreateNewAccount( _username.c_str(), password, EVEServerConfig::account.autoAccountRole);
 			if( accountID > 0 ) {
 				// add new account successful, get account info again
 				bool ret = GetAccountInformation(username, password, account_info);
@@ -99,7 +99,7 @@ bool ServiceDB::UpdateAccountHash( const char* username, std::string & hash )
 
     if(!DBcore::RunQuery(err, "UPDATE account SET password='',hash='%s' where accountName='%s'", escaped_hash.c_str(), escaped_username.c_str())) {
 
-        sLog.Error( "AccountDB", "Unable to update account information for: %s.", username );
+        SysLog::Error( "AccountDB", "Unable to update account information for: %s.", username );
         return false;
     }
 
@@ -114,7 +114,7 @@ bool ServiceDB::UpdateAccountInformation( const char* username, bool isOnline )
 
     DBcore::DoEscapeString(escaped_username, user_name);
     if(!DBcore::RunQuery(err, "UPDATE account SET lastLogin=now(), logonCount=logonCount+1, online=%u where accountName='%s'", isOnline, escaped_username.c_str())) {
-        sLog.Error( "AccountDB", "Unable to update account information for: %s.", username );
+        SysLog::Error( "AccountDB", "Unable to update account information for: %s.", username );
         return false;
     }
 
@@ -131,7 +131,7 @@ uint32 ServiceDB::CreateNewAccount( const char* login, const char* pass, uint64 
         " VALUES ( '%s', '%s', %" PRIu64 " )",
         login, pass, role ) )
     {
-        sLog.Error( "ServiceDB", "Failed to create a new account '%s': %s.", login, err.c_str() );
+        SysLog::Error( "ServiceDB", "Failed to create a new account '%s': %s.", login, err.c_str() );
         return 0;
     }
 

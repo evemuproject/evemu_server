@@ -188,7 +188,7 @@ PyResult CorporationService::Handle_GetAllCorpMedals( PyCallArgs& call )
         return NULL;
     }
 
-    sLog.Debug( "CorporationService", "Called GetAllCorpMedals stub." );
+    SysLog::Debug( "CorporationService", "Called GetAllCorpMedals stub." );
 
     PyList* res = new PyList;
 
@@ -219,7 +219,7 @@ PyResult CorporationService::Handle_GetRecruitmentAdTypes( PyCallArgs& call )
 {
     //no args
 
-    sLog.Debug( "CorporationService", "Called GetRecruitmentAdTypes stub." );
+    SysLog::Debug( "CorporationService", "Called GetRecruitmentAdTypes stub." );
 
     util_Rowset rs;
 
@@ -246,7 +246,7 @@ PyResult CorporationService::Handle_GetRecruitmentAdsByCriteria( PyCallArgs& cal
         return NULL;
     }
 
-    sLog.Debug( "CorporationService", "Called GetRecruitmentAdsByCriteria stub." );
+    SysLog::Debug( "CorporationService", "Called GetRecruitmentAdsByCriteria stub." );
 
     util_Rowset rs;
 

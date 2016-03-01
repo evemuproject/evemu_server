@@ -28,11 +28,11 @@
 #include "system/WrecksAndLoot.h"
 #include "system/SystemDB.h"
 
+std::map<uint32, uint32> DGM_Types_to_Wrecks_Table::m_WrecksToTypesMap;
 
 // ////////////////////// DGM_Types_to_Wrecks_Table Class ////////////////////////////
 DGM_Types_to_Wrecks_Table::DGM_Types_to_Wrecks_Table()
 {
-    m_WrecksToTypesMap.clear();
 }
 
 DGM_Types_to_Wrecks_Table::~DGM_Types_to_Wrecks_Table()
@@ -41,6 +41,8 @@ DGM_Types_to_Wrecks_Table::~DGM_Types_to_Wrecks_Table()
 
 int DGM_Types_to_Wrecks_Table::Initialize()
 {
+    m_WrecksToTypesMap.clear();
+
     _Populate();
 
     return 1;
@@ -69,7 +71,7 @@ void DGM_Types_to_Wrecks_Table::_Populate()
 		total_wreck_count++;
     }
 
-	sLog.Log("DGM_Types_to_Wrecks_Table", "%u total wreck objects loaded", total_wreck_count);
+    SysLog::Log("DGM_Types_to_Wrecks_Table", "%u total wreck objects loaded", total_wreck_count);
 
     //cleanup
     delete res;

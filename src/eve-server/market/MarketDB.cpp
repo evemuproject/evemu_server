@@ -150,7 +150,7 @@ PyRep *MarketDB::GetOrders( uint32 regionID, uint32 typeID )
         PyDecRef( tup );
         return NULL;
     }
-    sLog.Debug("MarketDB::GetOrders", "Fetched %d sell orders for type %d", res.GetRowCount(), typeID);
+    SysLog::Debug("MarketDB::GetOrders", "Fetched %d sell orders for type %d", res.GetRowCount(), typeID);
 
     //this is wrong.
     tup->AddItem( DBResultToCRowset( res ) );
@@ -169,7 +169,7 @@ PyRep *MarketDB::GetOrders( uint32 regionID, uint32 typeID )
         PyDecRef( tup );
         return NULL;
     }
-    sLog.Debug("MarketDB::GetOrders", "Fetched %d buy orders for type %d", res.GetRowCount(), typeID);
+    SysLog::Debug("MarketDB::GetOrders", "Fetched %d buy orders for type %d", res.GetRowCount(), typeID);
 
     //this is wrong.
     tup->AddItem( DBResultToCRowset( res ) );

@@ -607,7 +607,7 @@ SkillRef Character::GetSkillInTraining() const
     InventoryItemRef item;
     if (!FindSingleByFlag(flagSkillInTraining, item))
     {
-        //sLog.Debug("Character","unable to find skill in training");
+        //Log::Debug("Character","unable to find skill in training");
     }
 
     return SkillRef::StaticCast( item );
@@ -838,7 +838,7 @@ void Character::StopTraining()
     }
     // Set skill points trained.
     stopTraining->SetAttribute(AttrSkillPoints, totalPointsTrained);
-    sLog.Debug("", "Skill %s (%u) trained %f skill points before termination from training queue", stopTraining->itemName().c_str(), stopTraining->itemID(), totalPointsTrained);
+    SysLog::Debug("", "Skill %s (%u) trained %f skill points before termination from training queue", stopTraining->itemName().c_str(), stopTraining->itemID(), totalPointsTrained);
 
     // Set flag to just be a skill.
     stopTraining->SetFlag(flagSkill);
@@ -983,8 +983,8 @@ SkillRef Character::StartTraining(uint32 skillID, uint64 nextStartTime)
     // Save changes to this skill before removing it from training:
     startTraining->SaveItem();
 
-    sLog.Debug("Character::UpdateSkillQueue()", "  Training skill at %f SP/min with %f SP to next Level of %d", SPPerMinute, SPToNextLevel, skillLevel);
-    sLog.Debug("    ", "Calculated time to complete training = %s", Win32TimeToString((uint64) timeTraining).c_str());
+    SysLog::Debug("Character::UpdateSkillQueue()", "  Training skill at %f SP/min with %f SP to next Level of %d", SPPerMinute, SPToNextLevel, skillLevel);
+    SysLog::Debug("    ", "Calculated time to complete training = %s", Win32TimeToString((uint64) timeTraining).c_str());
 
     // Add event to database.
     uint32 method = 36; // 36 - SkillTrainingStarted
@@ -1061,7 +1061,7 @@ void Character::UpdateSkillQueue()
             continue;
         }
         // Training has been finished:
-        sLog.Debug( "Character::UpdateSkillQueue()", "%s (%u): Finishing training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID() );
+        SysLog::Debug( "Character::UpdateSkillQueue()", "%s (%u): Finishing training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID() );
 
         // Get new skill Level.
         int skillLevel = currentTraining->GetAttribute(AttrSkillLevel).get_int() + 1;
@@ -1380,7 +1380,7 @@ void Character::SaveCharacter()
     // Calculate total Skill Points trained at this time to save to DB:
     _CalculateTotalSPTrained();
 
-    sLog.Debug( "Character::SaveCharacter()", "Saving all basic character info and attribute info to DB for character %s...", itemName().c_str() );
+    SysLog::Debug( "Character::SaveCharacter()", "Saving all basic character info and attribute info to DB for character %s...", itemName().c_str() );
     // character data
     InventoryDB::SaveCharacter(
         itemID(),
@@ -1434,7 +1434,7 @@ void Character::SaveFullCharacter()
 {
     _log( ITEM__TRACE, "Saving character %u.", itemID() );
 
-    sLog.Debug( "Character::SaveFullCharacter()", "Saving FULL set of character info, skills, items, etc to DB for character %s...", itemName().c_str() );
+    SysLog::Debug( "Character::SaveFullCharacter()", "Saving FULL set of character info, skills, items, etc to DB for character %s...", itemName().c_str() );
 
 	// First save basic character info and attributes:
 	SaveCharacter();

@@ -177,7 +177,7 @@ PyResult CorpRegistryBound::Handle_GetInfoWindowDataForChar( PyCallArgs& call )
 {
     //takes characterID
 
-    sLog.Debug( "CorpRegistryBound", "Called GetInfoWindowDataForChar stub." );
+    SysLog::Debug( "CorpRegistryBound", "Called GetInfoWindowDataForChar stub." );
 
     return new PyNone;
 }
@@ -186,7 +186,7 @@ PyResult CorpRegistryBound::Handle_GetLockedItemLocations( PyCallArgs& call )
 {
     //takes characterID
 
-    sLog.Debug( "CorpRegistryBound", "Called GetLockedItemLocations stub." );
+    SysLog::Debug( "CorpRegistryBound", "Called GetLockedItemLocations stub." );
 
     //this returns an empty list for me on live.
     return new PyList;
@@ -216,7 +216,7 @@ PyResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
     }
 
     //first make sure the char can even afford it.
-    int32 corp_cost = sConfig.rates.corporationStartupCost;
+    int32 corp_cost = EVEServerConfig::rates.corporationStartupCost;
 
     if(call.client->GetBalance() < double(corp_cost)) {
         _log(SERVICE__ERROR, "%s: Cannot afford corporation startup costs!", call.client->GetName());
@@ -308,7 +308,7 @@ bool CorpRegistryBound::JoinCorporation(Client *who, uint32 newCorpID, const Cor
 PyResult CorpRegistryBound::Handle_GetMember(PyCallArgs &call) {
 //    uint32 item = 0;
     //item += 1;
-    sLog.Debug( "CorpRegistryBound", "Called GetMember stub." );
+    SysLog::Debug( "CorpRegistryBound", "Called GetMember stub." );
     return NULL;
 }
 
@@ -371,7 +371,7 @@ PyClass
 */
 PyResult CorpRegistryBound::Handle_GetMembers(PyCallArgs &call) {
 
-    sLog.Debug( "CorpRegistryBound", "Called GetMembers stub." );
+    SysLog::Debug( "CorpRegistryBound", "Called GetMembers stub." );
     return NULL;
 }
 
@@ -1007,7 +1007,7 @@ PyResult CorpRegistryBound::Handle_UpdateLogo(PyCallArgs &call) {
 }
 
 PyResult CorpRegistryBound::Handle_GetSharesByShareholder(PyCallArgs &call) {
-    sLog.Log("CorpRegisrtyBound", "Called GetSharesByShareholder stub.");
+    SysLog::Log("CorpRegisrtyBound", "Called GetSharesByShareholder stub.");
 
     return NULL;
 }

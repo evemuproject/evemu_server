@@ -61,13 +61,13 @@ MailingListMgrService::~MailingListMgrService()
 PyResult MailingListMgrService::Handle_GetJoinedLists(PyCallArgs& call)
 {
     // no args
-    sLog.Debug("MailingListMgrService", "Called GetJoinedLists stub" );
+    SysLog::Debug("MailingListMgrService", "Called GetJoinedLists stub" );
     return new PyDict();
 }
 
 PyResult MailingListMgrService::Handle_Create(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called Create stub" );
+    SysLog::Debug("MailingListMgrService", "Called Create stub" );
     Call_CreateMailingList args;
     if (!args.Decode(&call.tuple))
     {
@@ -80,7 +80,7 @@ PyResult MailingListMgrService::Handle_Create(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_Join(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called Join stub" );
+    SysLog::Debug("MailingListMgrService", "Called Join stub" );
     Call_SingleStringArg args;
     if(!args.Decode(&call.tuple)) {
         codelog(CLIENT__ERROR, "Failed to decode Join args");
@@ -94,7 +94,7 @@ PyResult MailingListMgrService::Handle_Join(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_Leave(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called Leave stub" );
+    SysLog::Debug("MailingListMgrService", "Called Leave stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {
@@ -109,7 +109,7 @@ PyResult MailingListMgrService::Handle_Leave(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_Delete(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called Delete stub" );
+    SysLog::Debug("MailingListMgrService", "Called Delete stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {
@@ -124,7 +124,7 @@ PyResult MailingListMgrService::Handle_Delete(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_KickMembers(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called KickMembers stub" );
+    SysLog::Debug("MailingListMgrService", "Called KickMembers stub" );
     Call_MemberList args;
     if (!args.Decode(&call.tuple))
     {
@@ -137,7 +137,7 @@ PyResult MailingListMgrService::Handle_KickMembers(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_GetMembers(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called GetMembers stub" );
+    SysLog::Debug("MailingListMgrService", "Called GetMembers stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {
@@ -152,7 +152,7 @@ PyResult MailingListMgrService::Handle_GetMembers(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SetEntityAccess(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SetEntityAccess stub" );
+    SysLog::Debug("MailingListMgrService", "Called SetEntityAccess stub" );
     Call_SetEntityAccess args;
     if (!args.Decode(&call.tuple))
     {
@@ -165,7 +165,7 @@ PyResult MailingListMgrService::Handle_SetEntityAccess(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_ClearEntityAccess(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called ClearEntityAccess stub" );
+    SysLog::Debug("MailingListMgrService", "Called ClearEntityAccess stub" );
     Call_ClearEntityAccess args;
     if (!args.Decode(&call.tuple))
     {
@@ -178,7 +178,7 @@ PyResult MailingListMgrService::Handle_ClearEntityAccess(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SetMembersMuted(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SetMembersMuted stub" );
+    SysLog::Debug("MailingListMgrService", "Called SetMembersMuted stub" );
     Call_MemberList args;
     if (!args.Decode(&call.tuple))
     {
@@ -190,7 +190,7 @@ PyResult MailingListMgrService::Handle_SetMembersMuted(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SetMembersOperator(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SetMembersOperator stub" );
+    SysLog::Debug("MailingListMgrService", "Called SetMembersOperator stub" );
     Call_MemberList args;
     if (!args.Decode(&call.tuple))
     {
@@ -202,7 +202,7 @@ PyResult MailingListMgrService::Handle_SetMembersOperator(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SetMembersClear(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SetMembersClear stub" );
+    SysLog::Debug("MailingListMgrService", "Called SetMembersClear stub" );
     Call_MemberList args;
     if (!args.Decode(&call.tuple))
     {
@@ -214,7 +214,7 @@ PyResult MailingListMgrService::Handle_SetMembersClear(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SetDefaultAccess(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SetDefaultAccess stub" );
+    SysLog::Debug("MailingListMgrService", "Called SetDefaultAccess stub" );
     Call_SetDefaultAccess args;
     if (!args.Decode(&call.tuple))
     {
@@ -226,7 +226,7 @@ PyResult MailingListMgrService::Handle_SetDefaultAccess(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_GetInfo(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called GetInfo stub" );
+    SysLog::Debug("MailingListMgrService", "Called GetInfo stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {
@@ -240,7 +240,7 @@ PyResult MailingListMgrService::Handle_GetInfo(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_GetSettings(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called GetSettings stub" );
+    SysLog::Debug("MailingListMgrService", "Called GetSettings stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {
@@ -254,7 +254,7 @@ PyResult MailingListMgrService::Handle_GetSettings(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_GetWelcomeMail(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called GetWelcomeMail stub" );
+    SysLog::Debug("MailingListMgrService", "Called GetWelcomeMail stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {
@@ -268,7 +268,7 @@ PyResult MailingListMgrService::Handle_GetWelcomeMail(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SaveWelcomeMail(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SaveWelcomeMail stub" );
+    SysLog::Debug("MailingListMgrService", "Called SaveWelcomeMail stub" );
     Call_SaveWelcomeMail args;
     if (!args.Decode(&call.tuple))
     {
@@ -280,7 +280,7 @@ PyResult MailingListMgrService::Handle_SaveWelcomeMail(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_SendWelcomeMail(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called SendWelcomeMail stub" );
+    SysLog::Debug("MailingListMgrService", "Called SendWelcomeMail stub" );
     Call_SaveWelcomeMail args;
     if (!args.Decode(&call.tuple))
     {
@@ -292,7 +292,7 @@ PyResult MailingListMgrService::Handle_SendWelcomeMail(PyCallArgs& call)
 
 PyResult MailingListMgrService::Handle_ClearWelcomeMail(PyCallArgs& call)
 {
-    sLog.Debug("MailingListMgrService", "Called ClearWelcomeMail stub" );
+    SysLog::Debug("MailingListMgrService", "Called ClearWelcomeMail stub" );
     Call_SingleIntegerArg args;
     if (!args.Decode(&call.tuple))
     {

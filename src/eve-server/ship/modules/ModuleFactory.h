@@ -47,7 +47,7 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
 
     if( (item->categoryID() != EVEDB::invCategories::Module) && (item->categoryID() != EVEDB::invCategories::Subsystem) )
     {
-        sLog.Error("ModuleFactory","Cannot create module from non module type item");
+        SysLog::Error("ModuleFactory","Cannot create module from non module type item");
         assert(false);
     }
     else
@@ -237,7 +237,7 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
 
     // THIS IS A MAJOR PROBLEM IF CODE EXECUTION MAKES IT TO THIS POINT,
     // IT WILL CRASH THE SERVER IF NULL IS RETURNED:
-    sLog.Error( "ModuleFactory::ModuleFactory()", "CRITICAL!  NO Module Group was found for item '%s' (itemID = %u)", item->itemName().c_str(), item->itemID() );
+    SysLog::Error( "ModuleFactory::ModuleFactory()", "CRITICAL!  NO Module Group was found for item '%s' (itemID = %u)", item->itemName().c_str(), item->itemID() );
     return NULL;
 }
 

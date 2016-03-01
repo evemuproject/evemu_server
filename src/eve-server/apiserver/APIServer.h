@@ -41,36 +41,37 @@ class APIServiceManager;
  * @author Aknor Jaden
  * @date July 2011
  */
-class APIServer : public Singleton<APIServer>
+class APIServer
 {
-public:
+private:
     APIServer();
-    void Run();
-    void Stop();
-    void CreateServices();
+public:
+    static void Run();
+    static void Stop();
+    static void CreateServices();
 
-    std::string& url();
+    static std::string& url();
 
-    std::shared_ptr<std::vector<char> > GetXML(const APICommandCall * pAPICommandCall);
+    static std::shared_ptr<std::vector<char> > GetXML(const APICommandCall * pAPICommandCall);
 
     // used when the ImageServer can't find the image requested
     // this way we don't have to transfer over all the static NPC images
     static const char *const FallbackURL;
 
 private:
-    void RunInternal();
+    static void RunInternal();
 
-    std::unique_ptr<boost::asio::detail::thread> _ioThread;
-    std::unique_ptr<boost::asio::io_service> _io;
-    std::unique_ptr<APIServerListener> _listener;
-    std::string _url;
-    std::string _basePath;
-    boost::asio::detail::mutex _limboLock;
-    bool runonce;
+    static std::unique_ptr<boost::asio::detail::thread> _ioThread;
+    static std::unique_ptr<boost::asio::io_service> _io;
+    static std::unique_ptr<APIServerListener> _listener;
+    static std::string _url;
+    static std::string _basePath;
+    static boost::asio::detail::mutex _limboLock;
+    static bool runonce;
 
-    std::shared_ptr<std::string> m_xmlString;
+    static std::shared_ptr<std::string> m_xmlString;
 
-    std::map<std::string, APIServiceManager *> m_APIServiceManagers;    // We own these
+    static std::map<std::string, APIServiceManager *> m_APIServiceManagers; // We own these
 
     class Lock
     {
@@ -81,8 +82,5 @@ private:
         boost::asio::detail::mutex& _mutex;
     };
 };
-
-#define sAPIServer \
-    ( APIServer::get() )
 
 #endif // __APISERVER__H__INCL__

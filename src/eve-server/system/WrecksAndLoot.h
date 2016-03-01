@@ -31,26 +31,24 @@
 
 // This class is a singleton object, containing all Effects loaded from dgmEffects table as memory objects of type MEffect:
 class DGM_Types_to_Wrecks_Table
-: public Singleton< DGM_Types_to_Wrecks_Table >
 {
-public:
+private:
     DGM_Types_to_Wrecks_Table();
     ~DGM_Types_to_Wrecks_Table();
+public:
 
     // Initializes the Table:
-    int Initialize();
+    static int Initialize();
 
     // Returns typeID of wreck that is appropriate for the given typeID, returns 0 if no match
-    uint32 GetWreckID(uint32 typeID);
+    static uint32 GetWreckID(uint32 typeID);
 
 protected:
-    void _Populate();
+    static void _Populate();
 
-    std::map<uint32, uint32> m_WrecksToTypesMap;
+    static std::map<uint32, uint32> m_WrecksToTypesMap;
 };
 
-#define sDGM_Types_to_Wrecks_Table \
-    ( DGM_Types_to_Wrecks_Table::get() )
 // -----------------------------------------------------------------------
 
 

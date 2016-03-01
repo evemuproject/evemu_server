@@ -436,7 +436,7 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
                 break;
 
             default:
-                sLog.Error("AttributeMap::GetAttribute()", "unable to find attribute: %u for item %u, '%s' of type %u", attributeId, mItem.itemID(), mItem.itemName().c_str(), mItem.typeID());
+                SysLog::Error("AttributeMap::GetAttribute()", "unable to find attribute: %u for item %u, '%s' of type %u", attributeId, mItem.itemID(), mItem.itemName().c_str(), mItem.typeID());
                 break;
         }
 
@@ -485,7 +485,7 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 {
     if (attrChange == NULL)
     {
-        sLog.Error("AttributeMap", "unable to send NULL packet");
+        SysLog::Error("AttributeMap", "unable to send NULL packet");
         return false;
     }
 
@@ -504,7 +504,7 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
 
         if (client == NULL)
         {
-            //sLog.Error("AttributeMap::SendAttributeChanges()", "unable to find client:%u", mItem.ownerID());
+            //Log::Error("AttributeMap::SendAttributeChanges()", "unable to find client:%u", mItem.ownerID());
             //return false;
             return true;
         }
@@ -512,7 +512,7 @@ bool AttributeMap::SendAttributeChanges( PyTuple* attrChange )
         {
             if( client->Destiny() == NULL )
             {
-                //sLog.Warning( "AttributeMap::SendAttributeChanges()", "client->Destiny() returned NULL" );
+                //Log::Warning( "AttributeMap::SendAttributeChanges()", "client->Destiny() returned NULL" );
                 //return false;
             }
             else
@@ -530,7 +530,7 @@ bool AttributeMap::ResetAttribute(uint32 attrID, bool notify)
 
     if (!DBcore::RunQuery(res, "SELECT * FROM dgmTypeAttributes WHERE typeID='%u'", mItem.typeID()))
     {
-        sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
+        SysLog::Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
 
@@ -577,7 +577,7 @@ bool AttributeMap::Load()
     {
         if (!DBcore::RunQuery(res, "SELECT * FROM entity_default_attributes WHERE itemID='%u'", mItem.itemID()))
         {
-			sLog.Error("AttributeMap (DEFAULT)", "Error in db load query: %s", res.error.c_str());
+			SysLog::Error("AttributeMap (DEFAULT)", "Error in db load query: %s", res.error.c_str());
 			return false;
 		}
 	}
@@ -585,7 +585,7 @@ bool AttributeMap::Load()
     {
         if (!DBcore::RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID()))
         {
-			sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
+			SysLog::Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
 			return false;
 		}
 	}
@@ -612,7 +612,7 @@ bool AttributeMap::Load()
         DBQueryResult res;
 
         if(!DBcore::RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
-        sLog.Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
+        Log::Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
 
@@ -636,7 +636,7 @@ bool AttributeMap::Load()
             else if( !row.IsNull(3) )
                 attr_value = row.GetDouble(3);
             else
-                sLog.Error( "AttributeMap::Load()", "Both valueInt and valueFloat fields of this (itemID,attributeID) = (%u,%u) are NULL.", row.GetInt(0), attributeID );
+                Log::Error( "AttributeMap::Load()", "Both valueInt and valueFloat fields of this (itemID,attributeID) = (%u,%u) are NULL.", row.GetInt(0), attributeID );
 
             SetAttribute(attributeID, attr_value, false);
             //Add(attributeID, attr_value);
@@ -788,7 +788,7 @@ bool AttributeMap::Save()
 
         if (!success)
         {
-            sLog.Error("AttributeMap", "unable to save attribute");
+            SysLog::Error("AttributeMap", "unable to save attribute");
         }
     }
 
@@ -817,7 +817,7 @@ bool AttributeMap::Delete()
 			mItem.itemID()
 		))
 		{
-			sLog.Error( "AttributeMap::Delete()", "Failed to delete DEFAULT item %u: %s", mItem.itemID(), err.c_str());
+			SysLog::Error( "AttributeMap::Delete()", "Failed to delete DEFAULT item %u: %s", mItem.itemID(), err.c_str());
 			return false;
 		}
 	}
@@ -830,7 +830,7 @@ bool AttributeMap::Delete()
 			mItem.itemID()
 		))
 		{
-			sLog.Error( "AttributeMap::Delete()", "Failed to delete item %u: %s", mItem.itemID(), err.c_str());
+			SysLog::Error( "AttributeMap::Delete()", "Failed to delete item %u: %s", mItem.itemID(), err.c_str());
 			return false;
 		}
 	}

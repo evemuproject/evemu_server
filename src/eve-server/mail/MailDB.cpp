@@ -189,6 +189,6 @@ int MailDB::BitFromLabelID(int id)
             return i;
 
     // This just gets rid of a warning, code execution should never reach here.
-    sLog.Error("MailDB::BitFromLabelID", "ERROR: Could not get bit.");
+    SysLog::Error("MailDB::BitFromLabelID", "ERROR: Could not get bit.");
     return 0;
 }

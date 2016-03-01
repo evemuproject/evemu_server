@@ -34,11 +34,11 @@ APIAdminManager::APIAdminManager()
 
 std::shared_ptr<std::string> APIAdminManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
-    sLog.Debug("APIAdminManager::ProcessCall()", "EVEmu API - Admin Service Manager");
+    SysLog::Debug("APIAdminManager::ProcessCall()", "EVEmu API - Admin Service Manager");
 
     if( pAPICommandCall->find( "servicehandler" ) == pAPICommandCall->end() )
     {
-        sLog.Error( "APIAdminManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
+        SysLog::Error( "APIAdminManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
         return std::shared_ptr<std::string>(new std::string(""));
     }
 
@@ -46,7 +46,7 @@ std::shared_ptr<std::string> APIAdminManager::ProcessCall(const APICommandCall *
     //    return _TODO(pAPICommandCall);
     //else
     //{
-        sLog.Error("APIAdminManager::ProcessCall()", "EVEmu API - Admin Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
+        SysLog::Error("APIAdminManager::ProcessCall()", "EVEmu API - Admin Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
             pAPICommandCall->find("servicehandler")->second.c_str() );
         return std::shared_ptr<std::string>(new std::string(""));
     //}

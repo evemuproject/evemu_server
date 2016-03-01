@@ -34,7 +34,7 @@ APIMapManager::APIMapManager()
 
 std::shared_ptr<std::string> APIMapManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
-    sLog.Debug("APIMapManager::ProcessCall()", "EVEmu API - Map Service Manager");
+    SysLog::Debug("APIMapManager::ProcessCall()", "EVEmu API - Map Service Manager");
 
     return std::shared_ptr<std::string>(new std::string(""));
 }

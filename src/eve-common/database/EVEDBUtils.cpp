@@ -93,7 +93,7 @@ PyRep* DBColumnToPyRep( const DBResultRow& row, uint32 index )
             return new PyWString( row.GetText( index ), row.ColumnLength( index ) );
 
         default:
-            sLog.Error( "DBColumnToPyRep", "invalid column type: %u", type );
+            SysLog::Error( "DBColumnToPyRep", "invalid column type: %u", type );
             /* hack... MAJOR... */
 
         case DBTYPE_BYTES:
@@ -188,7 +188,7 @@ PyObject *DBResultToIndexRowset(DBQueryResult &result, const char *key) {
 
     if(key_index == cc)
     {
-        sLog.Error("EVEDBUtils", "DBResultToIndexRowset | Failed to find key column '%s' in result for IndexRowset", key);
+        SysLog::Error("EVEDBUtils", "DBResultToIndexRowset | Failed to find key column '%s' in result for IndexRowset", key);
         return NULL;
     }
 
@@ -471,7 +471,7 @@ PyDict *DBResultToPackedRowDict( DBQueryResult &result, const char *key )
 
     if(key_index == cc)
     {
-        sLog.Error("EVEDBUtils", "DBResultToPackedRowDict | Failed to find key column '%s' in result for CIndexRowset", key);
+        SysLog::Error("EVEDBUtils", "DBResultToPackedRowDict | Failed to find key column '%s' in result for CIndexRowset", key);
         return NULL;
     }
 
@@ -549,7 +549,7 @@ PyObjectEx *DBResultToCIndexedRowset( DBQueryResult &result, const char *key )
 
     if(key_index == cc)
     {
-        sLog.Error("EVEDBUtils", "DBResultToCIndexedRowset | Failed to find key column '%s' in result for CIndexRowset", key);
+        SysLog::Error("EVEDBUtils", "DBResultToCIndexedRowset | Failed to find key column '%s' in result for CIndexRowset", key);
         return NULL;
     }
 

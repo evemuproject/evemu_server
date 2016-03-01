@@ -32,7 +32,7 @@ PyObject *AccountDB::GetEntryTypes() {
 
     if(!DBcore::RunQuery(res, "SELECT refTypeID AS entryTypeID,refTypeText AS entryTypeName,description FROM market_refTypes"))
     {
-        sLog.Error("Account DB", "Error in query: %s", res.error.c_str());
+        SysLog::Error("Account DB", "Error in query: %s", res.error.c_str());
         return NULL;
     }
 
@@ -44,7 +44,7 @@ PyObject *AccountDB::GetKeyMap() {
 
     if(!DBcore::RunQuery(res, "SELECT accountKey AS keyID,accountType AS keyType,accountName AS keyName,description FROM market_keyMap"))
     {
-        sLog.Error("Account DB", "Error in query: %s", res.error.c_str());
+        SysLog::Error("Account DB", "Error in query: %s", res.error.c_str());
         return NULL;
     }
 
@@ -68,7 +68,7 @@ PyObject *AccountDB::GetJournal(uint32 charID, uint32 refTypeID, uint32 accountK
         "AND (0 = %u OR refTypeID = %u) "
         "AND characterID=%u" , dT, transDate, accountKey, refTypeID, refTypeID, charID))
     {
-        sLog.Error("Account DB", "Error in query: %s", res.error.c_str());
+        SysLog::Error("Account DB", "Error in query: %s", res.error.c_str());
         return NULL;
     }
 
@@ -96,7 +96,7 @@ bool ServiceDB::GiveCash( uint32 characterID, JournalRefType refTypeID, uint32 o
         "VALUES (%u,NULL,%" PRIu64 ",%u,%u,%u,\"%s\",%u,%u,%.2f,%.2f,\"%s\")",
         characterID, Win32TimeNow(), refTypeID, ownerFromID, ownerToID, eArg1.c_str(), accountID, accountKey, amount, balance, eReason.c_str()))
     {
-        sLog.Error("Service DB", "Error in query : %s", err.c_str());
+        SysLog::Error("Service DB", "Error in query : %s", err.c_str());
         return false;
     }
 
@@ -108,13 +108,13 @@ bool AccountDB::CheckIfCorporation(uint32 corpID) {
     DBResultRow row;
     if (!DBcore::RunQuery(res, "SELECT corporationID FROM corporation WHERE corporationID = %u ", corpID))
     {
-        sLog.Error("Service DB", "Error in query: %s", res.error.c_str());
+        SysLog::Error("Service DB", "Error in query: %s", res.error.c_str());
         return false;
     }
 
     if (!res.GetRow(row))
     {
-        sLog.Error("Service DB", "Failed to find corporation %u", corpID);
+        SysLog::Error("Service DB", "Failed to find corporation %u", corpID);
         return false;
     }
     return true;
@@ -124,7 +124,7 @@ bool ServiceDB::AddBalanceToCorp(uint32 corpID, double amount) {
     DBerror err;
     if (!DBcore::RunQuery(err, "UPDATE corporation SET balance = balance + (%lf) WHERE corporationID = %u ", amount, corpID))
     {
-        sLog.Error("Service DB", "Error in query: %s", err.c_str());
+        SysLog::Error("Service DB", "Error in query: %s", err.c_str());
         return false;
     }
     return true;
@@ -135,12 +135,12 @@ double ServiceDB::GetCorpBalance(uint32 corpID) {
     DBResultRow row;
     if (!DBcore::RunQuery(res, "SELECT balance FROM corporation WHERE corporationID = %u ", corpID))
     {
-        sLog.Error("Service DB", "Error in query: %s", res.error.c_str());
+        SysLog::Error("Service DB", "Error in query: %s", res.error.c_str());
         return 0.0;
     }
     if (!res.GetRow(row))
     {
-        sLog.Error("Service DB", "Corporation %u missing from database.", corpID);
+        SysLog::Error("Service DB", "Corporation %u missing from database.", corpID);
         return 0.0;
     }
     return row.GetDouble(0);

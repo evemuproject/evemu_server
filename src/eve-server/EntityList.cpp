@@ -57,7 +57,7 @@ void EntityList::Process()
         active_client = *client_cur;
         if(!active_client->ProcessNet())
         {
-            sLog.Log("Entity List", "Destroying client for account %u", active_client->GetAccountID());
+            SysLog::Log("Entity List", "Destroying client for account %u", active_client->GetAccountID());
             SafeDelete(active_client);
 
             client_tmp = client_cur++;
@@ -75,7 +75,7 @@ void EntityList::Process()
     /* capt: I wonder what this stuff should do... its spamming the console... */
     //if( destiny == true )
     //{
-        //sLog.Log("Entity List | Destiny Trace", "Triggering destiny tick for stamp %u", DestinyManager::GetStamp());
+        //Log::Log("Entity List | Destiny Trace", "Triggering destiny tick for stamp %u", DestinyManager::GetStamp());
     //}
 
     //first process any systems, watching for deletion.
@@ -93,7 +93,7 @@ void EntityList::Process()
 
         if(!active_system->Process())
         {
-            sLog.Log("Entity List", "Destroying system");
+            SysLog::Log("Entity List", "Destroying system");
             tmp = cur++;
             delete cur->second;
             m_systems.erase(tmp);
@@ -370,7 +370,7 @@ SystemManager *EntityList::FindOrBootSystem(uint32 systemID) {
     if(res != m_systems.end())
         return(res->second);
 
-    sLog.Log("Entity List", "Booting system %u", systemID);
+    SysLog::Log("Entity List", "Booting system %u", systemID);
 /*
     ItemData idata(
         5,

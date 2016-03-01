@@ -60,10 +60,10 @@ void ItemFactory::Shutdown()
 			if( ((float)items_saved / (float)total_item_count) > (current_percent_items_saved + 0.05) )
 			{
 				current_percent_items_saved = (float)items_saved / (float)total_item_count;
-				sLog.Log( "Saving Items", " %3.2f%%", (current_percent_items_saved * 100.0) );
+				SysLog::Log( "Saving Items", " %3.2f%%", (current_percent_items_saved * 100.0) );
 			}
         }
-		sLog.Log( "Saving Items", " COMPLETE!" );
+		SysLog::Log( "Saving Items", " COMPLETE!" );
     }
     // types
     {
@@ -339,7 +339,7 @@ void ItemFactory::_DeleteItem(uint32 itemID)
     std::map<uint32, InventoryItemRef>::iterator res = m_items.find( itemID );
     if( res == m_items.end() )
     {
-        sLog.Error("Item Factory", "Item ID %u not found when requesting deletion!", itemID );
+        SysLog::Error("Item Factory", "Item ID %u not found when requesting deletion!", itemID );
     }
     else
     {

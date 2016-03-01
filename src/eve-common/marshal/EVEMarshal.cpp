@@ -220,7 +220,7 @@ bool MarshalStream::VisitString( const PyString* rep )
     else
     {
         //string is long enough for a string table entry, check it.
-        const uint8 index = sMarshalStringTable.LookupIndex( rep->content() );
+        const uint8 index = MarshalStringTable::LookupIndex( rep->content() );
         if( STRING_TABLE_ERROR != index )
         {
             Put<uint8>( Op_PyStringTableItem );

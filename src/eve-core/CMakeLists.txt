@@ -69,7 +69,6 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/RefPtr.h"
      "${TARGET_INCLUDE_DIR}/utils/SafeMem.h"
      "${TARGET_INCLUDE_DIR}/utils/Seperator.h"
-     "${TARGET_INCLUDE_DIR}/utils/Singleton.h"
      "${TARGET_INCLUDE_DIR}/utils/str2conv.h"
      "${TARGET_INCLUDE_DIR}/utils/timer.h"
      "${TARGET_INCLUDE_DIR}/utils/utils_hex.h"

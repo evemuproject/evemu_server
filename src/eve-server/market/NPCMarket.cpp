@@ -35,7 +35,7 @@ void NPCMarket::CreateNPCMarketForRegion(uint32 regionID)
     if (!DBcore::RunQuery(err, "DELETE FROM market_orders WHERE duration > 90 AND regionID=%u", regionID))
     {
         _log(MARKET__ERROR, "Error in query: %s.", err.c_str());
-        sLog.Log("NPCMarket", "Failed to clear old NPC market for region %u", regionID);
+        SysLog::Log("NPCMarket", "Failed to clear old NPC market for region %u", regionID);
         return;
     }
 
@@ -74,7 +74,7 @@ void NPCMarket::CreateNPCMarket()
     if (!DBcore::RunQuery(err, "DELETE FROM market_orders WHERE duration > 90"))
     {
         _log(MARKET__ERROR, "Error in query: %s.", err.c_str());
-        sLog.Log("NPCMarket", "Failed to clear old NPC market for ALL regions.");
+        SysLog::Log("NPCMarket", "Failed to clear old NPC market for ALL regions.");
         return;
     }
 

@@ -28,7 +28,7 @@
 #include "marshal/EVEMarshalStringTable.h"
 
 /* we made up this list so we have efficient string communication with the client */
-const char* const MarshalStringTable::s_mStringTable[] =
+const char* const s_mStringTable[] =
 {
     "*corpid",
     "*locationid",
@@ -227,12 +227,43 @@ const char* const MarshalStringTable::s_mStringTable[] =
     "agent.StorylineMissionDetails",
 };
 
-const size_t MarshalStringTable::s_mStringTableSize = sizeof( MarshalStringTable::s_mStringTable ) / sizeof( const char* );
+typedef std::unordered_map<uint32, uint8> StringTableMap;
+typedef StringTableMap::iterator StringTableMapItr;
+typedef StringTableMap::const_iterator StringTableMapConstItr;
+
+const size_t s_mStringTableSize = sizeof ( s_mStringTable) / sizeof ( const char*);
+
+/**
+ * @brief djb2 algorithm taken from http://www.cse.yorku.ca/~oz/hash.html slightly modified
+ *
+ * @param[in] oStr string that needs to be hashed.
+ *
+ * @return djb2 has of the string.
+ */
+static uint32 hash(const char* str)
+{
+    uint32 hash = 5381;
+    int c;
+
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+    return hash;
+}
+
+StringTableMap getMarshalTable()
+{
+    StringTableMap table;
+    // table not initialize yet.
+    for (uint8 i = 1; i <= s_mStringTableSize; i++)
+    {
+        table.insert(std::make_pair(hash(MarshalStringTable::LookupString(i)), i));
+    }
+    return table;
+}
 
 MarshalStringTable::MarshalStringTable()
 {
-    for( uint8 i = 1; i <= s_mStringTableSize; i++ )
-        mStringTableMap.insert( std::make_pair( hash( LookupString( i ) ), i ) );
 }
 
 /* lookup a index using a string */
@@ -244,6 +275,7 @@ uint8 MarshalStringTable::LookupIndex( const std::string& str )
 /* lookup a index using a string */
 uint8 MarshalStringTable::LookupIndex( const char* str )
 {
+    static StringTableMap mStringTableMap = getMarshalTable();
     StringTableMapConstItr res = mStringTableMap.find( hash( str ) );
     if( mStringTableMap.end() == res )
         return STRING_TABLE_ERROR;

@@ -176,7 +176,7 @@ PyResult AgentMgrService::Handle_GetMyEpicJournalDetails( PyCallArgs& call )
 {
     //no args
 
-    sLog.Debug( "AgentMgrService", "Called GetMyEpicJournalDetails stub." );
+    SysLog::Debug( "AgentMgrService", "Called GetMyEpicJournalDetails stub." );
 
     return new PyList;
 }
@@ -184,7 +184,7 @@ PyResult AgentMgrService::Handle_GetMyEpicJournalDetails( PyCallArgs& call )
 
 PyResult AgentMgrService::Handle_GetSolarSystemOfAgent(PyCallArgs &call) {
 
-    sLog.Debug("AgentMgrService", "Called GetSolarSystemOfAgent Stub.");
+    SysLog::Debug("AgentMgrService", "Called GetSolarSystemOfAgent Stub.");
 
     return NULL;
 }
@@ -193,7 +193,7 @@ PyResult AgentMgrBound::Handle_GetInfoServiceDetails( PyCallArgs& call )
 {
     //takes no arguments
 
-    sLog.Debug( "AgentMgrBound", "Called GetInfoServiceDetails stub." );
+    SysLog::Debug( "AgentMgrBound", "Called GetInfoServiceDetails stub." );
 
     return new PyNone;
 }
@@ -215,7 +215,7 @@ PyResult AgentMgrBound::Handle_DoAction(PyCallArgs &call) {
     std::map<uint32, std::string> choices;
     if( !(args.arg->IsInt()) )
     {
-        sLog.Error( "AgentMgrBound::Handle_DoAction()", "args.arg->IsInt() failed.  Expected type Int, got type %s", args.arg->TypeString() );
+        SysLog::Error( "AgentMgrBound::Handle_DoAction()", "args.arg->IsInt() failed.  Expected type Int, got type %s", args.arg->TypeString() );
     }
     else
         m_agent->DoAction( call.client, args.arg->AsInt()->value(), res.agentSays, choices );
@@ -254,21 +254,21 @@ PyResult AgentMgrBound::Handle_GetMyJournalDetails(PyCallArgs &call) {
 
 PyResult AgentMgrBound::Handle_GetMissionBriefingInfo(PyCallArgs &call) {
 
-    sLog.Debug("Server", "Called GetMissionBriefingInfo Stub.");
+    SysLog::Debug("Server", "Called GetMissionBriefingInfo Stub.");
 
     return NULL;
 }
 
 PyResult AgentMgrBound::Handle_GetAgentLocationWrap(PyCallArgs &call) {
 
-    sLog.Debug("Server", "Called GetAgentLocationWrap Stub.");
+    SysLog::Debug("Server", "Called GetAgentLocationWrap Stub.");
 
     return NULL;
 }
 
 PyResult AgentMgrBound::Handle_GetMissionObjectiveInfo(PyCallArgs &call) {
 
-    sLog.Debug("Server", "Called GetMissionObjectiveInfo Stub.");
+    SysLog::Debug("Server", "Called GetMissionObjectiveInfo Stub.");
 
     return NULL;
 }

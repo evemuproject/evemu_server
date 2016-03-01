@@ -100,14 +100,14 @@ PyResult TutorialService::Handle_GetCategories(PyCallArgs &call)
 
 PyResult TutorialService::Handle_GetContextHelp( PyCallArgs& call )
 {
-    sLog.Debug( "TutorialService", "Called GetContextHelp stub." );
+    SysLog::Debug( "TutorialService", "Called GetContextHelp stub." );
 
     return new PyList;
 }
 
 PyResult TutorialService::Handle_GetCharacterTutorialState( PyCallArgs& call )
 {
-    sLog.Debug( "TutorialService", "Called GetCharacterTutorialState stub." );
+    SysLog::Debug( "TutorialService", "Called GetCharacterTutorialState stub." );
 
     util_Rowset rs;
     rs.lines = new PyList;
@@ -122,7 +122,7 @@ PyResult TutorialService::Handle_GetCharacterTutorialState( PyCallArgs& call )
 
 PyResult TutorialService::Handle_GetTutorialsAndConnections( PyCallArgs& call )
 {
-    sLog.Debug( "TutorialService", "Called GetTutorialsAndConnections stub." );
+    SysLog::Debug( "TutorialService", "Called GetTutorialsAndConnections stub." );
 
     return new PyNone;
 }

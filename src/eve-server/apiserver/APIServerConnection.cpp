@@ -110,7 +110,7 @@ void APIServerConnection::ProcessHeaders()
 
     if (get_chk_str.compare("GET") == 0)
     {
-        sLog.Debug( "APIServerConnection::ProcessHeaders()", "RECEIVED new HTTP GET request..." );
+        SysLog::Debug( "APIServerConnection::ProcessHeaders()", "RECEIVED new HTTP GET request..." );
 
         // Format of an HTTP GET query:
         // 0    5     10          20
@@ -166,21 +166,21 @@ void APIServerConnection::ProcessHeaders()
             m_apiCommandCall.insert( std::pair<std::string, std::string>( param, value ) );
         }
 
-        _xmlData = sAPIServer.GetXML(&m_apiCommandCall);
+        _xmlData = APIServer::GetXML(&m_apiCommandCall);
         if (!_xmlData)
         {
-            sLog.Error("APIServerConnection::ProcessHeaders()", "Unknown or malformed EVEmu API HTTP CMD Received:\r\n%s\r\n", query.c_str());
+            SysLog::Error("APIServerConnection::ProcessHeaders()", "Unknown or malformed EVEmu API HTTP CMD Received:\r\n%s\r\n", query.c_str());
             NotFound();
             return;
         }
 
         // Print out to the Log with basic info on the API call and all parameters and their values parsed out
-        sLog.Debug("APIServerConnection::ProcessHeaders()", "HTTP %s CMD Received: Service: %s, Handler: %s", _http_cmd_str.c_str(), _service.c_str(), _service_handler.c_str());
+        SysLog::Debug("APIServerConnection::ProcessHeaders()", "HTTP %s CMD Received: Service: %s, Handler: %s", _http_cmd_str.c_str(), _service.c_str(), _service_handler.c_str());
         APICommandCall::const_iterator cur, end;
         cur = m_apiCommandCall.begin();
         end = m_apiCommandCall.end();
         for (int i=1; cur != end; cur++, i++)
-            sLog.Debug("        ", "%d: param = %s,  value = %s", i, cur->first.c_str(), cur->second.c_str() );
+            SysLog::Debug("        ", "%d: param = %s,  value = %s", i, cur->first.c_str(), cur->second.c_str() );
 
         // first we have to send the responseOK, then our actual result
         boost::asio::async_write(_socket, _responseOK, boost::asio::transfer_all(), std::bind(&APIServerConnection::SendXML, shared_from_this()));
@@ -188,7 +188,7 @@ void APIServerConnection::ProcessHeaders()
     }
     else if (post_chk_str.compare("POST") == 0)
     {
-        sLog.Debug( "APIServerConnection::ProcessHeaders()", "RECEIVED new HTTP POST request..." );
+        SysLog::Debug( "APIServerConnection::ProcessHeaders()", "RECEIVED new HTTP POST request..." );
 
         // Format of an HTTP GET query:
         //
@@ -239,7 +239,7 @@ void APIServerConnection::ProcessHeaders()
         uint32 postDataBytes = atoi( request.c_str() );
         std::getline(stream, request, '\n');
 
-        sLog.Debug( "APIServerConnection::ProcessHeaders()", "    POST Content-Length = %u bytes", postDataBytes );
+        SysLog::Debug( "APIServerConnection::ProcessHeaders()", "    POST Content-Length = %u bytes", postDataBytes );
 
         // Keep reading lines until we get past the next "\r\n" line (blank line):
         while( request.compare( "\r" ) != 0 )
@@ -256,7 +256,7 @@ void APIServerConnection::ProcessHeaders()
             // Decode the arguments of the POST data block here since asio did NOT stop reading past the first "\r\n\r\n"
             //// DUPLICATE
             // Parse the query portion of the GET to a series of string pairs ("param", "value") from the URI
-            sLog.Debug( "APIServerConnection::ProcessHeaders()", "POST data found in ProcessHeaders() !  Parsing..." );
+            SysLog::Debug( "APIServerConnection::ProcessHeaders()", "POST data found in ProcessHeaders() !  Parsing..." );
             parameterCount = 0;
             while( (pos = request.find_first_of('=')) >= 0 )
             {
@@ -288,21 +288,21 @@ void APIServerConnection::ProcessHeaders()
                 boost::asio::async_read(_socket, _postBuffer, boost::asio::transfer_exactly(postDataBytes), std::bind(&APIServerConnection::ProcessPostData, shared_from_this()));
             }
 
-            _xmlData = sAPIServer.GetXML(&m_apiCommandCall);
+            _xmlData = APIServer::GetXML(&m_apiCommandCall);
             if (!_xmlData)
             {
-                sLog.Error("APIServerConnection::ProcessHeaders()", "Unknown or malformed EVEmu API HTTP CMD Received:\r\n%s\r\n", query.c_str());
+                SysLog::Error("APIServerConnection::ProcessHeaders()", "Unknown or malformed EVEmu API HTTP CMD Received:\r\n%s\r\n", query.c_str());
                 NotFound();
                 return;
             }
 
             // Print out to the Log with basic info on the API call and all parameters and their values parsed out
-            sLog.Debug("APIServerConnection::ProcessHeaders()", "HTTP %s CMD Received: Service: %s, Handler: %s", _http_cmd_str.c_str(), _service.c_str(), _service_handler.c_str());
+            SysLog::Debug("APIServerConnection::ProcessHeaders()", "HTTP %s CMD Received: Service: %s, Handler: %s", _http_cmd_str.c_str(), _service.c_str(), _service_handler.c_str());
             APICommandCall::const_iterator cur, end;
             cur = m_apiCommandCall.begin();
             end = m_apiCommandCall.end();
             for (int i=1; cur != end; cur++, i++)
-                sLog.Debug("        ", "%d: param = %s,  value = %s", i, cur->first.c_str(), cur->second.c_str() );
+                SysLog::Debug("        ", "%d: param = %s,  value = %s", i, cur->first.c_str(), cur->second.c_str() );
 
             // first we have to send the responseOK, then our actual result
             boost::asio::async_write(_socket, _responseOK, boost::asio::transfer_all(), std::bind(&APIServerConnection::SendXML, shared_from_this()));
@@ -337,7 +337,7 @@ void APIServerConnection::ProcessPostData()
     // Check for empty POST data block, and if empty, return without sending anything back:
     if( request.compare( "" ) == 0 )
     {
-        sLog.Error("APIServerConnection::ProcessPostData()", "POST data block is COMPLETELY EMPTY!!" );
+        SysLog::Error("APIServerConnection::ProcessPostData()", "POST data block is COMPLETELY EMPTY!!" );
         boost::asio::async_write(_socket, _responseNoContent, boost::asio::transfer_all(), std::bind(&APIServerConnection::Close, shared_from_this()));
         //NotFound();
         return;
@@ -366,21 +366,21 @@ void APIServerConnection::ProcessPostData()
         m_apiCommandCall.insert( std::pair<std::string, std::string>( param, value ) );
     }
 
-    _xmlData = sAPIServer.GetXML(&m_apiCommandCall);
+    _xmlData = APIServer::GetXML(&m_apiCommandCall);
     if (!_xmlData)
     {
-        sLog.Error("APIServerConnection::ProcessPostData()", "Unknown or malformed EVEmu API HTTP CMD Received:\r\n%s\r\n", query.c_str());
+        SysLog::Error("APIServerConnection::ProcessPostData()", "Unknown or malformed EVEmu API HTTP CMD Received:\r\n%s\r\n", query.c_str());
         NotFound();
         return;
     }
 
     // Print out to the Log with basic info on the API call and all parameters and their values parsed out
-    sLog.Debug("APIServerConnection::ProcessPostData()", "HTTP %s CMD Received: Service: %s, Handler: %s", _http_cmd_str.c_str(), _service.c_str(), _service_handler.c_str());
+    SysLog::Debug("APIServerConnection::ProcessPostData()", "HTTP %s CMD Received: Service: %s, Handler: %s", _http_cmd_str.c_str(), _service.c_str(), _service_handler.c_str());
     APICommandCall::const_iterator cur, end;
     cur = m_apiCommandCall.begin();
     end = m_apiCommandCall.end();
     for (int i=1; cur != end; cur++, i++)
-        sLog.Debug("        ", "%d: param = %s,  value = %s", i, cur->first.c_str(), cur->second.c_str() );
+        SysLog::Debug("        ", "%d: param = %s,  value = %s", i, cur->first.c_str(), cur->second.c_str() );
 
     // first we have to send the responseOK, then our actual result
     boost::asio::async_write(_socket, _responseOK, boost::asio::transfer_all(), std::bind(&APIServerConnection::SendXML, shared_from_this()));

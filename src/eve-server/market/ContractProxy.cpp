@@ -43,7 +43,7 @@ ContractProxyService::~ContractProxyService()
 }
 
 PyResult ContractProxyService::Handle_GetMyExpiredContractList(PyCallArgs &call) {
-    sLog.Debug("Server", "Called GetMyExpiredContractList Stub.");
+    SysLog::Debug("Server", "Called GetMyExpiredContractList Stub.");
 
     return NULL;
 }

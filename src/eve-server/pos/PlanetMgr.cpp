@@ -133,13 +133,13 @@ PyResult PlanetMgrService::Handle_GetMyLaunchesDetails(PyCallArgs &call) {
 }
 
 PyResult PlanetMgrBound::Handle_GetCommandPinsForPlanet(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GetCommandPinsForPlanet stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GetCommandPinsForPlanet stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_GetExtractorsForPlanet(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GetExtractorsForPlanet incomplete.");
+    SysLog::Debug("PlanetMgrBound", "Called GetExtractorsForPlanet incomplete.");
     /* Incomplete, Needs to retrieve data from tables that do not exist yet.
      * Currently stops the client from throwing errors.
      */
@@ -152,7 +152,7 @@ PyResult PlanetMgrBound::Handle_GetExtractorsForPlanet(PyCallArgs &call) {
 }
 
 PyResult PlanetMgrBound::Handle_GetPlanetInfo(PyCallArgs &call) {
-    sLog.Debug("Server", "Called GetPlanetInfo Incomplete.");
+    SysLog::Debug("Server", "Called GetPlanetInfo Incomplete.");
     /* Incomplete, needs to check if planet is colonised by char, if so, return full colony + planet data.
      * Right now every planet is un-colonised.
      */
@@ -195,7 +195,7 @@ PyResult PlanetMgrBound::Handle_GetPlanetResourceInfo(PyCallArgs &call) {
 }
 
 PyResult PlanetMgrBound::Handle_GetProgramResultInfo(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GetProgramResultInfo stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GetProgramResultInfo stub.");
 
     return NULL;
 }
@@ -244,64 +244,64 @@ PyResult PlanetMgrBound::Handle_GetResourceData(PyCallArgs &call) {
 }
 
 PyResult PlanetMgrBound::Handle_GMAddCommodity(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GMAddCommodity stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GMAddCommodity stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_GMConvertCommandCenter(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GMConvertCommandCenter stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GMConvertCommandCenter stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_GMForceInstallProgram(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GMForceInstallProgram stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GMForceInstallProgram stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_GMGetLocalDistributionReport(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GMGetLocalDistributionReport stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GMGetLocalDistributionReport stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_GMGetSynchedServerState(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GMGetSynchedServerState stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GMGetSynchedServerState stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_GMRunDepletionSim(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called GMRunDepletionSim stub.");
+    SysLog::Debug("PlanetMgrBound", "Called GMRunDepletionSim stub.");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserAbandonPlanet(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called UserAbandonPlanet stub.");
+    SysLog::Debug("PlanetMgrBound", "Called UserAbandonPlanet stub.");
     call.tuple->Dump(stdout, "[DEBUG] UAP: ");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserLaunchCommodities(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called UserLaunchCommodities stub.");
+    SysLog::Debug("PlanetMgrBound", "Called UserLaunchCommodities stub.");
     call.tuple->Dump(stdout, "[DEBUG] ULC: ");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserTransferCommodities(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called UserTransferCommodities stub.");
+    SysLog::Debug("PlanetMgrBound", "Called UserTransferCommodities stub.");
     call.tuple->Dump(stdout, "[DEBUG] UTC: ");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
-    sLog.Debug("PlanetMgrBound", "Called UserUpdateNetwork incomplete.");
+    SysLog::Debug("PlanetMgrBound", "Called UserUpdateNetwork incomplete.");
     call.tuple->Dump(stdout, "[DEBUG] UUN: ");
 
     UUNCommandList uuncl;
@@ -316,7 +316,7 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             codelog(CLIENT__ERROR, "Failed to decode args for UUNCommand");
             return NULL;
         }
-        sLog.Debug("PlanetMgrBound", "UserUpdateNetwork: loop: %u, command: %u", i, uunc.command);
+        SysLog::Debug("PlanetMgrBound", "UserUpdateNetwork: loop: %u, command: %u", i, uunc.command);
         switch(uunc.command) {
             case 1: //COMMAND_CREATEPIN
             {
@@ -331,9 +331,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->CreateCommandPin(uunccc.pinID, uunccc.typeID, uunccc.latitude, uunccc.longitude)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create command center");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create command center");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success creating command center");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating command center");
                     }
                 } else if(groupID == 1029 || groupID == 1030) {
                     /* Storage / Spaceport Pin
@@ -344,9 +344,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->CreateSpaceportPin(uuncsp.pinID2, uuncsp.typeID, uuncsp.latitude, uuncsp.longitude)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create storage/spaceport");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create storage/spaceport");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success creating storage/spaceport");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating storage/spaceport");
                     }
                 } else if(groupID == 1028) {
                     /* Process Pin
@@ -357,9 +357,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->CreateProcessPin(uuncsp.pinID2, uuncsp.typeID, uuncsp.latitude, uuncsp.longitude)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create process");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create process");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success creating process");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating process");
                     }
                 } else if(groupID == 1063) {
                     /* Extractor Pin
@@ -371,13 +371,13 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->CreateExtractorPin(uuncsp.pinID2, uuncsp.typeID, uuncsp.latitude, uuncsp.longitude)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create extractor");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create extractor");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success creating extractor");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating extractor");
                     }
                 }else {
                     // Invalid...
-                    sLog.Debug("PlanetMgrBound", "UserUpdateNetwork: INVALID CREATEPIN groupID");
+                    SysLog::Debug("PlanetMgrBound", "UserUpdateNetwork: INVALID CREATEPIN groupID");
                 }
                 break;
             }
@@ -386,9 +386,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                 //                                command_data           pinID2
                 uint32 pinID = uunc.command_data->GetItem(0)->AsTuple()->GetItem(1)->AsInt()->value();
                 if(!m_colony->RemovePin(pinID)){
-                    sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove pin");
+                    SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove pin");
                 }else {
-                    sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success removing pin");
+                    SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success removing pin");
                 }
                 break;
             }
@@ -401,9 +401,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->CreateLink(uunclc.src, uunclc.dest2, uunclc.level, true)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create link");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create link");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success creating link");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating link");
                     }
                 }else if(uunc.command_data->GetItem(0)->IsTuple()) {
                     UUNCLinkStandard uuncls;
@@ -412,13 +412,13 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->CreateLink(uuncls.src2, uuncls.dest2, uuncls.level, false)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create link");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create link");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success creating link");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating link");
                     }
                 }else {
                     //Invalid...
-                    sLog.Debug("PlanetMgrBound", "UserUpdateNetwork: INVALID CREATELINK");
+                    SysLog::Debug("PlanetMgrBound", "UserUpdateNetwork: INVALID CREATELINK");
                 }
                 break;
             }
@@ -428,17 +428,17 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     uint32 src = uunc.command_data->GetItem(0)->AsInt()->value();
                     uint32 dest2 = uunc.command_data->GetItem(1)->AsTuple()->GetItem(1)->AsInt()->value();
                     if(!m_colony->RemoveLink(src, dest2, true)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove link");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove link");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success removing link");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success removing link");
                     }
                 }else if(uunc.command_data->GetItem(0)->IsTuple()) {
                     uint32 src = uunc.command_data->GetItem(0)->AsTuple()->GetItem(1)->AsInt()->value();
                     uint32 dest2 = uunc.command_data->GetItem(1)->AsTuple()->GetItem(1)->AsInt()->value();
                     if(!m_colony->RemoveLink(src, dest2, false)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove link");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove link");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success removing link");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success removing link");
                     }
                 }
                 break;
@@ -452,9 +452,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if(!m_colony->UpgradeLink(uunclc.src, uunclc.dest2, uunclc.level, true)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to upgrade link");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to upgrade link");
                     }else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success upgrading link");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success upgrading link");
                     }
                 }else if(uunc.command_data->GetItem(0)->IsTuple()) {
                     UUNCLinkStandard uuncls;
@@ -463,9 +463,9 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
                     }
 
                     if (!m_colony->UpgradeLink(uuncls.src2, uuncls.dest2, uuncls.level, false)) {
-                        sLog.Error("PlanetMgrBound", "UserUpdateNetwork: Failed to upgrade link");
+                        SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to upgrade link");
                     } else {
-                        sLog.Success("PlanetMgrBound", "UserUpdateNetwork: Success upgrading link");
+                        SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success upgrading link");
                     }
                 }
                 break;

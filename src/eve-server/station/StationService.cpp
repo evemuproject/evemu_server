@@ -75,6 +75,6 @@ PyResult StationService::Handle_GetGuests(PyCallArgs &call) {
 
     return res;
 
-    //sLog.Debug("StationService", "Called GetGuests stub.");
+    //Log::Debug("StationService", "Called GetGuests stub.");
     //return NULL;
 }

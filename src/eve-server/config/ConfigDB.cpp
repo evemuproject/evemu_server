@@ -461,7 +461,7 @@ PyRep *ConfigDB::GetCelestialStatistic(uint32 celestialID) {
 
 PyRep *ConfigDB::GetDynamicCelestials(uint32 solarSystemID) {
 
-    sLog.Error("ConfigDB::GetDynamicCelestials", "This query is intentionally made to yield an empty result.  It must be re-worked to provide actual data!");
+    SysLog::Error("ConfigDB::GetDynamicCelestials", "This query is intentionally made to yield an empty result.  It must be re-worked to provide actual data!");
 
     const std::string query = " SELECT "
                               "     `itemID`, "

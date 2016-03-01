@@ -60,7 +60,7 @@ void ShipOperatorInterface::SendNotifyMsg( const char* fmt, va_list args )
 //        m_pNPC->SendNotifyMsg( fmt, args );
     else
     {
-        sLog.Error( "ShipOperatorInterface::SendNotifyMsg()", "ERROR: All Operator types should be accounted for" );
+        SysLog::Error( "ShipOperatorInterface::SendNotifyMsg()", "ERROR: All Operator types should be accounted for" );
         assert(false);
     }
 }
@@ -71,7 +71,7 @@ void ShipOperatorInterface::SendDogmaNotification( const char *notifyType, const
 		m_pClient->SendNotification( notifyType, idType, payload );
 	else
 	{
-		sLog.Error( "ShipOperatorInterface::SendNotification()", "ERROR: All Operator types should be accounted for" );
+		SysLog::Error( "ShipOperatorInterface::SendNotification()", "ERROR: All Operator types should be accounted for" );
 	}
 }
 
@@ -83,7 +83,7 @@ void ShipOperatorInterface::SendErrorMsg( const char* fmt, va_list args )
 //        m_pNPC->SendErrorMsg( fmt, args );
     else
     {
-        sLog.Error( "ShipOperatorInterface::SendErrorMsg()", "ERROR: All Operator types should be accounted for" );
+        SysLog::Error( "ShipOperatorInterface::SendErrorMsg()", "ERROR: All Operator types should be accounted for" );
         assert(false);
     }
 }
@@ -95,7 +95,7 @@ const char * ShipOperatorInterface::GetName() const
 //    else if( m_pNPC != NULL )
 //        return m_pNPC->GetChar() ? m_pNPC->GetChar()->itemName().c_str() : "(null)";
 
-    sLog.Error( "ShipOperatorInterface::GetName()", "ERROR: All Operator types should be accounted for" );
+    SysLog::Error( "ShipOperatorInterface::GetName()", "ERROR: All Operator types should be accounted for" );
     assert(false);
     return NULL;
 }
@@ -107,7 +107,7 @@ ShipRef ShipOperatorInterface::GetShip() const
 //    else if( m_pNPC != NULL )
 //        return ShipRef::StaticCast( m_pNPC->Item() );
 
-    sLog.Error( "ShipOperatorInterface::GetShip()", "ERROR: All Operator types should be accounted for" );
+    SysLog::Error( "ShipOperatorInterface::GetShip()", "ERROR: All Operator types should be accounted for" );
     assert(false);
 
     // Hack to get rid of warning, code execution should never reach this point
@@ -122,7 +122,7 @@ CharacterRef ShipOperatorInterface::GetChar() const
 //    else if( m_pNPC != NULL )
 //        return ShipRef::StaticCast( m_pNPC->Item() );
 
-    sLog.Error( "ShipOperatorInterface::GetChar()", "ERROR: All Operator types should be accounted for" );
+    SysLog::Error( "ShipOperatorInterface::GetChar()", "ERROR: All Operator types should be accounted for" );
     assert(false);
 
     // Hack to get rid of warning, code execution should never reach this point
@@ -137,7 +137,7 @@ DestinyManager * ShipOperatorInterface::GetDestiny()
 //    else if( m_pNPC != NULL )
 //        return m_pNPC->Destiny();
 
-    sLog.Error( "ShipOperatorInterface::GetDestiny()", "ERROR: All Operator types should be accounted for" );
+    SysLog::Error( "ShipOperatorInterface::GetDestiny()", "ERROR: All Operator types should be accounted for" );
     assert(false);
 
     // Hack to get rid of warning, code execution should never reach this point
@@ -152,7 +152,7 @@ SystemEntity * ShipOperatorInterface::GetSystemEntity()
 //    else if( m_pNPC != NULL )
 //        return static_cast<SystemEntity *>(m_pNPC);
 
-    sLog.Error( "ShipOperatorInterface::GetSystemEntity()", "ERROR: All Operator types should be accounted for" );
+    SysLog::Error( "ShipOperatorInterface::GetSystemEntity()", "ERROR: All Operator types should be accounted for" );
     assert(false);
 
     // Hack to get rid of warning, code execution should never reach this point
@@ -167,7 +167,7 @@ uint32 ShipOperatorInterface::GetLocationID() const
 //    else if( m_pNPC != NULL )
 //        return ShipRef::StaticCast( m_pNPC->Item() );
 
-    sLog.Error( "ShipOperatorInterface::GetLocationID()", "ERROR: All Operator types should be accounted for" );
+    SysLog::Error( "ShipOperatorInterface::GetLocationID()", "ERROR: All Operator types should be accounted for" );
     assert(false);
 
     // Hack to get rid of warning, code execution should never reach this point
@@ -182,7 +182,7 @@ void ShipOperatorInterface::MoveItem(uint32 itemID, uint32 location, EVEItemFlag
 //        return ShipRef::StaticCast( m_pNPC->Item() );
     else
     {
-        sLog.Error( "ShipOperatorInterface::MoveItem()", "ERROR: All Operator types should be accounted for" );
+        SysLog::Error( "ShipOperatorInterface::MoveItem()", "ERROR: All Operator types should be accounted for" );
         assert(false);
     }
 }

@@ -36,11 +36,11 @@ APIActiveObjectManager::APIActiveObjectManager()
 
 std::shared_ptr<std::string> APIActiveObjectManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
-    sLog.Debug("APIActiveObjectManager::ProcessCall()", "EVEmu API - Active Object Service Manager");
+    SysLog::Debug("APIActiveObjectManager::ProcessCall()", "EVEmu API - Active Object Service Manager");
 
     if( pAPICommandCall->find( "servicehandler" ) == pAPICommandCall->end() )
     {
-        sLog.Error( "APIActiveObjectManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
+        SysLog::Error( "APIActiveObjectManager::ProcessCall()", "Cannot find 'servicehandler' specifier in pAPICommandCall packet" );
         return std::shared_ptr<std::string>(new std::string(""));
     }
 /*
@@ -68,7 +68,7 @@ std::shared_ptr<std::string> APIActiveObjectManager::ProcessCall(const APIComman
     //    return _TODO(pAPICommandCall);
     else
     {
-        sLog.Error("APIActiveObjectManager::ProcessCall()", "EVEmu API - Active Object Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
+        Log::Error("APIActiveObjectManager::ProcessCall()", "EVEmu API - Active Object Service Manager - ERROR: Cannot resolve '%s' as a valid service query for Admin Service Manager",
             pAPICommandCall->find("servicehandler")->second.c_str() );
         return std::shared_ptr<std::string>(new std::string(""));
     }
@@ -89,14 +89,14 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
     std::string accountID;
     std::string keyTag;
 	\*
-    sLog.Debug("APIActiveObjectManager::_APIKeyRequest()", "EVEmu API - Active Object Service Manager - CALL: APIKeyRequest.xml.aspx");
+    Log::Debug("APIActiveObjectManager::_APIKeyRequest()", "EVEmu API - Active Object Service Manager - CALL: APIKeyRequest.xml.aspx");
 
     // 1: Decode arguments:
     if( pAPICommandCall->find( "username" ) != pAPICommandCall->end() )
         username = pAPICommandCall->find( "username" )->second;
     else
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'username' parameter found in call argument list - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'username' parameter found in call argument list - exiting with error" );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
@@ -104,7 +104,7 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
         password = pAPICommandCall->find( "password" )->second;
     else
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'password' parameter found in call argument list - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'password' parameter found in call argument list - exiting with error" );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
@@ -112,14 +112,14 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
         keyType = pAPICommandCall->find( "keytype" )->second;
     else
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'keytype' parameter found in call argument list - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'keytype' parameter found in call argument list - exiting with error" );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
     if( keyType != "full" )
         if( keyType != "limited" )
         {
-            sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: 'keytype' parameter has invalid value '%s' - exiting with error", keyType.c_str() );
+            Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: 'keytype' parameter has invalid value '%s' - exiting with error", keyType.c_str() );
             return BuildErrorXMLResponse( "203", "Authentication failure." );
         }
 
@@ -127,14 +127,14 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
         action = pAPICommandCall->find( "action" )->second;
     else
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'action' parameter found in call argument list - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: No 'action' parameter found in call argument list - exiting with error" );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
     if( action != "new" )
         if( action != "get" )
         {
-            sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: 'action' parameter has invalid value '%s' - exiting with error", action.c_str() );
+            Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: 'action' parameter has invalid value '%s' - exiting with error", action.c_str() );
             return BuildErrorXMLResponse( "203", "Authentication failure." );
         }
 
@@ -142,14 +142,14 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
     status = _AuthenticateUserNamePassword( username, password );
     if( !status )
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: username='%s' password='%s' does not authenticate.", username.c_str(), password.c_str() );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: username='%s' password='%s' does not authenticate.", username.c_str(), password.c_str() );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
     // 2a: Get accountID using username, now that it's been validated:
     status = m_db.GetAccountIdFromUsername( username, &accountID );
     if( !status )
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: username='%s' cannot be found in 'account' table.", username.c_str() );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: username='%s' cannot be found in 'account' table.", username.c_str() );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
@@ -189,7 +189,7 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
     status = m_db.GetApiAccountInfoUsingAccountID( accountID, &userID, &apiFullKey, &apiLimitedKey, &apiRole );
     if( !status )
     {
-        sLog.Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: username='%s' cannot be found in 'account' table.", username.c_str() );
+        Log::Error( "APIActiveObjectManager::_APIKeyRequest()", "ERROR: username='%s' cannot be found in 'account' table.", username.c_str() );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
@@ -217,13 +217,13 @@ std::shared_ptr<std::string> APIActiveObjectManager::_APIKeyRequest(const APICom
 std::shared_ptr<std::string> APIActiveObjectManager::_Characters(const APICommandCall * pAPICommandCall)
 {
 
-    sLog.Error( "APIActiveObjectManager::_Characters()", "TODO: Insert code to validate userID and apiKey" );
+    Log::Error( "APIActiveObjectManager::_Characters()", "TODO: Insert code to validate userID and apiKey" );
 	\*
-    sLog.Debug("APIActiveObjectManager::_Characters()", "EVEmu API - Account Service Manager - CALL: Characters.xml.aspx");
+    Log::Debug("APIActiveObjectManager::_Characters()", "EVEmu API - Account Service Manager - CALL: Characters.xml.aspx");
 
     if( pAPICommandCall->find( "userid" ) == pAPICommandCall->end() )
     {
-        sLog.Error( "APIActiveObjectManager::_Characters()", "ERROR: No 'userID' parameter found in call argument list - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_Characters()", "ERROR: No 'userID' parameter found in call argument list - exiting with error" );
         return BuildErrorXMLResponse( "106", "Must provide userID parameter for authentication." );
     }
 
@@ -239,13 +239,13 @@ std::shared_ptr<std::string> APIActiveObjectManager::_Characters(const APIComman
     status = m_db.GetAccountIdFromUserID( userID, &accountID );
     if( !status )
     {
-        sLog.Error( "APIActiveObjectManager::_Characters()", "ERROR: userID='%s' cannot be found in 'accountApi' table.", userID.c_str() );
+        Log::Error( "APIActiveObjectManager::_Characters()", "ERROR: userID='%s' cannot be found in 'accountApi' table.", userID.c_str() );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
     if( !( m_accountDB.GetCharactersList(accountID, charIDList, charNameList, charCorpIDList, charCorpNameList) ) )
     {
-        sLog.Error( "APIActiveObjectManager::_Characters()", "ERROR: m_accountDB.GetCharactersList() call failed for unknown reason - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_Characters()", "ERROR: m_accountDB.GetCharactersList() call failed for unknown reason - exiting with error" );
         BuildErrorXMLResponse( "9999", "EVEmu API Server: Account Manager - Characters.xml.aspx STUB" );
     }
 
@@ -281,11 +281,11 @@ std::shared_ptr<std::string> APIActiveObjectManager::_Characters(const APIComman
 
 std::shared_ptr<std::string> APIActiveObjectManager::_AccountStatus(const APICommandCall * pAPICommandCall)
 {
-    sLog.Error( "APIActiveObjectManager::_AccountStatus()", "TODO: Insert code to validate userID and apiKey" );
+    Log::Error( "APIActiveObjectManager::_AccountStatus()", "TODO: Insert code to validate userID and apiKey" );
 	\*
     if( pAPICommandCall->find( "userid" ) == pAPICommandCall->end() )
     {
-        sLog.Error( "APIActiveObjectManager::_AccountStatus()", "ERROR: No 'userID' parameter found in call argument list - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_AccountStatus()", "ERROR: No 'userID' parameter found in call argument list - exiting with error" );
         return BuildErrorXMLResponse( "106", "Must provide userID parameter for authentication." );
     }
 
@@ -294,13 +294,13 @@ std::shared_ptr<std::string> APIActiveObjectManager::_AccountStatus(const APICom
 
     if( !(m_db.GetAccountIdFromUserID( pAPICommandCall->find( "userid" )->second, &accountID )) )
     {
-        sLog.Error( "APIActiveObjectManager::_AccountStatus()", "ERROR: Could not find 'accountID' in 'accountApi' table - exiting with error" );
+        Log::Error( "APIActiveObjectManager::_AccountStatus()", "ERROR: Could not find 'accountID' in 'accountApi' table - exiting with error" );
         return BuildErrorXMLResponse( "106", "Must provide userID parameter for authentication." );
     }
 
     if( !(m_accountDB.GetAccountInfo( accountID, accountInfoList )) )
     {
-        sLog.Error( "APIActiveObjectManager::_AccountStatus()", "ERROR: Could not find 'accountID' in 'account' table; there is an invalid 'accountID' referenced by api account 'userID' = %s - exiting with error", pAPICommandCall->find( "userid" )->second.c_str() );
+        Log::Error( "APIActiveObjectManager::_AccountStatus()", "ERROR: Could not find 'accountID' in 'account' table; there is an invalid 'accountID' referenced by api account 'userID' = %s - exiting with error", pAPICommandCall->find( "userid" )->second.c_str() );
         return BuildErrorXMLResponse( "106", "Must provide userID parameter for authentication." );
     }
 

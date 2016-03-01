@@ -45,14 +45,14 @@ bool XMLParser::ParseFile( const char* file )
     m_pXML_Document = new TiXmlDocument( file );
     if( !m_pXML_Document->LoadFile() )
     {
-        sLog.Error( "XMLParser", "Unable to load '%s': %s.", file, m_pXML_Document->ErrorDesc() );
+        SysLog::Error( "XMLParser", "Unable to load '%s': %s.", file, m_pXML_Document->ErrorDesc() );
         return false;
     }
 
     TiXmlElement* root = m_pXML_Document->RootElement();
     if( NULL == root )
     {
-        sLog.Error( "XMLParser", "Unable to find root in '%s'.", file );
+        SysLog::Error( "XMLParser", "Unable to find root in '%s'.", file );
         return false;
     }
 
@@ -64,7 +64,7 @@ bool XMLParser::ParseElement( const TiXmlElement* element ) const
     std::map<std::string, ElementParser*>::const_iterator res = mParsers.find( element->Value() );
     if( mParsers.end() == res )
     {
-        sLog.Error( "XMLParser", "Unknown element '%s' at line %d.", element->Value(), element->Row() );
+        SysLog::Error( "XMLParser", "Unknown element '%s' at line %d.", element->Value(), element->Row() );
         return true;    // Ignore any unanticipated XML tags and structures and continue parsing the rest of the XML
     }
 
@@ -84,7 +84,7 @@ bool XMLParser::ParseElementChildren( const TiXmlElement* element, size_t max ) 
 
             if( 0 < max && max <= count )
             {
-                sLog.Error( "XMLParser", "Maximal children count %lu exceeded"
+                SysLog::Error( "XMLParser", "Maximal children count %lu exceeded"
                                          " in element '%s' at line %d"
                                          " by element '%s' at line %d.",
                                          max,

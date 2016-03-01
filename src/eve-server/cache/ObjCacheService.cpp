@@ -143,7 +143,7 @@ ObjCacheService::ObjCacheService(const char *cacheDir)
 	/*
 	*	Create server_cache directory to store the cached objects
 	*/
-	std::string _basePath = sConfig.files.cacheDir;
+	std::string _basePath = EVEServerConfig::files.cacheDir;
 
 	if (_basePath[_basePath.size() - 1] != '/')
         _basePath += "/";
@@ -253,7 +253,7 @@ PyResult ObjCacheService::Handle_GetCachableObject(PyCallArgs &call) {
     CallGetCachableObject args;
     if(!args.Decode(&call.tuple))
     {
-        sLog.Error("Obj Cache Srv", "%s: Unable to decode arguments", call.client->GetName());
+        SysLog::Error("Obj Cache Srv", "%s: Unable to decode arguments", call.client->GetName());
         return NULL;
     }
 
@@ -333,9 +333,9 @@ bool ObjCacheService::_LoadCachableObject(const PyRep *objectID) {
     if(!m_cacheDir.empty())
     {
         if(!m_cache.SaveCachedToFile(m_cacheDir, objectID))
-            sLog.Error( "ObjCacheService", "Failed to save cache file for '%s' in '%s'", objectID_string.c_str(), m_cacheDir.c_str() );
+            SysLog::Error( "ObjCacheService", "Failed to save cache file for '%s' in '%s'", objectID_string.c_str(), m_cacheDir.c_str() );
         else
-            sLog.Log( "ObjCacheService", "Saved cached object '%s' to file.", objectID_string.c_str() );
+            SysLog::Log( "ObjCacheService", "Saved cached object '%s' to file.", objectID_string.c_str() );
     }
 
     return true;

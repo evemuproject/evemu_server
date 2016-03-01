@@ -40,7 +40,7 @@ public:
         m_pClient = NULL;
         m_pNPC = NULL;
         //m_pPCP = NULL;
-        //sLog.Error( "ShipOperatorInterface default Constructor:", "YOU MUST NOT INVOKE DEFAULT CONSTRUCTOR !" );
+        //Log::Error( "ShipOperatorInterface default Constructor:", "YOU MUST NOT INVOKE DEFAULT CONSTRUCTOR !" );
         //assert( false );
     }
 

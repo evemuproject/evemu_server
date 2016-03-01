@@ -165,60 +165,62 @@ int main( int argc, char* argv[] )
     printf("details.\n");
     printf("\n");
 
+    // Initialize the configuration.
+    EVEServerConfig config;
     // Load server configuration
-    if( !sConfig.ParseFile( CONFIG_FILE ) )
+    if (!config.ParseFile(CONFIG_FILE))
     {
         printf("ERROR: Loading server configuration '%s' failed.", CONFIG_FILE );
-        //sLog.Error( "server init", "Loading server configuration '%s' failed.", CONFIG_FILE );
+        //Log::Error( "server init", "Loading server configuration '%s' failed.", CONFIG_FILE );
         std::cout << std::endl << "press any key to exit...";  std::cin.get();
         return 1;
     }
 
-    sLog.InitializeLogging(sConfig.files.logDir);
-    sLog.Log("", "");
-    sLog.Warning("EvEMu", "Server Information:");
-    sLog.Log("Server Revision", EVEMU_VERSION);
-    sLog.Log("Build Date Time", "%s %s", __DATE__, __TIME__);
-    sLog.Log("This Source", "%s", EVEMU_REPOSITORY);
-    sLog.Log("Client", "Codename: %s | Version: %g | Build: %u (macho: %u)", EVEProjectCodename, EVEVersionNumber, EVEBuildVersion, MachoNetVersion );
-    sLog.Log("Database", "%s@%s:%u", sConfig.database.db.c_str(), sConfig.database.host.c_str(), sConfig.database.port);
-    sLog.Log("","");
+    SysLog::InitializeLogging(EVEServerConfig::files.logDir);
+    SysLog::Log("", "");
+    SysLog::Warning("EvEMu", "Server Information:");
+    SysLog::Log("Server Revision", EVEMU_VERSION);
+    SysLog::Log("Build Date Time", "%s %s", __DATE__, __TIME__);
+    SysLog::Log("This Source", "%s", EVEMU_REPOSITORY);
+    SysLog::Log("Client", "Codename: %s | Version: %g | Build: %u (macho: %u)", EVEProjectCodename, EVEVersionNumber, EVEBuildVersion, MachoNetVersion );
+    SysLog::Log("Database", "%s@%s:%u", EVEServerConfig::database.db.c_str(), EVEServerConfig::database.host.c_str(), EVEServerConfig::database.port);
+    SysLog::Log("","");
 
     //it is important to do this before doing much of anything, in case they use it.
     Timer::SetCurrentTime();
 
     // Load server log settings ( will be removed )
-    if( load_log_settings( sConfig.files.logSettings.c_str() ) )
-        sLog.Success( "Server Init", "Log settings loaded from %s", sConfig.files.logSettings.c_str() );
+    if( load_log_settings( EVEServerConfig::files.logSettings.c_str() ) )
+        SysLog::Success( "Server Init", "Log settings loaded from %s", EVEServerConfig::files.logSettings.c_str() );
     else
-        sLog.Warning( "Server Init", "Unable to read %s (this file is optional)", sConfig.files.logSettings.c_str() );
+        SysLog::Warning( "Server Init", "Unable to read %s (this file is optional)", EVEServerConfig::files.logSettings.c_str() );
 
     // open up the log file if specified ( will be removed )
-    if( !sConfig.files.logDir.empty() )
+    if( !EVEServerConfig::files.logDir.empty() )
     {
-        std::string logFile = sConfig.files.logDir + "eve-server.log";
+        std::string logFile = EVEServerConfig::files.logDir + "eve-server.log";
         if( log_open_logfile( logFile.c_str() ) )
-            sLog.Success( "Server Init", "Found log directory %s", sConfig.files.logDir.c_str() );
+            SysLog::Success( "Server Init", "Found log directory %s", EVEServerConfig::files.logDir.c_str() );
         else
-            sLog.Warning( "Server Init", "Unable to find log directory '%s', only logging to the screen now.", sConfig.files.logDir.c_str() );
+            SysLog::Warning( "Server Init", "Unable to find log directory '%s', only logging to the screen now.", EVEServerConfig::files.logDir.c_str() );
     }
 
     //connect to the database...
     DBerror err;
     if (!DBcore::Open(err,
-        sConfig.database.host.c_str(),
-        sConfig.database.username.c_str(),
-        sConfig.database.password.c_str(),
-        sConfig.database.db.c_str(),
-        sConfig.database.port ) )
+        EVEServerConfig::database.host.c_str(),
+        EVEServerConfig::database.username.c_str(),
+        EVEServerConfig::database.password.c_str(),
+        EVEServerConfig::database.db.c_str(),
+        EVEServerConfig::database.port ) )
     {
-        sLog.Error( "Server Init", "Unable to connect to the database: %s", err.c_str() );
+        SysLog::Error( "Server Init", "Unable to connect to the database: %s", err.c_str() );
         std::cout << std::endl << "Exiting";
         return 1;
     }
     else if (DBcore::Connected)
     {
-        sLog.Success("Server Init", "Connected to database successfully");
+        SysLog::Success("Server Init", "Connected to database successfully");
     }
 
     _sDgmTypeAttrMgr = new dgmtypeattributemgr(); // needs to be after db init as its using it
@@ -227,23 +229,23 @@ int main( int argc, char* argv[] )
     EVETCPServer tcps;
 
     char errbuf[ TCPCONN_ERRBUF_SIZE ];
-    if( tcps.Open( sConfig.net.port, errbuf ) )
+    if( tcps.Open( EVEServerConfig::net.port, errbuf ) )
     {
-        sLog.Success( "Server Init", "TCP listener started on port %u.", sConfig.net.port );
+        SysLog::Success( "Server Init", "TCP listener started on port %u.", EVEServerConfig::net.port );
     }
     else
     {
-        sLog.Error( "Server Init", "Failed to start TCP listener on port %u: %s.", sConfig.net.port, errbuf );
+        SysLog::Error( "Server Init", "Failed to start TCP listener on port %u: %s.", EVEServerConfig::net.port, errbuf );
         std::cout << std::endl << "Exiting";
         return 1;
     }
 
     //make the item factory
-  sLog.Log("Server Init", "starting item factory");
+  SysLog::Log("Server Init", "starting item factory");
 
     //now, the service manager...
     PyServiceMgr::Init(888444);
-  sLog.Log("Server Init", "starting service manager");
+  SysLog::Log("Server Init", "starting service manager");
 
     //setup the command dispatcher
     CommandDispatcher command_dispatcher;
@@ -253,7 +255,7 @@ int main( int argc, char* argv[] )
      * Service creation and registration.
      *
      */
-    sLog.Log("Server Init", "Creating services.");
+    SysLog::Log("Server Init", "Creating services.");
 
     // Please keep the services list clean so it's easier to find something
 
@@ -309,7 +311,7 @@ int main( int argc, char* argv[] )
     PyServiceMgr::RegisterService(new MissionMgrService());
     PyServiceMgr::RegisterService(new NetService());
     PyServiceMgr::RegisterService(new NotificationMgrService());
-    PyServiceMgr::RegisterService(PyServiceMgr::cache_service = new ObjCacheService(sConfig.files.cacheDir.c_str()));
+    PyServiceMgr::RegisterService(PyServiceMgr::cache_service = new ObjCacheService(EVEServerConfig::files.cacheDir.c_str()));
     PyServiceMgr::RegisterService(new OnlineStatusService());
     PyServiceMgr::RegisterService(new PaperDollService());
     PyServiceMgr::RegisterService(new PetitionerService());
@@ -332,58 +334,58 @@ int main( int argc, char* argv[] )
     PyServiceMgr::RegisterService(new VoiceMgrService());
     PyServiceMgr::RegisterService(new WarRegistryService());
 
-    sLog.Log("Server Init", "Priming cached objects.");
+    SysLog::Log("Server Init", "Priming cached objects.");
     PyServiceMgr::cache_service->PrimeCache();
-    sLog.Log("Server Init", "finished priming");
+    SysLog::Log("Server Init", "finished priming");
 
     // start up the image server
-    sImageServer.Run();
-  sLog.Log("Server Init", "started image server");
+    ImageServer::Run();
+  SysLog::Log("Server Init", "started image server");
 
     // start up the api server
-    sAPIServer.CreateServices( );
-    sAPIServer.Run();
-  sLog.Log("Server Init", "started API server");
+    APIServer::CreateServices();
+    APIServer::Run();
+  SysLog::Log("Server Init", "started API server");
 
     // start up the image server
-  sLog.Log("Server Init", "Loading Dynamic Database Table Objects...");
+  SysLog::Log("Server Init", "Loading Dynamic Database Table Objects...");
 
   // Create In-Memory Database Objects for Critical Systems, such as ModuleManager:
-  sLog.Log("Server Init", "---> sDGM_Effects_Table: Loading...");
-  sDGM_Effects_Table.Initialize();
-  sLog.Log("Server Init", "---> sDGM_Type_Effects_Table: Loading...");
-  sDGM_Type_Effects_Table.Initialize();
-  sLog.Log("Server Init", "---> sDGM_Skill_Bonus_Modifiers_Table: Loading...");
-  sDGM_Skill_Bonus_Modifiers_Table.Initialize();
-  //sLog.Log("Server Init", "---> sDGM_Ship_Bonus_Modifiers_Table: Loading...");
-  //sDGM_Ship_Bonus_Modifiers_Table.Initialize();
-  sLog.Log("Server Init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
-  sDGM_Types_to_Wrecks_Table.Initialize();
+  SysLog::Log("Server Init", "---> sDGM_Effects_Table: Loading...");
+  DGM_Effects_Table::Initialize();
+  SysLog::Log("Server Init", "---> sDGM_Type_Effects_Table: Loading...");
+  DGM_Type_Effects_Table::Initialize();
+  SysLog::Log("Server Init", "---> sDGM_Skill_Bonus_Modifiers_Table: Loading...");
+  DGM_Skill_Bonus_Modifiers_Table::Initialize();
+  //Log::Log("Server Init", "---> sDGM_Ship_Bonus_Modifiers_Table: Loading...");
+  //DGM_Ship_Bonus_Modifiers_Table::Initialize();
+  SysLog::Log("Server Init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
+  DGM_Types_to_Wrecks_Table::Initialize();
 
 #ifdef HAVE_UNISTD_H
   if(getuid() == 0) {
-    sLog.Warning("Server Init", "Running as root. Attempting to drop root privileges.");
+    SysLog::Warning("Server Init", "Running as root. Attempting to drop root privileges.");
     // uid:gid 99:99 is nobody:nobody on my system. seems standard across all my linux systems. (arch, centos, debian)
     if(setgid(99) != 0) {
-      sLog.Error("Server Init", "setgid: Unable to drop group privileges: %s", strerror(errno));
+      SysLog::Error("Server Init", "setgid: Unable to drop group privileges: %s", strerror(errno));
       RunLoops = false;
     }
     if(setuid(99) != 0) {
-      sLog.Error("Server Init", "setuid: Unable to drop user privileges: %S", strerror(errno));
+      SysLog::Error("Server Init", "setuid: Unable to drop user privileges: %S", strerror(errno));
       RunLoops = false;
     }
-    sLog.Success("Server Init", "Dropped root privileges successfully: %u", getuid());
+    SysLog::Success("Server Init", "Dropped root privileges successfully: %u", getuid());
   }
 #endif /* HAVE_UNISTD_H */
 
-    sLog.Success("Server Init", "Initialisation finished");
+    SysLog::Success("Server Init", "Initialisation finished");
 
   /////////////////////////////////////////////////////////////////////////////////////
   //     !!!  DO NOT PUT ANY INITIALIZATION CODE OR CALLS BELOW THIS LINE   !!!
   /////////////////////////////////////////////////////////////////////////////////////
     ServiceDB::SetServerOnlineStatus(true);
-  sLog.Success("STATUS", "SERVER IS NOW [ONLINE]");
-  sLog.Log("INFO", "(press Ctrl+C to start controlled server shutdown)");
+  SysLog::Success("STATUS", "SERVER IS NOW [ONLINE]");
+  SysLog::Log("INFO", "(press Ctrl+C to start controlled server shutdown)");
 
     /*
      * THE MAIN LOOP
@@ -426,25 +428,25 @@ int main( int argc, char* argv[] )
             Sleep( MAIN_LOOP_DELAY - etime );
     }
 
-    sLog.Log("Server Shutdown", "Main loop stopped" );
+    SysLog::Log("Server Shutdown", "Main loop stopped" );
 
     // Shutting down EVE Client TCP listener
     tcps.Close();
-    sLog.Log("Server Shutdown", "TCP listener stopped." );
+    SysLog::Log("Server Shutdown", "TCP listener stopped." );
 
     // Shutting down API Server:
-    sAPIServer.Stop();
-    sLog.Log("Server Shutdown", "Image Server TCP listener stopped." );
+    APIServer::Stop();
+    SysLog::Log("Server Shutdown", "Image Server TCP listener stopped." );
 
     // Shutting down Image Server:
-    sImageServer.Stop();
-    sLog.Log("Server Shutdown", "API Server TCP listener stopped." );
+    ImageServer::Stop();
+    SysLog::Log("Server Shutdown", "API Server TCP listener stopped." );
 
     ServiceDB::SetServerOnlineStatus(false);
     PyServiceMgr::Shutdown();
-    sLog.Log("Server Shutdown", "SERVER IS NOW [OFFLINE]");
+    SysLog::Log("Server Shutdown", "SERVER IS NOW [OFFLINE]");
 
-    sLog.Log("Server Shutdown", "Cleanup db cache" );
+    SysLog::Log("Server Shutdown", "Cleanup db cache" );
     delete _sDgmTypeAttrMgr;
 
     log_close_logfile();
@@ -452,7 +454,7 @@ int main( int argc, char* argv[] )
     //std::cout << std::endl << "press the ENTER key to exit...";  std::cin.get();
 
 	// Shut down the Item system ensuring ALL items get saved to the database:
-	sLog.Log("Server Shutdown", "Shutting down Item Factory." );
+	SysLog::Log("Server Shutdown", "Shutting down Item Factory." );
 
 	return 0;
 }
@@ -478,7 +480,7 @@ static void SetupSignals()
 
 static void CatchSignal( int sig_num )
 {
-    sLog.Log( "Signal system", "Caught signal: %d", sig_num );
+    SysLog::Log( "Signal system", "Caught signal: %d", sig_num );
 
     RunLoops = false;
 }

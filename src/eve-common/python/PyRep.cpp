@@ -87,7 +87,7 @@ void PyRep::Dump( LogType type, const char* pfx ) const
 
 int32 PyRep::hash() const
 {
-    sLog.Error( "Hash", "Unhashable type: '%s'", TypeString() );
+    SysLog::Error( "Hash", "Unhashable type: '%s'", TypeString() );
     return -1;
 }
 
@@ -1053,7 +1053,7 @@ void PySubStream::EncodeData() const
     Buffer* buf = new Buffer;
     if( !Marshal( decoded(), *buf ) )
     {
-        sLog.Error( "Marshal", "Failed to marshal rep %p.", decoded() );
+        SysLog::Error( "Marshal", "Failed to marshal rep %p.", decoded() );
 
         SafeDelete( buf );
         return;

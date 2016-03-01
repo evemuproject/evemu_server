@@ -62,7 +62,7 @@ void ActiveModuleProcessingComponent::Process()
 			if(ShouldProcessActiveCycle())
 			{
 				//time passed and we can drain cap and make/maintain changes to the attributes
-				sLog.Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
+				SysLog::Debug("ActiveModuleProcessingComponent", "Cycle finished, processing...");
 				ProcessActiveCycle();
 			}
 			else
@@ -108,7 +108,7 @@ void ActiveModuleProcessingComponent::ActivateCycle()
 			//m_Mod->DoCycle();	// Do initial cycle immediately while we start timer
 		}
 		else
-			sLog.Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
+			SysLog::Error( "ActiveModuleProcessingComponent::ActivateCycle()", "ERROR! ActiveModule '%s' (id %u) has neither AttrSpeed nor AttrDuration! No way to process time-based cycle!", m_Mod->getItem()->itemName().c_str(), m_Mod->getItem()->itemID() );
 	}
 }
 

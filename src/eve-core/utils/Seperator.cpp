@@ -80,7 +80,7 @@ Seperator::Seperator( const char* str, const char* divs, const char* quotes )
                 if( isDiv )
                     inQuote = false;
                 else
-                    sLog.Error( "Seperator", "Invalid input." );
+                    SysLog::Error( "Seperator", "Invalid input." );
             }
         }
     }

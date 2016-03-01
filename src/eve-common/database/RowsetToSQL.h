@@ -123,7 +123,7 @@ bool ReaderToSQL( const char* table_name, const char* key_field, FILE* out, _Rea
     const size_t key_col = reader.FindColumn( key_field );
     if( cc == key_col )
     {
-        sLog.Error( "ReaderToSQL", "Unable to find key column '%s'.", key_field );
+        SysLog::Error( "ReaderToSQL", "Unable to find key column '%s'.", key_field );
         return false;
     }
 

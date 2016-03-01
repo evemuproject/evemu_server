@@ -459,7 +459,7 @@ void Client::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("Client::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("Client::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void Client::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -811,7 +811,7 @@ void Client::Killed(Damage &fatal_blow) {
 
     if(GetShip()->typeID() == itemTypeCapsule)
 	{
-		//sLog.Error( "Client::Killed()", "WARNING!  This is likely to crash the server, DO NOT ATTEMPT To POD KILL until this function properly returns client to the station of your last clone update!" );
+		//Log::Error( "Client::Killed()", "WARNING!  This is likely to crash the server, DO NOT ATTEMPT To POD KILL until this function properly returns client to the station of your last clone update!" );
         //we have been pod killed... off we go.
 
 		//TODO: explode the capsule and make a new one in the last medical clone's station:
@@ -840,7 +840,7 @@ void Client::Killed(Damage &fatal_blow) {
         ShipRef capsuleRef = ItemFactory::SpawnShip(capsuleItemData);
 		if( !capsuleRef )
 		{
-			sLog.Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
+			SysLog::Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
             //what to do?
 			throw PyException( MakeCustomError ( "Unable to generate escape pod" ) );
             return;
@@ -893,7 +893,7 @@ void Client::Killed(Damage &fatal_blow) {
 		// Actually do the spawn using SystemManager's BuildEntity:
 		if( !(System()->BuildDynamicEntity( this, corpseEntity )) )
 		{
-			sLog.Error("Client::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", corpseTypeID);
+			SysLog::Error("Client::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", corpseTypeID);
 			throw PyException( MakeCustomError ( "Spawning Wreck Failed: typeID or typeName not supported." ) );
 			return;
 		}
@@ -943,7 +943,7 @@ void Client::Killed(Damage &fatal_blow) {
         ShipRef capsuleRef = ItemFactory::SpawnShip(capsuleItemData);
 		if( !capsuleRef )
 		{
-			sLog.Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
+			SysLog::Error("Client::Killed()", "Failed to create capsule for character '%s'", GetName());
             //what to do?
 			throw PyException( MakeCustomError ( "Unable to generate escape pod" ) );
             return;
@@ -983,7 +983,7 @@ void Client::Killed(Damage &fatal_blow) {
 		deadShipObj->Destiny()->SendTerminalExplosion();
 
 		//TODO: figure out anybody else which may be referencing this ship...
-		uint32 wreckTypeID = sDGM_Types_to_Wrecks_Table.GetWreckID(deadShipObj->Item()->typeID());
+		uint32 wreckTypeID = DGM_Types_to_Wrecks_Table::GetWreckID(deadShipObj->Item()->typeID());
 
 		// TODO: Spawn a wreck matching the ship we lost
 		InventoryItemRef wreckItemRef;
@@ -1019,7 +1019,7 @@ void Client::Killed(Damage &fatal_blow) {
 		// Actually do the spawn using SystemManager's BuildEntity:
 		if( !(System()->BuildDynamicEntity( this, wreckEntity )) )
 		{
-			sLog.Error("Client::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", wreckTypeID);
+			SysLog::Error("Client::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", wreckTypeID);
 			throw PyException( MakeCustomError ( "Spawning Wreck Failed: typeID or typeName not supported." ) );
 			return;
 		}
@@ -1069,7 +1069,7 @@ void NPC::Killed(Damage &fatal_blow)
     }
 
 	GPoint deadNPCPosition = this->Destiny()->GetPosition();
-	uint32 wreckTypeID = sDGM_Types_to_Wrecks_Table.GetWreckID(this->Item()->typeID());
+	uint32 wreckTypeID = DGM_Types_to_Wrecks_Table::GetWreckID(this->Item()->typeID());
 	this->AI()->ClearAllTargets();
 	this->Bubble()->Remove(this, true);
 
@@ -1107,7 +1107,7 @@ void NPC::Killed(Damage &fatal_blow)
 	// Actually do the spawn using SystemManager's BuildEntity:
 	if( !(System()->BuildDynamicEntity( NULL, wreckEntity )) )
 	{
-		sLog.Error("NPC::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", wreckTypeID);
+		SysLog::Error("NPC::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", wreckTypeID);
 		throw PyException( MakeCustomError ( "Spawning Wreck Failed: typeID or typeName not supported." ) );
 		return;
 	}
@@ -1142,7 +1142,7 @@ void NPC::_DropLoot(SystemEntity *owner) {
     //maxLootCount
     //minLootValue
     //maxLootValue
-	sLog.Warning("NPC::_DropLoot", "TODO: This function has NO code in it to create a loot drop for an NPC kill!");
+	SysLog::Warning("NPC::_DropLoot", "TODO: This function has NO code in it to create a loot drop for an NPC kill!");
 
     // Send an OnSpecialFX (9) for effects.Jettison (with can's ID, not npc)
 }
@@ -1197,7 +1197,7 @@ void ShipEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("ShipEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("ShipEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void ShipEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -1234,7 +1234,7 @@ void ShipEntity::Killed(Damage &fatal_blow)
     }
 
 	// Spawn a wreck for the Ship that was destroyed:
-	uint32 wreckTypeID = sDGM_Types_to_Wrecks_Table.GetWreckID(this->Item()->typeID());
+	uint32 wreckTypeID = DGM_Types_to_Wrecks_Table::GetWreckID(this->Item()->typeID());
 	std::string wreck_name = this->Item()->itemName();
 	GPoint wreckPosition = this->Destiny()->GetPosition();
 	InventoryItemRef wreckItemRef;
@@ -1270,7 +1270,7 @@ void ShipEntity::Killed(Damage &fatal_blow)
 	// Actually do the spawn using SystemManager's BuildEntity:
 	if( !(System()->BuildDynamicEntity( NULL, wreckEntity )) )		// WARNING! Passing NULL for a client object (this is ok since BuildDynamicEntity() does not use the first argument
 	{
-		sLog.Error("ShipEntity::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", wreckTypeID);
+		SysLog::Error("ShipEntity::Killed()", "Spawning Wreck Failed: typeID or typeName not supported: '%u'", wreckTypeID);
 		throw PyException( MakeCustomError ( "Spawning Wreck Failed: typeID or typeName not supported." ) );
 		return;
 	}
@@ -1296,7 +1296,7 @@ void ShipEntity::_DropLoot(SystemEntity *owner) {
     //maxLootCount
     //minLootValue
     //maxLootValue
-	sLog.Warning("NPC::_DropLoot", "TODO: This function has NO code in it to create a loot drop for an NPC kill!");
+	SysLog::Warning("NPC::_DropLoot", "TODO: This function has NO code in it to create a loot drop for an NPC kill!");
 
     // Send an OnSpecialFX (9) for effects.Jettison (with can's ID, not npc)
 }
@@ -1311,7 +1311,7 @@ void DroneEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("Drone::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("Drone::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void DroneEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -1362,7 +1362,7 @@ void StructureEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("StructureEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("StructureEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void StructureEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -1413,7 +1413,7 @@ void ContainerEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("ContainerEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("ContainerEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void ContainerEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -1464,7 +1464,7 @@ void DeployableEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("DeployableEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("DeployableEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void DeployableEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -1546,7 +1546,7 @@ void CelestialEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("CelestialEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("CelestialEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void CelestialEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)
@@ -1597,7 +1597,7 @@ void StationEntity::_ReduceDamage(Damage &d) {
     // shieldExplosiveDamageResonance
     // shieldKineticDamageResonance
     // shieldThermalDamageResonance
-	sLog.Warning("StationEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
+	SysLog::Warning("StationEntity::_ReduceDamage", "TODO: This function has NO code in it to reduce damage dealt by another entity!");
 }
 
 void StationEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target)

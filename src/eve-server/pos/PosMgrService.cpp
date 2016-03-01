@@ -107,7 +107,7 @@ PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args)
 }
 
 PyResult PosMgrServiceBound::Handle_SetShipPassword(PyCallArgs &call) {
-    sLog.Debug("PosMgrServiceBound","Called SetShipPassword Stub.");
+    SysLog::Debug("PosMgrServiceBound","Called SetShipPassword Stub.");
     call.tuple->Dump(stdout, "PMSB:SSP:    ");
 
     return  NULL;

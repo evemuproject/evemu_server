@@ -28,8 +28,6 @@
 
 #include "ship/modules/ModuleDB.h"
 #include "ship/modules/ModuleDefs.h"
-#include "utils/Singleton.h"
-
 
 // ////////////////////// Effects Class ////////////////////////////
 typedef std::vector<uint32> typeTargetGroupIDlist;
@@ -243,101 +241,93 @@ protected:
 
 // This class is a singleton object, containing all Effects loaded from dgmEffects table as memory objects of type MEffect:
 class DGM_Effects_Table
-: public Singleton< DGM_Effects_Table >
 {
-public:
+private:
     DGM_Effects_Table();
     ~DGM_Effects_Table();
+public:
 
     // Initializes the Table:
-    int Initialize();
+    static int Initialize();
 
     // Returns pointer to MEffect object corresponding to the effectID supplied:
-    MEffect * GetEffect(uint32 effectID);
+    static MEffect * GetEffect(uint32 effectID);
 
 protected:
-    void _Populate();
+    static void _Populate();
 
-    std::map<uint32, MEffect *> m_EffectsMap;
+    static std::map<uint32, MEffect *> m_EffectsMap;
 };
 
-#define sDGM_Effects_Table \
-    ( DGM_Effects_Table::get() )
 // -----------------------------------------------------------------------
 
 
 // This class is a singleton object, containing all effectIDs loaded from dgmTypeEffects table as a memory object:
 class DGM_Type_Effects_Table
-: public Singleton< DGM_Type_Effects_Table >
 {
-public:
+private:
     DGM_Type_Effects_Table();
     ~DGM_Type_Effects_Table();
+public:
 
     // Initializes the Table:
-    int Initialize();
+    static int Initialize();
 
     // Returns list of effectIDs for the given typeID:
-	TypeEffectsList * GetTypeEffectsList(uint32 typeID);
+    static TypeEffectsList * GetTypeEffectsList(uint32 typeID);
 
 protected:
-    void _Populate();
+    static void _Populate();
 
-    std::map<uint32, TypeEffectsList *> m_TypeEffectsMap;
+    static std::map<uint32, TypeEffectsList *> m_TypeEffectsMap;
 };
 
-#define sDGM_Type_Effects_Table \
-    ( DGM_Type_Effects_Table::get() )
 // -----------------------------------------------------------------------
 
 
 // This class is a singleton object, containing all Skill Bonus Modifiers loaded from dgmSkillBonusModifiers table as memory objects of type SkillBonusModifier:
 class DGM_Skill_Bonus_Modifiers_Table
-: public Singleton< DGM_Skill_Bonus_Modifiers_Table >
 {
-public:
+private:
     DGM_Skill_Bonus_Modifiers_Table();
     ~DGM_Skill_Bonus_Modifiers_Table();
+public:
 
     // Initializes the Table:
-    int Initialize();
+    static int Initialize();
 
     // Returns pointer to SkillBonusModifier object corresponding to the skillID supplied:
-    SkillBonusModifier * GetSkillModifier(uint32 skillID);
+    static SkillBonusModifier * GetSkillModifier(uint32 skillID);
 
 protected:
-    void _Populate();
+    static void _Populate();
 
-    std::map<uint32, SkillBonusModifier *> m_SkillBonusModifiersMap;
+    static std::map<uint32, SkillBonusModifier *> m_SkillBonusModifiersMap;
 };
 
-#define sDGM_Skill_Bonus_Modifiers_Table \
-    ( DGM_Skill_Bonus_Modifiers_Table::get() )
 // -----------------------------------------------------------------------
 
 
 // This class is a singleton object, containing all Effects loaded from dgmShipBonusModifiers table as memory objects of type MEffect:
 class DGM_Ship_Bonus_Modifiers_Table
-: public Singleton< DGM_Ship_Bonus_Modifiers_Table >
 {
-public:
+private:
     DGM_Ship_Bonus_Modifiers_Table();
     ~DGM_Ship_Bonus_Modifiers_Table();
+public:
 
     // Initializes the Table:
-    int Initialize();
+    static int Initialize();
 
     // Returns pointer to ShipBonusModifier object corresponding to the shipID supplied:
-    ShipBonusModifier * GetShipModifier(uint32 shipID);
+    static ShipBonusModifier * GetShipModifier(uint32 shipID);
 
 protected:
-    void _Populate();
+    static void _Populate();
 
-    std::map<uint32, ShipBonusModifier *> m_ShipBonusModifiersMap;
+    static std::map<uint32, ShipBonusModifier *> m_ShipBonusModifiersMap;
 };
 
-#define sDGM_Ship_Bonus_Modifiers_Table \
-    ( DGM_Ship_Bonus_Modifiers_Table::get() )
 // -----------------------------------------------------------------------
 
 

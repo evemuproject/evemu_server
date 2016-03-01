@@ -257,7 +257,7 @@ bool TCPConnection::Process()
             // Connect
             if( !Connect( GetrIP(), GetrPort(), errbuf ) )
             {
-                sLog.Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                SysLog::Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -272,7 +272,7 @@ bool TCPConnection::Process()
             // Receive data
             if( !RecvData( errbuf ) )
             {
-                sLog.Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                SysLog::Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -281,7 +281,7 @@ bool TCPConnection::Process()
             // Send data
             if( !SendData( errbuf ) )
             {
-                sLog.Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                SysLog::Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -296,7 +296,7 @@ bool TCPConnection::Process()
             // Send anything that may be pending
             if( !SendData( errbuf ) )
             {
-                sLog.Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
+                SysLog::Error( "TCPConnection", "%s: %s.", GetAddress().c_str(), errbuf );
 
                 DoDisconnect();
                 return false;
@@ -497,7 +497,7 @@ void TCPConnection::TCPConnectionLoop()
 #endif /* HAVE_WINDOWS_H */
 
 #ifndef HAVE_WINDOWS_H
-    sLog.Log( "Threading", "Starting TCPConnectionLoop with thread ID %lu", pthread_self() );
+    SysLog::Log( "Threading", "Starting TCPConnectionLoop with thread ID %lu", pthread_self() );
 #endif /* !HAVE_WINDOWS_H */
 
     mMLoopRunning.Lock();
@@ -522,6 +522,6 @@ void TCPConnection::TCPConnectionLoop()
     mMLoopRunning.Unlock();
 
 #ifndef HAVE_WINDOWS_H
-    sLog.Log( "Threading", "Ending TCPConnectionLoop with thread ID %lu", pthread_self() );
+    SysLog::Log( "Threading", "Ending TCPConnectionLoop with thread ID %lu", pthread_self() );
 #endif /* !HAVE_WINDOWS_H */
 }

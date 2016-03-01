@@ -619,7 +619,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
     if( !name.Decode( call.tuple ) )
     {
-        sLog.Error( "LSCService", "%s: Invalid arguments", call.client->GetName() );
+        SysLog::Error( "LSCService", "%s: Invalid arguments", call.client->GetName() );
         return NULL;
     }
 
@@ -660,13 +660,13 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
             channel = CreateChannel( name.arg.c_str() );
         else
         {
-            sLog.Error( "LSCService", "%s: Error creating new chat channel: channel name '%s' already exists.", call.client->GetName(), name.arg.c_str() );
+            SysLog::Error( "LSCService", "%s: Error creating new chat channel: channel name '%s' already exists.", call.client->GetName(), name.arg.c_str() );
             channel = NULL;
         }
 
         if (channel == NULL)
         {
-            sLog.Error( "LSCService", "%s: Error creating new chat channel", call.client->GetName() );
+            SysLog::Error( "LSCService", "%s: Error creating new chat channel", call.client->GetName() );
             return NULL;
         }
 
@@ -720,13 +720,13 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
             if (channel == NULL)
             {
-                sLog.Error( "LSCService", "%s: Error creating new chat channel", call.client->GetName() );
+                SysLog::Error( "LSCService", "%s: Error creating new chat channel", call.client->GetName() );
                 return NULL;
             }
         }
         else
         {
-            sLog.Error( "LSCService", "%s: Unable to join channel '%s', this channel does not exist.", call.client->GetName(), channel_name.c_str() );
+            SysLog::Error( "LSCService", "%s: Unable to join channel '%s', this channel does not exist.", call.client->GetName(), channel_name.c_str() );
             return NULL;
         }
     }
@@ -756,7 +756,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
         if (channel == NULL)
         {
-            sLog.Error( "LSCService", "%s: Error creating new Temporary chat channel", call.client->GetName() );
+            SysLog::Error( "LSCService", "%s: Error creating new Temporary chat channel", call.client->GetName() );
             return NULL;
         }
 
@@ -790,13 +790,13 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
         // Somehow execution got here and was not captured in either Creating a new channel, Joining a temporary channel,
         // or Joining an existing channel, so print an error:
-        sLog.Error( "LSCService", "%s: ERROR: Character %u tried to join/create channel '%s'.  The packet format was unexpected.", call.client->GetName(), call.client->GetCharacterID(), channel->GetDisplayName().c_str() );
+        SysLog::Error( "LSCService", "%s: ERROR: Character %u tried to join/create channel '%s'.  The packet format was unexpected.", call.client->GetName(), call.client->GetCharacterID(), channel->GetDisplayName().c_str() );
         return NULL;
     }
     else
     {
         // Malformed packet somehow / no "create" field in byname map
-        sLog.Error( "LSCService", "%s: Malformed packet: 'create' field in byname map is missing.", call.client->GetName() );
+        SysLog::Error( "LSCService", "%s: Malformed packet: 'create' field in byname map is missing.", call.client->GetName() );
         return NULL;
     }
 }
@@ -822,14 +822,14 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
         channel_id = call.tuple->AsTuple()->GetItem(0)->AsInt()->value();
     else
     {
-        sLog.Error( "LSCService", "%s: Tuple contained wrong type: '%s'", call.client->GetName(), call.tuple->TypeString() );
+        SysLog::Error( "LSCService", "%s: Tuple contained wrong type: '%s'", call.client->GetName(), call.tuple->TypeString() );
         return NULL;
     }
 
     // Get count of parameters or just loop through the std::map until you've reached the end
     if (call.byname.size() == 0)
     {
-        sLog.Error( "LSCService", "%s: byname std::map contained zero elements, expected at least one.", call.client->GetName() );
+        SysLog::Error( "LSCService", "%s: byname std::map contained zero elements, expected at least one.", call.client->GetName() );
         return NULL;
     }
 
@@ -837,7 +837,7 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     std::map<uint32, LSCChannel*>::iterator res = m_channels.find( channel_id );
     if( m_channels.end() == res )
     {
-        sLog.Error( "LSCService", "%s: Handle_Configure Couldn't find channel %u", call.client->GetName(), channel_id );
+        SysLog::Error( "LSCService", "%s: Handle_Configure Couldn't find channel %u", call.client->GetName(), channel_id );
         return NULL;
     }
 
@@ -860,7 +860,7 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
         }
         else
         {
-            sLog.Error( "LSCService", "%s: displayName contained wrong type: '%s'", call.client->GetName(), call.byname.find("displayName")->second->TypeString() );
+            SysLog::Error( "LSCService", "%s: displayName contained wrong type: '%s'", call.client->GetName(), call.byname.find("displayName")->second->TypeString() );
             return NULL;
         }
     }
@@ -875,7 +875,7 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
         }
         else
         {
-            sLog.Error( "LSCService", "%s: memberless contained wrong type: '%s'", call.client->GetName(), call.byname.find("memberless")->second->TypeString() );
+            SysLog::Error( "LSCService", "%s: memberless contained wrong type: '%s'", call.client->GetName(), call.byname.find("memberless")->second->TypeString() );
             return NULL;
         }
     }
@@ -890,7 +890,7 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
         }
         else
         {
-            sLog.Error( "LSCService", "%s: motd contained wrong type: '%s'", call.client->GetName(), call.byname.find("motd")->second->TypeString() );
+            SysLog::Error( "LSCService", "%s: motd contained wrong type: '%s'", call.client->GetName(), call.byname.find("motd")->second->TypeString() );
             return NULL;
         }
     }
@@ -913,14 +913,14 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
                     }
                     else
                     {
-                        sLog.Error( "LSCService", "%s: newPassword contained wrong type: '%s'", call.client->GetName(), call.byname.find("newPassword")->second->TypeString() );
+                        SysLog::Error( "LSCService", "%s: newPassword contained wrong type: '%s'", call.client->GetName(), call.byname.find("newPassword")->second->TypeString() );
                         return NULL;
                     }
                 }
             }
             else
             {
-                sLog.Error( "LSCService", "%s: incorrect oldPassword supplied. Password NOT changed.", call.client->GetName() );
+                SysLog::Error( "LSCService", "%s: incorrect oldPassword supplied. Password NOT changed.", call.client->GetName() );
                 return NULL;
             }
         }
@@ -936,14 +936,14 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
                 }
                 else
                 {
-                    sLog.Error( "LSCService", "%s: newPassword contained wrong type: '%s'", call.client->GetName(), call.byname.find("newPassword")->second->TypeString() );
+                    SysLog::Error( "LSCService", "%s: newPassword contained wrong type: '%s'", call.client->GetName(), call.byname.find("newPassword")->second->TypeString() );
                     return NULL;
                 }
             }
         }
         else
         {
-            sLog.Error( "LSCService", "%s: oldPassword is of an unexpected type: '%s'", call.client->GetName(), call.byname.find("newPassword")->second->TypeString() );
+            SysLog::Error( "LSCService", "%s: oldPassword is of an unexpected type: '%s'", call.client->GetName(), call.byname.find("newPassword")->second->TypeString() );
             return NULL;
         }
     }
@@ -971,14 +971,14 @@ PyResult LSCService::Handle_DestroyChannel( PyCallArgs& call )
     Call_SingleIntegerArg arg;
     if( !arg.Decode( call.tuple ) )
     {
-        sLog.Error( "LSCService", "%s: Invalid arguments", call.client->GetName() );
+        SysLog::Error( "LSCService", "%s: Invalid arguments", call.client->GetName() );
         return NULL;
     }
 
     std::map<uint32, LSCChannel*>::iterator res = m_channels.find( arg.arg );
     if( m_channels.end() == res )
     {
-        sLog.Error( "LSCService", "%s: Couldn't find channel %u", call.client->GetName(), arg.arg );
+        SysLog::Error( "LSCService", "%s: Couldn't find channel %u", call.client->GetName(), arg.arg );
         return NULL;
     }
 
@@ -1035,32 +1035,32 @@ PyResult LSCService::Handle_SendMessage( PyCallArgs& call )
 
         channel_id = (call.tuple->AsTuple()->items[0]->AsInt())->value();
         message = ((call.tuple->AsTuple()->items[1]->AsWString())->content());
-        sLog.Log( "LSCService", "Handle_SendMessage: call is either User-created chat message or bad packet.");
+        SysLog::Log( "LSCService", "Handle_SendMessage: call is either User-created chat message or bad packet.");
     }
     else
     {
         // Decode All system (local, corp, region, etc) chat channel messages here:
         if( !args.Decode( call.tuple ) )
         {
-            sLog.Error( "LSCService", "%s: Invalid arguments", call.client->GetName() );
+            SysLog::Error( "LSCService", "%s: Invalid arguments", call.client->GetName() );
             return NULL;
         }
         channel_id = args.channel.id;
         message = args.message;
-        sLog.Log( "LSCService", "Handle_SendMessage: call is Corp/Local/Region/Constellation chat.");
+        SysLog::Log( "LSCService", "Handle_SendMessage: call is Corp/Local/Region/Constellation chat.");
     }
 
     std::map<uint32, LSCChannel*>::iterator res = m_channels.find( channel_id );
     if( m_channels.end() == res )
     {
-        sLog.Error( "LSCService", "%s: Couldn't find channel %u", call.client->GetName(), channel_id );
+        SysLog::Error( "LSCService", "%s: Couldn't find channel %u", call.client->GetName(), channel_id );
         return NULL;
     }
 
 	std::string CIC_test_name = "CIC - " + std::string(call.client->GetName());
 	if( (message.substr(0,3) == "pcs") && (res->second->GetDisplayName() == CIC_test_name) )
 	{
-        sLog.Debug( "LSCService::Handle_SendMessage()", "CALL to Player Command System via LSC Service, baby!" );
+        SysLog::Debug( "LSCService::Handle_SendMessage()", "CALL to Player Command System via LSC Service, baby!" );
 
 		// call to Player Command System to parse command
 
@@ -1072,12 +1072,12 @@ PyResult LSCService::Handle_SendMessage( PyCallArgs& call )
 
 	if( message == "cic" )
 	{
-		sLog.Debug( "LSCService::Handle_SendMessage()", "Message 'cic' received, creating/joining %s...", CIC_test_name.c_str() );
+		SysLog::Debug( "LSCService::Handle_SendMessage()", "Message 'cic' received, creating/joining %s...", CIC_test_name.c_str() );
 	}
 
     if( message.at(0) == '.' )
     {
-        sLog.Debug( "LSCService::Handle_SendMessage()", "CALL to SlashService->SlashCmd() via LSC Service, baby!" );
+        SysLog::Debug( "LSCService::Handle_SendMessage()", "CALL to SlashService->SlashCmd() via LSC Service, baby!" );
 
         if (PyServiceMgr::LookupService("slash") != NULL)
             static_cast<SlashService *> (PyServiceMgr::LookupService("slash"))->SlashCommand(call.client, message);
@@ -1147,7 +1147,7 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
             channel_ID = call.tuple->GetItem(1)->AsInt()->value();
         else
         {
-            sLog.Error( "LSCService", "%s: call.tuple->GetItem(1) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->TypeString() );
+            SysLog::Error( "LSCService", "%s: call.tuple->GetItem(1) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->TypeString() );
             return NULL;
         }
 
@@ -1155,13 +1155,13 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
             invited_char_ID = call.tuple->GetItem(0)->AsInt()->value();
         else
         {
-            sLog.Error( "LSCService", "%s: call.tuple->GetItem(0) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->TypeString() );
+            SysLog::Error( "LSCService", "%s: call.tuple->GetItem(0) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->TypeString() );
             return NULL;
         }
     }
     else
     {
-        sLog.Error( "LSCService", "%s: call.tuple is of the wrong type: '%s'.  Expected PyTuple type.", call.client->GetName(), call.tuple->TypeString() );
+        SysLog::Error( "LSCService", "%s: call.tuple is of the wrong type: '%s'.  Expected PyTuple type.", call.client->GetName(), call.tuple->TypeString() );
         return NULL;
     }
 
@@ -1211,13 +1211,13 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
         }
         else
         {
-            sLog.Error( "LSCService", "%s: Character %u is already joined to channel %u.", call.client->GetName(), invited_char_ID, channel_ID );
+            SysLog::Error( "LSCService", "%s: Character %u is already joined to channel %u.", call.client->GetName(), invited_char_ID, channel_ID );
             return NULL;
         }
     }
     else
     {
-        sLog.Error( "LSCService", "%s: Cannot find channel %u.", call.client->GetName(), channel_ID );
+        SysLog::Error( "LSCService", "%s: Cannot find channel %u.", call.client->GetName(), channel_ID );
         return NULL;
     }
 

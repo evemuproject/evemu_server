@@ -167,7 +167,7 @@ public:
         const TiXmlNode* contents = field->FirstChild();
         if( NULL == contents || TiXmlNode::TINYXML_TEXT != contents->Type() )
         {
-            sLog.Error( "XMLParser", "Expected a text element in element '%s' at line %d.", field->Value(), field->Row() );
+            SysLog::Error( "XMLParser", "Expected a text element in element '%s' at line %d.", field->Value(), field->Row() );
             return false;
         }
 

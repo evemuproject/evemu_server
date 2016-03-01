@@ -50,7 +50,7 @@ public:
     {
     // ALL DERIVED CLASSES SHOULD OVERRIDE THIS
     //    //warn user - yes be obnoxious
-    //    sLog.Error("GenericModule","MEMORY LEAK!");
+    //    Log::Error("GenericModule","MEMORY LEAK!");
 
     //    //force the users to override the inherited destructor
     //    assert(false); //crash if they don't

@@ -38,30 +38,42 @@
 
 const char *const APIServer::FallbackURL = "http://api.eveonline.com/";
 
+std::unique_ptr<boost::asio::detail::thread> APIServer::_ioThread;
+std::unique_ptr<boost::asio::io_service> APIServer::_io;
+std::unique_ptr<APIServerListener> APIServer::_listener;
+std::string APIServer::_url;
+std::string APIServer::_basePath;
+boost::asio::detail::mutex APIServer::_limboLock;
+bool APIServer::runonce = false;
+
+std::shared_ptr<std::string> APIServer::m_xmlString;
+
+std::map<std::string, APIServiceManager *> APIServer::m_APIServiceManagers; // We own these
+
 APIServer::APIServer()
 {
     runonce = false;
-    std::stringstream urlBuilder;
-    urlBuilder << "http://" << sConfig.net.apiServer << ":" << (sConfig.net.apiServerPort) << "/";
-    _url = urlBuilder.str();
 }
 
 void APIServer::CreateServices()
 {
-    if( !runonce )
+    if (!runonce)
     {
-        m_APIServiceManagers.insert(std::make_pair("base", new APIServiceManager()));
-        m_APIServiceManagers.insert(std::make_pair("account", new APIAccountManager()));
-        m_APIServiceManagers.insert(std::make_pair("admin", new APIAdminManager()));
-        m_APIServiceManagers.insert(std::make_pair("char", new APICharacterManager()));
-        m_APIServiceManagers.insert(std::make_pair("corp", new APICorporationManager()));
-        m_APIServiceManagers.insert(std::make_pair("eve", new APIEveSystemManager()));
-        m_APIServiceManagers.insert(std::make_pair("map", new APIMapManager()));
-		m_APIServiceManagers.insert(std::make_pair("object", new APIActiveObjectManager()));
-        m_APIServiceManagers.insert(std::make_pair("server", new APIServerManager()));
+        return;
     }
-
     runonce = true;
+    std::stringstream urlBuilder;
+    urlBuilder << "http://" << EVEServerConfig::net.apiServer << ":" << (EVEServerConfig::net.apiServerPort) << "/";
+    _url = urlBuilder.str();
+    m_APIServiceManagers.insert(std::make_pair("base", new APIServiceManager()));
+    m_APIServiceManagers.insert(std::make_pair("account", new APIAccountManager()));
+    m_APIServiceManagers.insert(std::make_pair("admin", new APIAdminManager()));
+    m_APIServiceManagers.insert(std::make_pair("char", new APICharacterManager()));
+    m_APIServiceManagers.insert(std::make_pair("corp", new APICorporationManager()));
+    m_APIServiceManagers.insert(std::make_pair("eve", new APIEveSystemManager()));
+    m_APIServiceManagers.insert(std::make_pair("map", new APIMapManager()));
+    m_APIServiceManagers.insert(std::make_pair("object", new APIActiveObjectManager()));
+    m_APIServiceManagers.insert(std::make_pair("server", new APIServerManager()));
 }
 
 std::shared_ptr<std::vector<char> > APIServer::GetXML(const APICommandCall * pAPICommandCall)
@@ -69,7 +81,7 @@ std::shared_ptr<std::vector<char> > APIServer::GetXML(const APICommandCall * pAP
     //if( m_APIServiceManagers.find(pAPICommandCall->at(0).first) != m_APIServiceManagers.end() )
     if( pAPICommandCall->find( "service" ) == pAPICommandCall->end() )
     {
-        sLog.Error( "APIserver::GetXML()", "Cannot find 'service' specifier in pAPICommandCall packet" );
+        SysLog::Error( "APIserver::GetXML()", "Cannot find 'service' specifier in pAPICommandCall packet" );
         return std::shared_ptr<std::vector<char> >(new std::vector<char>() );
         //return std::shared_ptr<std::string>(new std::string(""));
     }
@@ -104,7 +116,7 @@ std::string& APIServer::url()
 
 void APIServer::Run()
 {
-    _ioThread = std::unique_ptr<boost::asio::detail::thread>(new boost::asio::detail::thread(std::bind(&APIServer::RunInternal, this)));
+    _ioThread = std::unique_ptr<boost::asio::detail::thread>(new boost::asio::detail::thread(std::bind(&APIServer::RunInternal)));
 }
 
 void APIServer::Stop()

@@ -42,14 +42,14 @@ bool APIServiceDB::GetAccountIdFromUsername(std::string username, std::string * 
         " FROM account "
         " WHERE accountName='%s'" , username.c_str() ))
     {
-        sLog.Error( "APIServiceDB::GetAccountIdFromUsername()", "Cannot find accountID for username %s", username.c_str() );
+        SysLog::Error( "APIServiceDB::GetAccountIdFromUsername()", "Cannot find accountID for username %s", username.c_str() );
         return false;
     }
 
     DBResultRow row;
     if( !res.GetRow(row) )
     {
-        sLog.Error( "APIServiceDB::GetAccountIdFromUsername()", "res.GetRow(row) failed for unknown reason." );
+        SysLog::Error( "APIServiceDB::GetAccountIdFromUsername()", "res.GetRow(row) failed for unknown reason." );
         return false;
     }
 
@@ -68,14 +68,14 @@ bool APIServiceDB::GetAccountIdFromUserID(std::string userID, uint32 * accountID
         " FROM accountApi "
         " WHERE userID='%s'" , userID.c_str() ))
     {
-        sLog.Error( "APIServiceDB::GetAccountIdFromUserID()", "Cannot find accountID for userID %s", userID.c_str() );
+        SysLog::Error( "APIServiceDB::GetAccountIdFromUserID()", "Cannot find accountID for userID %s", userID.c_str() );
         return false;
     }
 
     DBResultRow row;
     if( !res.GetRow(row) )
     {
-        sLog.Error( "APIServiceDB::GetAccountIdFromUserID()", "res.GetRow(row) failed for unknown reason." );
+        SysLog::Error( "APIServiceDB::GetAccountIdFromUserID()", "res.GetRow(row) failed for unknown reason." );
         return false;
     }
 
@@ -95,14 +95,14 @@ bool APIServiceDB::GetApiAccountInfoUsingAccountID(std::string accountID, uint32
         " FROM accountApi "
         " WHERE accountID='%s'" , accountID.c_str() ))
     {
-        sLog.Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "Cannot find accountID '%s' in 'accountApi' table", accountID.c_str() );
+        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "Cannot find accountID '%s' in 'accountApi' table", accountID.c_str() );
         return false;
     }
 
     DBResultRow row;
     if( !res.GetRow(row) )
     {
-        sLog.Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "res.GetRow(row) failed for unknown reason." );
+        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "res.GetRow(row) failed for unknown reason." );
         return false;
     }
 
@@ -124,14 +124,14 @@ bool APIServiceDB::GetApiAccountInfoUsingUserID(std::string userID, std::string 
         " FROM accountApi "
         " WHERE userID='%s'" , userID.c_str() ))
     {
-        sLog.Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "Cannot find userID '%s' in 'accountApi' table", userID.c_str() );
+        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "Cannot find userID '%s' in 'accountApi' table", userID.c_str() );
         return false;
     }
 
     DBResultRow row;
     if( !res.GetRow(row) )
     {
-        sLog.Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "res.GetRow(row) failed for unknown reason." );
+        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "res.GetRow(row) failed for unknown reason." );
         return false;
     }
 
@@ -146,13 +146,13 @@ bool APIServiceDB::UpdateUserIdApiKeyDatabaseRow(uint32 userID, std::string apiF
     // Check key lengths and report error and return if either are incorrect:
     if( apiLimitedKey.length() != 64 )
     {
-        sLog.Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "limitedApiKey length != 64, but rather %u", apiLimitedKey.length() );
+        SysLog::Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "limitedApiKey length != 64, but rather %u", apiLimitedKey.length() );
         return false;
     }
 
     if( apiFullKey.length() != 64 )
     {
-        sLog.Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "fullApiKey length != 64, but rather %u", apiFullKey.length() );
+        SysLog::Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "fullApiKey length != 64, but rather %u", apiFullKey.length() );
         return false;
     }
 
@@ -166,7 +166,7 @@ bool APIServiceDB::UpdateUserIdApiKeyDatabaseRow(uint32 userID, std::string apiF
         " WHERE userID = %u",
         apiFullKey.c_str(), apiLimitedKey.c_str(), userID ))
     {
-        sLog.Error( "", "Error in query: %s.", err.c_str());
+        SysLog::Error( "", "Error in query: %s.", err.c_str());
         return false;
     }
     else
@@ -178,13 +178,13 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
     // Check key lengths and report error and return if either are incorrect:
     if( apiLimitedKey.length() != 64 )
     {
-        sLog.Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "limitedApiKey length != 64, but rather %u", apiLimitedKey.length() );
+        SysLog::Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "limitedApiKey length != 64, but rather %u", apiLimitedKey.length() );
         return false;
     }
 
     if( apiFullKey.length() != 64 )
     {
-        sLog.Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "fullApiKey length != 64, but rather %u", apiFullKey.length() );
+        SysLog::Error( "APIServiceDB::UpdateUserIdApiKeyDatabaseRow()", "fullApiKey length != 64, but rather %u", apiFullKey.length() );
         return false;
     }
 
@@ -200,7 +200,7 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
             accountID, apiFullKey.c_str(), apiLimitedKey.c_str(), apiRole
             ))
     {
-        sLog.Error( "", "Error in query: %s.", err.c_str());
+        SysLog::Error( "", "Error in query: %s.", err.c_str());
         return false;
     }
     else
@@ -219,7 +219,7 @@ bool APIServiceDB::UpdateUserIdApiRole(uint32 userID, uint32 apiRole)
         " WHERE userID = %u",
         apiRole, userID ))
     {
-        sLog.Error( "", "Error in query: %s.", err.c_str());
+        SysLog::Error( "", "Error in query: %s.", err.c_str());
         return false;
     }
     else

@@ -348,7 +348,7 @@ PyRep *StationDB::DoGetStation(uint32 sid)
     " WHERE staStations.stationID = %u GROUP BY staStations.stationID", sid ))
     {
         //_log(SERVICE__ERROR, "Error in DoGetStation query: %s", res.error.c_str());
-        sLog.Error("StationDB", "Error in DoGetStation query: %s", res.error.c_str());
+        SysLog::Error("StationDB", "Error in DoGetStation query: %s", res.error.c_str());
         return NULL;
     }
 

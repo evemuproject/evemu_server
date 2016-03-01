@@ -64,7 +64,7 @@ PyResult RamProxyService::Handle_AssemblyLinesSelectPrivate(PyCallArgs &call) {
 
 PyResult RamProxyService::Handle_GetRelevantCharSkills(PyCallArgs &call) {
 
-    sLog.Debug("Server", "Called GetRelevantCharSkills Stub.");
+    SysLog::Debug("Server", "Called GetRelevantCharSkills Stub.");
 
     return NULL;
 }

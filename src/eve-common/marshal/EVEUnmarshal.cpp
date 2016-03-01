@@ -140,7 +140,7 @@ PyRep* UnmarshalStream::LoadStream( size_t streamLength )
     const uint8 header = Read<uint8>();
     if( MarshalHeaderByte != header )
     {
-        sLog.Error( "Unmarshal", "Invalid stream received (header byte 0x%X).", header );
+        SysLog::Error( "Unmarshal", "Invalid stream received (header byte 0x%X).", header );
         return NULL;
     }
 
@@ -162,7 +162,7 @@ PyRep* UnmarshalStream::LoadRep()
     const uint8 opcode = ( header & PyRepOpcodeMask );
 
     if( flagUnknown )
-        sLog.Warning( "Unmarshal", "Encountered flagUnknown in header 0x%X.", header );
+        SysLog::Warning( "Unmarshal", "Encountered flagUnknown in header 0x%X.", header );
 
     const uint32 storageIndex = ( flagSave ? GetStorageIndex() : 0 );
 
@@ -268,11 +268,11 @@ PyRep* UnmarshalStream::LoadStringTable()
 {
     const uint8 index = Read<uint8>();
 
-    const char* str = sMarshalStringTable.LookupString( index );
+    const char* str = MarshalStringTable::LookupString( index );
     if( NULL == str )
     {
         assert( false );
-        sLog.Error( "Unmarshal", "String Table Item %u is out of range!", index );
+        SysLog::Error( "Unmarshal", "String Table Item %u is out of range!", index );
 
         char ebuf[64];
         snprintf( ebuf, 64, "Invalid String Table Item %u", index );
@@ -445,7 +445,7 @@ PyRep* UnmarshalStream::LoadObject()
 
     if( !type->IsString() )
     {
-        sLog.Error( "Unmarshal", "Object: Expected 'String' as type, got '%s'.", type->TypeString() );
+        SysLog::Error( "Unmarshal", "Object: Expected 'String' as type, got '%s'.", type->TypeString() );
 
         PyDecRef( type );
         return NULL;
@@ -633,7 +633,7 @@ PyRep* UnmarshalStream::LoadPackedRow()
 
 PyRep* UnmarshalStream::LoadError()
 {
-    sLog.Error( "Unmarshal", "Invalid opcode encountered." );
+    SysLog::Error( "Unmarshal", "Invalid opcode encountered." );
 
     return NULL;
 }
@@ -645,7 +645,7 @@ PyRep* UnmarshalStream::LoadSavedStreamElement()
     PyRep* obj = GetStoredObject( index );
     if( NULL == obj )
     {
-        sLog.Error( "Unmarshal", "SavedStreamElement: Got invalid stored object." );
+        SysLog::Error( "Unmarshal", "SavedStreamElement: Got invalid stored object." );
         return NULL;
     }
 

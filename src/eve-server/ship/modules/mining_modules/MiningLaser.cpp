@@ -118,7 +118,7 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 			}
 			else
 			{
-				sLog.Error( "MiningLaser::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
+				SysLog::Error( "MiningLaser::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
 				throw PyException( MakeCustomError( "ERROR!  Cannot find charge that is supposed to be loaded into this module!" ) );
 			}
 		}
@@ -136,7 +136,7 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 	}
 	else
 	{
-		sLog.Error( "MiningLaser::Activate()", "ERROR: Cannot activate mining laser on non-asteroid target!" );
+		SysLog::Error( "MiningLaser::Activate()", "ERROR: Cannot activate mining laser on non-asteroid target!" );
 		throw PyException( MakeCustomError( "ERROR!  Cannot activate mining laser on non-asteroid target!" ) );
 	}
 }
@@ -255,7 +255,7 @@ void MiningLaser::_ProcessCycle()
 			oreUnitsToPull *= moduleRef->GetAttribute(AttrSpecialisationAsteroidYieldMultiplier).get_float();
 		else
 		{
-			sLog.Error( "MiningLaser::DoCycle()", "" );
+			SysLog::Error( "MiningLaser::DoCycle()", "" );
 			oreUnitsToPull = 0.0;
 		}
 	}
@@ -312,7 +312,7 @@ void MiningLaser::_ProcessCycle()
                     }
                     else
                     {
-                        sLog.Error("MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_Ship->itemName().c_str(), m_Ship->itemID());
+                        SysLog::Error("MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_Ship->itemName().c_str(), m_Ship->itemID());
                         ore->Delete();
                     }
                 }
@@ -342,7 +342,7 @@ void MiningLaser::_ProcessCycle()
     }
     else
     {
-        sLog.Warning("MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID());
+        SysLog::Warning("MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID());
     }
 }
 

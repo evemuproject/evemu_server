@@ -29,7 +29,7 @@
 
 //PyRep* CertificateMgrDB::GetMyCertificates( uint32 characterID )
 //{
-//    sLog.Debug( "CertificateMgrDB", "Called GetMyCertificates stub." );
+//    Log::Debug( "CertificateMgrDB", "Called GetMyCertificates stub." );
 //
 //    util_Rowset rs;
 //

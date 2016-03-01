@@ -108,13 +108,13 @@ PyResult TradeService::Handle_InitiateTrade(PyCallArgs &call){
     rsp.when = Win32TimeNow();
     rsp.unknown7 = 0;
 
-    sLog.Debug("Trade Service", "Called InitiateTrade with character: %u", args.arg);
+    SysLog::Debug("Trade Service", "Called InitiateTrade with character: %u", args.arg);
 
     return rsp.Encode();
 }
 PyResult TradeBound::Handle_List(PyCallArgs &call) {
 
     TradeListRsp tradeListResponse;
-    sLog.Debug("TradeBound", "Called List stub");
+    SysLog::Debug("TradeBound", "Called List stub");
     return tradeListResponse.Encode();
 }

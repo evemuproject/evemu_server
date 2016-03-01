@@ -70,7 +70,7 @@ PyResult CommandDispatcher::Execute( Client *from, const char* msg )
     std::map<std::string, CommandRecord*>::const_iterator res = m_commands.find( sep.arg( 0 ) );
     if( m_commands.end() == res )
     {
-        sLog.Error( "CommandDispatcher", "Unable to find command '%s' for %s", sep.arg( 0 ).c_str(), from->GetName() );
+        SysLog::Error( "CommandDispatcher", "Unable to find command '%s' for %s", sep.arg( 0 ).c_str(), from->GetName() );
 
         throw PyException( MakeCustomError( "Unknown command '%s'", sep.arg( 0 ).c_str() ) );
     }
@@ -79,7 +79,7 @@ PyResult CommandDispatcher::Execute( Client *from, const char* msg )
 
     if( ( from->GetAccountRole() & rec->required_role ) != rec->required_role )
     {
-        sLog.Error( "CommandDispatcher", "Access denied to %s for command '%s', had role 0x%x, need role 0x%x",
+        SysLog::Error( "CommandDispatcher", "Access denied to %s for command '%s', had role 0x%x, need role 0x%x",
                     from->GetName(), rec->command.c_str(), from->GetAccountRole(), rec->required_role );
 
         throw PyException( MakeCustomError( "Access denied to command '%s'", sep.arg( 0 ).c_str() ) );

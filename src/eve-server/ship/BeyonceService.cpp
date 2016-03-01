@@ -254,7 +254,7 @@ PyResult BeyonceBound::Handle_CmdGotoBookmark(PyCallArgs &call) {
 
     if( !(call.tuple->GetItem( 0 )->IsInt()) )
     {
-        sLog.Error( "BeyonceService::Handle_GotoBookmark()", "%s: Invalid type %s for bookmarkID received.", call.client->GetName(), call.tuple->GetItem( 0 )->TypeString() );
+        SysLog::Error( "BeyonceService::Handle_GotoBookmark()", "%s: Invalid type %s for bookmarkID received.", call.client->GetName(), call.tuple->GetItem( 0 )->TypeString() );
         return NULL;
     }
     uint32 bookmarkID = call.tuple->GetItem( 0 )->AsInt()->value();
@@ -262,7 +262,7 @@ PyResult BeyonceBound::Handle_CmdGotoBookmark(PyCallArgs &call) {
     DestinyManager *destiny = call.client->Destiny();
     if( destiny == NULL )
     {
-        sLog.Error( "%s: Client has no destiny manager!", call.client->GetName() );
+        SysLog::Error( "%s: Client has no destiny manager!", call.client->GetName() );
         return NULL;
     }
 
@@ -275,7 +275,7 @@ PyResult BeyonceBound::Handle_CmdGotoBookmark(PyCallArgs &call) {
 
     if( bkSrvc == NULL )
     {
-        sLog.Error( "BeyonceService::Handle_GotoBookmark()", "Attempt to access BookmarkService via (BookmarkService *)(LookupService(\"bookmark\")) returned NULL pointer." );
+        SysLog::Error( "BeyonceService::Handle_GotoBookmark()", "Attempt to access BookmarkService via (BookmarkService *)(LookupService(\"bookmark\")) returned NULL pointer." );
         return NULL;
     }
     else
@@ -296,12 +296,12 @@ PyResult BeyonceBound::Handle_CmdGotoBookmark(PyCallArgs &call) {
             // Bookmark type is of a static system entity, so search for it and obtain its coordinates:
             SystemManager *sm = call.client->System();
             if(sm == NULL) {
-                sLog.Error( "BeyonceService::Handle_GotoBookmark()", "%s: no system manager found", call.client->GetName() );
+                SysLog::Error( "BeyonceService::Handle_GotoBookmark()", "%s: no system manager found", call.client->GetName() );
                 return NULL;
             }
             SystemEntity *se = sm->get( itemID );
             if(se ==  NULL) {
-                sLog.Error( "BeyonceService::Handle_GotoBookmark()", "%s: unable to find location %d", call.client->GetName(), itemID );
+                SysLog::Error( "BeyonceService::Handle_GotoBookmark()", "%s: unable to find location %d", call.client->GetName(), itemID );
                 return NULL;
             }
 
@@ -493,7 +493,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
 
         if( bkSrvc == NULL )
         {
-            sLog.Error( "BeyonceService::Handle_WarpToStuff()", "Attempt to access BookmarkService via (BookmarkService *)(LookupService(\"bookmark\")) returned NULL pointer." );
+            SysLog::Error( "BeyonceService::Handle_WarpToStuff()", "Attempt to access BookmarkService via (BookmarkService *)(LookupService(\"bookmark\")) returned NULL pointer." );
             return NULL;
         }
         else
@@ -529,7 +529,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
                     " FROM invTypes "
                     " WHERE typeID = %u ", typeID))
                 {
-                    sLog.Error( "BeyonceService::Handle_WarpToStuff()", "Error in query: %s", result.error.c_str() );
+                    SysLog::Error( "BeyonceService::Handle_WarpToStuff()", "Error in query: %s", result.error.c_str() );
                     return NULL;
                 }
 
@@ -537,7 +537,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
                 // and if not, then get the groupID from the row:
                 if ( !(result.GetRow(row)) )
                 {
-                    sLog.Error( "BeyonceService::Handle_WarpToStuff()", "Invalid typeID: %u, no rows returned in db query.", typeID );
+                    SysLog::Error( "BeyonceService::Handle_WarpToStuff()", "Invalid typeID: %u, no rows returned in db query.", typeID );
                     return NULL;
                 }
                 groupID = row.GetUInt( 0 );
@@ -558,12 +558,12 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
                 // Bookmark type is of a static system entity, so search for it and obtain its coordinates:
                 SystemManager *sm = call.client->System();
                 if(sm == NULL) {
-                    sLog.Error( "BeyonceService::Handle_WarpToStuff()", "%s: no system manager found", call.client->GetName() );
+                    SysLog::Error( "BeyonceService::Handle_WarpToStuff()", "%s: no system manager found", call.client->GetName() );
                     return NULL;
                 }
                 SystemEntity *se = sm->get( itemID );
                 if(se ==  NULL) {
-                    sLog.Error( "BeyonceService::Handle_WarpToStuff()", "%s: unable to find location %d", call.client->GetName(), itemID );
+                    SysLog::Error( "BeyonceService::Handle_WarpToStuff()", "%s: unable to find location %d", call.client->GetName(), itemID );
                     return NULL;
                 }
 
@@ -594,7 +594,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
     }
     else
     {
-        sLog.Error( "BeyonceService::Handle_WarpToStuff()", "Unexpected arg.type value: '%s'.", arg.type.c_str() );
+        SysLog::Error( "BeyonceService::Handle_WarpToStuff()", "Unexpected arg.type value: '%s'.", arg.type.c_str() );
         return NULL;
     }
 

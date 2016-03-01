@@ -26,9 +26,9 @@
 /*
  * example usage:
  *     // Seed NPC market.
- *     sLog.Log("Server Init", "NPC market seeding started.");
+ *     Log::Log("Server Init", "NPC market seeding started.");
  *     NPCMarket::CreateNPCMarket();
- *     sLog.Log("Server Init", "NPC market seeding finished.");
+ *     Log::Log("Server Init", "NPC market seeding finished.");
  *
  *     // Seed NPC market in a region.
  *     NPCMarket::CreateNPCMarketForRegion(regionID);

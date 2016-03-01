@@ -38,7 +38,7 @@ APIServiceManager::APIServiceManager()
 
 std::shared_ptr<std::string> APIServiceManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
-    sLog.Debug("APIServiceManager::ProcessCall()", "EVEmu API - Default Service Manager");
+    SysLog::Debug("APIServiceManager::ProcessCall()", "EVEmu API - Default Service Manager");
 
     // EXAMPLE OF USING ALL FEATURES OF THE INHERITED APISERVICEMANAGER XML BUILDING HELPER FUNCTIONS:
     /*

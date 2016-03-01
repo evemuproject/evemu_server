@@ -32,8 +32,7 @@
  * @author Zhur, Bloody.Rabbit
  */
 class EVEServerConfig
-: public XMLParserEx,
-  public Singleton< EVEServerConfig >
+: public XMLParserEx
 {
 public:
     /**
@@ -42,7 +41,7 @@ public:
     EVEServerConfig();
 
     /// From <rates/>
-    struct
+    struct EVEConfigRates
     {
         /// Rate at which skills train compared to normal speed
         float skillRate;
@@ -50,21 +49,21 @@ public:
         float secRate;
         /// Modifier for npc bounties automatically awarded for shooting down npc enemies.
         float npcBountyMultiply;
-	/// Startup Cost to create a corporation.
-	double corporationStartupCost;
-    } rates;
+        /// Startup Cost to create a corporation.
+        double corporationStartupCost;
+    };
 
     /// From <account/>
-    struct
+    struct EVEConfigAccount
     {
         /// Role to assign to auto created account; set to 0 to disable auto account creation.
         uint64 autoAccountRole;
         /// A message shown to every client on login.
         std::string loginMessage;
-    } account;
+    };
 
     /// From <character/>
-    struct
+    struct EVEConfigCharacter
     {
         /// Money balance of new created characters.
         double startBalance;
@@ -76,10 +75,10 @@ public:
         uint32 startCorporation;
         /// Delay for terminating a character in seconds
         uint32 terminationDelay;
-    } character;
+    };
 
     // From <database/>
-    struct
+    struct EVEConfigDatabase
     {
         /// Hostname of database server.
         std::string host;
@@ -91,10 +90,10 @@ public:
         std::string password;
         /// A database to be used by server.
         std::string db;
-    } database;
+    };
 
     // From <files/>
-    struct
+    struct EVEConfigFiles
     {
         /// A directory in which the log files are stored
         std::string logDir;
@@ -104,10 +103,10 @@ public:
         std::string cacheDir;
         // used as the base directory for the image server
         std::string imageDir;
-    } files;
+    };
 
     /// From <net/>
-    struct
+    struct EVEConfigNet
     {
         /// Port at which the server should listen.
         uint16 port;
@@ -119,20 +118,23 @@ public:
         uint16 apiServerPort;
         /// the apiServer for API functions. should be the evemu server external ip/host
         std::string apiServer;
-    } net;
+    };
+
+    static EVEConfigRates rates;
+    static EVEConfigAccount account;
+    static EVEConfigCharacter character;
+    static EVEConfigDatabase database;
+    static EVEConfigFiles files;
+    static EVEConfigNet net;
 
 protected:
-    bool ProcessEveServer( const TiXmlElement* ele );
-    bool ProcessRates( const TiXmlElement* ele );
-    bool ProcessAccount( const TiXmlElement* ele );
-    bool ProcessCharacter( const TiXmlElement* ele );
-    bool ProcessDatabase( const TiXmlElement* ele );
-    bool ProcessFiles( const TiXmlElement* ele );
-    bool ProcessNet( const TiXmlElement* ele );
+    bool ProcessEveServer(const TiXmlElement* ele);
+    bool ProcessRates(const TiXmlElement* ele);
+    bool ProcessAccount(const TiXmlElement* ele);
+    bool ProcessCharacter(const TiXmlElement* ele);
+    bool ProcessDatabase(const TiXmlElement* ele);
+    bool ProcessFiles(const TiXmlElement* ele);
+    bool ProcessNet(const TiXmlElement* ele);
 };
-
-/// A macro for easier access to the singleton.
-#define sConfig \
-    ( EVEServerConfig::get() )
 
 #endif /* !__EVE_SERVER_CONFIG__H__INCL__ */

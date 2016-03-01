@@ -50,7 +50,7 @@ SimpleSystemEntity* SimpleSystemEntity::MakeEntity( SystemManager* system, const
             return new SystemStationEntity( system, entity );
 
         default:
-            sLog.Error( "Simple sys Entity", "Unrecognized entity type '%u' on '%s' (%u), falling back to simple space item.",
+            SysLog::Error( "Simple sys Entity", "Unrecognized entity type '%u' on '%s' (%u), falling back to simple space item.",
                         entity.typeID, entity.itemName.c_str(), entity.itemID );
             return new SystemSimpleEntity( system, entity );
     }

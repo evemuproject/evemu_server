@@ -78,38 +78,38 @@ Inventory *Inventory::Cast(InventoryItemRef item)
         case EVEDB::invCategories::Effects:
         case EVEDB::invCategories::Lights:
         case EVEDB::invCategories::Cells:
-            sLog.Warning("Inventory", "unhandled item categoryID used on cast");
+            SysLog::Warning("Inventory", "unhandled item categoryID used on cast");
             break;
 
         case EVEDB::invCategories::Owner:
-            sLog.Warning("Inventory", "Owner item categoryID used on cast");
+            SysLog::Warning("Inventory", "Owner item categoryID used on cast");
 
             //return OwnerRef::StaticCast( item ).get();
 
             break;
         case EVEDB::invCategories::WorldSpace:
-            sLog.Warning("Inventory", "WorldSpace item categoryID used on cast");
+            SysLog::Warning("Inventory", "WorldSpace item categoryID used on cast");
             break;
         case EVEDB::invCategories::Skill:
-            sLog.Warning("Inventory", "Skill item categoryID used on cast");
+            SysLog::Warning("Inventory", "Skill item categoryID used on cast");
             //return SkillRef::StaticCast( item ).get();
             break;
         case EVEDB::invCategories::Celestial:
-            sLog.Warning("Inventoy", "Celestial item categoryID used on cast");
+            SysLog::Warning("Inventoy", "Celestial item categoryID used on cast");
             //don't know ho to do this but it's missing in a lot of places in the log
             //it says that the return is not of Inventory type
             //return CelestialObjectRef::StaticCast( item ).get();
             break;
         case EVEDB::invCategories::Station:
-            sLog.Warning("Inventory", "Station item categoryID used on cast");
+            SysLog::Warning("Inventory", "Station item categoryID used on cast");
             return StationRef::StaticCast( item ).get();
             break;
         case EVEDB::invCategories::Structure:
-            sLog.Warning("Inventory", "Structure item categoryID used on cast");
+            SysLog::Warning("Inventory", "Structure item categoryID used on cast");
             return StructureRef::StaticCast( item ).get();
             break;
         case EVEDB::invCategories::Ship:
-            sLog.Warning("Inventory", "Ship item categoryID used on cast");
+            SysLog::Warning("Inventory", "Ship item categoryID used on cast");
             return ShipRef::StaticCast( item ).get();
             break;
     }
@@ -132,7 +132,7 @@ Inventory *Inventory::Cast(InventoryItemRef item)
     }
 
     // maybe add extra debug info on what for type or item.
-    sLog.Error("Inventory::Cast()", "Item cast not supported for item typeID = %u, groupID = %u, categoryID = %u", item->typeID(), item->groupID(), item->categoryID() );
+    SysLog::Error("Inventory::Cast()", "Item cast not supported for item typeID = %u, groupID = %u, categoryID = %u", item->typeID(), item->groupID(), item->categoryID() );
     return NULL;
 }
 
@@ -147,13 +147,13 @@ bool Inventory::LoadContents()
 		}
 	}
 
-    sLog.Debug("Inventory", "Recursively loading contents of inventory %u", inventoryID() );
+    SysLog::Debug("Inventory", "Recursively loading contents of inventory %u", inventoryID() );
 
     //load the list of items we need
     std::vector<uint32> items;
     if( !GetItems( items ) )
     {
-        sLog.Error("Inventory", "Failed  to get items of %u", inventoryID() );
+        SysLog::Error("Inventory", "Failed  to get items of %u", inventoryID() );
         return false;
     }
 
@@ -178,7 +178,7 @@ bool Inventory::LoadContents()
             locationID = ItemFactory::GetUsingClient()->GetLocationID();
         }
         else
-            sLog.Error( "Inventory::LoadContents()", "Failed to resolve pointer to Client object currently using the ItemFactory." );
+            SysLog::Error( "Inventory::LoadContents()", "Failed to resolve pointer to Client object currently using the ItemFactory." );
         if( (into.ownerID == characterID) || (characterID == 0) || (into.ownerID == corporationID) )// || (into.locationID == locationID) )
             //    || (ItemFactory::GetUsingClient() == NULL) )
         {
@@ -188,12 +188,12 @@ bool Inventory::LoadContents()
             // --OR--
             // The pointer to the client object currently "using" the ItemFactory is NULL, meaning no client is using it at the moment.
             if (ItemFactory::GetUsingClient() == NULL)
-                sLog.Error( "Inventory::LoadContents()", "WARNING! Loading Contents while ItemFactory::GetUsingClient() returned NULL!" );
+                SysLog::Error( "Inventory::LoadContents()", "WARNING! Loading Contents while ItemFactory::GetUsingClient() returned NULL!" );
 
             InventoryItemRef i = ItemFactory::GetItem(*cur);
             if( !i )
             {
-                sLog.Error("Inventory::LoadContents()", "Failed to load item %u contained in %u. Skipping.", *cur, inventoryID() );
+                SysLog::Error("Inventory::LoadContents()", "Failed to load item %u contained in %u. Skipping.", *cur, inventoryID() );
                 continue;
             }
 
@@ -281,7 +281,7 @@ InventoryItemRef Inventory::FindFirstByFlag(EVEItemFlags _flag) const
             return cur->second;
     }
 
-    sLog.Error("Inventory", "unable to find first by flag");
+    SysLog::Error("Inventory", "unable to find first by flag");
     return InventoryItemRef();
 }
 
@@ -421,12 +421,12 @@ void Inventory::AddItem(InventoryItemRef item)
     {
         mContents.insert( std::make_pair( item->itemID(), item ) );
 
-        sLog.Debug("Inventory", "Updated location %u to contain item %u with flag %d.", inventoryID(), item->itemID(), (int)item->flag() );
+        SysLog::Debug("Inventory", "Updated location %u to contain item %u with flag %d.", inventoryID(), item->itemID(), (int)item->flag() );
     }
 	else
 	{
 		//else already here
-		sLog.Debug("Inventory", "unable to updated location %u to contain item %u with flag %d, because it already happend.", inventoryID(), item->itemID(), (int)item->flag() );
+		SysLog::Debug("Inventory", "unable to updated location %u to contain item %u with flag %d, because it already happend.", inventoryID(), item->itemID(), (int)item->flag() );
 	}
 }
 
@@ -437,11 +437,11 @@ void Inventory::RemoveItem(InventoryItemRef item)
     {
         mContents.erase( res );
 
-        sLog.Debug("Inventory", "Updated location %u to no longer contain item %u.", inventoryID(), item->itemID() );
+        SysLog::Debug("Inventory", "Updated location %u to no longer contain item %u.", inventoryID(), item->itemID() );
     }
 	else
 	{
-		sLog.Debug("Inventory", "unable to remove %u from %u.", item->itemID(), inventoryID() );
+		SysLog::Debug("Inventory", "unable to remove %u from %u.", item->itemID(), inventoryID() );
 	}
 }
 

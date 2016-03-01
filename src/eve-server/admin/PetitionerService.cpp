@@ -86,7 +86,7 @@ PyResult PetitionerService::Handle_GetCategories( PyCallArgs& call )
 {
     //takes no arguments
 
-    sLog.Debug( "PetitionerService", "Called GetCategories stub." );
+    SysLog::Debug( "PetitionerService", "Called GetCategories stub." );
 
     PyList* result = new PyList;
     result->AddItemString( "Test Cat" );
@@ -97,7 +97,7 @@ PyResult PetitionerService::Handle_GetCategories( PyCallArgs& call )
 
 PyResult PetitionerService::Handle_GetCategoryHierarchicalInfo( PyCallArgs& call )
 {
-    sLog.Debug( "PetitionerService", "Called GetCategoryHierarchicalInfo stub." );
+    SysLog::Debug( "PetitionerService", "Called GetCategoryHierarchicalInfo stub." );
     return new PyList;
 }
 
@@ -105,7 +105,7 @@ PyResult PetitionerService::Handle_GetUnreadMessages( PyCallArgs& call )
 {
     //takes no arguments
 
-    sLog.Debug( "PetitionerService", "Called GetUnreadMessages stub." );
+    SysLog::Debug( "PetitionerService", "Called GetUnreadMessages stub." );
 
     //unknown...
     return new PyList;

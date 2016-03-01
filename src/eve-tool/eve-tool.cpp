@@ -38,12 +38,12 @@ int main( int argc, char* argv[] )
     _CrtSetDbgFlag( _CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG ) );
 #endif /* defined( HAVE_CRTDBG_H ) && !defined( NDEBUG ) */
 
-    sLog.InitializeLogging(LOG_FILE);
+    SysLog::InitializeLogging(LOG_FILE);
     // Load server log settings ( will be removed )
     if( !load_log_settings( LOG_SETTINGS_FILE ) )
-        sLog.Warning( "init", "Unable to read %s (this file is optional)", LOG_SETTINGS_FILE );
+        SysLog::Warning( "init", "Unable to read %s (this file is optional)", LOG_SETTINGS_FILE );
     else
-        sLog.Success( "init", "Log settings loaded from %s", LOG_SETTINGS_FILE );
+        SysLog::Success( "init", "Log settings loaded from %s", LOG_SETTINGS_FILE );
 
     //skip first argument (launch path), we don't need it
     --argc;
@@ -54,7 +54,7 @@ int main( int argc, char* argv[] )
 
     ProcessFile( stdin );
 
-    sLog.Log( "shutdown", "Exiting." );
+    SysLog::Log( "shutdown", "Exiting." );
 
     return 0;
 }
@@ -103,17 +103,17 @@ void ProcessFile( const std::string& filename )
     FILE* file = fopen( filename.c_str(), "r" );
     if( NULL == file )
     {
-        sLog.Error( "input", "Unable to open script '%s'.", filename.c_str() );
+        SysLog::Error( "input", "Unable to open script '%s'.", filename.c_str() );
         return;
     }
 
-    sLog.Log( "input", "Queuing commands from script '%s'.", filename.c_str() );
+    SysLog::Log( "input", "Queuing commands from script '%s'.", filename.c_str() );
     ProcessFile( file );
 
     if( feof( file ) )
-        sLog.Success( "input", "Load of script '%s' successfully completed.", filename.c_str() );
+        SysLog::Success( "input", "Load of script '%s' successfully completed.", filename.c_str() );
     else
-        sLog.Error( "input", "Error occured while reading script '%s'.", filename.c_str() );
+        SysLog::Error( "input", "Error occured while reading script '%s'.", filename.c_str() );
 
     fclose( file );
 }

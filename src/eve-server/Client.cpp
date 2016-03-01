@@ -129,7 +129,7 @@ bool Client::ProcessNet()
         try
         {
             if( !DispatchPacket( p ) )
-                sLog.Error( "Client", "%s: Failed to dispatch packet of type %s (%d).", GetName(), MACHONETMSG_TYPE_NAMES[ p->type ], (int)p->type );
+                SysLog::Error( "Client", "%s: Failed to dispatch packet of type %s (%d).", GetName(), MACHONETMSG_TYPE_NAMES[ p->type ], (int)p->type );
         }
         catch( PyException& e )
         {
@@ -158,7 +158,7 @@ void Client::Process() {
         m_moveState = msIdle;
         switch(s) {
         case msIdle:
-            sLog.Error("Client","%s: Move timer expired when no move is pending.", GetName());
+            SysLog::Error("Client","%s: Move timer expired when no move is pending.", GetName());
             break;
         //used to delay stargate animation
         case msJump:
@@ -194,7 +194,7 @@ void Client::SendErrorMsg( const char* fmt, ... )
     vasprintf( &str, fmt, args );
     assert( str );
 
-    sLog.Error("Client","Sending Error Message to %s:", GetName() );
+    SysLog::Error("Client","Sending Error Message to %s:", GetName() );
     log_messageVA( CLIENT__ERROR, fmt, args );
     va_end( args );
 
@@ -216,7 +216,7 @@ void Client::SendErrorMsg( const char* fmt, va_list args )
     vasprintf( &str, fmt, args );
     assert( str );
 
-    sLog.Error("Client","Sending Error Message to %s:", GetName() );
+    SysLog::Error("Client","Sending Error Message to %s:", GetName() );
     log_messageVA( CLIENT__ERROR, fmt, args );
 
     //want to send some sort of notify with a "ServerMessage" message ID maybe?
@@ -242,7 +242,7 @@ void Client::SendInfoModalMsg( const char* fmt, ... )
     vasprintf( &str, fmt, args );
     assert( str );
 
-    sLog.Log("Client","Info Modal to %s:", GetName() );
+    SysLog::Log("Client","Info Modal to %s:", GetName() );
     log_messageVA( CLIENT__MESSAGE, fmt, args );
     va_end( args );
 
@@ -268,7 +268,7 @@ void Client::SendNotifyMsg( const char* fmt, ... )
     vasprintf( &str, fmt, args );
     assert( str );
 
-    sLog.Log("Client","Notify to %s:", GetName() );
+    SysLog::Log("Client","Notify to %s:", GetName() );
     log_messageVA( CLIENT__MESSAGE, fmt, args );
     va_end( args );
 
@@ -290,7 +290,7 @@ void Client::SendNotifyMsg( const char* fmt, va_list args )
     vasprintf( &str, fmt, args );
     assert( str );
 
-    sLog.Log("Client","Notify to %s:", GetName() );
+    SysLog::Log("Client","Notify to %s:", GetName() );
     log_messageVA( CLIENT__MESSAGE, fmt, args );
 
     //want to send some sort of notify with a "ServerMessage" message ID maybe?
@@ -319,12 +319,12 @@ void Client::SelfChatMessage( const char* fmt, ... )
 
     if( m_channels.empty() )
     {
-        sLog.Error("Client", "%s: Tried to send self chat, but we are not joined to any channels: %s", GetName(), str );
+        SysLog::Error("Client", "%s: Tried to send self chat, but we are not joined to any channels: %s", GetName(), str );
         free( str );
         return;
     }
 
-    sLog.Log("Client","%s: Self message on all channels: %s", GetName(), str );
+    SysLog::Log("Client","%s: Self message on all channels: %s", GetName(), str );
 
     //this is such a pile of crap, but im not sure whats better.
     //maybe a private message...
@@ -373,7 +373,7 @@ bool Client::EnterSystem(bool login) {
         //find our system manager and register ourself with it.
         m_system = EntityList::FindOrBootSystem(GetSystemID());
         if(m_system == NULL) {
-            sLog.Error("Client", "Failed to boot system %u for char %s (%u)", GetSystemID(), GetName(), GetCharacterID());
+            SysLog::Error("Client", "Failed to boot system %u for char %s (%u)", GetSystemID(), GetName(), GetCharacterID());
             SendErrorMsg("Unable to boot system %u", GetSystemID());
             return false;
         }
@@ -497,7 +497,7 @@ void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
     ItemFactory::SetUsingClient(this);
     InventoryItemRef item = ItemFactory::GetItem(itemID);
     if( !item ) {
-        sLog.Error("Client","%s: Unable to load item %u", GetName(), itemID);
+        SysLog::Error("Client","%s: Unable to load item %u", GetName(), itemID);
         return;
     }
 
@@ -518,7 +518,7 @@ void Client::MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag)
 void Client::BoardShip(ShipRef new_ship) {
 
     if(!new_ship->singleton()) {
-        sLog.Error("Client","%s: tried to board ship %u, which is not assembled.", GetName(), new_ship->itemID());
+        SysLog::Error("Client","%s: tried to board ship %u, which is not assembled.", GetName(), new_ship->itemID());
         SendErrorMsg("You cannot board a ship which is not assembled!");
         return;
     }
@@ -624,7 +624,7 @@ void Client::_UpdateSession2( uint32 characterID )
 
     if( characterID == 0 )
     {
-        sLog.Error( "Client::_UpdateSession2()", "characterID == 0, which is illegal" );
+        SysLog::Error( "Client::_UpdateSession2()", "characterID == 0, which is illegal" );
         return;
     }
 
@@ -647,7 +647,7 @@ void Client::_UpdateSession2( uint32 characterID )
 
     if( characterDataMap.size() == 0 )
     {
-        sLog.Error( "Client::_UpdateSession2()", "characterDataMap.size() returned zero." );
+        SysLog::Error( "Client::_UpdateSession2()", "characterDataMap.size() returned zero." );
         return;
     }
 
@@ -770,7 +770,7 @@ void Client::_SendSessionChange()
     if( scn.changes->empty() )
         return;
 
-    sLog.Log("Client","Session updated, sending session change");
+    SysLog::Log("Client","Session updated, sending session change");
     scn.changes->Dump(CLIENT__SESSION, "  Changes: ");
 
     //this is probably not necessary...
@@ -994,7 +994,7 @@ void Client::SendNotification(const PyAddress &dest, EVENotificationStream &noti
         p->named_payload->SetItemString("sn", new PyInt(m_nextNotifySequence++));
     }
 
-    sLog.Log("Client","Sending notify of type %s with ID type %s", dest.service.c_str(), dest.bcast_idtype.c_str());
+    SysLog::Log("Client","Sending notify of type %s with ID type %s", dest.service.c_str(), dest.bcast_idtype.c_str());
     if(is_log_enabled(CLIENT__NOTIFY_REP))
     {
         PyLogDumpVisitor dumper(CLIENT__NOTIFY_REP, CLIENT__NOTIFY_REP, "", true, true);
@@ -1040,7 +1040,7 @@ PyDict *Client::MakeSlimItem() const {
 
 void Client::WarpTo(const GPoint &to, double distance) {
     if(m_moveState != msIdle || m_moveTimer.Enabled()) {
-        sLog.Log("Client","%s: WarpTo called when a move is already pending. Ignoring.", GetName());
+        SysLog::Log("Client","%s: WarpTo called when a move is already pending. Ignoring.", GetName());
         return;
     }
 
@@ -1050,7 +1050,7 @@ void Client::WarpTo(const GPoint &to, double distance) {
 
 void Client::StargateJump(uint32 fromGate, uint32 toGate) {
     if(m_moveState != msIdle || m_moveTimer.Enabled()) {
-        sLog.Log("Client","%s: StargateJump called when a move is already pending. Ignoring.", GetName());
+        SysLog::Log("Client","%s: StargateJump called when a move is already pending. Ignoring.", GetName());
         return;
     }
 
@@ -1063,7 +1063,7 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
         toGate,
         &solarSystemID, &constellationID, &regionID, &position
     )) {
-        sLog.Error("Client","%s: Failed to query information for stargate %u", GetName(), toGate);
+        SysLog::Error("Client","%s: Failed to query information for stargate %u", GetName(), toGate);
         return;
     }
 
@@ -1318,7 +1318,7 @@ void Client::TargetsCleared()
 
 void Client::SavePosition() {
     if( !GetShip() || m_destiny == NULL ) {
-        sLog.Debug("Client","%s: Unable to save position. We are probably not in space.", GetName());
+        SysLog::Debug("Client","%s: Unable to save position. We are probably not in space.", GetName());
         return;
     }
     GetShip()->Relocate( m_destiny->GetPosition() );
@@ -1371,11 +1371,11 @@ DoDestinyUpdate ,*args= ([(31759,
 #endif
 
     if(!IsSolarSystem(GetLocationID())) {
-        sLog.Log("Client","%s: Trying to launch drone when not in space!", GetName());
+        SysLog::Log("Client","%s: Trying to launch drone when not in space!", GetName());
         return false;
     }
 
-    sLog.Log("Client","%s: Launching drone %u", GetName(), drone->itemID());
+    SysLog::Log("Client","%s: Launching drone %u", GetName(), drone->itemID());
 
     //first, the item gets moved into space
     //TODO: set customInfo to a tuple: (shipID, None)
@@ -1542,23 +1542,23 @@ uint32 Client::_GetUserCount()
 
 bool Client::_VerifyVersion( VersionExchangeClient& version )
 {
-    sLog.Log("Client","%s: Received Low Level Version Exchange:", GetAddress().c_str());
+    SysLog::Log("Client","%s: Received Low Level Version Exchange:", GetAddress().c_str());
     version.Dump(NET__PRES_REP, "    ");
 
     if( version.birthday != EVEBirthday )
-        sLog.Error("Client","%s: Client's birthday does not match ours!", GetAddress().c_str());
+        SysLog::Error("Client","%s: Client's birthday does not match ours!", GetAddress().c_str());
 
     if( version.macho_version != MachoNetVersion )
-        sLog.Error("Client","%s: Client's macho_version not match ours!", GetAddress().c_str());
+        SysLog::Error("Client","%s: Client's macho_version not match ours!", GetAddress().c_str());
 
     if( version.version_number != EVEVersionNumber )
-        sLog.Error("Client","%s: Client's version_number not match ours!", GetAddress().c_str());
+        SysLog::Error("Client","%s: Client's version_number not match ours!", GetAddress().c_str());
 
     if( version.build_version != EVEBuildVersion )
-        sLog.Error("Client","%s: Client's build_version not match ours!", GetAddress().c_str());
+        SysLog::Error("Client","%s: Client's build_version not match ours!", GetAddress().c_str());
 
     if( version.project_version != EVEProjectVersion )
-        sLog.Error("Client","%s: Client's project_version not match ours!", GetAddress().c_str());
+        SysLog::Error("Client","%s: Client's project_version not match ours!", GetAddress().c_str());
 
 
     return true;
@@ -1572,19 +1572,19 @@ bool Client::_VerifyCrypto( CryptoRequestPacket& cr )
         CryptoAPIRequestParams car;
         if( !car.Decode( cr.keyParams ) )
         {
-            sLog.Error("Client","%s: Received invalid CryptoAPI request!", GetAddress().c_str());
+            SysLog::Error("Client","%s: Received invalid CryptoAPI request!", GetAddress().c_str());
         }
         else
         {
-            sLog.Error("Client","%s: Unhandled CryptoAPI request: hashmethod=%s sessionkeylength=%d provider=%s sessionkeymethod=%s", GetAddress().c_str(), car.hashmethod.c_str(), car.sessionkeylength, car.provider.c_str(), car.sessionkeymethod.c_str());
-            sLog.Error("Client","%s: You must change your client to use Placebo crypto in common.ini to talk to this server!\n", GetAddress().c_str());
+            SysLog::Error("Client","%s: Unhandled CryptoAPI request: hashmethod=%s sessionkeylength=%d provider=%s sessionkeymethod=%s", GetAddress().c_str(), car.hashmethod.c_str(), car.sessionkeylength, car.provider.c_str(), car.sessionkeymethod.c_str());
+            SysLog::Error("Client","%s: You must change your client to use Placebo crypto in common.ini to talk to this server!\n", GetAddress().c_str());
         }
 
         return false;
     }
     else
     {
-        sLog.Debug("Client","%s: Received Placebo crypto request, accepting.", GetAddress().c_str());
+        SysLog::Debug("Client","%s: Received Placebo crypto request, accepting.", GetAddress().c_str());
 
         //send out accept response
         PyRep* rsp = new PyString( "OK CC" );
@@ -1606,8 +1606,8 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     /* send passwordVersion required: 1=plain, 2=hashed */
     PyRep* rsp = new PyInt( 2 );
 
-    //sLog.Debug("Client","%s: Received Client Challenge.", GetAddress().c_str());
-    //sLog.Debug("Client","Login with %s:", ccp.user_name.c_str());
+    //Log::Debug("Client","%s: Received Client Challenge.", GetAddress().c_str());
+    //Log::Debug("Client","Login with %s:", ccp.user_name.c_str());
 
     if (!ServiceDB::GetAccountInformation(
 				ccp.user_name.c_str(),
@@ -1635,7 +1635,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
                 account_info.password,
                 password_hash ) )
         {
-            sLog.Error("Client", "unable to generate password hash, sending LoginAuthFailed");
+            SysLog::Error("Client", "unable to generate password hash, sending LoginAuthFailed");
             goto error_login_auth_failed;
         }
 
@@ -1643,7 +1643,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
                 ccp.user_name.c_str(),
                 password_hash ) )
         {
-            sLog.Error("Client", "unable to update account hash, sending LoginAuthFailed");
+            SysLog::Error("Client", "unable to update account hash, sending LoginAuthFailed");
             goto error_login_auth_failed;
         }
 
@@ -1667,7 +1667,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     mNet->QueueRep( rsp );
     PyDecRef( rsp );
 
-    sLog.Log("Client","successful");
+    SysLog::Log("Client","successful");
 
     /* update account information, increase login count, last login timestamp and mark account as online */
             ServiceDB::UpdateAccountInformation(account_info.name.c_str(), true);
@@ -1687,7 +1687,7 @@ bool Client::_VerifyLogin( CryptoChallengePacket& ccp )
     server_shake.challenge_responsehash = "55087";
 
     // the image server used by the client to download images
-    server_shake.imageserverurl = sImageServer.url();
+    server_shake.imageserverurl = ImageServer::url();
 
     server_shake.macho_version = MachoNetVersion;
     server_shake.boot_version = EVEVersionNumber;
@@ -1735,7 +1735,7 @@ bool Client::_VerifyFuncResult( CryptoHandshakeResult& result )
     // no client update available
     ack.client_hash = new PyNone;
     ack.user_clientid = GetAccountID();
-    ack.live_updates = sLiveUpdateDB.GetUpdates();
+    ack.live_updates = LiveUpdateDB::GetUpdates();
 
     PyRep* r = ack.Encode();
     mNet->QueueRep( r );
@@ -1759,20 +1759,20 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
         uint32 nodeID, bindID;
         if( sscanf( req.remoteObjectStr.c_str(), "N=%u:%u", &nodeID, &bindID ) != 2 )
         {
-            sLog.Error("Client","Failed to parse bind string '%s'.", req.remoteObjectStr.c_str());
+            SysLog::Error("Client","Failed to parse bind string '%s'.", req.remoteObjectStr.c_str());
             return false;
         }
 
         if (nodeID != PyServiceMgr::GetNodeID())
         {
-            sLog.Error("Client", "Unknown nodeID %u received (expected %u).", nodeID, PyServiceMgr::GetNodeID());
+            SysLog::Error("Client", "Unknown nodeID %u received (expected %u).", nodeID, PyServiceMgr::GetNodeID());
             return false;
         }
 
         dest = PyServiceMgr::FindBoundObject(bindID);
         if( dest == NULL )
         {
-            sLog.Error("Client", "Failed to find bound object %u.", bindID);
+            SysLog::Error("Client", "Failed to find bound object %u.", bindID);
             return false;
         }
     }
@@ -1782,7 +1782,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
         dest = PyServiceMgr::LookupService(packet->dest.service);
         if( dest == NULL )
         {
-            sLog.Error("Client","Unable to find service to handle call to: %s", packet->dest.service.c_str());
+            SysLog::Error("Client","Unable to find service to handle call to: %s", packet->dest.service.c_str());
             packet->dest.Dump(CLIENT__ERROR, "    ");
 
             //TODO: throw proper exception to client (exceptions.ServiceNotFound).
@@ -1792,10 +1792,10 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
 
     //Debug code
     if( req.method == "BeanCount" )
-        sLog.Error("Client","BeanCount");
+        SysLog::Error("Client","BeanCount");
     else
-        //this should be sLog.Debug, but because of the number of messages, I left it as .Log for readability, and ease of finding other debug messages
-        sLog.Log("Server", "%s call made to %s",req.method.c_str(),packet->dest.service.c_str());
+        //this should be Log::Debug, but because of the number of messages, I left it as .Log for readability, and ease of finding other debug messages
+        SysLog::Log("Server", "%s call made to %s",req.method.c_str(),packet->dest.service.c_str());
 
     //build arguments
     PyCallArgs args( this, req.arg_tuple, req.arg_dict );
@@ -1815,7 +1815,7 @@ bool Client::Handle_Notify( PyPacket* packet )
     ServerNotification notify;
     if( !notify.Decode( packet->payload ) )
     {
-        sLog.Error("Client","Failed to convert rep into a notify stream");
+        SysLog::Error("Client","Failed to convert rep into a notify stream");
         return false;
     }
 
@@ -1829,20 +1829,20 @@ bool Client::Handle_Notify( PyPacket* packet )
         for(; cur != end; cur++)
         {
             if(!element.Decode( *cur )) {
-                sLog.Error("Client","Notification '%s' from %s: Failed to decode element. Skipping.", notify.method.c_str(), GetName());
+                SysLog::Error("Client","Notification '%s' from %s: Failed to decode element. Skipping.", notify.method.c_str(), GetName());
                 continue;
             }
 
             uint32 nodeID, bindID;
             if(sscanf(element.boundID.c_str(), "N=%u:%u", &nodeID, &bindID) != 2) {
-                sLog.Error("Client","Notification '%s' from %s: Failed to parse bind string '%s'. Skipping.",
+                SysLog::Error("Client","Notification '%s' from %s: Failed to parse bind string '%s'. Skipping.",
                     notify.method.c_str(), GetName(), element.boundID.c_str());
                 continue;
             }
 
             if (nodeID != PyServiceMgr::GetNodeID())
             {
-                sLog.Error("Client","Notification '%s' from %s: Unknown nodeID %u received (expected %u). Skipping.",
+                SysLog::Error("Client","Notification '%s' from %s: Unknown nodeID %u received (expected %u). Skipping.",
                            notify.method.c_str(), GetName(), nodeID, PyServiceMgr::GetNodeID());
                 continue;
             }
@@ -1852,7 +1852,7 @@ bool Client::Handle_Notify( PyPacket* packet )
     }
     else
     {
-        sLog.Error("Client","Unhandled notification from %s: unknown method '%s'", GetName(), notify.method.c_str());
+        SysLog::Error("Client","Unhandled notification from %s: unknown method '%s'", GetName(), notify.method.c_str());
         return false;
     }
 

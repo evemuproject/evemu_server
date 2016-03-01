@@ -135,7 +135,7 @@ PyObject *StandingDB::GetStandingTransactions( uint32 characterID )
     return (DBResultToRowset(res));*/
 
     //since we dont support standing changes in any way yet, its useless to have such stuff in db
-    sLog.Debug( "StandingDB", "Called GetStandingTransactions stub." );
+    SysLog::Debug( "StandingDB", "Called GetStandingTransactions stub." );
 
     util_Rowset res;
 

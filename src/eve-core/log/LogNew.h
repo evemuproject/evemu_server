@@ -27,7 +27,6 @@
 #define __LOG__LOG_NEW_H__INCL__
 
 #include "threading/Mutex.h"
-#include "utils/Singleton.h"
 
 /**
  * @brief a small and simple logging system.
@@ -38,50 +37,49 @@
  * @author Captnoord.
  * @date August 2009
  */
-class NewLog
-: public Singleton< NewLog >
+class SysLog
 {
-public:
+private:
     /// Primary constructor, initializes logging.
-    NewLog();
-    NewLog(std::string logPath);
+    SysLog();
     /// Destructor, closes the logfile.
-    ~NewLog();
+    ~SysLog();
+public:
 
     /**
      * @brief Initializes and sets the Log file path.
      *
      * @param[in] logPath is the absolute or relative path where log files are to be stored
      */
-    void InitializeLogging( std::string logPath );
+    static void InitializeLogging(std::string logPath);
     /**
      * @brief Logs a message to file.
      *
      * @param[in] source is the source from where the message is printed.
      * @param[in] fmt is the message itself.
      */
-    void Log( const char* source, const char* fmt, ... );
+    static void Log(const char* source, const char* fmt, ...);
     /**
      * @brief Logs error message to console and file.
      *
      * @param[in] source is the source from where the message is printed.
      * @param[in] fmt is the error message itself.
      */
-    void Error( const char* source, const char* fmt, ... );
+    static void Error(const char* source, const char* fmt, ...);
     /**
      * @brief Logs a warning message to file.
      *
      * @param[in] source is the source from where the message is printed.
      * @param[in] fmt is the message itself.
      */
-    void Warning( const char* source, const char* fmt, ... );
+    static void Warning(const char* source, const char* fmt, ...);
     /**
      * @brief Logs a success message to file.
      *
      * @param[in] source is the source from where the message is printed.
      * @param[in] fmt is the message itself.
      */
-    void Success( const char* source, const char* fmt, ... );
+    static void Success(const char* source, const char* fmt, ...);
     /**
      * @brief Logs a debug message to file and console.
      *
@@ -90,7 +88,7 @@ public:
      * @param[in] source is the source from where the message is printed.
      * @param[in] fmt is the message itself.
      */
-    void Debug( const char* source, const char* fmt, ... );
+    static void Debug(const char* source, const char* fmt, ...);
 
     /**
      * @brief Sets the logfile to be used.
@@ -100,7 +98,7 @@ public:
      * @retval true  The new logfile was successfully opened.
      * @retval false Failed to open the new logfile.
      */
-    bool SetLogfile( const char* filename );
+    static bool SetLogfile(const char* filename);
     /**
      * @brief Sets the logfile to be used.
      *
@@ -111,14 +109,17 @@ public:
      * @retval true  The new logfile was successfully opened.
      * @retval false Failed to open the new logfile.
      */
-    bool SetLogfile( FILE* file );
+    static bool SetLogfile(FILE* file);
 
-    /**
+/**
      * @brief Sets the log system time every main loop.
      *
      * @param[in] time is the timestamp.
      */
-    void SetTime( time_t time ) { mTime = time; }
+    static void SetTime(time_t time)
+    {
+        mTime = time;
+    }
 
 protected:
     /// A convenience color enum.
@@ -148,11 +149,11 @@ protected:
      * @param[in] fmt    The format string.
      * @param[in] ap     The arguments.
      */
-    void PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap );
+    static void PrintMsg(Color color, char pfx, const char* source, const char* fmt, va_list ap);
     /**
      * @brief Prints current time.
      */
-    void PrintTime();
+    static void PrintTime();
 
     /**
      * @brief Prints a raw message.
@@ -163,7 +164,7 @@ protected:
      * @param[in] fmt The format string.
      * @param[in] ... The arguments.
      */
-    void Print( const char* fmt, ... );
+    static void Print(const char* fmt, ...);
     /**
      * @brief Prints a raw message.
      *
@@ -173,33 +174,33 @@ protected:
      * @param[in] fmt The format string.
      * @param[in] ap  The arguments.
      */
-    void PrintVa( const char* fmt, va_list ap );
+    static void PrintVa(const char* fmt, va_list ap);
 
     /**
      * @brief Sets the color of the output text.
      *
      * @param[in] color The new color of output text.
      */
-    void SetColor( Color color );
+    static void SetColor(Color color);
     /**
      * @brief Sets the default logfile.
      */
-    void SetLogfileDefault(std::string logPath);
+    static void SetLogfileDefault(std::string logPath);
 
     /// The active logfile.
-    FILE* mLogfile;
+    static FILE* mLogfile;
     /// Current timestamp.
-    time_t mTime; // crap there should be 1 generic easy to understand time manager.
+    static time_t mTime; // crap there should be 1 generic easy to understand time manager.
     /// Protection against concurrent log messages
-    Mutex mMutex;
+    static Mutex mMutex;
 
-    bool m_initialized;
+    static bool m_initialized;
 
 #ifdef HAVE_WINDOWS_H
     /// Handle to standard output stream.
-    const HANDLE mStdOutHandle;
+    const static HANDLE mStdOutHandle;
     /// Handle to standard error stream.
-    const HANDLE mStdErrHandle;
+    const static HANDLE mStdErrHandle;
 
     /// Color translation table.
     static const WORD COLOR_TABLE[ COLOR_COUNT ];
@@ -208,9 +209,5 @@ protected:
     static const char* const COLOR_TABLE[ COLOR_COUNT ];
 #endif /* !HAVE_WINDOWS_H */
 };
-
-/// Evaluates to a NewLog instance.
-#define sLog \
-    ( NewLog::get() )
 
 #endif /* !__LOG__LOG_NEW_H__INCL__ */

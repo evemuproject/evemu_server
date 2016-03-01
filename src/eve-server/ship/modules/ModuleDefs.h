@@ -354,7 +354,7 @@ static EvilNumber CalculateNewAttributeValue(EvilNumber attrVal, EvilNumber attr
 		default:									return 0; break;
     }
 
-    sLog.Error("CalculateNewAttributeValue", "Unknown EveCalculationType used");
+    SysLog::Error("CalculateNewAttributeValue", "Unknown EveCalculationType used");
     assert(false);
     return 0;
 }

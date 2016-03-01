@@ -45,14 +45,14 @@ LPService::~LPService()
 
 PyResult LPService::Handle_GetLPExchangeRates( PyCallArgs& call )
 {
-    sLog.Debug( "LPService", "Called GetLPExchangeRates stub." );
+    SysLog::Debug( "LPService", "Called GetLPExchangeRates stub." );
 
     return new PyList;
 }
 
 PyResult LPService::Handle_GetLPForCharacterCorp( PyCallArgs& call )
 {
-    sLog.Debug( "LPService", "Called GetLPForCharacterCorp stub." );
+    SysLog::Debug( "LPService", "Called GetLPForCharacterCorp stub." );
 
     return new PyInt( 0 );
 }
@@ -61,7 +61,7 @@ PyResult LPService::Handle_GetLPsForCharacter( PyCallArgs& call )
 {
     //no args
 
-    sLog.Debug( "LPService", "Called GetLPsForCharacter stub." );
+    SysLog::Debug( "LPService", "Called GetLPsForCharacter stub." );
 
     return new PyList;
 }
@@ -69,7 +69,7 @@ PyResult LPService::Handle_GetLPsForCharacter( PyCallArgs& call )
 PyResult LPService::Handle_GetAvailableOffersFromCorp( PyCallArgs& call )
 {
 
-    sLog.Debug( "LPService", "Called GetAvailableOffersFromCorp stub." );
+    SysLog::Debug( "LPService", "Called GetAvailableOffersFromCorp stub." );
 
     return new PyList;
 }

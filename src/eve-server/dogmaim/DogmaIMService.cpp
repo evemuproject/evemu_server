@@ -193,7 +193,7 @@ PyResult DogmaIMBound::Handle_CheckSendLocationInfo( PyCallArgs& call )
 {
     //no arguments
 
-    sLog.Debug( "DogmaIMBound", "Called CheckSendLocationInfo stub." );
+    SysLog::Debug( "DogmaIMBound", "Called CheckSendLocationInfo stub." );
 
     return new PyNone;
 }
@@ -261,7 +261,7 @@ PyResult DogmaIMBound::Handle_LoadAmmoToBank( PyCallArgs& call ) {
 	InventoryItemRef moduleRef = shipRef->GetModule(args.moduleItemID);
 	if( moduleRef.get() == NULL )
 	{
-		sLog.Error("DogmaIMBound::Handle_LoadAmmoToBank()", "ERROR: cannot find module into which charge should be loaded!  How did we get here!?!?!" );
+		SysLog::Error("DogmaIMBound::Handle_LoadAmmoToBank()", "ERROR: cannot find module into which charge should be loaded!  How did we get here!?!?!" );
 		return NULL;
 	}
 	EVEItemFlags moduleFlag = moduleRef->flag();
@@ -309,7 +309,7 @@ PyResult DogmaIMBound::Handle_Activate( PyCallArgs& call )
 
                 if( se == NULL )
                 {
-                    sLog.Error( "DogmaIMBound::Handle_Activate()", "Item ID = %u is not a valid SystemEntity found in this system.", itemID );
+                    SysLog::Error( "DogmaIMBound::Handle_Activate()", "Item ID = %u is not a valid SystemEntity found in this system.", itemID );
                     return NULL;
                 }
 
@@ -342,13 +342,13 @@ PyResult DogmaIMBound::Handle_Activate( PyCallArgs& call )
             }
             else
             {
-                sLog.Error( "DogmaIMBound::Handle_Activate()", "call.tuple->items.at( 1 ) was not PyInt expected type." );
+                SysLog::Error( "DogmaIMBound::Handle_Activate()", "call.tuple->items.at( 1 ) was not PyInt expected type." );
                 return NULL;
             }
         }
         else
         {
-            sLog.Error( "DogmaIMBound::Handle_Activate()", "call.tuple->items.at( 0 ) was not PyInt expected type." );
+            SysLog::Error( "DogmaIMBound::Handle_Activate()", "call.tuple->items.at( 0 ) was not PyInt expected type." );
             return NULL;
         }
     }
@@ -384,13 +384,13 @@ PyResult DogmaIMBound::Handle_Deactivate( PyCallArgs& call )
 
 PyResult DogmaIMBound::Handle_Overload( PyCallArgs& call ) {
 
-	sLog.Warning("Server", "Called Overload stub");
+	SysLog::Warning("Server", "Called Overload stub");
 	return NULL;
 }
 
 PyResult DogmaIMBound::Handle_CancelOverloading( PyCallArgs& call ) {
 
-	sLog.Warning("Server", "Called CancelOverloading stub");
+	SysLog::Warning("Server", "Called CancelOverloading stub");
 	return NULL;
 }
 
@@ -421,7 +421,7 @@ PyResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
     GVector vectorToTarget( call.client->GetPosition(), target->GetPosition() );
     double rangeToTarget = vectorToTarget.length();
     // TODO: calculate double distance = SQRT(x^2 + y^2 + z^), where x,y,z are to.x-from.x, etc
-    sLog.Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET ADDED - Range to Target = %f meters.", rangeToTarget );
+    SysLog::Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET ADDED - Range to Target = %f meters.", rangeToTarget );
 
     Rsp_Dogma_AddTarget rsp;
     rsp.success = true;
@@ -451,7 +451,7 @@ PyResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
     // For Debugging purposes, put a message in the log to print out the range to the target:
     GVector vectorToTarget( call.client->GetPosition(), target->GetPosition() );
     double rangeToTarget = vectorToTarget.length();
-    sLog.Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET REMOVED - Range to Target = %f meters.", rangeToTarget );
+    SysLog::Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET REMOVED - Range to Target = %f meters.", rangeToTarget );
 
     call.client->targets.ClearTarget(target);
 
@@ -468,7 +468,7 @@ PyResult DogmaIMBound::Handle_ClearTargets(PyCallArgs &call) {
 
 PyResult DogmaIMBound::Handle_GetWeaponBankInfoForShip( PyCallArgs& call )
 {
-    sLog.Debug( "DogmaIMBound", "Called GetWeaponBankInfoForShip stub." );
+    SysLog::Debug( "DogmaIMBound", "Called GetWeaponBankInfoForShip stub." );
 
     return new PyDict;
 }

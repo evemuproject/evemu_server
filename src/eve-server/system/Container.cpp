@@ -166,7 +166,7 @@ void CargoContainer::AddItem(InventoryItemRef item)
 
 void CargoContainer::RemoveItem(InventoryItemRef item)
 {
-    sLog.Error( "CargoContainer::RemoveItem()", "Empty status of cargo containers is not checked to ensure proper despawn of jet-cans." );
+    SysLog::Error( "CargoContainer::RemoveItem()", "Empty status of cargo containers is not checked to ensure proper despawn of jet-cans." );
     InventoryEx::RemoveItem( item );
 }
 

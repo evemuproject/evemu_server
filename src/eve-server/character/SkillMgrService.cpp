@@ -136,7 +136,7 @@ PyResult SkillMgrBound::Handle_GetEndOfTraining(PyCallArgs &call) {
 
 PyResult SkillMgrBound::Handle_GetSkillHistory( PyCallArgs& call )
 {
-    sLog.Debug( "SkillMgrBound", "Called GetSkillHistory stub." );
+    SysLog::Debug( "SkillMgrBound", "Called GetSkillHistory stub." );
 
     util_Rowset rowset;
 
@@ -362,8 +362,8 @@ PyResult SkillMgrBound::Handle_CharStartTrainingSkillByTypeID( PyCallArgs& call 
 
     CharacterRef charRef = call.client->GetChar();
     charRef->StartTraining(args.arg);
-    //sLog.Error("SkillMgrBound::Handle_CharStartTrainingSkillByTypeID()", "TODO: This is used on resuming skill queue, so should be implemented");
-    //sLog.Debug( "SkillMgrBound", "Called CharStartTrainingSkillByTypeID stub." );
+    //Log::Error("SkillMgrBound::Handle_CharStartTrainingSkillByTypeID()", "TODO: This is used on resuming skill queue, so should be implemented");
+    //Log::Debug( "SkillMgrBound", "Called CharStartTrainingSkillByTypeID stub." );
 
     return NULL;
 }

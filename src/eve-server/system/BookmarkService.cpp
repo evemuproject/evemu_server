@@ -62,7 +62,7 @@ uint32 BookmarkService::GetNextAvailableBookmarkID()
         " FROM bookmarks "
         " WHERE bookmarkID > %u ", 0))
     {
-        sLog.Error( "BookmarkDB::GetNextAvailableBookmarkID()", "Error in query: %s", res.error.c_str() );
+        SysLog::Error( "BookmarkDB::GetNextAvailableBookmarkID()", "Error in query: %s", res.error.c_str() );
         return 0;
     }
 
@@ -99,7 +99,7 @@ uint32 BookmarkService::GetNextAvailableFolderID()
         " FROM bookmarkFolders "
         " WHERE folderID > %u ", 0))
     {
-        sLog.Error( "BookmarkDB::GetNextAvailableFolderID()", "Error in query: %s", res.error.c_str() );
+        SysLog::Error( "BookmarkDB::GetNextAvailableFolderID()", "Error in query: %s", res.error.c_str() );
         return 0;
     }
 
@@ -211,7 +211,7 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
         memo = call.tuple->GetItem( 2 )->AsWString()->content();
     else
     {
-        sLog.Error( "BookmarkService::Handle_BookmarkLocation()", "%s: call.tuple->GetItem(2) is of the wrong type: '%s'.  Expected PyString or PyWString type.", call.client->GetName(), call.tuple->GetItem(2)->TypeString() );
+        SysLog::Error( "BookmarkService::Handle_BookmarkLocation()", "%s: call.tuple->GetItem(2) is of the wrong type: '%s'.  Expected PyString or PyWString type.", call.client->GetName(), call.tuple->GetItem(2)->TypeString() );
         return NULL;
     }
 
@@ -221,11 +221,11 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
         note = call.tuple->GetItem( 3 )->AsWString()->content();
     else
     {
-        sLog.Error( "BookmarkService::Handle_BookmarkLocation()", "%s: call.tuple->GetItem(3) is of the wrong type: '%s'.  Expected PyString or PyWString type.", call.client->GetName(), call.tuple->GetItem(3)->TypeString() );
+        SysLog::Error( "BookmarkService::Handle_BookmarkLocation()", "%s: call.tuple->GetItem(3) is of the wrong type: '%s'.  Expected PyString or PyWString type.", call.client->GetName(), call.tuple->GetItem(3)->TypeString() );
         return NULL;
     }
 
-      sLog.Debug( "BookmarkService::Handle_BookmarkLocation()", "itemID = %u, typeID = %u", itemID, typeID );
+      SysLog::Debug( "BookmarkService::Handle_BookmarkLocation()", "itemID = %u, typeID = %u", itemID, typeID );
     ////////////////////////////////////////
     // Save bookmark info to database:
     ////////////////////////////////////////
@@ -277,12 +277,12 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
 //15:37:47 L BookmarkService::Handle_DeleteBookmarks(): size= 1, 0 = ObjectEx
 PyResult BookmarkService::Handle_DeleteBookmarks(PyCallArgs &call)          //not working
 {
-  sLog.Log( "BookmarkService::Handle_DeleteBookmarks()", "size= %u, 0 = %s", call.tuple->size(),
+  SysLog::Log( "BookmarkService::Handle_DeleteBookmarks()", "size= %u, 0 = %s", call.tuple->size(),
             call.tuple->GetItem(0)->TypeString() );  //call.tuple->GetItem(0)->AsInt()->value() fails...server crash
 
     if(call.tuple->IsList())
     {
-      sLog.Log( "BookmarkService::Handle_DeleteBookmarks()", "Call is PyList");
+      SysLog::Log( "BookmarkService::Handle_DeleteBookmarks()", "Call is PyList");
       PyList *list = call.tuple->GetItem( 0 )->AsList();
       uint32 i;
       uint32 bookmarkID;
@@ -298,12 +298,12 @@ PyResult BookmarkService::Handle_DeleteBookmarks(PyCallArgs &call)          //no
 
             BookmarkDB::DeleteBookmarksFromDatabase(call.client->GetCharacterID(), &bookmarkIDs);
       }else{
-          sLog.Error( "BookmarkService::Handle_DeleteBookmarks()", "%s: call.tuple->GetItem( 0 )->AsList()->size() == 0.  Expected size >= 1.", call.client->GetName() );
+          SysLog::Error( "BookmarkService::Handle_DeleteBookmarks()", "%s: call.tuple->GetItem( 0 )->AsList()->size() == 0.  Expected size >= 1.", call.client->GetName() );
           return NULL;
       }
     }else if(call.tuple->IsTuple())
     {
-      sLog.Log( "BookmarkService::Handle_DeleteBookmarks()", "Call is PyTuple");
+      SysLog::Log( "BookmarkService::Handle_DeleteBookmarks()", "Call is PyTuple");
 	  //bookmarkIDs = call.tuple->
       /**
         uint32 bookmarkID;
@@ -312,10 +312,10 @@ PyResult BookmarkService::Handle_DeleteBookmarks(PyCallArgs &call)          //no
       */
     }else if(call.tuple->IsObjectEx())
     {
-      sLog.Error( "BookmarkService::Handle_DeleteBookmarks()", "Call is ObjectEx.");
+      SysLog::Error( "BookmarkService::Handle_DeleteBookmarks()", "Call is ObjectEx.");
       return NULL;
     }else{
-      sLog.Error( "BookmarkService::Handle_DeleteBookmarks()", "Call is NotDefined.  Returning NULL.");
+      SysLog::Error( "BookmarkService::Handle_DeleteBookmarks()", "Call is NotDefined.  Returning NULL.");
       return NULL;
     }
 
@@ -350,7 +350,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
     // bookmarkID = call.tuple->GetItem( 0 )->AsInt()->value()
     if ( !(call.tuple->GetItem( 0 )->IsInt()) )
     {
-        sLog.Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.tuple->GetItem( 0 ) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->GetItem( 0 )->TypeString() );
+        SysLog::Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.tuple->GetItem( 0 ) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->GetItem( 0 )->TypeString() );
         return NULL;
     }
     else
@@ -359,7 +359,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
     // memo = call.tuple->GetItem( 3 )->AsWString()->content()
     if ( !(call.tuple->GetItem( 3 )->IsWString()) )
     {
-        sLog.Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.tuple->GetItem( 3 ) is of the wrong type: '%s'.  Expected PyWString type.", call.client->GetName(), call.tuple->GetItem( 3 )->TypeString() );
+        SysLog::Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.tuple->GetItem( 3 ) is of the wrong type: '%s'.  Expected PyWString type.", call.client->GetName(), call.tuple->GetItem( 3 )->TypeString() );
         return NULL;
     }
     else
@@ -370,7 +370,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
     //newNote = call.byname.find("note")->second->AsString() when note == ""
     if( call.byname.find("note") == call.byname.end() )
     {
-        sLog.Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.byname.find(\"note\") could not be found.", call.client->GetName() );
+        SysLog::Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.byname.find(\"note\") could not be found.", call.client->GetName() );
         return NULL;
     }
     else
@@ -381,7 +381,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
             newNote = call.byname.find("note")->second->AsString()->content();
         else
         {
-            sLog.Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.byname.find(\"note\")->second is of the wrong type: '%s'.  Expected PyWString or PyString type.", call.client->GetName(), call.byname.find("note")->second->TypeString() );
+            SysLog::Error( "BookmarkService::Handle_UpdateBookmark()", "%s: call.byname.find(\"note\")->second is of the wrong type: '%s'.  Expected PyWString or PyString type.", call.client->GetName(), call.byname.find("note")->second->TypeString() );
             return NULL;
         }
     }
@@ -439,7 +439,7 @@ PyResult BookmarkService::Handle_CreateFolder(PyCallArgs &call)     // working
         creatorID
     );
 
-	sLog.Error("Handle_CreateFolder()", "This function does NOT return anything to the client!");
+	SysLog::Error("Handle_CreateFolder()", "This function does NOT return anything to the client!");
 
     return(new PyNone());
 }
@@ -492,7 +492,7 @@ PyResult BookmarkService::Handle_DeleteFolder(PyCallArgs &call)     // working
 //16:02:12 L BookmarkService::Handle_MoveBookmarksToFolder(): size= 2, 0 = Integer(2), 1 = ObjectEx
 PyResult BookmarkService::Handle_MoveBookmarksToFolder(PyCallArgs &call)
 {
-  sLog.Log( "BookmarkService::Handle_MoveBookmarksToFolder()", "size= %u, 0 = %s, 1 = %s", call.tuple->size(),
+  SysLog::Log( "BookmarkService::Handle_MoveBookmarksToFolder()", "size= %u, 0 = %s, 1 = %s", call.tuple->size(),
             call.tuple->GetItem(0)->TypeString(), call.tuple->GetItem(1)->TypeString() );  //call.tuple->GetItem(0)->AsInt()->value() fails...server crash
 
     return(new PyNone());

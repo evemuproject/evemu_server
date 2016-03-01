@@ -34,7 +34,7 @@ APIEveSystemManager::APIEveSystemManager()
 
 std::shared_ptr<std::string> APIEveSystemManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
-    sLog.Debug("APIEveSystemManager::ProcessCall()", "EVEmu API - EvE-System Service Manager");
+    SysLog::Debug("APIEveSystemManager::ProcessCall()", "EVEmu API - EvE-System Service Manager");
 
     return std::shared_ptr<std::string>(new std::string(""));
 }

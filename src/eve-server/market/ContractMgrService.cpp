@@ -42,7 +42,7 @@ ContractMgrService::~ContractMgrService()
 
 PyResult ContractMgrService::Handle_NumRequiringAttention( PyCallArgs& call )
 {
-    sLog.Debug( "ContractMgrService", "Called NumRequiringAttention stub." );
+    SysLog::Debug( "ContractMgrService", "Called NumRequiringAttention stub." );
 
     PyDict* args = new PyDict;
     args->SetItemString( "n", new PyInt( 0 ) );

@@ -78,7 +78,7 @@ bool XMLPacketGen::ParseElements( const TiXmlElement* field )
 {
     if( !OpenFiles() )
     {
-        sLog.Error( "XMLPacketGen", "Unable to open output files: %s.", strerror( errno ) );
+        SysLog::Error( "XMLPacketGen", "Unable to open output files: %s.", strerror( errno ) );
         return false;
     }
 

@@ -44,7 +44,7 @@ PyRep *FactionWarMgrDB::GetWarFactions() {
 
 PyRep* FactionWarMgrDB::GetFacWarSystems()
 {
-    sLog.Debug( "FactionWarMgrDB", "Called GetFacWarSystems stub." );
+    SysLog::Debug( "FactionWarMgrDB", "Called GetFacWarSystems stub." );
 
     //fill some crap
     PyDict* result = new PyDict;

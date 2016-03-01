@@ -823,7 +823,7 @@ std::wstring Strings::StringToWString( std::string & str )
 
     if (ret_len != str.size()) {
 
-        sLog.Error("Utils::Strings::StringToWString", "unable to convert std::string to std::wstring, wide character string");
+        SysLog::Error("Utils::Strings::StringToWString", "unable to convert std::string to std::wstring, wide character string");
     }
     return wstr;
 }

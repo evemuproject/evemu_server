@@ -1167,7 +1167,7 @@ void InventoryItem::SetOnline(bool online) {
     Client *c = EntityList::FindCharacter(m_ownerID);
     if(c == NULL)
     {
-        sLog.Error("InventoryItem", "unable to set ourselfs online//offline because we can't find the client");
+        SysLog::Error("InventoryItem", "unable to set ourselfs online//offline because we can't find the client");
         return;
     }
 
@@ -1207,7 +1207,7 @@ void InventoryItem::SetActive(bool active, uint32 effectID, double duration, boo
 	Client* c = EntityList::FindCharacter(m_ownerID);
     if(c == NULL)
     {
-        sLog.Error("InventoryItem", "unable to set ourselfs online//offline because we can't find the client");
+        SysLog::Error("InventoryItem", "unable to set ourselfs online//offline because we can't find the client");
         return;
     }
 

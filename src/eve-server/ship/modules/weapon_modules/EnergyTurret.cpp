@@ -97,7 +97,7 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 	}
 	else
 	{
-		sLog.Error( "EnergyTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
+		SysLog::Error( "EnergyTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
 		throw PyException( MakeCustomError( "ERROR!  Cannot find charge that is supposed to be loaded into this module!" ) );
 	}
 }

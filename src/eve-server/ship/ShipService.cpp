@@ -117,7 +117,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
     ShipRef oldShipRef = call.client->GetShip();
 
     if(!args.Decode(&call.tuple)) {
-        sLog.Error("ShipBound::Handle_Board()", "%s: failed to decode arguments", call.client->GetName());
+        SysLog::Error("ShipBound::Handle_Board()", "%s: failed to decode arguments", call.client->GetName());
         return NULL;
     }
 
@@ -135,7 +135,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
 
         if( !boardShipRef )
         {
-            sLog.Error("ShipBound::Handle_Board()", "%s: Failed to get new ship %u.", call.client->GetName(), args.arg1);
+            SysLog::Error("ShipBound::Handle_Board()", "%s: Failed to get new ship %u.", call.client->GetName(), args.arg1);
         }
         else
         {
@@ -216,7 +216,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
 
     // Player is NOT in space, so board ship as if in station:
     if( !boardShipRef ) {
-        sLog.Error("ShipBound::Handle_Board()", "%s: Failed to get new ship %u.", call.client->GetName(), args.arg1);
+        SysLog::Error("ShipBound::Handle_Board()", "%s: Failed to get new ship %u.", call.client->GetName(), args.arg1);
     }
     else
     {
@@ -266,7 +266,7 @@ PyResult ShipBound::Handle_Undock(PyCallArgs &call) {
         return NULL;
     }
 
-    sLog.Error( "ShipBound::Handle_Undock()", "!!! Undock not fully implemented!");
+    SysLog::Error( "ShipBound::Handle_Undock()", "!!! Undock not fully implemented!");
 
     //send an OnItemChange notification
     // tuple:
@@ -335,7 +335,7 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
     {
         if( !(call.tuple->GetItem(0)->IsInt()) )
         {
-            sLog.Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: call.tuple->GetItem(0)->IsInt() == false");
+            SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: call.tuple->GetItem(0)->IsInt() == false");
             //TODO: throw exception
             return NULL;
         }
@@ -344,7 +344,7 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
             // Tuple contains single Integer, this is for Tech 3 Ship Assembly:
             if( !argsT3.Decode(&call.tuple) )
             {
-                sLog.Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: argsT3.Decode(&call.tuple) failed");
+                SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: argsT3.Decode(&call.tuple) failed");
                 //TODO: throw exception
                 return NULL;
             }
@@ -360,14 +360,14 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
                 }
                 else
                 {
-                    sLog.Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: !call.byname.find(\"subSystems\")->second->IsList() failed");
+                    SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: !call.byname.find(\"subSystems\")->second->IsList() failed");
                     //TODO: throw exception
                     return NULL;
                 }
             }
             else
             {
-                sLog.Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: call.byname.find(\"subSystems\") != call.byname.end() failed" );
+                SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: call.byname.find(\"subSystems\") != call.byname.end() failed" );
                 return NULL;
             }
             completeTech3Assembly = true;
@@ -463,7 +463,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
     {
         if( !(drop3args.toDrop->IsList()) )
         {
-            sLog.Error("ShipBound::Handle_Drop()", "toDrop argument type is wrong, expected PyList");
+            SysLog::Error("ShipBound::Handle_Drop()", "toDrop argument type is wrong, expected PyList");
             //TODO: throw exception
             return NULL;
         }
@@ -474,7 +474,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
     }
     else
     {
-        sLog.Error("ShipBound::Handle_Drop()", "call.tuple wrong size, expected 3 items, actual size = %u", call.tuple->size());
+        SysLog::Error("ShipBound::Handle_Drop()", "call.tuple wrong size, expected 3 items, actual size = %u", call.tuple->size());
         //TODO: throw exception
         return NULL;
     }
@@ -489,14 +489,14 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
         cargoItem = ItemFactory::GetItem(itemID);
         if( !cargoItem )
         {
-            sLog.Error("ShipBound::Handle_Drop()", "%s: Unable to find item %u to drop.", call.client->GetName(), itemID);
+            SysLog::Error("ShipBound::Handle_Drop()", "%s: Unable to find item %u to drop.", call.client->GetName(), itemID);
             continue;
         }
 
         //verify that this item is in fact in the player's ship.
         if( cargoItem->locationID() != call.client->GetShipID() )
         {
-            sLog.Error("ShipBound::Handle_Drop()", "%s: Item %u is not in our ship (%u), it is in %u. Not dropping.", call.client->GetName(), itemID, call.client->GetShipID(), cargoItem->locationID());
+            SysLog::Error("ShipBound::Handle_Drop()", "%s: Item %u is not in our ship (%u), it is in %u. Not dropping.", call.client->GetName(), itemID, call.client->GetShipID(), cargoItem->locationID());
             continue;
         }
 

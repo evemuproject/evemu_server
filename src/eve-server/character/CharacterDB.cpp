@@ -84,7 +84,7 @@ bool CharacterDB::GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uin
 uint64 CharacterDB::PrepareCharacterForDelete(uint32 accountID, uint32 charID)
 {
     // calculate the point in time from which this character may be deleted
-    uint64 deleteTime = Win32TimeNow() + (Win32Time_Second * sConfig.character.terminationDelay);
+    uint64 deleteTime = Win32TimeNow() + (Win32Time_Second * EVEServerConfig::character.terminationDelay);
 
     // note: the queries relating to character deletion have been specifically designed to avoid wreaking havoc when used by a malicious client
     // the client can't lie to us about accountID, only charID
@@ -283,12 +283,12 @@ void CharacterDB::GetCharacterData(uint32 characterID, std::map<std::string, uin
         " WHERE characterID = %u",
         characterID))
     {
-        sLog.Error("CharacterDB::GetCharPublicInfo2()", "Failed to query HQ of character's %u corporation: %s.", characterID, res.error.c_str());
+        SysLog::Error("CharacterDB::GetCharPublicInfo2()", "Failed to query HQ of character's %u corporation: %s.", characterID, res.error.c_str());
     }
 
     if(!res.GetRow(row))
     {
-        sLog.Error("CharacterDB::GetCharacterData()", "No valid rows were returned by the database query.");
+        SysLog::Error("CharacterDB::GetCharacterData()", "No valid rows were returned by the database query.");
     }
 
 //    std::map<std::string,uint32> characterDataMap;
@@ -990,7 +990,7 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
 PyObject *CharacterDB::GetTopBounties() {
     DBQueryResult res;
     if(!DBcore::RunQuery(res, "SELECT `characterID`, `itemName` as `ownerName`, `bounty`, `online`  FROM character_  LEFT JOIN `entity` ON `characterID` = `itemID` WHERE `characterID` >= %u AND `bounty` > 0 ORDER BY `bounty` DESC LIMIT 0,100" , EVEMU_MINIMUM_ID)) {
-        sLog.Error("CharacterDB", "Error in GetTopBounties query: %s", res.error.c_str());
+        SysLog::Error("CharacterDB", "Error in GetTopBounties query: %s", res.error.c_str());
         return NULL;
     }
     return DBResultToRowset(res);
@@ -999,7 +999,7 @@ PyObject *CharacterDB::GetTopBounties() {
 uint32 CharacterDB::GetBounty(uint32 charID) {
     DBQueryResult res;
     if(!DBcore::RunQuery(res, "SELECT `bounty` FROM character_ WHERE `characterID` = %u", charID)) {
-        sLog.Error("CharacterDB", "Error in GetBounty query: %s", res.error.c_str());
+        SysLog::Error("CharacterDB", "Error in GetBounty query: %s", res.error.c_str());
         return 0;
     }
     DBResultRow row;

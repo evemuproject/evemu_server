@@ -655,7 +655,7 @@ void Ship::AddItem(InventoryItemRef item)
 
 void Ship::SaveShip()
 {
-    sLog.Debug( "Ship::SaveShip()", "Saving all 'entity' info and attribute info to DB for ship %s (%u)...", itemName().c_str(), itemID() );
+    SysLog::Debug( "Ship::SaveShip()", "Saving all 'entity' info and attribute info to DB for ship %s (%u)...", itemName().c_str(), itemID() );
 
     SaveItem();                         // Save all attributes and item info
     m_ModuleManager->SaveModules();     // Save all attributes and item info for all modules fitted to this ship
@@ -818,7 +818,7 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 
 		// The default case handles ANY other items added to ship and assumes they go into one of the valid cargo holds on this ship:
 		default:
-			//sLog.Error( "Ship::AddItem(flag,item)", "ERROR! Function called with item '%s' (id: %u) of category neither Charge nor Module!", item->itemName().c_str(), item->itemID() );
+			//Log::Error( "Ship::AddItem(flag,item)", "ERROR! Function called with item '%s' (id: %u) of category neither Charge nor Module!", item->itemName().c_str(), item->itemID() );
 			_IncreaseCargoHoldsUsedVolume( item->flag(), (item->GetAttribute(AttrVolume).get_float() * item->quantity()) );
 			item->Move(itemID(), flag);
 			break;
@@ -904,8 +904,8 @@ void Ship::UpdateModules()
 	// InventoryBound::_ExecAdd()		- things have been added or removed, recheck all modules for... some reason
 	// Client::MoveItem()				- something has been moved into or out of the ship, recheck all modules for... some reason
 
-	sLog.Error( "Ship::UpdateModules()", "We are currently not checking for modules that need to go online, or skill checking character for any modules of a newly boarded ship, or updating module states based on things being moved into or off the ship!" );
-	sLog.Error( "Ship::UpdateModules()", "This should really be a simple call to a function ModuleManager::UpdateModules() and the code put inside there." );
+	SysLog::Error( "Ship::UpdateModules()", "We are currently not checking for modules that need to go online, or skill checking character for any modules of a newly boarded ship, or updating module states based on things being moved into or off the ship!" );
+	SysLog::Error( "Ship::UpdateModules()", "This should really be a simple call to a function ModuleManager::UpdateModules() and the code put inside there." );
 }
 
 void Ship::UnloadModule(uint32 itemID)

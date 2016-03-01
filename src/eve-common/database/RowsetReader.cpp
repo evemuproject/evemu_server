@@ -292,14 +292,14 @@ bool SetSQLDumper::VisitTuple( const PyTuple* rep )
             //must be duplicated in order to be decoded ...
             PyTuple* dup = new PyTuple( *rep );
             if( !rowset.Decode( &dup ) )
-                sLog.Error( "SetSQLDumper", "Unable to interpret tuple as a tupleset, it may not even be one." );
+                SysLog::Error( "SetSQLDumper", "Unable to interpret tuple as a tupleset, it may not even be one." );
             else
             {
                 TuplesetReader reader( rowset );
                 if( ReaderToSQL<TuplesetReader>( mTable.c_str(), mKeyField.c_str(), mOut, reader ) )
                     return true;
 
-                sLog.Error( "SetSQLDumper", "Failed to convert tupleset to SQL." );
+                SysLog::Error( "SetSQLDumper", "Failed to convert tupleset to SQL." );
             }
         }
     }
@@ -318,14 +318,14 @@ bool SetSQLDumper::VisitObject( const PyObject* rep )
         //must be duplicated in order to be decoded ...
         PyObject* dup = new PyObject( *rep );
         if( !rowset.Decode( &dup ) )
-            sLog.Error( "SetSQLDumper", "Unable to load a rowset from the object body!" );
+            SysLog::Error( "SetSQLDumper", "Unable to load a rowset from the object body!" );
         else
         {
             RowsetReader reader( rowset );
             if( ReaderToSQL<RowsetReader>( mTable.c_str(), mKeyField.c_str(), mOut, reader ) )
                 return true;
 
-            sLog.Error( "SetSQLDumper", "Failed to convert rowset to SQL." );
+            SysLog::Error( "SetSQLDumper", "Failed to convert rowset to SQL." );
         }
     }
 

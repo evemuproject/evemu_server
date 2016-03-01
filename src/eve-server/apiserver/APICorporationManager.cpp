@@ -34,7 +34,7 @@ APICorporationManager::APICorporationManager()
 
 std::shared_ptr<std::string> APICorporationManager::ProcessCall(const APICommandCall * pAPICommandCall)
 {
-    sLog.Debug("APICorporationManager::ProcessCall()", "EVEmu API - Corporation Service Manager");
+    SysLog::Debug("APICorporationManager::ProcessCall()", "EVEmu API - Corporation Service Manager");
 
     return std::shared_ptr<std::string>(new std::string(""));
 }

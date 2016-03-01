@@ -46,7 +46,7 @@ HoloscreenMgrService::~HoloscreenMgrService()
 
 PyResult HoloscreenMgrService::Handle_GetTwoHourCache(PyCallArgs& call)
 {
-    sLog.Debug("HoloscreenMgrService", "Called GetTwoHourCache stub.");
+    SysLog::Debug("HoloscreenMgrService", "Called GetTwoHourCache stub.");
 
     PyDict* agents = new PyDict;
 
@@ -65,14 +65,14 @@ PyResult HoloscreenMgrService::Handle_GetTwoHourCache(PyCallArgs& call)
 
 PyResult HoloscreenMgrService::Handle_GetRecentEpicArcCompletions(PyCallArgs& call)
 {
-    sLog.Debug("HoloscreenMgrService", "Called GetRecentEpicArcCompletions stub.");
+    SysLog::Debug("HoloscreenMgrService", "Called GetRecentEpicArcCompletions stub.");
 
     return NULL;
 }
 
 PyResult HoloscreenMgrService::Handle_GetRuntimeCache(PyCallArgs& call)
 {
-    sLog.Debug("HoloscreenMgrService", "Called GetRuntimeCache stub.");
+    SysLog::Debug("HoloscreenMgrService", "Called GetRuntimeCache stub.");
 
     PyDict* agents = new PyDict;
 

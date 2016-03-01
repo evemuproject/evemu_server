@@ -33,7 +33,7 @@
 /* NewLog                                                                */
 /*************************************************************************/
 #ifdef HAVE_WINDOWS_H
-const WORD NewLog::COLOR_TABLE[ COLOR_COUNT ] =
+const WORD SysLog::COLOR_TABLE[ COLOR_COUNT ] =
 {
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE                        ), // COLOR_DEFAULT
     ( 0                                                                          ), // COLOR_BLACK
@@ -46,7 +46,7 @@ const WORD NewLog::COLOR_TABLE[ COLOR_COUNT ] =
     ( FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY )  // COLOR_WHITE
 };
 #else /* !HAVE_WINDOWS_H */
-const char* const NewLog::COLOR_TABLE[ COLOR_COUNT ] =
+const char* const SysLog::COLOR_TABLE[ COLOR_COUNT ] =
 {
     "\033[" "00"    "m", // COLOR_DEFAULT
     "\033[" "30;22" "m", // COLOR_BLACK
@@ -62,23 +62,26 @@ const char* const NewLog::COLOR_TABLE[ COLOR_COUNT ] =
 
 #define CONSOLE_LOG_PADDING 20
 
-NewLog::NewLog()
-: mLogfile( NULL ),
-  mTime( 0 )
-#ifdef HAVE_WINDOWS_H
-  ,mStdOutHandle( GetStdHandle( STD_OUTPUT_HANDLE ) ),
-  mStdErrHandle( GetStdHandle( STD_ERROR_HANDLE ) )
-#endif /* HAVE_WINDOWS_H */
-{
-    //// open default logfile
-    //std::string logPath = EVEMU_ROOT "/log/";
-    //SetLogfileDefault(logPath);
+/// The active logfile.
+FILE* SysLog::mLogfile = nullptr;
+/// Current timestamp.
+time_t SysLog::mTime; // crap there should be 1 generic easy to understand time manager.
+/// Protection against concurrent log messages
+Mutex SysLog::mMutex;
+bool SysLog::m_initialized = false;
 
-    //Debug( "Log", "Log system initiated" );
-    m_initialized = false;
+#ifdef HAVE_WINDOWS_H
+/// Handle to standard output stream.
+const SysLog::HANDLE mStdOutHandle;
+/// Handle to standard error stream.
+const SysLog::HANDLE mStdErrHandle;
+#endif /* !HAVE_WINDOWS_H */
+
+SysLog::SysLog()
+{
 }
 
-NewLog::~NewLog()
+SysLog::~SysLog()
 {
     Debug( "Log", "Log system shutting down" );
 
@@ -86,8 +89,15 @@ NewLog::~NewLog()
     SetLogfile( (FILE*)NULL );
 }
 
-void NewLog::InitializeLogging( std::string logPath )
+void SysLog::InitializeLogging(std::string logPath)
 {
+    mLogfile = nullptr;
+    mTime = 0;
+#ifdef HAVE_WINDOWS_H
+    mStdOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    mStdErrHandle = GetStdHandle(STD_ERROR_HANDLE);
+#endif /* HAVE_WINDOWS_H */
+
     // open default logfile
     if( logPath.empty() )
         logPath = EVEMU_ROOT "/log/";
@@ -99,7 +109,7 @@ void NewLog::InitializeLogging( std::string logPath )
     Debug( "Log", "Log system initiated" );
 }
 
-void NewLog::Log( const char* source, const char* fmt, ... )
+void SysLog::Log(const char* source, const char* fmt, ...)
 {
     va_list ap;
     va_start( ap, fmt );
@@ -109,7 +119,7 @@ void NewLog::Log( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Error( const char* source, const char* fmt, ... )
+void SysLog::Error(const char* source, const char* fmt, ...)
 {
     va_list ap;
     va_start( ap, fmt );
@@ -119,7 +129,7 @@ void NewLog::Error( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Warning( const char* source, const char* fmt, ... )
+void SysLog::Warning(const char* source, const char* fmt, ...)
 {
     va_list ap;
     va_start( ap, fmt );
@@ -129,7 +139,7 @@ void NewLog::Warning( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Success( const char* source, const char* fmt, ... )
+void SysLog::Success(const char* source, const char* fmt, ...)
 {
     va_list ap;
     va_start( ap, fmt );
@@ -139,7 +149,7 @@ void NewLog::Success( const char* source, const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::Debug( const char* source, const char* fmt, ... )
+void SysLog::Debug(const char* source, const char* fmt, ...)
 {
 //#ifndef NDEBUG
     if( is_log_enabled( DEBUG__DEBUG ) )
@@ -154,7 +164,7 @@ void NewLog::Debug( const char* source, const char* fmt, ... )
 //#endif /* !NDEBUG */
 }
 
-bool NewLog::SetLogfile( const char* filename )
+bool SysLog::SetLogfile(const char* filename)
 {
     MutexLock l( mMutex );
 
@@ -176,7 +186,7 @@ bool NewLog::SetLogfile( const char* filename )
     return SetLogfile( file );
 }
 
-bool NewLog::SetLogfile( FILE* file )
+bool SysLog::SetLogfile(FILE* file)
 {
     MutexLock l( mMutex );
 
@@ -187,7 +197,7 @@ bool NewLog::SetLogfile( FILE* file )
     return true;
 }
 
-void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fmt, va_list ap )
+void SysLog::PrintMsg(Color color, char pfx, const char* source, const char* fmt, va_list ap)
 {
     if( !m_initialized )
         return;
@@ -217,7 +227,7 @@ void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fm
     SetColor( COLOR_DEFAULT );
 }
 
-void NewLog::PrintTime()
+void SysLog::PrintTime()
 {
     MutexLock l( mMutex );
 
@@ -230,7 +240,7 @@ void NewLog::PrintTime()
     Print( "%02u:%02u:%02u", t.tm_hour, t.tm_min, t.tm_sec );
 }
 
-void NewLog::Print( const char* fmt, ... )
+void SysLog::Print(const char* fmt, ...)
 {
     va_list ap;
     va_start( ap, fmt );
@@ -240,7 +250,7 @@ void NewLog::Print( const char* fmt, ... )
     va_end( ap );
 }
 
-void NewLog::PrintVa( const char* fmt, va_list ap )
+void SysLog::PrintVa(const char* fmt, va_list ap)
 {
     MutexLock l( mMutex );
 
@@ -263,7 +273,7 @@ void NewLog::PrintVa( const char* fmt, va_list ap )
     vprintf( fmt, ap );
 }
 
-void NewLog::SetColor( Color color )
+void SysLog::SetColor(Color color)
 {
     assert( 0 <= color && color < COLOR_COUNT );
 
@@ -276,7 +286,7 @@ void NewLog::SetColor( Color color )
 #endif /* !HAVE_WINDOWS_H */
 }
 
-void NewLog::SetLogfileDefault(std::string logPath)
+void SysLog::SetLogfileDefault(std::string logPath)
 {
     MutexLock l( mMutex );
 

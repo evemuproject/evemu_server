@@ -30,8 +30,8 @@
 
 APIServerListener::APIServerListener(boost::asio::io_service& io)
 {
-    _acceptor = new boost::asio::ip::tcp::acceptor(io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), sConfig.net.apiServerPort));
-    sLog.Log("API Server Init", "listening on port %u", (sConfig.net.apiServerPort));
+    _acceptor = new boost::asio::ip::tcp::acceptor(io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), EVEServerConfig::net.apiServerPort));
+    SysLog::Log("API Server Init", "listening on port %u", (EVEServerConfig::net.apiServerPort));
     StartAccept();
 }
 

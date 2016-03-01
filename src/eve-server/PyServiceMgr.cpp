@@ -85,7 +85,7 @@ PyService *PyServiceMgr::LookupService(const std::string &name) {
         {
             //this is added here so you know which server opens the call
             //that if it gets loaded
-            sLog.Debug("ServiceOfIterest", (*cur)->GetName());
+            SysLog::Debug("ServiceOfIterest", (*cur)->GetName());
             return(*cur);
         }
     }
@@ -95,7 +95,7 @@ PyService *PyServiceMgr::LookupService(const std::string &name) {
 PySubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyDict **dict) {
     if(cb == NULL)
     {
-        sLog.Error("Service Mgr", "Tried to bind a NULL object!");
+        SysLog::Error("Service Mgr", "Tried to bind a NULL object!");
         return new PySubStruct(new PyNone());
     }
 
@@ -107,7 +107,7 @@ PySubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyDict **dic
 
     m_boundObjects[cb->bindID()] = obj;
 
-    //sLog.Debug("Service Mgr", "Binding %s to service %s", bind_str, cb->GetName());
+    //Log::Debug("Service Mgr", "Binding %s to service %s", bind_str, cb->GetName());
 
     std::string bind_str = cb->GetBindStr();
     //not sure what this really is...
@@ -141,7 +141,7 @@ void PyServiceMgr::ClearBoundObjects(Client *who) {
     while(cur != end) {
         if(cur->second.client == who)
         {
-            //sLog.Debug("Service Mgr", "Clearing bound object %s", cur->first.c_str());
+            //Log::Debug("Service Mgr", "Clearing bound object %s", cur->first.c_str());
             cur->second.destination->Release();
 
             ObjectsBoundMapItr tmp = cur++;
@@ -168,13 +168,13 @@ void PyServiceMgr::ClearBoundObject(uint32 bindID)
     std::map<uint32, BoundObject>::iterator res;
     res = m_boundObjects.find(bindID);
     if(res == m_boundObjects.end()) {
-        sLog.Error("Service Mgr", "Unable to find bound object %u to release.", bindID);
+        SysLog::Error("Service Mgr", "Unable to find bound object %u to release.", bindID);
         return;
     }
 
     PyBoundObject *bo = res->second.destination;
 
-    //sLog.Debug("Service Mgr", "Clearing bound object %s (released)", res->first.c_str());
+    //Log::Debug("Service Mgr", "Clearing bound object %s (released)", res->first.c_str());
 
     m_boundObjects.erase(res);
     bo->Release();

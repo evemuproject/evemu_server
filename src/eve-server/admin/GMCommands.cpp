@@ -121,7 +121,7 @@ PyResult Command_createitem( Client* who, const Seperator& args )
             qty = atoi( args.arg( 2 ).c_str() );
     }
 
-    sLog.Log("command message", "Create %s %u times", args.arg( 1 ).c_str(), qty );
+    SysLog::Log("command message", "Create %s %u times", args.arg( 1 ).c_str(), qty );
 
     //create into their cargo hold unless they are docked in a station,
     //then stick it in their hangar instead.
@@ -213,7 +213,7 @@ PyResult Command_translocate( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "Argument 1 should be an entity ID" ) );
     uint32 loc = atoi( args.arg( 1 ).c_str() );
 
-    sLog.Log( "Command", "Translocate to %u.", loc );
+    Log::Log( "Command", "Translocate to %u.", loc );
 
     GPoint p( 0.0f, 1000000.0f, 0.0f ); //when going to a system, who knows where to stick them... could find a stargate and stick them near it I guess...
 
@@ -364,7 +364,7 @@ PyResult Command_tr( Client* who, const Seperator& args )
 /*
 	uint32 loc = atoi( args.arg( 2 ).c_str() );
 
-    sLog.Log( "Command", "Translocate to %u.", loc );
+    Log::Log( "Command", "Translocate to %u.", loc );
 
     GPoint p( 0.0f, 0.0f, 1000000000.0f ); //when going to a system, who knows where to stick them... could find a stargate and stick them near it I guess...
 
@@ -465,7 +465,7 @@ PyResult Command_goto( Client* who, const Seperator& args)
               atof( args.arg( 2 ).c_str() ),
               atof( args.arg( 3 ).c_str() ) );
 
-    sLog.Log( "Command", "%s: Goto (%.13f, %.13f, %.13f)", who->GetName(), p.x, p.y, p.z );
+    SysLog::Log( "Command", "%s: Goto (%.13f, %.13f, %.13f)", who->GetName(), p.x, p.y, p.z );
 
     who->MoveToPosition( p );
     return new PyString( "Goto successful." );
@@ -548,7 +548,7 @@ PyResult Command_spawnn( Client* who, const Seperator& args )
     if( !(who->System()->BuildDynamicEntity( who, entity )) )
         return new PyString( "Spawn Failed: typeID or typeName not supported." );
 
-    sLog.Log( "Command", "%s: Spawned %u.", who->GetName(), typeID );
+    SysLog::Log( "Command", "%s: Spawned %u.", who->GetName(), typeID );
 
     return new PyString( "Spawn successful." );
 }
@@ -700,7 +700,7 @@ PyResult Command_spawn( Client* who, const Seperator& args )
 		}
 	}
 
-	sLog.Log( "Command", "%s: Spawned %u in space, %u times", who->GetName(), typeID, spawnCount );
+	SysLog::Log( "Command", "%s: Spawned %u in space, %u times", who->GetName(), typeID, spawnCount );
 
     return new PyString( "Spawn successful." );
 }
@@ -862,7 +862,7 @@ PyResult Command_setattr( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
     //item->attributes.SetReal( attribute, value );
-    sLog.Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
+    SysLog::Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
     item->SetAttribute(attribute, (float)value);
 
     return new PyString( "Operation successful." );
@@ -1331,7 +1331,7 @@ PyResult Command_unspawn( Client* who, const Seperator& args )
         itemRef->Delete();
     }
 
-    sLog.Log( "Command", "%s: Un-Spawned %u.", who->GetName(), itemID );
+    SysLog::Log( "Command", "%s: Un-Spawned %u.", who->GetName(), itemID );
 
     return new PyString( "Un-Spawn successful." );
 }
@@ -1365,7 +1365,7 @@ PyResult Command_dogma( Client* who, const Seperator& args )
     //get attributeID
     uint32 attributeID = CommandDB::GetAttributeID(attributeName);
 
-    sLog.Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
+    SysLog::Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
     item->SetAttribute( attributeID, attributeValue );
 
     return NULL;
@@ -1518,7 +1518,7 @@ PyResult Command_kill( Client* who, const Seperator& args )
         if( shipEntity == NULL )
 		{
 			throw PyException( MakeCustomError("/kill cannot process this object") );
-			sLog.Error("GMCommands - Command_kill()", "Cannot process this object, aborting kill: %s [%u]", itemRef->itemName().c_str(), itemRef->itemID());
+			SysLog::Error("GMCommands - Command_kill()", "Cannot process this object, aborting kill: %s [%u]", itemRef->itemName().c_str(), itemRef->itemID());
 		}
 		else
 		{
@@ -1634,9 +1634,9 @@ PyResult Command_seedmarket(Client* who, const Seperator& args)
     }
     for (uint32 regionID : regions)
     {
-        sLog.Log("GMCommands - command_seedmarket()", "NPC market seeding started for region: %d", regionID);
+        SysLog::Log("GMCommands - command_seedmarket()", "NPC market seeding started for region: %d", regionID);
         NPCMarket::CreateNPCMarketForRegion(regionID);
-        sLog.Log("GMCommands - command_seedmarket()", "NPC market seeding finished for region: %d", regionID);
+        SysLog::Log("GMCommands - command_seedmarket()", "NPC market seeding finished for region: %d", regionID);
     }
     return NULL;
 }

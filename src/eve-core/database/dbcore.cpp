@@ -93,7 +93,7 @@ bool DBcore::RunQuery(DBQueryResult &into, const char *query_fmt, ...) {
     uint32 col_count = mysql_field_count(mysql);
     if(col_count == 0) {
         into.error.SetError(0xFFFF, "DBcore::RunQuery: No Result");
-        sLog.Error("DBCore Query", "Query: %s failed because did not return a result", query);
+        SysLog::Error("DBCore Query", "Query: %s failed because did not return a result", query);
         return false;
     }
 
@@ -103,7 +103,7 @@ bool DBcore::RunQuery(DBQueryResult &into, const char *query_fmt, ...) {
     into.SetResult(&result, col_count);
 
     //DEBUG STUFF
-    //sLog.Debug("%s",query);
+    //Log::Debug("%s",query);
     //End Debug Stuff
 
 
@@ -186,13 +186,13 @@ bool DBcore::DoQuery_locked(DBerror &err, const char *query, int32 querylen, boo
 
         if (retry && (num == CR_SERVER_LOST || num == CR_SERVER_GONE_ERROR))
         {
-            sLog.Error("DBCore", "Lost connection, attempting to recover....");
+            SysLog::Error("DBCore", "Lost connection, attempting to recover....");
             return DoQuery_locked(err, query, querylen, false);
         }
 
         pStatus = Error;
         err.SetError(num, mysql_error(mysql));
-        sLog.Error("DBCore Query", "#%d in '%s': %s", err.GetErrNo(), query, err.c_str());
+        SysLog::Error("DBCore Query", "#%d in '%s': %s", err.GetErrNo(), query, err.c_str());
         return false;
     }
 
@@ -211,7 +211,7 @@ bool DBcore::RunQuery(const char* query, int32 querylen, char* errbuf, MYSQL_RES
     DBerror err;
     if(!DoQuery_locked(err, query, querylen, retry))
     {
-        sLog.Error("DBCore Query", "Query: %s failed", query);
+        SysLog::Error("DBCore Query", "Query: %s failed", query);
         if(errnum != NULL)
             *errnum = err.GetErrNo();
 
@@ -239,7 +239,7 @@ bool DBcore::RunQuery(const char* query, int32 querylen, char* errbuf, MYSQL_RES
              */
             if (errbuf)
                 strcpy(errbuf, "DBcore::RunQuery: No Result");
-            sLog.Error("DBCore Query", "Query: %s failed because it should return a result", query);
+            SysLog::Error("DBCore Query", "Query: %s failed because it should return a result", query);
             return false;
         }
     }
@@ -490,7 +490,7 @@ const char* DBQueryResult::ColumnName( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Query Result", "ColumnName: Column index %d exceeds number of columns (%s) in row\n", index, ColumnCount() );
+        SysLog::Error( "DBCore Query Result", "ColumnName: Column index %d exceeds number of columns (%s) in row\n", index, ColumnCount() );
         return "(ERROR)";      //nothing better to do...
     }
 #endif
@@ -502,7 +502,7 @@ DBTYPE DBQueryResult::ColumnType( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Query Result", "ColumnType: Column index %d exceeds number of columns (%s) in row\n", index, ColumnCount() );
+        SysLog::Error( "DBCore Query Result", "ColumnType: Column index %d exceeds number of columns (%s) in row\n", index, ColumnCount() );
         return DBTYPE_STR;     //nothing better to do...
     }
 #endif
@@ -573,7 +573,7 @@ uint32 DBResultRow::ColumnLength( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetColumnLength: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetColumnLength: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -585,7 +585,7 @@ int32 DBResultRow::GetInt( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -598,7 +598,7 @@ bool DBResultRow::GetBool( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -610,7 +610,7 @@ uint32 DBResultRow::GetUInt( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetUInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetUInt: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -623,7 +623,7 @@ int64 DBResultRow::GetInt64( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetInt64: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetInt64: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -640,7 +640,7 @@ uint64 DBResultRow::GetUInt64( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetUInt64: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetUInt64: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -654,7 +654,7 @@ float DBResultRow::GetFloat( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetFloat: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetFloat: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif
@@ -666,7 +666,7 @@ double DBResultRow::GetDouble( uint32 index ) const
 #ifdef COLUMN_BOUNDS_CHECKING
     if( index >= ColumnCount() )
     {
-        sLog.Error( "DBCore Result Row", "GetDouble: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
+        SysLog::Error( "DBCore Result Row", "GetDouble: Column index %u exceeds number of columns (%u) in row", index, ColumnCount() );
         return 0;       //nothing better to do...
     }
 #endif

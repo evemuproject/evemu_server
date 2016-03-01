@@ -57,7 +57,7 @@ public:
         mapitr res;
         res = m_serviceCalls.find(method_name);
         if(res == m_serviceCalls.end()) {
-            sLog.Error("Server","Unknown call to '%s' by '%s'", method_name.c_str(), call.client->GetName());
+            SysLog::Error("Server","Unknown call to '%s' by '%s'", method_name.c_str(), call.client->GetName());
             return NULL;
         }
 

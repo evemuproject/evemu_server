@@ -48,10 +48,10 @@ PyResult AuthService::Handle_Ping(PyCallArgs &call) {
 
 PyResult AuthService::Handle_GetPostAuthenticationMessage(PyCallArgs &call)
 {
-    if( !sConfig.account.loginMessage.empty() )
+    if( !EVEServerConfig::account.loginMessage.empty() )
     {
         PyDict* args = new PyDict;
-        args->SetItemString( "message", new PyString( sConfig.account.loginMessage ) );
+        args->SetItemString( "message", new PyString( EVEServerConfig::account.loginMessage ) );
 
         return new PyObject( "util.KeyVal", args );
     }

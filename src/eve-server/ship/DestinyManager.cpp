@@ -495,7 +495,7 @@ void DestinyManager::_InitWarp() {
 		warpSpeedMultiplier = 3.0;
 	}
     else
-        sLog.Error( "DestinyManager::_InitWarp():", "'m_self' was not found to be either a Client object nor an NPC object." );
+        SysLog::Error( "DestinyManager::_InitWarp():", "'m_self' was not found to be either a Client object nor an NPC object." );
 
     //warp_speed = (double)(m_self->CastToClient()->GetShip()->GetAttribute(AttrWarpSpeedMultiplier).get_float()) * ONE_AU_IN_METERS;
     warp_speed = baseWarpSpeed * ((double)BASE_WARP_SPEED) * warpSpeedMultiplier * ((double)ONE_AU_IN_METERS);
@@ -521,9 +521,9 @@ void DestinyManager::_InitWarp() {
     warp_slow_time += warp_distance * 3.0f;
     warp_slow_time /= warp_speed * 3.0f;    //v40 ~9.1105
 
-    sLog.Debug( "DestinyManager::_InitWarp():", "Warp will accelerate for %f s, then slow down at %f s", warp_acceleration_time, warp_slow_time);
+    SysLog::Debug( "DestinyManager::_InitWarp():", "Warp will accelerate for %f s, then slow down at %f s", warp_acceleration_time, warp_slow_time);
 
-    sLog.Debug( "DestinyManager::_InitWarp():", "Opposite warp direction is (%.13f, %.13f, %.13f)",
+    SysLog::Debug( "DestinyManager::_InitWarp():", "Opposite warp direction is (%.13f, %.13f, %.13f)",
         vector_from_goal.x, vector_from_goal.y, vector_from_goal.z);
 
     delete m_warpState;
@@ -574,7 +574,7 @@ void DestinyManager::_Warp() {
         // Remove ship from bubble only when distance traveled takes the ship beyond the bubble's radius
         m_system->bubbles.UpdateBubble(m_self,true,true);   // use optional 3rd param to indicate ship is warping so as to not add to new bubbles while accelerating into warp
 
-        sLog.Debug( "DestinyManager::_Warp():", "Entity %u: Warp Accelerating: velocity %f m/s with %f m left to go.",
+        SysLog::Debug( "DestinyManager::_Warp():", "Entity %u: Warp Accelerating: velocity %f m/s with %f m left to go.",
             m_self->GetID(),
             velocity_magnitude, dist_remaining);
 
@@ -594,7 +594,7 @@ void DestinyManager::_Warp() {
     //        m_self->Bubble()->Remove(m_self);
     //    }
 
-        sLog.Debug( "DestinyManager::_Warp():", "Entity %u: Warp Cruising: velocity %f m/s with %f m left to go.",
+        SysLog::Debug( "DestinyManager::_Warp():", "Entity %u: Warp Cruising: velocity %f m/s with %f m left to go.",
             m_self->GetID(),
             velocity_magnitude, dist_remaining);
     } else {
@@ -617,7 +617,7 @@ void DestinyManager::_Warp() {
         dist_remaining = velocity_magnitude * 10;// / 2.5;//m_warpDecelerateFactor;
 	//	dist_remaining = 0;
 
-        sLog.Debug( "DestinyManager::_Warp():", "Entity %u: Warp Slowing: velocity %f m/s with %f m left to go.",
+        SysLog::Debug( "DestinyManager::_Warp():", "Entity %u: Warp Slowing: velocity %f m/s with %f m left to go.",
             m_self->GetID(),
             velocity_magnitude, dist_remaining);
 
@@ -653,7 +653,7 @@ void DestinyManager::_Warp() {
     m_velocity = m_warpState->normvec_them_to_us * (-velocity_magnitude);
 
     if(stop) {
-        sLog.Debug( "DestinyManager::_Warp():", "Entity %u: Warp completed. Exit velocity %f m/s with %f m left to go.",
+        SysLog::Debug( "DestinyManager::_Warp():", "Entity %u: Warp completed. Exit velocity %f m/s with %f m left to go.",
             m_self->GetID(),
             velocity_magnitude, dist_remaining);
         //they re-calculated the velocity, but it was exactly the same..
@@ -963,7 +963,7 @@ void DestinyManager::Follow(SystemEntity *who, double distance, bool update) {
 		SendSingleDestinyUpdate(&tmp);    //consumed
 	}
 
-    sLog.Debug( "DestinyManager::Follow()", "SystemEntity '%s' following SystemEntity '%s' at velocity %f",
+    SysLog::Debug( "DestinyManager::Follow()", "SystemEntity '%s' following SystemEntity '%s' at velocity %f",
                 m_self->GetName(), who->GetName(), m_maxVelocity );
 
     // Forcibly set Speed since it doesn't get updated when Following upon Undock from stations:
@@ -1026,7 +1026,7 @@ void DestinyManager::TractorBeamFollow(SystemEntity *who, double mass, double ma
 		SendDestinyUpdate(updates, false);	//consumed
 	}
 
-	sLog.Debug("DestinyManager::TractorBeamFollow()", "SystemEntity '%s' following SystemEntity '%s' at velocity %f",
+	SysLog::Debug("DestinyManager::TractorBeamFollow()", "SystemEntity '%s' following SystemEntity '%s' at velocity %f",
 		m_self->GetName(), who->GetName(), m_maxVelocity);
 
 	// Forcibly set Speed since it doesn't get updated when Following upon Undock from stations:
@@ -1243,7 +1243,7 @@ void DestinyManager::AlignTo(const GPoint &direction, bool update) {
         SendSingleDestinyUpdate(&tmp);    //consumed
     }
 
-    sLog.Debug( "DestinyManager::GotoDirection()", "SystemEntity '%s' vectoring to (%f,%f,%f) at velocity %f",
+    SysLog::Debug( "DestinyManager::GotoDirection()", "SystemEntity '%s' vectoring to (%f,%f,%f) at velocity %f",
                 m_self->GetName(), direction.x, direction.y, direction.z, m_maxVelocity );
 }
 
@@ -1264,7 +1264,7 @@ void DestinyManager::GotoDirection(const GPoint &direction, bool update) {
 	if( m_self->IsClient() )
 		m_self->CastToClient()->SetPendingDockOperation( false );
 
-    sLog.Debug( "DestinyManager::GotoDirection()", "SystemEntity '%s' vectoring to (%f,%f,%f) at velocity %f",
+    SysLog::Debug( "DestinyManager::GotoDirection()", "SystemEntity '%s' vectoring to (%f,%f,%f) at velocity %f",
                 m_self->GetName(), direction.x, direction.y, direction.z, m_maxVelocity );
 
     if(update) {
@@ -1435,7 +1435,7 @@ PyResult DestinyManager::AttemptDockOperation()
 
 void DestinyManager::Cloak()
 {
-	sLog.Warning("DestinyManager::Cloak()", "TODO - check for warp-safe-ness, and turn on any cloaking device module fitted");
+	SysLog::Warning("DestinyManager::Cloak()", "TODO - check for warp-safe-ness, and turn on any cloaking device module fitted");
 	m_cloaked = true;
 	SendCloakShip(true);
 	m_self->Bubble()->RemoveExclusive(m_self,true);
@@ -1443,7 +1443,7 @@ void DestinyManager::Cloak()
 
 void DestinyManager::UnCloak()
 {
-	sLog.Warning("DestinyManager::UnCloak()", "TODO - check for warp-safe-ness, and turn off any cloaking device module fitted");
+	SysLog::Warning("DestinyManager::UnCloak()", "TODO - check for warp-safe-ness, and turn off any cloaking device module fitted");
 	m_cloaked = false;
 	SendUncloakShip();
 	m_self->Bubble()->AddExclusive(m_self,true);

@@ -106,7 +106,7 @@ PyResult InventoryBound::Handle_ReplaceCharges(PyCallArgs &call) {
 
 PyResult InventoryBound::Handle_ListStations( PyCallArgs& call )
 {
-    sLog.Debug( "InventoryBound", "Called ListStations stub." );
+    SysLog::Debug( "InventoryBound", "Called ListStations stub." );
 
     util_Rowset rowset;
 
@@ -125,7 +125,7 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
     {
         // TODO: Add comments here to describe what kind of client action results in having
         // to use the 'Call_Add_3' packet structure
-		sLog.Debug( "InventoryBound::Handle_Add()", "Action decoded as Call_Add_3 occurred." );
+		SysLog::Debug( "InventoryBound::Handle_Add()", "Action decoded as Call_Add_3 occurred." );
         Call_Add_3 args;
         if(!args.Decode(&call.tuple)) {
             codelog(SERVICE__ERROR, "Unable to decode arguments from '%s'", call.client->GetName());
@@ -143,7 +143,7 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
         // to use the 'Call_Add_2' packet structure
         // * Moving cargo items from ship cargo bay to a container in space goes here
         // * Qty missing, so query it from the itemRef
-		sLog.Debug( "InventoryBound::Handle_Add()", "Action decoded as Call_Add_2 occurred." );
+		SysLog::Debug( "InventoryBound::Handle_Add()", "Action decoded as Call_Add_2 occurred." );
         Call_Add_2 args;
         //chances are its trying to transfer into a cargo container
         if(!args.Decode(&call.tuple))
@@ -155,7 +155,7 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
         uint32 flag = 0;
         if( call.byname.find("flag") == call.byname.end() )
         {
-            sLog.Debug( "InventoryBound::Handle_Add()", "Cannot find key 'flag' from call.byname dictionary." );
+            SysLog::Debug( "InventoryBound::Handle_Add()", "Cannot find key 'flag' from call.byname dictionary." );
 			if( IsStation(call.client->GetLocationID()) )
 				flag = flagHangar;
 			else
@@ -186,7 +186,7 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
     {
         // TODO: Add comments here to describe what kind of client action results in having
         // to use the 'Call_SingleIntegerArg' packet structure
-		sLog.Debug( "InventoryBound::Handle_Add()", "Action decoded as Call_SingleIntegerArg occurred." );
+		SysLog::Debug( "InventoryBound::Handle_Add()", "Action decoded as Call_SingleIntegerArg occurred." );
         Call_SingleIntegerArg arg;
         if( !arg.Decode( &call.tuple ) )
         {
@@ -218,7 +218,7 @@ PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
     {
         // TODO: Add comments here to describe what kind of client action results in having
         // to use the 'Call_MultiAdd_3' packet structure
-		sLog.Debug( "InventoryBound::Handle_MultiAdd()", "Action decoded as Call_MultiAdd_3 occurred." );
+		SysLog::Debug( "InventoryBound::Handle_MultiAdd()", "Action decoded as Call_MultiAdd_3 occurred." );
         Call_MultiAdd_3 args;
         if(!args.Decode(&call.tuple)) {
             codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -251,7 +251,7 @@ PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
     {
         // TODO: Add comments here to describe what kind of client action results in having
         // to use the 'Call_MultiAdd_2' packet structure
-		sLog.Debug( "InventoryBound::Handle_MultiAdd()", "Action decoded as Call_MultiAdd_2 occurred" );
+		SysLog::Debug( "InventoryBound::Handle_MultiAdd()", "Action decoded as Call_MultiAdd_2 occurred" );
         Call_MultiAdd_2 args;
         if(!args.Decode(&call.tuple)) {
             codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -261,7 +261,7 @@ PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
 		uint32 flag = 0;
 		if( call.byname.find("flag") == call.byname.end() )
 		{
-			sLog.Debug( "InventoryBound::Handle_MultiAdd()", "Cannot find key 'flag' from call.byname dictionary." );
+			SysLog::Debug( "InventoryBound::Handle_MultiAdd()", "Cannot find key 'flag' from call.byname dictionary." );
 			flag = flagCargoHold;    // hard-code this since ship cargo to cargo container move flag since key 'flag' in client.byname does not exist
 		}
 		else
@@ -274,7 +274,7 @@ PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
     {
         // TODO: Add comments here to describe what kind of client action results in having
         // to use the 'Call_SingleIntList' packet structure
-		sLog.Debug( "InventoryBound::Handle_MultiAdd()", "Action decoded as Call_SingleIntList occurred." );
+		SysLog::Debug( "InventoryBound::Handle_MultiAdd()", "Action decoded as Call_SingleIntList occurred." );
         Call_SingleIntList args;
         if(!args.Decode(&call.tuple)) {
             codelog(SERVICE__ERROR, "Unable to decode arguments");
@@ -350,18 +350,18 @@ PyResult InventoryBound::Handle_StackAll(PyCallArgs &call) {
 }
 
 PyResult InventoryBound::Handle_StripFitting(PyCallArgs &call) {
-    sLog.Debug("Server", "Called StripFitting Stub.");
+    SysLog::Debug("Server", "Called StripFitting Stub.");
 
     return NULL;
 }
 
 PyResult InventoryBound::Handle_DestroyFitting(PyCallArgs &call) {
 
-    sLog.Debug("InventoryBound","Called DestroyFittings stub");
+    SysLog::Debug("InventoryBound","Called DestroyFittings stub");
 
     Call_SingleIntegerArg args;
     if(!args.Decode(&call.tuple)){
-        sLog.Error("Destroy Fittings","Failed to decode args.");
+        SysLog::Error("Destroy Fittings","Failed to decode args.");
     }
 
     //get the actual item
@@ -414,10 +414,10 @@ PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
             snprintf(ci, sizeof(ci), "%u", bookmarkID);
             i->SetCustomInfo(ci);  //<- use this to set bookmarkID to DB.entity.customInfo
         }
-        sLog.Log( "InventoryBound::Handle_CreateBookmarkVouchers()", "%u Vouchers created", list->size() );
+        SysLog::Log( "InventoryBound::Handle_CreateBookmarkVouchers()", "%u Vouchers created", list->size() );
         //  when bm is copied to another players places tab, copy data from db using bookmarkID stored in ItemData.customInfo
      } else {
-        sLog.Error( "InventoryBound::Handle_CreateBookmarkVouchers()", "%s: call.tuple->GetItem( 0 )->AsList()->size() == 0.  Expected size > 0.", call.client->GetName() );
+        SysLog::Error( "InventoryBound::Handle_CreateBookmarkVouchers()", "%s: call.tuple->GetItem( 0 )->AsList()->size() == 0.  Expected size > 0.", call.client->GetName() );
         return NULL;
      }
 
@@ -442,7 +442,7 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
     {
         InventoryItemRef sourceItem = ItemFactory::GetItem(*cur);
         if( !sourceItem ) {
-            sLog.Error("_ExecAdd","Failed to load item %u. Skipping.", *cur);
+            SysLog::Error("_ExecAdd","Failed to load item %u. Skipping.", *cur);
             continue;
         }
 
@@ -459,7 +459,7 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
         {
             InventoryItemRef newItem = sourceItem->Split(quantity);
             if( !newItem ) {
-                sLog.Error("_ExecAdd", "Error splitting item %u. Skipping.", sourceItem->itemID() );
+                SysLog::Error("_ExecAdd", "Error splitting item %u. Skipping.", sourceItem->itemID() );
             }
             else
             {
@@ -468,11 +468,11 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
                 // window and NOT onto a specific slot.  'flagAutoFit' means "put this module into which ever slot makes sense")
                 if( (flag == flagAutoFit) )
                 {
-					sLog.Error( "InventoryBound::_ExecAdd()", "ERROR: handling adding modules where flag = flagAutoFit not yet supported!!!" );
+					SysLog::Error( "InventoryBound::_ExecAdd()", "ERROR: handling adding modules where flag = flagAutoFit not yet supported!!!" );
 					EVEItemFlags newFlag = (EVEItemFlags)(c->GetShip()->FindAvailableModuleSlot( newItem ));
 					if( newFlag == flagIllegal )
 					{
-						sLog.Error( "InventoryBound::_ExecAdd()", "ERROR: Attempt to auto-fit module failed!  'flagIllegal' returned from FindAvailableModuleSlot()" );
+						SysLog::Error( "InventoryBound::_ExecAdd()", "ERROR: Attempt to auto-fit module failed!  'flagIllegal' returned from FindAvailableModuleSlot()" );
 						return NULL;
 					}
 					else
@@ -558,11 +558,11 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
             // window and NOT onto a specific slot.  'flagAutoFit' means "put this module into which ever slot makes sense")
             if( (flag == flagAutoFit) )
             {
-                sLog.Error( "InventoryBound::_ExecAdd()", "ERROR: handling adding modules where flag = flagAutoFit not yet supported!!!" );
+                SysLog::Error( "InventoryBound::_ExecAdd()", "ERROR: handling adding modules where flag = flagAutoFit not yet supported!!!" );
                 EVEItemFlags newFlag = (EVEItemFlags)(c->GetShip()->FindAvailableModuleSlot( sourceItem ));
                 if( newFlag == flagIllegal )
 				{
-					sLog.Error( "InventoryBound::_ExecAdd()", "ERROR: Attempt to auto-fit module failed!  'flagIllegal' returned from FindAvailableModuleSlot()" );
+					SysLog::Error( "InventoryBound::_ExecAdd()", "ERROR: Attempt to auto-fit module failed!  'flagIllegal' returned from FindAvailableModuleSlot()" );
 					return NULL;
 				}
 				else

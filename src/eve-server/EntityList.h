@@ -27,7 +27,6 @@
 #define EVE_ENTITY_LIST_H
 
 #include "threading/Mutex.h"
-#include "utils/Singleton.h"
 
 class Client;
 class PyAddress;

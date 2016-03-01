@@ -89,7 +89,7 @@ PyResult FactionWarMgrService::Handle_GetMyCharacterRankOverview( PyCallArgs& ca
         return NULL;
     }
 
-    sLog.Debug( "FactionWarMgrService", "Called GetMyCharacterRankOverview stub." );
+    SysLog::Debug( "FactionWarMgrService", "Called GetMyCharacterRankOverview stub." );
 
     util_Rowset rs;
 

@@ -40,28 +40,16 @@ const char *const ImageServer::Categories[] = {
 
 const uint32 ImageServer::CategoryCount = 5;
 
+std::unordered_map<uint32 /*accountID*/, std::shared_ptr<std::vector<char> > /*imageData*/> ImageServer::_limboImages;
+std::shared_ptr<boost::asio::detail::thread> ImageServer::_ioThread;
+std::shared_ptr<boost::asio::io_service> ImageServer::_io;
+std::shared_ptr<ImageServerListener> ImageServer::_listener;
+std::string ImageServer::_url;
+std::string ImageServer::_basePath;
+boost::asio::detail::mutex ImageServer::_limboLock;
+
 ImageServer::ImageServer()
 {
-    std::stringstream urlBuilder;
-    urlBuilder << "http://" << sConfig.net.imageServer << ":" << (sConfig.net.imageServerPort) << "/";
-    _url = urlBuilder.str();
-
-    _basePath = sConfig.files.imageDir;
-    if (_basePath[_basePath.size() - 1] != '/')
-        _basePath += "/";
-
-    CreateDirectory( _basePath.c_str(), NULL );
-
-    for (int i = 0; i < CategoryCount; i++) {
-        std::string subdir = _basePath;
-        subdir.append(Categories[i]);
-
-        CreateDirectory( subdir.c_str(), NULL );
-    }
-
-    sLog.Log("Image Server Init", "our URL: %s", _url.c_str());
-    sLog.Log("Image Server Init", "our base: %s", _basePath.c_str());
-
 }
 
 void ImageServer::ReportNewImage(uint32 accountID, std::shared_ptr<std::vector<char> > imageData)
@@ -101,7 +89,7 @@ void ImageServer::ReportNewCharacter(uint32 creatorAccountID, uint32 characterID
     // and delete it from our limbo map
     _limboImages.erase(creatorAccountID);
 
-    sLog.Log("Image Server Init", "saved image from %i as %s", creatorAccountID, path.c_str());
+    SysLog::Log("Image Server Init", "saved image from %i as %s", creatorAccountID, path.c_str());
 }
 
 std::shared_ptr<std::vector<char> > ImageServer::GetImage(std::string& category, uint32 id, uint32 size)
@@ -180,7 +168,34 @@ std::string& ImageServer::url()
 
 void ImageServer::Run()
 {
-    _ioThread = std::shared_ptr<boost::asio::detail::thread>(new boost::asio::detail::thread(std::bind(&ImageServer::RunInternal, this)));
+    if (_ioThread != nullptr)
+    {
+        return;
+    }
+    // Initialize the server.
+    std::stringstream urlBuilder;
+    urlBuilder << "http://" << EVEServerConfig::net.imageServer << ":" << (EVEServerConfig::net.imageServerPort) << "/";
+    _url = urlBuilder.str();
+
+    _basePath = EVEServerConfig::files.imageDir;
+    if (_basePath[_basePath.size() - 1] != '/')
+        _basePath += "/";
+
+    CreateDirectory(_basePath.c_str(), NULL);
+
+    for (int i = 0; i < CategoryCount; i++)
+    {
+        std::string subdir = _basePath;
+        subdir.append(Categories[i]);
+
+        CreateDirectory(subdir.c_str(), NULL);
+    }
+
+    SysLog::Log("Image Server Init", "our URL: %s", _url.c_str());
+    SysLog::Log("Image Server Init", "our base: %s", _basePath.c_str());
+
+    // Start thread.
+    _ioThread = std::shared_ptr<boost::asio::detail::thread>(new boost::asio::detail::thread(std::bind(&ImageServer::RunInternal)));
 }
 
 void ImageServer::Stop()

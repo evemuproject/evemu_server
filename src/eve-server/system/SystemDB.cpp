@@ -128,7 +128,7 @@ bool SystemDB::GetWrecksToTypes(DBQueryResult &res)
         " *"
         " FROM invTypesToWrecks "))
     {
-		sLog.Error("SystemDB::GetWrecksToTypes()", "Error in query: %s", res.error.c_str());
+		SysLog::Error("SystemDB::GetWrecksToTypes()", "Error in query: %s", res.error.c_str());
         return false;
     }
 

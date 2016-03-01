@@ -87,7 +87,7 @@ void ProcessCommand( const Seperator& cmd )
     const EVEToolCommand* c = FindCommand( cmdName );
 
     if( NULL == c )
-        sLog.Error( "input", "Unknown command '%s'.", cmdName );
+        SysLog::Error( "input", "Unknown command '%s'.", cmdName );
     else
         ( *c->callback )( cmd );
 }
@@ -101,7 +101,7 @@ void DestinyDumpLogText( const Seperator& cmd )
 
     if( 1 == cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s destiny-binary [destiny-binary] ...", cmdName );
+        SysLog::Error( cmdName, "Usage: %s destiny-binary [destiny-binary] ...", cmdName );
         return;
     }
 
@@ -112,7 +112,7 @@ void DestinyDumpLogText( const Seperator& cmd )
         Buffer destinyBinary;
         if( !PyDecodeEscape( destinyBinaryStr.c_str(), destinyBinary ) )
         {
-            sLog.Error( cmdName, "Failed to decode destiny binary." );
+            SysLog::Error( cmdName, "Failed to decode destiny binary." );
             continue;
         }
 
@@ -126,7 +126,7 @@ void CRC32Text( const Seperator& cmd )
 
     if( 1 == cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s text-to-checksum [text-to-checksum] ...", cmdName );
+        SysLog::Error( cmdName, "Usage: %s text-to-checksum [text-to-checksum] ...", cmdName );
         return;
     }
 
@@ -134,7 +134,7 @@ void CRC32Text( const Seperator& cmd )
     {
         const std::string& s = cmd.arg( i );
 
-        sLog.Log( cmdName, "%X", CRC32::Generate( (const uint8*)s.c_str(), s.size() ) );
+        SysLog::Log( cmdName, "%X", CRC32::Generate( (const uint8*)s.c_str(), s.size() ) );
     }
 }
 
@@ -150,16 +150,16 @@ void PrintHelp( const Seperator& cmd )
 
     if( 1 == cmd.argCount() )
     {
-        sLog.Log( cmdName, "Available commands:" );
+        SysLog::Log( cmdName, "Available commands:" );
 
         for( size_t i = 0; i < EVETOOL_COMMAND_COUNT; ++i )
         {
             const EVEToolCommand* c = &EVETOOL_COMMANDS[i];
 
-            sLog.Log( cmdName, "%s", c->name );
+            SysLog::Log( cmdName, "%s", c->name );
         }
 
-        sLog.Log( cmdName, "You can get detailed help by typing '%s <command> [<command>] ...'.", cmdName );
+        SysLog::Log( cmdName, "You can get detailed help by typing '%s <command> [<command>] ...'.", cmdName );
     }
     else
     {
@@ -169,9 +169,9 @@ void PrintHelp( const Seperator& cmd )
             const EVEToolCommand* c = FindCommand( cmdStr );
 
             if( NULL == c )
-                sLog.Error( cmdName, "Unknown command '%s'.", cmdStr.c_str() );
+                SysLog::Error( cmdName, "Unknown command '%s'.", cmdStr.c_str() );
             else
-                sLog.Log( cmdName, "%s: %s", c->name, c->description );
+                SysLog::Log( cmdName, "%s: %s", c->name, c->description );
         }
     }
 }
@@ -180,7 +180,7 @@ void PrintTimeNow( const Seperator& cmd )
 {
     const char* cmdName = cmd.arg( 0 ).c_str();
 
-    sLog.Log( cmdName, "Now in Win32 time: %" PRIu64 ".", Win32TimeNow() );
+    SysLog::Log( cmdName, "Now in Win32 time: %" PRIu64 ".", Win32TimeNow() );
 }
 
 void ObjectToSQL( const Seperator& cmd )
@@ -189,7 +189,7 @@ void ObjectToSQL( const Seperator& cmd )
 
     if( 5 != cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s [cache_file] [table_name] [key_field] [file_name]", cmdName );
+        SysLog::Error( cmdName, "Usage: %s [cache_file] [table_name] [key_field] [file_name]", cmdName );
         return;
     }
     const std::string& cacheFile = cmd.arg( 1 );
@@ -201,20 +201,20 @@ void ObjectToSQL( const Seperator& cmd )
     abs_fname += cacheFile;
     abs_fname += ".cache";
 
-    sLog.Log( cmdName, "Converting cached object %s:\n", abs_fname.c_str() );
+    SysLog::Log( cmdName, "Converting cached object %s:\n", abs_fname.c_str() );
 
     CachedObjectMgr mgr;
     PyCachedObjectDecoder* obj = mgr.LoadCachedObject( abs_fname.c_str(), cacheFile.c_str() );
     if( obj == NULL )
     {
-        sLog.Error( cmdName, "Unable to load or decode '%s'!", abs_fname.c_str() );
+        SysLog::Error( cmdName, "Unable to load or decode '%s'!", abs_fname.c_str() );
         return;
     }
 
     obj->cache->DecodeData();
     if( obj->cache->decoded() == NULL )
     {
-        sLog.Error( cmdName, "Unable to load or decode body of '%s'!", abs_fname.c_str() );
+        SysLog::Error( cmdName, "Unable to load or decode body of '%s'!", abs_fname.c_str() );
 
         SafeDelete( obj );
         return;
@@ -223,7 +223,7 @@ void ObjectToSQL( const Seperator& cmd )
     FILE* out = fopen( fileName.c_str(), "w" );
     if( out == NULL )
     {
-        sLog.Error( cmdName, "Unable to open output file '%s'", fileName.c_str() );
+        SysLog::Error( cmdName, "Unable to open output file '%s'", fileName.c_str() );
 
         SafeDelete( obj );
         return;
@@ -231,9 +231,9 @@ void ObjectToSQL( const Seperator& cmd )
 
     SetSQLDumper dumper( tableName.c_str(), keyField.c_str(), out );
     if( obj->cache->decoded()->visit( dumper ) )
-        sLog.Success( cmdName, "Dumping of %s succeeded.", tableName.c_str() );
+        SysLog::Success( cmdName, "Dumping of %s succeeded.", tableName.c_str() );
     else
-        sLog.Error( cmdName, "Dumping of %s failed.", tableName.c_str() );
+        SysLog::Error( cmdName, "Dumping of %s failed.", tableName.c_str() );
 
     fclose( out );
     SafeDelete( obj );
@@ -245,7 +245,7 @@ void LoadScript( const Seperator& cmd )
 
     if( 1 == cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s file [file] ...", cmdName );
+        SysLog::Error( cmdName, "Usage: %s file [file] ...", cmdName );
         return;
     }
 
@@ -259,7 +259,7 @@ void TimeToString( const Seperator& cmd )
 
     if( 1 == cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s win32-time [win32-time] ...", cmdName );
+        SysLog::Error( cmdName, "Usage: %s win32-time [win32-time] ...", cmdName );
         return;
     }
 
@@ -271,7 +271,7 @@ void TimeToString( const Seperator& cmd )
         sscanf( timeStr.c_str(), "%" SCNu64, &t );
         const std::string time = Win32TimeToString( t );
 
-        sLog.Log( cmdName, "%s is %s.", timeStr.c_str(), time.c_str() );
+        SysLog::Log( cmdName, "%s is %s.", timeStr.c_str(), time.c_str() );
     }
 }
 
@@ -281,7 +281,7 @@ void TriToOBJ( const Seperator& cmd )
 
     if( 4 != cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s [trifile] [objout] [mtlout]", cmdName );
+        SysLog::Error( cmdName, "Usage: %s [trifile] [objout] [mtlout]", cmdName );
         return;
     }
     const std::string& trifile = cmd.arg( 1 );
@@ -291,14 +291,14 @@ void TriToOBJ( const Seperator& cmd )
     TriExporter::TriFile f;
     if( !f.LoadFile( trifile.c_str() ) )
     {
-        sLog.Error( cmdName, "Failed to load trifile '%s'.", trifile.c_str() );
+        SysLog::Error( cmdName, "Failed to load trifile '%s'.", trifile.c_str() );
         return;
     }
 
     f.DumpHeaders();
     f.ExportObj( objout.c_str(), mtlout.c_str() );
 
-    sLog.Success( cmdName, "%s - %s - written.", objout.c_str(), mtlout.c_str() );
+    SysLog::Success( cmdName, "%s - %s - written.", objout.c_str(), mtlout.c_str() );
 }
 
 void UnmarshalLogText( const Seperator& cmd )
@@ -307,7 +307,7 @@ void UnmarshalLogText( const Seperator& cmd )
 
     if( 1 == cmd.argCount() )
     {
-        sLog.Error( cmdName, "Usage: %s marshal-binary [marshal-binary] ...", cmdName );
+        SysLog::Error( cmdName, "Usage: %s marshal-binary [marshal-binary] ...", cmdName );
         return;
     }
 
@@ -318,16 +318,16 @@ void UnmarshalLogText( const Seperator& cmd )
         Buffer marshalBinary;
         if( !PyDecodeEscape( marshalBinaryStr.c_str(), marshalBinary ) )
         {
-            sLog.Error( cmdName, "Failed to decode string into binary." );
+            SysLog::Error( cmdName, "Failed to decode string into binary." );
             continue;
         }
 
         PyRep* r = InflateUnmarshal( marshalBinary );
         if( NULL == r )
-            sLog.Error( cmdName, "Failed to unmarshal binary." );
+            SysLog::Error( cmdName, "Failed to unmarshal binary." );
         else
         {
-            sLog.Success( cmdName, "Result:" );
+            SysLog::Success( cmdName, "Result:" );
             r->Dump( stdout, "    " );
 
             PyDecRef( r );
@@ -357,7 +357,7 @@ void StuffExtract( const Seperator& cmd )
 
     if (cmd.argCount() < 2)
     {
-        sLog.Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
+        SysLog::Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
         return;
     }
 
@@ -368,7 +368,7 @@ void StuffExtract( const Seperator& cmd )
         curArg++;
         if ((curArg + 2) != cmd.argCount())
         {
-            sLog.Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
+            SysLog::Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
             return;
         }
         outPath = cmd.arg(curArg);
@@ -377,7 +377,7 @@ void StuffExtract( const Seperator& cmd )
 
     if ((curArg + 1) != cmd.argCount())
     {
-        sLog.Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
+        SysLog::Error(cmdName, "Usage: %s [-O <outputPath>] [.stuff file]", cmdName);
         return;
     }
 
@@ -386,18 +386,18 @@ void StuffExtract( const Seperator& cmd )
     FILE* in = fopen( filename.c_str(), "rb" );
     if( NULL == in )
     {
-        sLog.Error( cmdName, "Unable to open %s.", filename.c_str() );
+        SysLog::Error( cmdName, "Unable to open %s.", filename.c_str() );
         return;
     }
 
     uint32 file_count;
     if( 1 != fread( &file_count, sizeof( file_count ), 1, in ) )
     {
-        sLog.Log( cmdName, "Unable to read file count." );
+        SysLog::Log( cmdName, "Unable to read file count." );
         return;
     }
 
-    sLog.Log( cmdName, "There are %u files in %s.", file_count, filename.c_str() );
+    SysLog::Log( cmdName, "There are %u files in %s.", file_count, filename.c_str() );
 
     std::vector<FileHeaderObj> headers;
     headers.resize( file_count );
@@ -408,7 +408,7 @@ void StuffExtract( const Seperator& cmd )
         FileHeader head;
         if( 1 != fread( &head, sizeof( head ), 1, in ) )
         {
-            sLog.Error( cmdName, "Unable to read header of file #%u.", i );
+            SysLog::Error( cmdName, "Unable to read header of file #%u.", i );
             return;
         }
 
@@ -422,13 +422,13 @@ void StuffExtract( const Seperator& cmd )
         obj.filename.resize( head.path_len );
         if( head.path_len != fread( &obj.filename[0], 1, head.path_len, in ) )
         {
-            sLog.Error( cmdName, "Unable to read name of file #%u.", i );
+            SysLog::Error( cmdName, "Unable to read name of file #%u.", i );
             return;
         }
         //drop read NULL term
         obj.filename.resize( head.path_len - 1 );
 
-        sLog.Log( cmdName, "File #%u has length %u and path %s.", i, obj.length, obj.filename.c_str() );
+        SysLog::Log( cmdName, "File #%u has length %u and path %s.", i, obj.length, obj.filename.c_str() );
         offset += head.file_size;
     }
 
@@ -458,24 +458,24 @@ void StuffExtract( const Seperator& cmd )
                 FILE* out = fopen( pathname.c_str(), "wb" );
                 if( NULL == out )
                 {
-                    sLog.Error( cmdName, "Unable to create file %s: %s.", pathname.c_str(), strerror( errno ) );
+                    SysLog::Error( cmdName, "Unable to create file %s: %s.", pathname.c_str(), strerror( errno ) );
                     break;
                 }
 
-                sLog.Log( cmdName, "Extracting file %s of length %u.", pathname.c_str(), cur->length );
+                SysLog::Log( cmdName, "Extracting file %s of length %u.", pathname.c_str(), cur->length );
 
                 if (cur->length > 0)
                 {
                     Buffer buf(cur->length);
                     if (cur->length != fread(&buf[0], 1, cur->length, in))
                     {
-                        sLog.Error(cmdName, "Unable to read file %s: %s.", cur->filename.c_str(), strerror(errno));
+                        SysLog::Error(cmdName, "Unable to read file %s: %s.", cur->filename.c_str(), strerror(errno));
                         break;
                     }
 
                     if (cur->length != fwrite(&buf[0], 1, cur->length, out))
                     {
-                        sLog.Error(cmdName, "Unable to write file %s: %s", pathname.c_str(), strerror(errno));
+                        SysLog::Error(cmdName, "Unable to write file %s: %s", pathname.c_str(), strerror(errno));
                         break;
                     }
                 }
@@ -493,13 +493,13 @@ void StuffExtract( const Seperator& cmd )
                     {
                         if( 0 == CreateDirectory( pathname.c_str(), NULL ) )
                         {
-                            sLog.Error( cmdName, "Failed to make intermediate directory %s: %s", pathname.c_str(), strerror( errno ) );
+                            SysLog::Error( cmdName, "Failed to make intermediate directory %s: %s", pathname.c_str(), strerror( errno ) );
                             break;
                         }
                     }
                     else
                     {
-                        sLog.Error( cmdName, "Unable to stat %s: %s", pathname.c_str(), strerror( errno ) );
+                        SysLog::Error( cmdName, "Unable to stat %s: %s", pathname.c_str(), strerror( errno ) );
                         break;
                     }
                 }
@@ -509,6 +509,6 @@ void StuffExtract( const Seperator& cmd )
 
     fclose( in );
 
-    sLog.Log( cmdName, "Extracting from archive %s finished.", filename.c_str() );
+    SysLog::Log( cmdName, "Extracting from archive %s finished.", filename.c_str() );
 }
 

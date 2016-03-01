@@ -210,7 +210,7 @@ PyResult CorpStationMgrIMBound::Handle_SetHomeStation(PyCallArgs &call) {
     //this takes an integer: stationID
     //price is prompted for on the client side.
 
-    sLog.Debug( "CorpStationMgrIMBound", "Called SetHomeStation stub." );
+    SysLog::Debug( "CorpStationMgrIMBound", "Called SetHomeStation stub." );
 
     return new PyNone;
 }
@@ -222,7 +222,7 @@ PyResult CorpStationMgrIMBound::Handle_SetCloneTypeID(PyCallArgs &call) {
 
     Call_SetCloneTypeID arg;
     if(!arg.Decode(&call.tuple)){
-        sLog.Debug("CoporationMgrIMBound","Failed to determine Clone Type");
+        SysLog::Debug("CoporationMgrIMBound","Failed to determine Clone Type");
     }
 
     //Get cost of clone
@@ -238,7 +238,7 @@ PyResult CorpStationMgrIMBound::Handle_SetCloneTypeID(PyCallArgs &call) {
     CorporationDB::ChangeCloneType(call.client->GetCharacterID(), arg.CloneTypeID);
 
 
-    //sLog.Debug( "CorpStationMgrIMBound", "Called SetCloneTypeID stub." );
+    //Log::Debug( "CorpStationMgrIMBound", "Called SetCloneTypeID stub." );
 
     return new PyNone;
 }
@@ -566,7 +566,7 @@ PyResult CorpStationMgrIMBound::Handle_GetStationOffices( PyCallArgs& call )
 {
     //Hack: Just passing the client an empty PyList to stop it throwing an exception.
     //TODO: Fid out what needs to be in the PyList and when to send it.
-    sLog.Debug( "CorpStationMgrIMBound", "Called GetStationOffices stub." );
+    SysLog::Debug( "CorpStationMgrIMBound", "Called GetStationOffices stub." );
     /*
     [PySubStream 99 bytes]
         [PyObjectData Name: objectCaching.CachedMethodCallResult]
@@ -608,7 +608,7 @@ PyResult CorpStationMgrIMBound::Handle_GetNumberOfUnrentedOffices( PyCallArgs &c
 
 PyResult CorpStationMgrIMBound::Handle_GetCorporateStationOffice(PyCallArgs &call)
 {
-    sLog.Debug("Server","Called GetCorporateStationOffice Stub");
+    SysLog::Debug("Server","Called GetCorporateStationOffice Stub");
 
     return new PyTuple(0);
 }

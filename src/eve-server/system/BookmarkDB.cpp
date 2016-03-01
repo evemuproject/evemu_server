@@ -49,7 +49,7 @@ PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
         " WHERE ownerID = %u",
         ownerID))
     {
-        sLog.Error( "BookmarkDB::GetBookmarks()", "Failed to query bookmarks for owner %u: %s.", ownerID, res.error.c_str() );
+        SysLog::Error( "BookmarkDB::GetBookmarks()", "Failed to query bookmarks for owner %u: %s.", ownerID, res.error.c_str() );
         return(NULL);
     }
 
@@ -69,7 +69,7 @@ PyObjectEx *BookmarkDB::GetFolders(uint32 ownerID) {
         " WHERE ownerID = %u",
         ownerID))
     {
-        sLog.Error( "BookmarkDB::GetBookmarks()", "Failed to query bookmarks for owner %u: %s.", ownerID, res.error.c_str() );
+        SysLog::Error( "BookmarkDB::GetBookmarks()", "Failed to query bookmarks for owner %u: %s.", ownerID, res.error.c_str() );
         return(NULL);
     }
 
@@ -92,7 +92,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
         " FROM entity "
         " WHERE itemID = %u ", itemID))
     {
-        sLog.Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res.error.c_str() );
+        SysLog::Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res.error.c_str() );
         return 0;
     }
 
@@ -105,7 +105,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
             " FROM invTypes "
             " WHERE typeID = %u ", row.GetUInt(0)))
         {
-            sLog.Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res2.error.c_str() );
+            SysLog::Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res2.error.c_str() );
             return 0;
         }
 
@@ -123,7 +123,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
         " FROM mapDenormalize "
         " WHERE itemID = %u ", itemID))
     {
-        sLog.Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res.error.c_str() );
+        SysLog::Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res.error.c_str() );
         return 0;
     }
 
@@ -163,7 +163,7 @@ bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint
         " FROM bookmarks "
         " WHERE bookmarkID = %u ", bookmarkID))
     {
-        sLog.Error( "BookmarkDB::GetBookmarkInformation()", "Error in query: %s", res.error.c_str() );
+        SysLog::Error( "BookmarkDB::GetBookmarkInformation()", "Error in query: %s", res.error.c_str() );
         return false;
     }
 
@@ -204,7 +204,7 @@ bool BookmarkDB::SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, u
         bookmarkID, ownerID, itemID, typeID, flag, memo.c_str(), created, x, y, z, locationID, note.c_str(), creatorID, folderID
         ))
     {
-        sLog.Error( "BookmarkDB::SaveNewBookmarkToDatabase()", "Error in query, Bookmark content couldn't be saved: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::SaveNewBookmarkToDatabase()", "Error in query, Bookmark content couldn't be saved: %s", err.c_str() );
         return 0;
     }
     else
@@ -220,7 +220,7 @@ bool BookmarkDB::DeleteBookmarkFromDatabase(uint32 ownerID, uint32 bookmarkID)
         " WHERE ownerID = %u AND bookmarkID = %u", ownerID, bookmarkID
         ))
     {
-        sLog.Error( "BookmarkDB::DeleteBookmarkFromDatabase()", "Error in query: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::DeleteBookmarkFromDatabase()", "Error in query: %s", err.c_str() );
         return false;
     }
 
@@ -248,7 +248,7 @@ bool BookmarkDB::DeleteBookmarksFromDatabase(uint32 ownerID, std::vector<unsigne
         " WHERE ownerID = %u AND bookmarkID IN (%s)", ownerID, st.str().c_str()
         ))
     {
-        sLog.Error( "BookmarkDB::DeleteBookmarksFromDatabase()", "Error in query: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::DeleteBookmarksFromDatabase()", "Error in query: %s", err.c_str() );
         ret = false;
     }
 
@@ -271,7 +271,7 @@ bool BookmarkDB::UpdateBookmarkInDatabase(uint32 bookmarkID, uint32 ownerID, std
         ownerID
         ))
     {
-        sLog.Error( "BookmarkDB::UpdateBookmarkInDatabase()", "Error in query: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::UpdateBookmarkInDatabase()", "Error in query: %s", err.c_str() );
         return false;
     }
 
@@ -290,7 +290,7 @@ bool BookmarkDB::SaveNewFolderToDatabase(uint32 &folderID, std::string folderNam
         folderID, folderName.c_str(), ownerID, creatorID
         ))
     {
-        sLog.Error( "BookmarkDB::SaveNewFolderToDatabase()", "Error in query, Folder couldn't be saved: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::SaveNewFolderToDatabase()", "Error in query, Folder couldn't be saved: %s", err.c_str() );
         return 0;
     }
     else
@@ -309,7 +309,7 @@ bool BookmarkDB::UpdateFolderInDatabase(uint32 &folderID, std::string folderName
          folderName.c_str(), folderID, ownerID
         ))
     {
-        sLog.Error( "BookmarkDB::UpdateFolderInDatabase()", "Error in query, Folder couldn't be saved: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::UpdateFolderInDatabase()", "Error in query, Folder couldn't be saved: %s", err.c_str() );
         return 0;
     }
     else
@@ -326,7 +326,7 @@ bool BookmarkDB::DeleteFolderFromDatabase(uint32 folderID, uint32 ownerID)
         ownerID, folderID
         ))
     {
-        sLog.Error( "BookmarkDB::DeleteFolderFromDatabase()", "Error in query: %s", err.c_str() );
+        SysLog::Error( "BookmarkDB::DeleteFolderFromDatabase()", "Error in query: %s", err.c_str() );
         return false;
     }
 

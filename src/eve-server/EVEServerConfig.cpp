@@ -27,6 +27,13 @@
 
 #include "EVEServerConfig.h"
 
+EVEServerConfig::EVEConfigRates EVEServerConfig::rates;
+EVEServerConfig::EVEConfigAccount EVEServerConfig::account;
+EVEServerConfig::EVEConfigCharacter EVEServerConfig::character;
+EVEServerConfig::EVEConfigDatabase EVEServerConfig::database;
+EVEServerConfig::EVEConfigFiles EVEServerConfig::files;
+EVEServerConfig::EVEConfigNet EVEServerConfig::net;
+
 /*************************************************************************/
 /* EVEServerConfig                                                       */
 /*************************************************************************/

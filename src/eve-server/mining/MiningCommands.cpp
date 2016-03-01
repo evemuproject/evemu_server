@@ -50,7 +50,7 @@ PyResult Command_roid( Client* who, const Seperator& args )
     if( !who->IsInSpace() )
         throw PyException( MakeCustomError( "You must be in space to spawn things." ) );
 
-    sLog.Log( "Command", "Roid %u of radius %f", typeID, radius );
+    SysLog::Log( "Command", "Roid %u of radius %f", typeID, radius );
 
     GPoint position( who->GetPosition() );
     position.x += radius + 1 + who->GetRadius();    //put it raw enough away to not push us around.
@@ -153,7 +153,7 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
     {
         if (!CommandDB::GetRoidDist(sys->GetSystemSecurity(), roidDist))
 		{
-			sLog.Error( "Command", "Couldn't get roid list for system security %s", sys->GetSystemSecurity() );
+			SysLog::Error( "Command", "Couldn't get roid list for system security %s", sys->GetSystemSecurity() );
 
 			throw PyException( MakeCustomError( "Couldn't get roid list for system security %s", sys->GetSystemSecurity() ) );
 		}
@@ -238,7 +238,7 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const G
     AsteroidEntity* new_roid = NULL;
     new_roid = new AsteroidEntity( i, system, position );
     if( new_roid != NULL )
-        sLog.Debug( "SpawnAsteroid()", "Spawned new asteroid of radius= %fm and volume= %f m3", radius, volume );
+        SysLog::Debug( "SpawnAsteroid()", "Spawned new asteroid of radius= %fm and volume= %f m3", radius, volume );
     //TODO: check for a local asteroid belt object?
     //TODO: actually add this to the asteroid belt too...
     system->AddEntity( new_roid );

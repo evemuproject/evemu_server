@@ -41,7 +41,7 @@ RepairService::~RepairService() {
 
 PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {
 
-    sLog.Log("RepairService", "Called UnasembleItems stub.");
+    SysLog::Log("RepairService", "Called UnasembleItems stub.");
     if (call.tuple->size() == 2)
     {
         bool repackDamaged = false;

@@ -102,7 +102,7 @@ void ProjectileTurret::Activate(SystemEntity * targetEntity)
 	}
 	else
 	{
-		sLog.Error( "ProjectileTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
+		SysLog::Error( "ProjectileTurret::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
 		throw PyException( MakeCustomError( "ERROR!  Cannot find charge that is supposed to be loaded into this module!" ) );
 	}
 }

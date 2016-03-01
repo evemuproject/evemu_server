@@ -304,7 +304,7 @@ PyObject *CorporationDB::GetEmploymentRecord(uint32 charID) {
 
 PyObject* CorporationDB::GetMedalsReceived( uint32 charID )
 {
-    sLog.Debug( "CorporationDB", "Called GetMedalsReceived stub." );
+    SysLog::Debug( "CorporationDB", "Called GetMedalsReceived stub." );
 
     util_Rowset rs;
 
@@ -1009,11 +1009,11 @@ uint32 CorporationDB::GetCloneTypeCostByID(uint32 cloneTypeID) {
         " FROM invTypes "
         " WHERE typeID = %u ", cloneTypeID))
     {
-        sLog.Error("CorporationDB","Failed to retrieve basePrice of typeID = %u",cloneTypeID);
+        SysLog::Error("CorporationDB","Failed to retrieve basePrice of typeID = %u",cloneTypeID);
     }
     DBResultRow row;
     if (!res.GetRow(row)) {
-        sLog.Error("CorporationDB","Query returned no results");
+        SysLog::Error("CorporationDB","Query returned no results");
         return 0;
     }
     return row.GetUInt(0);
@@ -1299,7 +1299,7 @@ bool CorporationDB::ChangeCloneType(uint32 characterID, uint32 typeID) {
     DBResultRow row;
     if( !(res.GetRow(row)) )
     {
-        sLog.Error( "CorporationDB::ChangeCloneType()", "Could not find Clone typeID = %u in invTypes table.", typeID );
+        SysLog::Error( "CorporationDB::ChangeCloneType()", "Could not find Clone typeID = %u in invTypes table.", typeID );
         return false;
     }
     std::string typeNameString = row.GetText(1);
@@ -1317,7 +1317,7 @@ bool CorporationDB::ChangeCloneType(uint32 characterID, uint32 typeID) {
         _log(DATABASE__ERROR, "Failed to change clone type of char %u: %s.", characterID, res.error.c_str());
         return false;
     }
-    sLog.Debug( "CorporationDB", "Clone upgrade successful" );
+    SysLog::Debug( "CorporationDB", "Clone upgrade successful" );
     return true;
 }
 
@@ -1344,7 +1344,7 @@ PyDict* CorporationDB::GetBookmarks(uint32 corporationID)
         " WHERE ownerID = %u",
         corporationID))
     {
-        sLog.Error("CorporationDB::GetBookmarks()", "Failed to query corporation bookmarks for corporation %u: %s", corporationID, res.error.c_str());
+        SysLog::Error("CorporationDB::GetBookmarks()", "Failed to query corporation bookmarks for corporation %u: %s", corporationID, res.error.c_str());
         return NULL;
     }
     return DBResultToPackedRowDict(res, "bookmarkID");

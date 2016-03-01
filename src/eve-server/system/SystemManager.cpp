@@ -241,7 +241,7 @@ public:
                     return shipObj;
                 }
                 else
-                    sLog.Error("DynamicEntityFactory::BuildEntity()", "We do not want to create ShipEntity objects for ANY ships owned by players, only those left in space owned by no one." );
+                    SysLog::Error("DynamicEntityFactory::BuildEntity()", "We do not want to create ShipEntity objects for ANY ships owned by players, only those left in space owned by no one." );
             } break;
             case EVEDB::invCategories::Deployable: {        // Deployable structures of all kinds!  Warp disruptor bubbles.
                 location.x = entity.x;
@@ -676,7 +676,7 @@ void SystemManager::ProcessDestiny() {
 			cur->second->ProcessDestiny();
 		else
 		{
-			sLog.Error("SystemManager::Process()", "ERROR! Somehow the SystemEntity * for entityID '%u' was deleted without being removed from the SystemManager's m_entities map!", cur->first);
+			SysLog::Error("SystemManager::Process()", "ERROR! Somehow the SystemEntity * for entityID '%u' was deleted without being removed from the SystemManager's m_entities map!", cur->first);
 			m_entities.erase(cur->first);
 		}
 
@@ -697,11 +697,11 @@ bool SystemManager::BuildDynamicEntity(Client *who, const DBSystemDynamicEntity 
     SystemEntity *se = DynamicEntityFactory::BuildEntity(*this, entity);
     if( se == NULL )
     {
-        sLog.Error( "SystemManager::BuildDynamicEntity()", "Failed to create entity for item %u (type %u)", entity.itemID, entity.typeID );
+        SysLog::Error( "SystemManager::BuildDynamicEntity()", "Failed to create entity for item %u (type %u)", entity.itemID, entity.typeID );
         return false;
     }
 
-    sLog.Debug( "SystemManager::BuildDynamicEntity()", "Loaded dynamic entity %u of type %u for system %u", entity.itemID, entity.typeID, m_systemID );
+    SysLog::Debug( "SystemManager::BuildDynamicEntity()", "Loaded dynamic entity %u of type %u for system %u", entity.itemID, entity.typeID, m_systemID );
     m_entities[se->GetID()] = se;
     bubbles.Add(se, false);
     m_entityChanged = true;

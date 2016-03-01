@@ -50,10 +50,10 @@ PyResult PhotoUploadService::Handle_Upload(PyCallArgs &call)
         return NULL;
     }
 
-    sLog.Log("photo upload", "Received image from account %i, size: %i", call.client->GetAccountID(), arg.arg.size());
+    SysLog::Log("photo upload", "Received image from account %i, size: %i", call.client->GetAccountID(), arg.arg.size());
 
     std::shared_ptr<std::vector<char> > data(new std::vector<char>(arg.arg.begin(), arg.arg.end()));
-    sImageServer.ReportNewImage(call.client->GetAccountID(), data);
+    ImageServer::ReportNewImage(call.client->GetAccountID(), data);
 
     return new PyBool(true);
 }

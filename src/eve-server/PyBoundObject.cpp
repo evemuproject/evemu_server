@@ -39,7 +39,7 @@ PyBoundObject::~PyBoundObject() {
 }
 
 PyResult PyBoundObject::Call(const std::string &method, PyCallArgs &args) {
-    sLog.Debug("Bound Object","NodeID: %u BindID: %u calling %s in service manager '%s'", nodeID(), bindID(), method.c_str(), GetBoundObjectClassStr().c_str());
+    SysLog::Debug("Bound Object","NodeID: %u BindID: %u calling %s in service manager '%s'", nodeID(), bindID(), method.c_str(), GetBoundObjectClassStr().c_str());
     args.Dump(SERVICE__CALL_TRACE);
 
     return(PyCallable::Call(method, args));

@@ -35,7 +35,7 @@ dgmtypeattributemgr::dgmtypeattributemgr()
     if( !DBcore::RunQuery( res,
         "SELECT * FROM dgmTypeAttributes ORDER BY typeID" ) )
     {
-        sLog.Error("DgmTypeAttrMgr", "Error in db load query: %s", res.error.c_str());
+        SysLog::Error("DgmTypeAttrMgr", "Error in db load query: %s", res.error.c_str());
         return;
     }
 
@@ -82,13 +82,13 @@ DgmTypeAttributeSet* dgmtypeattributemgr::GetDgmTypeAttributeSet( uint32 typeID 
     itr = mDgmTypeAttrInfo.find(typeID);
     if (itr == mDgmTypeAttrInfo.end())
     {
-        //sLog.Debug("DgmTypeAttrMgr", "INFO: No type attributes found for type %u.", typeID);
+        //Log::Debug("DgmTypeAttrMgr", "INFO: No type attributes found for type %u.", typeID);
         return NULL;
     }
 
     if (!itr->second)
     {
-        sLog.Error("DgmTypeAttrMgr", "something went wrong with typeID: %u, db problem.... maybe", typeID);
+        SysLog::Error("DgmTypeAttrMgr", "something went wrong with typeID: %u, db problem.... maybe", typeID);
         return NULL;
     }
 

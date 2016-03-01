@@ -229,7 +229,7 @@ void BaseTCPServer::TCPServerLoop()
 #endif /* HAVE_WINDOWS_H */
 
 #ifndef HAVE_WINDOWS_H
-    sLog.Log( "Threading", "Starting TCPServerLoop with thread ID %d", pthread_self() );
+    SysLog::Log( "Threading", "Starting TCPServerLoop with thread ID %d", pthread_self() );
 #endif /* !HAVE_WINDOWS_H */
 
     mMLoopRunning.Lock();
@@ -254,6 +254,6 @@ void BaseTCPServer::TCPServerLoop()
     mMLoopRunning.Unlock();
 
 #ifndef HAVE_WINDOWS_H
-    sLog.Log( "Threading", "Ending TCPServerLoop with thread ID %d", pthread_self() );
+    SysLog::Log( "Threading", "Ending TCPServerLoop with thread ID %d", pthread_self() );
 #endif /* !HAVE_WINDOWS_H */
 }

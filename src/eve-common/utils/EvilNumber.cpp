@@ -344,7 +344,7 @@ int64 EvilNumber::get_int() const
 
         /* this checks if the type convention lost stuff behind the decimal point (comma for you Europeans ;) */
         if (double(temp) != mValue.fVal)
-            sLog.Warning("EvilNumber", "Invalid call get_int called on a double");
+            SysLog::Warning("EvilNumber", "Invalid call get_int called on a double");
 
         return (int64)mValue.fVal;
     }
@@ -358,7 +358,7 @@ double EvilNumber::get_float() const
 
         /* this checks if the type convention ended up on a double overflow */
         if (int64(temp) != mValue.iVal)
-            sLog.Warning("EvilNumber", "Invalid call get_float called on a int");
+            SysLog::Warning("EvilNumber", "Invalid call get_float called on a int");
 
         return (double)mValue.iVal;
     }

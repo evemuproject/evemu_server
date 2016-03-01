@@ -80,7 +80,7 @@ PyBoundObject *ScenarioService::_CreateBoundObject(Client *c, const PyRep *bind_
 
 PyResult ScenarioService::Handle_ResetD( PyCallArgs& call )
 {
-    sLog.Debug( "ScenarioService", "Called ResetD stub." );
+    SysLog::Debug( "ScenarioService", "Called ResetD stub." );
 
     return new PyNone;
 }

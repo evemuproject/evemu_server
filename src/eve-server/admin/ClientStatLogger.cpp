@@ -46,7 +46,7 @@ PyResult ClientStatLogger::Handle_LogString(PyCallArgs &call) {
         return NULL;
     }
 
-    sLog.Error("LogFromClient", "This came from client: %s", args.arg.c_str());
+    SysLog::Error("LogFromClient", "This came from client: %s", args.arg.c_str());
 
     return NULL;
 }

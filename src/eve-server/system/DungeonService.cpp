@@ -85,7 +85,7 @@ PyResult DungeonService::Handle_DEGetFactions( PyCallArgs& call )
 {
     //PyRep *result = NULL;
 
-    sLog.Debug( "DungeonService", "Called DEGetFactions stub." );
+    SysLog::Debug( "DungeonService", "Called DEGetFactions stub." );
 
     return NULL;
 }
@@ -102,7 +102,7 @@ PyResult DungeonService::Handle_DEGetDungeons( PyCallArgs& call )
     //       dungeonVName
     //       dungeonVID
 
-    sLog.Debug( "DungeonService", "Called DEGetDungeons stub." );
+    SysLog::Debug( "DungeonService", "Called DEGetDungeons stub." );
 
     return NULL;
 }
@@ -115,7 +115,7 @@ PyResult DungeonService::Handle_DEGetRooms( PyCallArgs& call )
 
     //rows: roomName
 
-    sLog.Debug( "DungeonService", "Called DEGetRooms stub." );
+    SysLog::Debug( "DungeonService", "Called DEGetRooms stub." );
 
     return NULL;
 }

@@ -62,7 +62,7 @@ int main( int argc, char* argv[] )
                 }
                 else
                 {
-                    sLog.Error( "XMLPktGen", "Error parsing options: no parameter for include dir" );
+                    SysLog::Error( "XMLPktGen", "Error parsing options: no parameter for include dir" );
                     return -1;
                 }
                 break;
@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
                 }
                 else
                 {
-                    sLog.Error( "XMLPktGen", "Error parsing options: no parameter for source dir" );
+                    SysLog::Error( "XMLPktGen", "Error parsing options: no parameter for source dir" );
                     return -1;
                 }
                 break;
@@ -89,14 +89,14 @@ int main( int argc, char* argv[] )
 
             /* error */
             default:
-                sLog.Error( "XMLPktGen", "Unknown option '%c'", argv[0][1] );
+                SysLog::Error( "XMLPktGen", "Unknown option '%c'", argv[0][1] );
                 return -1;
         }
     }
 
     if( 0 == argc )
     {
-        sLog.Error( "XMLPktGen", "Error processing files: no files given" );
+        SysLog::Error( "XMLPktGen", "Error processing files: no files given" );
         return -1;
     }
 

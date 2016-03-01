@@ -77,13 +77,13 @@ bool CommandDB::ItemSearch(uint32 typeID, uint32 &actualTypeID,
         typeID
         ))
     {
-        sLog.Error( "CommandDB::ItemSearch()", "Error in query: %s", result.error.c_str() );
+        SysLog::Error( "CommandDB::ItemSearch()", "Error in query: %s", result.error.c_str() );
         return (false);
     }
 
     if( !result.GetRow(row) )
     {
-        sLog.Error( "CommandDB::ItemSearch()", "Query returned NO results: %s", result.error.c_str() );
+        SysLog::Error( "CommandDB::ItemSearch()", "Query returned NO results: %s", result.error.c_str() );
         return (false);
     }
 
@@ -154,7 +154,7 @@ int CommandDB::GetAccountID(std::string name) {
         " FROM character_ "
         " WHERE characterID = ( SELECT itemID FROM entity WHERE itemName = '%s' )", name.c_str()))
     {
-        sLog.Error("CommandDB", "Failed to retrieve accountID for %s", name.c_str());
+        SysLog::Error("CommandDB", "Failed to retrieve accountID for %s", name.c_str());
         return 0;
     }
 
@@ -162,7 +162,7 @@ int CommandDB::GetAccountID(std::string name) {
 
     if( !res.GetRow(row) )
     {
-        sLog.Error("CommandDB", "Query Returned no results");
+        SysLog::Error("CommandDB", "Query Returned no results");
         return 0;
     }
 

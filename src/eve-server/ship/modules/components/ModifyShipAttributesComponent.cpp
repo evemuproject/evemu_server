@@ -54,7 +54,7 @@ void ModifyShipAttributesComponent::ModifyTargetShipAttribute(uint32 targetItemI
     //check if we found the ship
     if( target == 0)
     {
-        sLog.Error("ModifyShipAttributesComponent","Failed to find target ship %u", targetItemID);
+        SysLog::Error("ModifyShipAttributesComponent","Failed to find target ship %u", targetItemID);
         return;
     }
 

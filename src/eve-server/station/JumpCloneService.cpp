@@ -81,7 +81,7 @@ PyResult JumpCloneBound::Handle_InstallCloneInStation( PyCallArgs& call )
 {
     //takes no arguments, returns no arguments
 
-    sLog.Debug( "JumpCloneBound", "Called InstallCloneInStation stub." );
+    SysLog::Debug( "JumpCloneBound", "Called InstallCloneInStation stub." );
 
     return new PyNone;
 }
@@ -91,7 +91,7 @@ PyResult JumpCloneBound::Handle_GetCloneState(PyCallArgs &call) {
     //returns (clones, implants, timeLastJump)
     //where jumpClones is a rowset? with at least columns: jumpCloneID, locationID
 
-    sLog.Debug( "JumpCloneBound", "Called GetCloneState stub." );
+    SysLog::Debug( "JumpCloneBound", "Called GetCloneState stub." );
 
     PyDict* d = new PyDict;
     d->SetItemString( "clones", new PyNone );
