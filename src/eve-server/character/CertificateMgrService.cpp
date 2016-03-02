@@ -169,7 +169,7 @@ PyResult CertificateMgrService::Handle_BatchCertificateUpdate(PyCallArgs &call) 
     cur = args.update.begin();
     end = args.update.end();
     for(; cur != end; cur++)
-        ch->UpdateCertificate( cur->first, cur->second );
+        ch->UpdateCertificate( cur->first, cur->second != 0);
 
     return(NULL);
 }

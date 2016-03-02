@@ -1606,7 +1606,7 @@ PyResult Command_seedmarket(Client* who, const Seperator& args)
         throw PyException(MakeCustomError("Must specify a regionID or 'this' to seed current region or 'all' to seed all regions."));
     }
     std::vector<uint32> regions;
-    for (int i = 0; i < args.argCount(); i++)
+    for (size_t i = 0; i < args.argCount(); i++)
     {
         std::string arg = args.arg(i);
         std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);

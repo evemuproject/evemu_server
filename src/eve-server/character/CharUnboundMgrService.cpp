@@ -198,7 +198,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     idata.singleton = true;
 
     cdata.accountID = call.client->GetAccountID();
-    cdata.gender = arg.genderID;
+    cdata.gender = arg.genderID != 0;
     cdata.ancestryID = arg.ancestryID;
     cdata.schoolID = arg.schoolID;
 
