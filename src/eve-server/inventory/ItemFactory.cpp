@@ -33,11 +33,40 @@
 #include "system/Container.h"
 #include "system/SolarSystem.h"
 
+#include <mutex>
+
 Client *ItemFactory::m_pClient; // pointer to client currently using the ItemFactory, we do not own this
+// The categories list and mutex.
 std::map<EVEItemCategories, ItemCategory *> ItemFactory::m_categories;
+
+std::unique_lock<std::mutex> getCategoryLock()
+{
+    static std::mutex m_categoriesMutex;
+    return std::unique_lock<std::mutex>(m_categoriesMutex);
+}
+// The groups list and mute.
 std::map<uint32, ItemGroup *> ItemFactory::m_groups;
+
+std::unique_lock<std::mutex> getGroupLock()
+{
+    static std::mutex m_groupsMutex;
+    return std::unique_lock<std::mutex>(m_groupsMutex);
+}
+// The types list and mutex.
 std::map<uint32, ItemType *> ItemFactory::m_types;
+
+std::unique_lock<std::mutex> getTypeLock()
+{
+    static std::mutex m_typesMutex;
+    return std::unique_lock<std::mutex>(m_typesMutex);
+}
+// The items list and mutex.
 std::map<uint32, InventoryItemRef> ItemFactory::m_items;
+std::unique_lock<std::mutex> getItemLock()
+{
+    static std::mutex m_itemsMutex;
+    return std::unique_lock<std::mutex>(m_itemsMutex);
+}
 // Initialize ID Authority variables:
 uint32 ItemFactory::m_nextEntityID = EVEMU_MINIMUM_ENTITY_ID;
 
@@ -45,6 +74,7 @@ void ItemFactory::Shutdown()
 {
     // items
     {
+        auto lock = getItemLock();
         std::map<uint32, InventoryItemRef>::const_iterator cur, end;
 		uint32 total_item_count = m_items.size();
 		uint32 items_saved = 0;
@@ -67,6 +97,7 @@ void ItemFactory::Shutdown()
     }
     // types
     {
+        auto lock = getTypeLock();
         std::map<uint32, ItemType *>::const_iterator cur, end;
         cur = m_types.begin();
         end = m_types.end();
@@ -75,6 +106,7 @@ void ItemFactory::Shutdown()
     }
     // groups
     {
+        auto lock = getGroupLock();
         std::map<uint32, ItemGroup *>::const_iterator cur, end;
         cur = m_groups.begin();
         end = m_groups.end();
@@ -83,6 +115,7 @@ void ItemFactory::Shutdown()
     }
     // categories
     {
+        auto lock = getCategoryLock();
         std::map<EVEItemCategories, ItemCategory *>::const_iterator cur, end;
         cur = m_categories.begin();
         end = m_categories.end();
@@ -94,48 +127,57 @@ void ItemFactory::Shutdown()
     m_pClient = NULL;
 }
 
-const ItemCategory *ItemFactory::GetCategory(EVEItemCategories category) {
+const ItemCategory *ItemFactory::GetCategory(EVEItemCategories category)
+{
+    auto lock = getCategoryLock();
     std::map<EVEItemCategories, ItemCategory *>::iterator res = m_categories.find(category);
-    if(res == m_categories.end()) {
+    if (res == m_categories.end())
+    {
+        lock.unlock();
         ItemCategory *cat = ItemCategory::Load(category);
         if(cat == NULL)
             return NULL;
 
+        lock.lock();
         // insert it into our cache
-        res = m_categories.insert(
-            std::make_pair(category, cat)
-        ).first;
+        res = m_categories.insert(std::make_pair(category, cat)).first;
     }
     return(res->second);
 }
 
-const ItemGroup *ItemFactory::GetGroup(uint32 groupID) {
+const ItemGroup *ItemFactory::GetGroup(uint32 groupID)
+{
+    auto lock = getGroupLock();
     std::map<uint32, ItemGroup *>::iterator res = m_groups.find(groupID);
-    if(res == m_groups.end()) {
+    if (res == m_groups.end())
+    {
+        lock.unlock();
         ItemGroup *group = ItemGroup::Load(groupID);
         if(group == NULL)
             return NULL;
 
+        lock.lock();
         // insert it into cache
-        res = m_groups.insert(
-            std::make_pair(groupID, group)
-        ).first;
+        res = m_groups.insert(std::make_pair(groupID, group)).first;
     }
     return(res->second);
 }
 
 template<class _Ty>
-const _Ty *ItemFactory::_GetType(uint32 typeID) {
+const _Ty *ItemFactory::_GetType(uint32 typeID)
+{
+    auto lock = getTypeLock();
     std::map<uint32, ItemType *>::iterator res = m_types.find(typeID);
-    if(res == m_types.end()) {
+    if (res == m_types.end())
+    {
+        lock.unlock();
         _Ty *type = _Ty::Load(typeID);
         if(type == NULL)
             return NULL;
 
+        lock.lock();
         // insert into cache
-        res = m_types.insert(
-            std::make_pair(typeID, type)
-        ).first;
+        res = m_types.insert(std::make_pair(typeID, type)).first;
     }
     return static_cast<const _Ty *>(res->second);
 }
@@ -156,7 +198,9 @@ const CharacterType *ItemFactory::GetCharacterTypeByBloodline(uint32 bloodlineID
     // Unfortunately, we have it indexed by typeID, so we must get it ...
     uint32 characterTypeID;
     if (!InventoryDB::GetCharacterTypeByBloodline(bloodlineID, characterTypeID))
+    {
         return NULL;
+    }
     return GetCharacterType(characterTypeID);
 }
 
@@ -171,14 +215,17 @@ const StationType *ItemFactory::GetStationType(uint32 stationTypeID) {
 template<class _Ty>
 RefPtr<_Ty> ItemFactory::_GetItem(uint32 itemID)
 {
+    auto lock = getItemLock();
     std::map<uint32, InventoryItemRef>::iterator res = m_items.find( itemID );
-    if( res == m_items.end() )
+    if( res == m_items.end())
     {
+        lock.unlock();
         // load the item
         RefPtr<_Ty> item = _Ty::Load( itemID );
         if( !item )
             return RefPtr<_Ty>();
 
+        lock.lock();
         //we keep the original ref.
         res = m_items.insert( std::make_pair( itemID, item ) ).first;
     }
@@ -243,9 +290,12 @@ CargoContainerRef ItemFactory::GetCargoContainer(uint32 containerID)
 
 InventoryItemRef ItemFactory::SpawnItem(ItemData &data) {
     InventoryItemRef i = InventoryItem::Spawn(data);
-    if( !i )
+    if (!i)
+    {
         return InventoryItemRef();
+    }
 
+    auto lock = getItemLock();
     // spawn successful; store the ref
     m_items.insert( std::make_pair( i->itemID(), i ) );
     return i;
@@ -253,27 +303,36 @@ InventoryItemRef ItemFactory::SpawnItem(ItemData &data) {
 
 BlueprintRef ItemFactory::SpawnBlueprint(ItemData &data, BlueprintData &bpData) {
     BlueprintRef bi = Blueprint::Spawn(data, bpData);
-    if( !bi )
+    if (!bi)
+    {
         return BlueprintRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( bi->itemID(), bi ) );
     return bi;
 }
 
 CharacterRef ItemFactory::SpawnCharacter(ItemData &data, CharacterData &charData, CorpMemberInfo &corpData) {
     CharacterRef c = Character::Spawn(data, charData, corpData);
-    if( !c )
+    if (!c)
+    {
         return CharacterRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( c->itemID(), c ) );
     return c;
 }
 
 ShipRef ItemFactory::SpawnShip(ItemData &data) {
     ShipRef s = Ship::Spawn(data);
-    if( !s )
+    if (!s)
+    {
         return ShipRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( s->itemID(), s ) );
     return s;
 }
@@ -281,9 +340,12 @@ ShipRef ItemFactory::SpawnShip(ItemData &data) {
 SkillRef ItemFactory::SpawnSkill(ItemData &data)
 {
     SkillRef s = Skill::Spawn( data );
-    if( !s )
+    if (!s)
+    {
         return SkillRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( s->itemID(), s ) );
     return s;
 }
@@ -291,9 +353,12 @@ SkillRef ItemFactory::SpawnSkill(ItemData &data)
 OwnerRef ItemFactory::SpawnOwner(ItemData &data)
 {
     OwnerRef o = Owner::Spawn( data );
-    if( !o )
+    if (!o)
+    {
         return OwnerRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( o->itemID(), o ) );
     return o;
 }
@@ -301,9 +366,12 @@ OwnerRef ItemFactory::SpawnOwner(ItemData &data)
 StructureRef ItemFactory::SpawnStructure(ItemData &data)
 {
     StructureRef o = Structure::Spawn( data );
-    if( !o )
+    if (!o)
+    {
         return StructureRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( o->itemID(), o ) );
     return o;
 }
@@ -311,9 +379,12 @@ StructureRef ItemFactory::SpawnStructure(ItemData &data)
 CargoContainerRef ItemFactory::SpawnCargoContainer(ItemData &data)
 {
     CargoContainerRef o = CargoContainer::Spawn( data );
-    if( !o )
+    if (!o)
+    {
         return CargoContainerRef();
+    }
 
+    auto lock = getItemLock();
     m_items.insert( std::make_pair( o->itemID(), o ) );
     return o;
 }
@@ -322,10 +393,13 @@ Inventory *ItemFactory::GetInventory(uint32 inventoryID, bool load)
 {
     InventoryItemRef item;
 
-    if( load )
-        item = GetItem( inventoryID );
+    if (load)
+    {
+        item = GetItem(inventoryID);
+    }
     else
     {
+        auto lock = getItemLock();
         std::map<uint32, InventoryItemRef>::iterator res = m_items.find( inventoryID );
         if( res != m_items.end() )
             item = res->second;
@@ -336,6 +410,7 @@ Inventory *ItemFactory::GetInventory(uint32 inventoryID, bool load)
 
 void ItemFactory::_DeleteItem(uint32 itemID)
 {
+    auto lock = getItemLock();
     std::map<uint32, InventoryItemRef>::iterator res = m_items.find( itemID );
     if( res == m_items.end() )
     {
