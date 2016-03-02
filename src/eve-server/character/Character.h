@@ -140,8 +140,9 @@ protected:
         const ItemGroup &group, const TypeData &data)
     {
         // check we are really loading a character type
-        if( group.id() != EVEDB::invGroups::Character ) {
-            SysLog::Error("Character", "Load of character type %u requested, but it's %s.", typeID, group.name().c_str() );
+        if( group.id() != EVEDB::invGroups::Character )
+        {
+            SysLog::Error("Character", "Load of character type %u requested, but it's %s.", typeID, group.name().c_str());
             return NULL;
         }
 
@@ -438,10 +439,6 @@ public:
      * @param InventoryItem
      */
     bool InjectSkillIntoBrain(SkillRef skill);
-    /*
-     * GM Version, allows level set
-     */
-    bool InjectSkillIntoBrain(SkillRef skill, uint8 level);
     /* AddSkillToSkillQueue()
      *
      * This will add a skill into the skill queue.
@@ -626,7 +623,7 @@ protected:
         // check it's a character
         if( type.groupID() != EVEDB::invGroups::Character )
         {
-            SysLog::Error("Character", "Trying to load %s as Character.", type.group().name().c_str() );
+            SysLog::Error("Character", "Trying to load %s as Character.", type.group().name().c_str());
             return RefPtr<_Ty>();
         }
         // cast the type

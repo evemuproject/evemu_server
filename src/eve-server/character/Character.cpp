@@ -705,46 +705,6 @@ bool Character::InjectSkillIntoBrain(SkillRef skill)
     return true;
 }
 
-bool Character::InjectSkillIntoBrain(SkillRef skill, uint8 level)
-{
-    Client *c = EntityList::FindCharacter(itemID());
-
-    SkillRef oldSkill = GetSkill(skill->typeID());
-    if( oldSkill)
-    {
-        // Set the new skill level.
-        oldSkill->SetAttribute(AttrSkillLevel, level);
-        // Set the new skill points.
-        oldSkill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
-        // Describe it as a skill.
-        oldSkill->SetFlag(flagSkill);
-        return true;
-    }
-
-    // Are we injecting from a stack of skills?
-    if( skill->quantity() > 1 )
-    {
-        // Split one skill off the stack.
-        skill = SkillRef::StaticCast(skill->Split(1));
-        if( !skill)
-        {
-            // Failed to split the stack.
-            _log( ITEM__ERROR, "%s (%u): Unable to split stack of %s (%u).", itemName().c_str(), itemID(), skill->itemName().c_str(), skill->itemID() );
-            return false;
-        }
-    }
-    // Set the skill level.
-    skill->SetAttribute(AttrSkillLevel, level);
-    // Set the skill points.
-    skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
-    // Describe it as a skill.
-    skill->SetFlag(flagSkill);
-    // Finally, move the skill into our brain.
-    skill->MoveInto(*this, flagSkill);
-
-    return true;
-}
-
 void Character::AddToSkillQueue(uint32 typeID, uint8 level)
 {
     QueuedSkill qs;
@@ -1061,7 +1021,7 @@ void Character::UpdateSkillQueue()
             continue;
         }
         // Training has been finished:
-        SysLog::Debug( "Character::UpdateSkillQueue()", "%s (%u): Finishing training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID() );
+        SysLog::Debug("Character::UpdateSkillQueue()", "%s (%u): Finishing training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID());
 
         // Get new skill Level.
         int skillLevel = currentTraining->GetAttribute(AttrSkillLevel).get_int() + 1;
@@ -1380,7 +1340,7 @@ void Character::SaveCharacter()
     // Calculate total Skill Points trained at this time to save to DB:
     _CalculateTotalSPTrained();
 
-    SysLog::Debug( "Character::SaveCharacter()", "Saving all basic character info and attribute info to DB for character %s...", itemName().c_str() );
+    SysLog::Debug("Character::SaveCharacter()", "Saving all basic character info and attribute info to DB for character %s...", itemName().c_str());
     // character data
     InventoryDB::SaveCharacter(
         itemID(),
@@ -1434,7 +1394,7 @@ void Character::SaveFullCharacter()
 {
     _log( ITEM__TRACE, "Saving character %u.", itemID() );
 
-    SysLog::Debug( "Character::SaveFullCharacter()", "Saving FULL set of character info, skills, items, etc to DB for character %s...", itemName().c_str() );
+    SysLog::Debug("Character::SaveFullCharacter()", "Saving FULL set of character info, skills, items, etc to DB for character %s...", itemName().c_str());
 
 	// First save basic character info and attributes:
 	SaveCharacter();

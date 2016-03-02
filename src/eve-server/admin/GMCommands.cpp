@@ -935,10 +935,6 @@ PyResult Command_giveallskills( Client* who, const Seperator& args )
 {
     uint8 level = 5;			// Ensure that ALL skills trained are trained to level 5
     CharacterRef character;
-    EVEItemFlags flag;
-    uint32 gty = 1;
-    //uint8 oldSkillLevel = 0;
-    EvilNumber oldSkillLevel(0);
     uint32 ownerID = 0;
 	Client * clientPtr = NULL;
 
@@ -971,67 +967,74 @@ PyResult Command_giveallskills( Client* who, const Seperator& args )
             */
         }
         else
-            throw PyException( MakeCustomError( "Argument 1 must be Character ID or Character Name ") );
+        {
+            throw PyException(MakeCustomError("Argument 1 must be Character ID or Character Name "));
+        }
     }
-	else
-        throw PyException( MakeCustomError("Correct Usage: /giveallskills [Character Name or ID]") );
+    else
+    {
+        throw PyException(MakeCustomError("Correct Usage: /giveallskills [Character Name or ID]"));
+    }
 
-    SkillRef skill;
 
     // Make sure character reference is not NULL before trying to use it:
-    if( character.get() != NULL )
+    if (character.get() != NULL)
     {
-		// Query Database to get list of ALL skills, then LOOP through each one, checking character for skill, setting level to 5:
-		// QUERY DB FOR LIST OF ALL SKILLS:
-		//		SELECT * FROM `invTypes` WHERE `groupID` IN (SELECT groupID FROM invGroups WHERE categoryID = 16)
-		// LOOP through each skill
-		std::vector<uint32> skillList;
-        CommandDB::FullSkillList(skillList);
+        return new PyString("Skill gifting target character not found");
+    }
+    // Stop any training.
+    character->StopTraining();
+    // Clear the skill queue.
+    character->ClearSkillQueue();
+    // Query Database to get list of ALL skills, then LOOP through each one, checking character for skill, setting level to 5:
+    // QUERY DB FOR LIST OF ALL SKILLS:
+    //		SELECT * FROM `invTypes` WHERE `groupID` IN (SELECT groupID FROM invGroups WHERE categoryID = 16)
+    // LOOP through each skill
+    std::vector<uint32> skillList;
+    CommandDB::FullSkillList(skillList);
 
-		std::vector<uint32>::const_iterator skill_cur, skill_end;
-		skill_cur = skillList.begin();
-		skill_end = skillList.end();
+    for(uint32 skillTypeID : skillList)
+    {
+        SkillRef skill = character->GetSkill(skillTypeID);
+        if (skill)
+        {
+            // Character already has this skill, so let's get the current level and check to see
+            // Set the skill level.
+            skill->SetAttribute(AttrSkillLevel, level);
+            // Set the skill points.
+            skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
+        }
+        else
+        {
+            // Character DOES NOT have this skill, so spawn a new one and then add this
+            // to the character with required level and skill points:
+            ItemData idata(
+                        skillTypeID,
+                        ownerID,
+                        0, //temp location
+                        flagSkill,
+                        1
+                           );
 
-		uint32 skillID = 0;
-		for( ; skill_cur != skill_end; skill_cur++ )
-		{
-			skillID = *skill_cur;
-			if(character->HasSkill( skillID ) )
-			{
-				// Character already has this skill, so let's get the current level and check to see
-				// if we need to update its level to what's required:
-				SkillRef oldSkill = character->GetSkill( skillID );
-				oldSkillLevel = oldSkill->GetAttribute( AttrSkillLevel );
+            skill = SkillRef::StaticCast(ItemFactory::SpawnItem(idata));
 
-				// Now check the current level to the required level and update it
-				if( oldSkillLevel < level )
-					character->InjectSkillIntoBrain( oldSkill, level);
-			}
-			else
-			{
-				// Character DOES NOT have this skill, so spawn a new one and then add this
-				// to the character with required level and skill points:
-				ItemData idata(
-					skillID,
-					ownerID,
-					0, //temp location
-					flag = (EVEItemFlags)flagSkill,
-					gty
-				);
+            if (!skill)
+            {
+                throw PyException(MakeCustomError("ERROR: Unable to create item of type %s.", skill->typeID()));
+            }
 
-                InventoryItemRef item = ItemFactory::SpawnItem(idata);
-				skill = SkillRef::StaticCast( item );
-
-				if( !item )
-					throw PyException( MakeCustomError( "ERROR: Unable to create item of type %s.", item->typeID() ) );
-
-				character->InjectSkillIntoBrain( skill, level);
-			}
-		}
-		// END LOOP
+            // Set the skill level.
+            skill->SetAttribute(AttrSkillLevel, level, false);
+            // Set the skill points.
+            skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level), false);
+            // save the new item.
+            skill->SaveItem();
+            // Finally, move the skill into our brain.
+            skill->Move(character->itemID(), flagSkill);
+        }
     }
 
-    return new PyString ("Skill Gifting Failure");
+    return new PyString("Skill gifting finished.");
 }
 
 PyResult Command_giveskills( Client* who, const Seperator& args ) {
