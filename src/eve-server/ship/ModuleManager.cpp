@@ -25,7 +25,7 @@
 
 #include "eve-server.h"
 
-#include "log/Basic_Log.h"
+#include "log/Task_Log.h"
 #include "PyCallable.h"
 #include "EVEServerConfig.h"
 #include "ship/Ship.h"
@@ -785,7 +785,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 
 	std::string logfilename = "On_Ship_" + m_Ship->itemName() + "_(" + std::string(itoa(m_Ship->itemID())) + ")";
 
-	m_pLog = new Basic_Log( EVEServerConfig::files.logDir, logsubdirectory, logfilename );
+	m_pLog = new Task_Log( EVEServerConfig::files.logDir, logsubdirectory, logfilename );
 
 	m_pLog->InitializeLogging( EVEServerConfig::files.logDir, logsubdirectory, logfilename );
 

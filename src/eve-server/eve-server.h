@@ -32,9 +32,9 @@
 #include "eve-core.h"
 
 // log
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 #include "log/logsys.h"
-#include "log/Basic_Log.h"
+#include "log/Task_Log.h"
 // network
 #include "network/StreamPacketizer.h"
 #include "network/TCPConnection.h"

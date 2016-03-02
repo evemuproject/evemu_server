@@ -34,7 +34,7 @@
 // database
 #include "database/dbtype.h"
 // log
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 // threading
 #include "threading/Mutex.h"
 // utils

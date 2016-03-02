@@ -33,7 +33,7 @@
 
 // log
 #include "log/logsys.h"
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 // utils
 #include "utils/str2conv.h"
 #include "utils/utils_string.h"

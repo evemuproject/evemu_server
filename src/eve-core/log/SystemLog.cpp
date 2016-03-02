@@ -25,7 +25,7 @@
 
 #include "eve-core.h"
 
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 #include "log/logtypes.h"
 #include "log/logsys.h"
 

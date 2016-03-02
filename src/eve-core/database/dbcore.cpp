@@ -27,7 +27,7 @@
 
 #include "database/dbcore.h"
 
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 #include "log/logsys.h"
 #include "utils/misc.h"
 

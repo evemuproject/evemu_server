@@ -26,7 +26,7 @@
 #include "eve-core.h"
 
 #include "log/logsys.h"
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 #include "network/TCPConnection.h"
 #include "network/NetUtils.h"
 #include "utils/timer.h"

@@ -127,8 +127,8 @@ public:
     //override for rigs and subsystems
     virtual ModulePowerLevel GetModulePowerLevel()                { return isHighPower() ? MODULE_BANK_HIGH_POWER : ( isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER); }
 
-	void SetLog(Basic_Log * pLog) { m_pMM_Log = pLog; }
-	Basic_Log * GetLog() { return m_pMM_Log; }
+	void SetLog(Task_Log * pLog) { m_pMM_Log = pLog; }
+	Task_Log * GetLog() { return m_pMM_Log; }
 
 protected:
     InventoryItemRef m_Item;
@@ -138,7 +138,7 @@ protected:
     ModuleStates m_ModuleState;
     ChargeStates m_ChargeState;
 
-	Basic_Log * m_pMM_Log;		// We do not own this
+	Task_Log * m_pMM_Log;		// We do not own this
 };
 
 #endif /* __MODULES_H__ */

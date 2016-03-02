@@ -141,28 +141,20 @@ inline void codelog( LogType type, const char* fmt, ... )
 #else
 //we have variadic macros, hooray!
 #   define _log( type, fmt, ... ) \
-        if( !is_log_enabled( type ) ) \
-            ; \
-        else \
+        if( is_log_enabled( type ) ) \
             log_message( type, fmt, ##__VA_ARGS__ )
 
 #   define codelog( type, fmt, ... ) \
-        if( !is_log_enabled( type ) ) \
-            ; \
-        else \
+        if( is_log_enabled( type ) ) \
             log_message( type, "%s(%s:%d): " fmt, __FUNCTION__, __FILE__, __LINE__, ##__VA_ARGS__ )
 #endif
 
 #define _hex( type, data, len) \
-    if( !is_log_enabled( type ) ) \
-        ; \
-    else \
+    if( is_log_enabled( type ) ) \
         log_hex( type, (const char*)data, len )
 
 #define phex( type, data, len) \
-    if( !is_log_enabled( type ) ) \
-        ; \
-    else \
+    if( is_log_enabled( type ) ) \
         log_phex( type, (const char*)data, len )
 
 

@@ -26,7 +26,7 @@
 #include "eve-core.h"
 
 #include "network/TCPServer.h"
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 
 const uint32 TCPSRV_ERRBUF_SIZE = 1024;
 const uint32 TCPSRV_LOOP_GRANULARITY = 5;

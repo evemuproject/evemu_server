@@ -33,7 +33,7 @@ class GenericModule;
 class SystemEntity;
 class Client;
 class ModuleManager;
-class Basic_Log;
+class Task_Log;
 
 #include "ship/modules/Modules.h"
 #include "ship/modules/ModuleDefs.h"
@@ -397,7 +397,7 @@ public:
     int32 ApplyImplantEffect(uint32 attributeID, uint32 originatorID, ModifierRef modifierRef);
     int32 RemoveImplantEffect(uint32 attributeID, uint32 originatorID, ModifierRef modifierRef);
 
-	Basic_Log * GetLogger() { return m_pLog; }
+	Task_Log * GetLogger() { return m_pLog; }
 
 private:
     bool _fitModule(InventoryItemRef item, EVEItemFlags flag);
@@ -422,7 +422,7 @@ private:
     ModifierMaps * m_LocalImplantModifierMaps;      // Holds std::map<> maps of Modifiers for attributes applied by IMPLANTS
     ModifierMaps * m_RemoteModifierMaps;            // Holds std::map<> maps of Modifiers for attributes applied by EXTERNAL ENTITY MODULES
 
-	Basic_Log * m_pLog;
+	Task_Log * m_pLog;
 };
 
 #pragma endregion

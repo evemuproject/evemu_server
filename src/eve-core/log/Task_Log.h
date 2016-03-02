@@ -23,8 +23,8 @@
     Author:     AknorJaden
 */
 
-#ifndef __LOG__BASIC_LOG_H__INCL__
-#define __LOG__BASIC_LOG_H__INCL__
+#ifndef __LOG__Task_Log_H__INCL__
+#define __LOG__Task_Log_H__INCL__
 
 #include "threading/Mutex.h"
 
@@ -38,14 +38,14 @@
  * @author AknorJaden
  * @date July 2013
  */
-class Basic_Log
+class Task_Log
 {
 public:
     /// Primary constructor, initializes logging.
-    Basic_Log();
-    Basic_Log(std::string logPath, std::string logSubdirectory, std::string logFilename);
+    Task_Log();
+    Task_Log(std::string logPath, std::string logSubdirectory, std::string logFilename);
     /// Destructor, closes the logfile.
-    ~Basic_Log();
+    ~Task_Log();
 
     /**
      * @brief Initializes and sets the Log file path.
@@ -205,4 +205,4 @@ protected:
 #endif /* !HAVE_WINDOWS_H */
 };
 
-#endif /* !__LOG__BASIC_LOG_H__INCL__ */
+#endif /* !__LOG__Task_Log_H__INCL__ */

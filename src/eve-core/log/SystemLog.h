@@ -21,10 +21,10 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:     Captnoord
-*/
+ */
 
-#ifndef __LOG__LOG_NEW_H__INCL__
-#define __LOG__LOG_NEW_H__INCL__
+#ifndef __LOG__SYSTEM_LOG_H__INCL__
+#define __LOG__SYSTEM_LOG_H__INCL__
 
 #include "threading/Mutex.h"
 
@@ -210,4 +210,4 @@ protected:
 #endif /* !HAVE_WINDOWS_H */
 };
 
-#endif /* !__LOG__LOG_NEW_H__INCL__ */
+#endif /* !__LOG__SYSTEM_LOG_H__INCL__ */

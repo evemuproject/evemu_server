@@ -35,7 +35,7 @@
 #include "database/dbtype.h"
 // log
 #include "log/logsys.h"
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 // network
 #include "network/Socket.h"
 #include "network/StreamPacketizer.h"

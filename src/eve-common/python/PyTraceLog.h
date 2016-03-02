@@ -27,7 +27,7 @@
 #define PY_TRACE_LOG_H
 
 #include "PyRep.h"
-#include "log/LogNew.h"
+#include "log/SystemLog.h"
 
 /* ascents cross platform color thingy's */
 #ifdef HAVE_WINDOWS_H
