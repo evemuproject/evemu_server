@@ -90,13 +90,6 @@ SET( utils_SOURCE
 #####################
 # Setup the library #
 #####################
-SOURCE_GROUP( "src"            FILES ${INCLUDE} )
-SOURCE_GROUP( "src\\database"  FILES ${database_INCLUDE} )
-SOURCE_GROUP( "src\\log"       FILES ${log_INCLUDE} )
-SOURCE_GROUP( "src\\network"   FILES ${network_INCLUDE} )
-SOURCE_GROUP( "src\\threading" FILES ${threading_INCLUDE} )
-SOURCE_GROUP( "src\\utils"     FILES ${utils_INCLUDE} )
-
 SOURCE_GROUP( "src"            FILES ${SOURCE} )
 SOURCE_GROUP( "src\\database"  FILES ${database_SOURCE} )
 SOURCE_GROUP( "src\\log"       FILES ${log_SOURCE} )
@@ -105,12 +98,12 @@ SOURCE_GROUP( "src\\threading" FILES ${threading_SOURCE} )
 SOURCE_GROUP( "src\\utils"     FILES ${utils_SOURCE} )
 
 ADD_LIBRARY( "${TARGET_NAME}"
-             ${INCLUDE}           ${SOURCE}
-             ${database_INCLUDE}  ${database_SOURCE}
-             ${log_INCLUDE}       ${log_SOURCE}
-             ${network_INCLUDE}   ${network_SOURCE}
-             ${threading_INCLUDE} ${threading_SOURCE}
-             ${utils_INCLUDE}     ${utils_SOURCE} )
+${SOURCE}
+${database_SOURCE}
+${log_SOURCE}
+${network_SOURCE}
+${threading_SOURCE}
+${utils_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "${TARGET_INCLUDE_DIR}/eve-core.h"

@@ -10,9 +10,7 @@ INCLUDE_DIRECTORIES(
 ADD_LIBRARY(
   "utils"
   # Source:
-  "Base64.h"
   "Base64.cpp"
-  "TriFile.h"
   "TriFile.cpp"
   )
 

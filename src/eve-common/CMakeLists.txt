@@ -185,19 +185,6 @@ SET( utils_SOURCE
 #####################
 # Setup the library #
 #####################
-SOURCE_GROUP( "src"                  FILES ${INCLUDE} )
-SOURCE_GROUP( "src\\auth"            FILES ${auth_INCLUDE} )
-SOURCE_GROUP( "src\\cache"           FILES ${cache_INCLUDE} )
-SOURCE_GROUP( "src\\database"        FILES ${database_INCLUDE} )
-SOURCE_GROUP( "src\\destiny"         FILES ${destiny_INCLUDE} )
-SOURCE_GROUP( "src\\marshal"         FILES ${marshal_INCLUDE} )
-SOURCE_GROUP( "src\\network"         FILES ${network_INCLUDE} )
-SOURCE_GROUP( "src\\packets"         FILES ${packets_INCLUDE} )
-SOURCE_GROUP( "src\\python"          FILES ${python_INCLUDE} )
-SOURCE_GROUP( "src\\python\\classes" FILES ${python_classes_INCLUDE} )
-SOURCE_GROUP( "src\\tables"          FILES ${tables_INCLUDE} )
-SOURCE_GROUP( "src\\utils"           FILES ${utils_INCLUDE} )
-
 SOURCE_GROUP( "src"                  FILES ${SOURCE} )
 SOURCE_GROUP( "src\\auth"            FILES ${auth_SOURCE} )
 SOURCE_GROUP( "src\\cache"           FILES ${cache_SOURCE} )
@@ -222,18 +209,18 @@ ADD_CUSTOM_COMMAND( OUTPUT ${packets_INCLUDE} ${packets_SOURCE}
                     COMMENT "Generating packet files..." )
 
 ADD_LIBRARY( "${TARGET_NAME}"
-             ${INCLUDE}                ${SOURCE}
-             ${auth_INCLUDE}           ${auth_SOURCE}
-             ${cache_INCLUDE}          ${cache_SOURCE}
-             ${database_INCLUDE}       ${database_SOURCE}
-             ${destiny_INCLUDE}        ${destiny_SOURCE}
-             ${marshal_INCLUDE}        ${marshal_SOURCE}
-             ${network_INCLUDE}        ${network_SOURCE}
-             ${packets_INCLUDE}        ${packets_SOURCE}        ${packets_XMLP}
-             ${python_INCLUDE}         ${python_SOURCE}
-             ${python_classes_INCLUDE} ${python_classes_SOURCE}
-             ${tables_INCLUDE}         ${tables_SOURCE}
-             ${utils_INCLUDE}          ${utils_SOURCE} )
+${SOURCE}
+${auth_SOURCE}
+${cache_SOURCE}
+${database_SOURCE}
+${destiny_SOURCE}
+${marshal_SOURCE}
+${network_SOURCE}
+${packets_SOURCE}        ${packets_XMLP}
+${python_SOURCE}
+${python_classes_SOURCE}
+${tables_SOURCE}
+${utils_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "${TARGET_INCLUDE_DIR}/eve-common.h"

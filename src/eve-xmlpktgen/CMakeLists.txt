@@ -40,12 +40,11 @@ SET( SOURCE
 ########################
 # Setup the executable #
 ########################
-SOURCE_GROUP( "src" FILES ${INCLUDE} )
 SOURCE_GROUP( "src"     FILES ${SOURCE} )
 
 IF( NOT EVEMU_TARGETS_IMPORT )
   ADD_EXECUTABLE( "${TARGET_NAME}"
-                  ${INCLUDE} ${SOURCE} )
+                   ${SOURCE} )
 
   TARGET_BUILD_PCH( "${TARGET_NAME}"
                     "${TARGET_INCLUDE_DIR}/eve-xmlpktgen.h"

@@ -10,11 +10,8 @@ INCLUDE_DIRECTORIES(
 ADD_LIBRARY(
   "gangsta"
   # Source:
-  "GaMath.h"
   "GaMath.cpp"
-  "GaPreReqs.h"
   "GaTypes.cpp"
-  "GaTypes.h"
   )
 
 SET( GANGSTA_INCLUDE_DIRS

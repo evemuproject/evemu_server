@@ -514,35 +514,6 @@ SET( system_SOURCE
 ########################
 # Setup the executable #
 ########################
-SOURCE_GROUP( "src"                FILES ${INCLUDE} )
-SOURCE_GROUP( "src\\account"       FILES ${account_INCLUDE} )
-SOURCE_GROUP( "src\\admin"         FILES ${admin_INCLUDE} )
-SOURCE_GROUP( "src\\apiserver"     FILES ${apiserver_INCLUDE} )
-SOURCE_GROUP( "src\\cache"         FILES ${cache_INCLUDE} )
-SOURCE_GROUP( "src\\character"     FILES ${character_INCLUDE} )
-SOURCE_GROUP( "src\\chat"          FILES ${chat_INCLUDE} )
-SOURCE_GROUP( "src\\config"        FILES ${config_INCLUDE} )
-SOURCE_GROUP( "src\\corporation"   FILES ${corporation_INCLUDE} )
-SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_INCLUDE} )
-SOURCE_GROUP( "src\\fleet"         FILES ${fleet_INCLUDE} )
-SOURCE_GROUP( "src\\imageserver"   FILES ${imageserver_INCLUDE} )
-SOURCE_GROUP( "src\\inventory"     FILES ${inventory_INCLUDE} )
-SOURCE_GROUP( "src\\mail"          FILES ${mail_INCLUDE} )
-SOURCE_GROUP( "src\\manufacturing" FILES ${manufacturing_INCLUDE} )
-SOURCE_GROUP( "src\\map"           FILES ${map_INCLUDE} )
-SOURCE_GROUP( "src\\market"        FILES ${market_INCLUDE} )
-SOURCE_GROUP( "src\\mining"        FILES ${mining_INCLUDE} )
-SOURCE_GROUP( "src\\missions"      FILES ${missions_INCLUDE} )
-SOURCE_GROUP( "src\\npc"           FILES ${npc_INCLUDE} )
-SOURCE_GROUP( "src\\pos"           FILES ${pos_INCLUDE} )
-SOURCE_GROUP( "src\\search"        FILES ${search_INCLUDE} )
-SOURCE_GROUP( "src\\ship"          FILES ${ship_INCLUDE} )
-SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_INCLUDE} )
-SOURCE_GROUP( "src\\ship\\modules\\components" FILES ${ship_modules_components_INCLUDE} )
-SOURCE_GROUP( "src\\standing"      FILES ${standing_INCLUDE} )
-SOURCE_GROUP( "src\\station"       FILES ${station_INCLUDE} )
-SOURCE_GROUP( "src\\system"        FILES ${system_INCLUDE} )
-
 SOURCE_GROUP( "src"                FILES ${SOURCE} )
 SOURCE_GROUP( "src\\account"       FILES ${account_SOURCE} )
 SOURCE_GROUP( "src\\admin"         FILES ${admin_SOURCE} )
@@ -573,34 +544,34 @@ SOURCE_GROUP( "src\\station"       FILES ${station_SOURCE} )
 SOURCE_GROUP( "src\\system"        FILES ${system_SOURCE} )
 
 ADD_EXECUTABLE( "${TARGET_NAME}"
-                ${INCLUDE}                ${SOURCE}
-                ${account_INCLUDE}        ${account_SOURCE}
-                ${admin_INCLUDE}          ${admin_SOURCE}
-                ${apiserver_INCLUDE}      ${apiserver_SOURCE}
-                ${cache_INCLUDE}          ${cache_SOURCE}
-                ${character_INCLUDE}      ${character_SOURCE}
-                ${chat_INCLUDE}           ${chat_SOURCE}
-                ${config_INCLUDE}         ${config_SOURCE}
-                ${corporation_INCLUDE}    ${corporation_SOURCE}
-                ${dogmaim_INCLUDE}        ${dogmaim_SOURCE}
-                ${fleet_INCLUDE}          ${fleet_SOURCE}
-                ${imageserver_INCLUDE}    ${imageserver_SOURCE}
-                ${inventory_INCLUDE}      ${inventory_SOURCE}
-                ${mail_INCLUDE}           ${mail_SOURCE}
-                ${manufacturing_INCLUDE}  ${manufacturing_SOURCE}
-                ${map_INCLUDE}            ${map_SOURCE}
-                ${market_INCLUDE}         ${market_SOURCE}
-                ${mining_INCLUDE}         ${mining_SOURCE}
-                ${missions_INCLUDE}       ${missions_SOURCE}
-                ${npc_INCLUDE}            ${npc_SOURCE}
-                ${pos_INCLUDE}            ${pos_SOURCE}
-                ${search_INCLUDE}         ${search_SOURCE}
-                ${ship_INCLUDE}           ${ship_SOURCE}
-                ${ship_modules_INCLUDE}   ${ship_modules_SOURCE}
-                ${ship_modules_components_INCLUDE} ${ship_modules_components_SOURCE}
-                ${standing_INCLUDE}       ${standing_SOURCE}
-                ${station_INCLUDE}        ${station_SOURCE}
-                ${system_INCLUDE}         ${system_SOURCE} )
+${SOURCE}
+${account_SOURCE}
+${admin_SOURCE}
+${apiserver_SOURCE}
+${cache_SOURCE}
+${character_SOURCE}
+${chat_SOURCE}
+${config_SOURCE}
+${corporation_SOURCE}
+${dogmaim_SOURCE}
+${fleet_SOURCE}
+${imageserver_SOURCE}
+${inventory_SOURCE}
+${mail_SOURCE}
+${manufacturing_SOURCE}
+${map_SOURCE}
+${market_SOURCE}
+${mining_SOURCE}
+${missions_SOURCE}
+${npc_SOURCE}
+${pos_SOURCE}
+${search_SOURCE}
+${ship_SOURCE}
+${ship_modules_SOURCE}
+${ship_modules_components_SOURCE}
+${standing_SOURCE}
+${station_SOURCE}
+${system_SOURCE} )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
                   "${TARGET_INCLUDE_DIR}/eve-server.h"
