@@ -11,6 +11,13 @@
 # is part of CMake 2.8.8 and later.
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 FATAL_ERROR )
 
+FIND_PROGRAM(CCACHE_FOUND ccache)
+IF(CCACHE_FOUND)
+    MESSAGE("ccache found all is great now!")
+    SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+ENDIF(CCACHE_FOUND)
+
 PROJECT( "evemu" )
 SET( PROJECT_DESCRIPTION_SUMMARY "A server emulator for EVE Online" )
 SET( PROJECT_VENDOR              "The EVEmu development team" )
@@ -234,9 +241,6 @@ ADD_SUBDIRECTORY( "src/eve-core" )
 ADD_SUBDIRECTORY( "src/eve-xmlpktgen" )
 ADD_SUBDIRECTORY( "src/eve-common" )
 ADD_SUBDIRECTORY( "src/eve-server" )
-ADD_SUBDIRECTORY( "src/eve-collector" )
-ADD_SUBDIRECTORY( "src/eve-tool" )
-ADD_SUBDIRECTORY( "src/eve-test" )
 
 ###############
 # CPack setup #
