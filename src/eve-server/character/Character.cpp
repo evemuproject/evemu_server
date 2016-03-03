@@ -694,9 +694,11 @@ bool Character::InjectSkillIntoBrain(SkillRef skill)
             return false;
         }
     }
-    // Inject the skill
-    skill->SetAttribute(AttrSkillLevel, 0);
+    // Inject the skill.
+    // Set level in defaults to integer as client does not like floats!
+    skill->SetAttribute(AttrSkillLevel, (uint8) 0, true, true);
     skill->MoveInto(*this, flagSkill);
+    skill->SaveItem();
 
     if (c != NULL)
     {
