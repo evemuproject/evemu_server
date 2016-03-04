@@ -316,15 +316,42 @@ PyResult InventoryBound::Handle_MultiMerge(PyCallArgs &call) {
             _log(SERVICE__ERROR, "Failed to load stationary item %u. Skipping.", element.stationaryItemID);
             continue;
         }
+        if (stationaryItem->singleton())
+        {
+            _log(SERVICE__ERROR, "Failed to merge with singleton item %u. Skipping.", element.stationaryItemID);
+            continue;
+        }
 
         InventoryItemRef draggedItem = ItemFactory::GetItem(element.draggedItemID);
         if( !draggedItem ) {
             _log(SERVICE__ERROR, "Failed to load dragged item %u. Skipping.", element.draggedItemID);
             continue;
         }
+        if (stationaryItem->typeID() != draggedItem->typeID())
+        {
+            _log(SERVICE__ERROR, "Failed to merge item %u of different type. Skipping.", element.draggedItemID);
+            continue;
+        }
+        Inventory *inventory = ItemFactory::GetInventory(stationaryItem->locationID());
+        if (inventory != nullptr)
+        {
+            if (!inventory->ValidateAddItem(stationaryItem->flag(), draggedItem))
+            {
+                continue;
+            }
+        }
 
-		draggedItem->SetFlag(stationaryItem->flag());	// Set dragged item's flag to the stationary item's flag so merge can complete
-        stationaryItem->Merge( (InventoryItemRef)draggedItem, element.draggedQty );
+        // Remove dragged items
+        if (draggedItem->quantity() == element.draggedQty)
+        {
+            draggedItem->Delete();
+        }
+        else
+        {
+            draggedItem->AlterQuantity(-element.draggedQty);
+        }
+        // Move dragged item to same container.
+        stationaryItem->AlterQuantity(element.draggedQty);
     }
 
     return NULL;
