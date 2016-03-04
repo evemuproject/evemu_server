@@ -681,7 +681,7 @@ void InventoryItem::Delete()
 
     //take ourself out of the DB
     DBerror err;
-    if (!DBcore::RunQuery(err, "DELETE FROM entity WHERE itemID=%u;"
+    if (!DBcore::RunQueryMulti(err, "DELETE FROM entity WHERE itemID=%u;"
                           "DELETE FROM entity_default_attributes WHERE itemID=%u;"
                           "DELETE FROM entity_attributes WHERE itemID=%u;",
                           m_itemID, m_itemID, m_itemID))

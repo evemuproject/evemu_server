@@ -149,6 +149,9 @@ public:
     //query which returns last insert ID:
     static bool RunQueryLID(DBerror &err, uint32 &last_insert_id, const char *query_fmt, ...);
 
+    //multiple command query which returns no information except error status
+    static bool RunQueryMulti(DBerror &err, const char *query_fmt, ...);
+
     //old style to be used with MakeAnyLengthString
     static bool RunQuery(const char* query, int32 querylen, char* errbuf = 0, MYSQL_RES** result = 0, int32* affected_rows = 0, int32* last_insert_id = 0, int32* errnum = 0, bool retry = true);
 

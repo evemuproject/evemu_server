@@ -171,6 +171,70 @@ bool DBcore::RunQueryLID(DBerror &err, uint32 &last_insert_id, const char *query
     return true;
 }
 
+//multiple command query which returns no information except error status
+
+bool DBcore::RunQueryMulti(DBerror &err, const char *query_fmt, ...)
+{
+    MutexLock lock(MDatabase);
+
+    va_list args;
+    va_start(args, query_fmt);
+    char *query = NULL;
+    uint32 querylen = vasprintf(&query, query_fmt, args);
+    va_end(args);
+
+    if (!DoQuery_locked(err, query, querylen))
+    {
+        free(query);
+        return false;
+    }
+
+    free(query);
+
+    MYSQL* mysql = getMySQL();
+    // Check for results.
+    int status = 0;
+    bool error = false;
+    do
+    {
+        MYSQL_RES *result = mysql_store_result(mysql);
+        if (result)
+        {
+            // We are doing noting with this right now.
+            mysql_free_result(result);
+        }
+        else
+        {
+            // Not doing anything with this either.
+            int fields = mysql_field_count(mysql);
+            if (fields)
+            {
+                // There was a result but it could not be retrieved.
+                error = true;
+                int num = mysql_errno(mysql);
+                err.SetError(num, mysql_error(mysql));
+                SysLog::Error("DBCore Multi-Query", "#%d in '%s': %s", err.GetErrNo(), query, err.c_str());
+                break;
+            }
+        }
+        // Check for more results.
+        status = mysql_next_result(mysql);
+        /* more results? -1 = no, >0 = error, 0 = yes (keep looping) */
+        if (status > 0)
+        {
+            // Error occurred.
+            error = true;
+            int num = mysql_errno(mysql);
+            err.SetError(num, mysql_error(mysql));
+            SysLog::Error("DBCore Multi-Query", "#%d in '%s': %s", err.GetErrNo(), query, err.c_str());
+            break;
+        }
+    }
+    while (status == 0); // If status is zero there are more results.
+
+    return !error;
+}
+
 bool DBcore::DoQuery_locked(DBerror &err, const char *query, int32 querylen, bool retry)
 {
     if (pStatus != Connected)
