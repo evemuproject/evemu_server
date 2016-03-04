@@ -469,30 +469,38 @@ double Ship::GetRemainingVolumeByFlag(EVEItemFlags flag) const
 	}
 }
 
-bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
+bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 {
-    CharacterRef character = m_pOperator->GetChar();        // Operator assumed to be Client *
+    CharacterRef character = m_pOperator->GetChar();
 
     if( flag == flagDroneBay )
     {
-        if( item->categoryID() != EVEDB::invCategories::Drone )
+        if (item->categoryID() != EVEDB::invCategories::Drone)
+        {
             //Can only put drones in drone bay
-            throw PyException( MakeUserError( "ItemCannotBeInDroneBay" ) );
+            throw PyException(MakeUserError("ItemCannotBeInDroneBay"));
+        }
     }
     else if( flag == flagShipHangar )
     {
-        if( m_pOperator->GetShip()->GetAttribute(AttrHasShipMaintenanceBay ) != 0)      // Operator assumed to be Client *
+        if (m_pOperator->GetShip()->GetAttribute(AttrHasShipMaintenanceBay) != 0)
+        {
             // We have no ship maintenance bay
-            throw PyException( MakeCustomError( "%s has no ship maintenance bay.", item->itemName().c_str() ) );
-        if( item->categoryID() != EVEDB::invCategories::Ship )
+            throw PyException(MakeCustomError("%s has no ship maintenance bay.", item->itemName().c_str()));
+        }
+        if (item->categoryID() != EVEDB::invCategories::Ship)
+        {
             // Only ships may be put here
-            throw PyException( MakeCustomError( "Only ships may be placed into ship maintenance bay." ) );
+            throw PyException(MakeCustomError("Only ships may be placed into ship maintenance bay."));
+        }
     }
     else if( flag == flagHangar )
     {
-        if( m_pOperator->GetShip()->GetAttribute(AttrHasCorporateHangars ) != 0)        // Operator assumed to be Client *
+        if (m_pOperator->GetShip()->GetAttribute(AttrHasCorporateHangars) != 0)
+        {
             // We have no corporate hangars
-            throw PyException( MakeCustomError( "%s has no corporate hangars.", item->itemName().c_str() ) );
+            throw PyException(MakeCustomError("%s has no corporate hangars.", item->itemName().c_str()));
+        }
     }
     else if( (flag >= flagLowSlot0)  &&  (flag <= flagHiSlot7) )
     {
@@ -532,7 +540,8 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
             {
                 throw PyException(MakeUserError("SlotAlreadyOccupied"));
             }
-		}
+        }
+        return true;
     }
     else if( (flag >= flagRigSlot0)  &&  (flag <= flagRigSlot7) )
     {
@@ -544,10 +553,15 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
                 throw PyException(MakeCustomError("You do not have the required skills to fit this \n%s", item->itemName().c_str()));
             }
         }
-        if(m_pOperator->GetShip()->GetAttribute(AttrRigSize) != item->GetAttribute(AttrRigSize))        // Operator assumed to be Client *
-            throw PyException( MakeCustomError( "Your ship cannot fit this size module" ) );
-        if( m_pOperator->GetShip()->GetAttribute(AttrUpgradeLoad) + item->GetAttribute(AttrUpgradeCost) > m_pOperator->GetShip()->GetAttribute(AttrUpgradeCapacity) )   // Operator assumed to be Client *
-            throw PyException( MakeCustomError( "Your ship cannot handle the extra calibration" ) );
+        if (m_pOperator->GetShip()->GetAttribute(AttrRigSize) != item->GetAttribute(AttrRigSize))
+        {
+            throw PyException(MakeCustomError("Your ship cannot fit this size module"));
+        }
+        if (m_pOperator->GetShip()->GetAttribute(AttrUpgradeLoad) + item->GetAttribute(AttrUpgradeCost) > m_pOperator->GetShip()->GetAttribute(AttrUpgradeCapacity))
+        {
+            throw PyException(MakeCustomError("Your ship cannot handle the extra calibration"));
+        }
+        return true;
     }
     else if( (flag >= flagSubSystem0)  &&  (flag <= flagSubSystem7) )
     {
@@ -559,16 +573,18 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item)
                 throw PyException(MakeCustomError("You do not have the required skills to fit this \n%s", item->itemName().c_str()));
             }
         }
+        return true;
     }
-    else
-    {
-		// Handle any other flag, legal or not by virtue of GetRemainingVolumeByFlag() and GetCapacity() that handle supported capacity types:
-		// (unsupported or illegal flags report capacity of 0.0, so are automatically rejected)
-        double capacityRemaining(0.0);
-		capacityRemaining = GetRemainingVolumeByFlag(flag);
+    // Handle any other flag, legal or not by virtue of GetRemainingVolumeByFlag() and GetCapacity() that handle supported capacity types:
+    // (unsupported or illegal flags report capacity of 0.0, so are automatically rejected)
+    double capacityRemaining(0.0);
+    capacityRemaining = GetRemainingVolumeByFlag(flag);
 
-		if( (capacityRemaining < (item->GetAttribute(AttrVolume).get_float() * (double)item->quantity())) )    // Operator assumed to be Client *
-            throw PyException( MakeCustomError( "Not enough cargo space!<br><br>flag = %u", (uint32)flag) );
+    // Check for sufficient capacity.
+    if ((capacityRemaining < (item->GetAttribute(AttrVolume).get_float() * (double) item->quantity())))
+    {
+        throw PyException(MakeCustomError("Not enough cargo space!<br><br>flag = %u", (uint32) flag));
+        return false;
     }
 
 	return true;
@@ -661,8 +677,8 @@ void Ship::SaveShip()
     m_ModuleManager->SaveModules();     // Save all attributes and item info for all modules fitted to this ship
 }
 
-bool Ship::ValidateItemSpecifics(InventoryItemRef equip) {
-
+bool Ship::ValidateItemSpecifics(InventoryItemRef equip) const
+{
     //declaring explicitly as int...not sure if this is needed or not
     int groupID = m_pOperator->GetShip()->groupID();
     int typeID = m_pOperator->GetShip()->typeID();

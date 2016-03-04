@@ -554,18 +554,20 @@ double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
 /*
  * InventoryEx
  */
-void InventoryEx::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
+bool InventoryEx::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 {
     //double volume = item->quantity() * item->volume();
-	EvilNumber volume = EvilNumber(item->quantity()) * item->GetAttribute(AttrVolume);
+    double volume = item->quantity() * item->GetAttribute(AttrVolume).get_float();
     double capacity = GetRemainingCapacity( flag );
     if( volume > capacity )
     {
         std::map<std::string, PyRep *> args;
 
         args["available"] = new PyFloat( capacity );
-        args["volume"] = volume.GetPyObject();
+        args["volume"] = new PyFloat(volume);
 
-        throw PyException( MakeUserError( "NotEnoughCargoSpace", args ) );
+        throw PyException(MakeUserError("NotEnoughCargoSpace", args));
+        return false;
     }
+    return true;
 }

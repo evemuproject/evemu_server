@@ -196,11 +196,11 @@ public:
      */
     double GetCapacity(EVEItemFlags flag) const;
 	double GetRemainingVolumeByFlag(EVEItemFlags flag) const;
-    bool ValidateAddItem(EVEItemFlags flag, InventoryItemRef item);
+    virtual bool ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const;
     /*
      * Checks for conflicts between ship and fitting
      */
-    bool ValidateItemSpecifics(InventoryItemRef equip);
+    bool ValidateItemSpecifics(InventoryItemRef equip) const;
 
     /*
      * Public fields:

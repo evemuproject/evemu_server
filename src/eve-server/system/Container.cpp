@@ -121,22 +121,26 @@ double CargoContainer::GetCapacity(EVEItemFlags flag) const
     }
 }
 
-void CargoContainer::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client *c)
+bool CargoContainer::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 {
-    CharacterRef character = c->GetChar();
-
     if( flag == flagCargoHold )
     {
         //get all items in cargohold
         EvilNumber capacityUsed(0);
         std::vector<InventoryItemRef> items;
-        c->GetShip()->FindByFlag(flag, items);
-        for(uint32 i = 0; i < items.size(); i++){
+        FindByFlag(flag, items);
+        for (uint32 i = 0; i < items.size(); i++)
+        {
             capacityUsed += items[i]->GetAttribute(AttrVolume);
         }
-        if( capacityUsed + item->GetAttribute(AttrVolume) > c->GetShip()->GetAttribute(AttrCapacity) )
-            throw PyException( MakeCustomError( "Not enough cargo space!") );
+        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrCapacity))
+        {
+            throw PyException(MakeCustomError("Not enough cargo space!"));
+            return false;
+        }
+        return true;
     }
+    return false;
 }
 
 PyObject *CargoContainer::CargoContainerGetInfo()

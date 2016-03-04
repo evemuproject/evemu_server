@@ -81,7 +81,22 @@ public:
 
     double GetStoredVolume(EVEItemFlags flag) const;
 
-    virtual void ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const {}
+    /**
+     * Validate if the item can be added.
+     * @param flag The location flag to add to.
+     * @param item The item to add.
+     * @return True if the item can be added.
+     * @throws PyException on error.
+     */
+    virtual bool ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
+    {
+        return true;
+    }
+    /**
+     * Stack all items in the given location.
+     * @param flag The location to stack.
+     * @param forOwner The owner for whos contents should be stacked.
+     */
     void StackAll(EVEItemFlags flag, uint32 forOwner = 0);
 
     /*
@@ -107,9 +122,10 @@ class InventoryEx
 {
 public:
     virtual double GetCapacity(EVEItemFlags flag) const = 0;
-    double GetRemainingCapacity(EVEItemFlags flag) const { return GetCapacity( flag ) - GetStoredVolume( flag ); }
+    double GetRemainingCapacity(EVEItemFlags flag) const { return GetCapacity( flag ) - GetStoredVolume( flag );
+    }
 
-    void ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const;
+    virtual bool ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const;
 };
 
 #endif /* !__INVENTORY__H__INCL__ */

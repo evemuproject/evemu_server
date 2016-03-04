@@ -112,45 +112,55 @@ double Structure::GetCapacity(EVEItemFlags flag) const
     }
 }
 
-void Structure::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item, Client *c)
+bool Structure::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 {
-    CharacterRef character = c->GetChar();
-
     if( flag == flagCargoHold )
     {
         //get all items in cargohold
         EvilNumber capacityUsed(0);
         std::vector<InventoryItemRef> items;
-        c->GetShip()->FindByFlag(flag, items);
-        for(uint32 i = 0; i < items.size(); i++){
+        FindByFlag(flag, items);
+        for (uint32 i = 0; i < items.size(); i++)
+        {
             capacityUsed += items[i]->GetAttribute(AttrVolume);
         }
-        if( capacityUsed + item->GetAttribute(AttrVolume) > c->GetShip()->GetAttribute(AttrCapacity) )
-            throw PyException( MakeCustomError( "Not enough cargo space!") );
+        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrCapacity))
+        {
+            throw PyException(MakeCustomError("Not enough cargo space!"));
+        }
+        return true;
     }
-    else if( flag == flagSecondaryStorage )
+    else if (flag == flagSecondaryStorage)
     {
         //get all items in SecondaryStorage
         EvilNumber capacityUsed(0);
         std::vector<InventoryItemRef> items;
-        c->GetShip()->FindByFlag(flag, items);
-        for(uint32 i = 0; i < items.size(); i++){
+        FindByFlag(flag, items);
+        for (uint32 i = 0; i < items.size(); i++)
+        {
             capacityUsed += items[i]->GetAttribute(AttrVolume);
         }
-        if( capacityUsed + item->GetAttribute(AttrVolume) > c->GetShip()->GetAttribute(AttrCapacitySecondary) )
-            throw PyException( MakeCustomError( "Not enough Secondary Storage space!") );
+        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrCapacitySecondary))
+        {
+            throw PyException(MakeCustomError("Not enough Secondary Storage space!"));
+        }
+        return true;
     }
-    else if( flag == flagSpecializedAmmoHold )
+    else if (flag == flagSpecializedAmmoHold)
     {
         //get all items in ammo hold
         EvilNumber capacityUsed(0);
         std::vector<InventoryItemRef> items;
-        c->GetShip()->FindByFlag(flag, items);
-        for(uint32 i = 0; i < items.size(); i++){
+        FindByFlag(flag, items);
+        for (uint32 i = 0; i < items.size(); i++)
+        {
             capacityUsed += items[i]->GetAttribute(AttrVolume);
         }
-        if( capacityUsed + item->GetAttribute(AttrVolume) > c->GetShip()->GetAttribute(AttrAmmoCapacity) )
-            throw PyException( MakeCustomError( "Not enough Ammo Storage space!") );
+        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrAmmoCapacity))
+        {
+            throw PyException(MakeCustomError("Not enough Ammo Storage space!"));
+        }
+        return true;
     }
 }
 
