@@ -37,7 +37,7 @@ Timer::Timer(uint32 inTimerTime, bool useAcurateTiming) {
     m_startTime = currentTime;
     m_setAtTrigger = m_timerTime;
     m_useAcurateTiming = useAcurateTiming;
-    
+
 	if (m_timerTime == 0) {
         m_enabled = false;
     }
@@ -51,7 +51,7 @@ Timer::Timer(uint32 start, uint32 timer, bool useAcurateTiming = false) {
     m_startTime = start;
     m_setAtTrigger = m_timerTime;
     m_useAcurateTiming = useAcurateTiming;
-    
+
 	if (m_timerTime == 0) {
         m_enabled = false;
     }
@@ -128,7 +128,24 @@ uint32 Timer::GetRemainingTime() const {
     }
 }
 
-void Timer::SetAtTrigger(uint32 setAtTrigger, bool enableIfDisabled) {
+uint32 Timer::GetElapsedTime() const
+{
+    if (m_enabled)
+    {
+        uint32 elapsed = currentTime - m_startTime;
+        if (elapsed > m_timerTime)
+            return m_timerTime;
+        else
+            return elapsed;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+void Timer::SetAtTrigger(uint32 setAtTrigger, bool enableIfDisabled)
+{
     m_setAtTrigger = setAtTrigger;
     if (!Enabled() && enableIfDisabled) {
         Enable();

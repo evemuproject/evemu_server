@@ -49,6 +49,8 @@ public:
 	void ProcessDeactivateCycle();
 
 	double GetRemainingCycleTimeMS();
+    double GetElapsedCycleTimeMS();
+    double GetTotalCycleTimeMS();
 
 private:
     //internal storage and record keeping

@@ -44,7 +44,7 @@ ActiveModuleProcessingComponent::~ActiveModuleProcessingComponent()
 /****************************************************
 	A little note about the timer:
 		Timer.Check() has two functions:
-			1. It checks if the timer has expired out 
+			1. It checks if the timer has expired out
 			2. It subtracts from the start time
 	Don't be fooled by it's name because if you don't
 	call it in a loop, you won't get the time moving.
@@ -89,7 +89,7 @@ void ActiveModuleProcessingComponent::Process()
 			m_Mod->StopCycle();
 		}
 	}
-		
+
 }
 
 void ActiveModuleProcessingComponent::ActivateCycle()
@@ -121,7 +121,7 @@ void ActiveModuleProcessingComponent::AbortCycle()
 {
 	// Immediately stop active cycle for things such as target destroyed or left bubble, or asteroid emptied and removed from space:
 	m_Stop = true;
-	m_timer.Disable();
+    m_timer.Disable();
 	m_Mod->StopCycle(true);
 }
 
@@ -174,7 +174,7 @@ void ActiveModuleProcessingComponent::ProcessActiveCycle()
 void ActiveModuleProcessingComponent::ProcessDeactivateCycle()
 {
 	//check to see who is the target
-	
+
 	//--pseudocode--
 	//if(target != self)
 	//	m_ShipAttrComp->ModifyTargetShipAttribute();
@@ -185,4 +185,14 @@ void ActiveModuleProcessingComponent::ProcessDeactivateCycle()
 double ActiveModuleProcessingComponent::GetRemainingCycleTimeMS()
 {
 	return (double)(m_timer.GetRemainingTime());
+}
+
+double ActiveModuleProcessingComponent::GetElapsedCycleTimeMS()
+{
+    return (double) (m_timer.GetElapsedTime());
+}
+
+double ActiveModuleProcessingComponent::GetTotalCycleTimeMS()
+{
+    return (double) (m_timer.GetTimerTime());
 }

@@ -40,6 +40,7 @@ public:
 	bool TimerFinished();
     void SetTimer(uint32 setTimerTime=0);
     uint32 GetRemainingTime() const;
+    uint32 GetElapsedTime() const;
     inline const uint32& GetTimerTime()        { return m_timerTime; }
     inline const uint32& GetSetAtTrigger()    { return m_setAtTrigger; }
     void Trigger();

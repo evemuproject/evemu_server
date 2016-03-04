@@ -129,7 +129,11 @@ public:
     //handles death.
     virtual void Killed(Damage &fatal_blow);
 
-    //helpers:
+    /**
+     * Get distance (squared) to another entity.
+     * @param other The entity to find the distance to.
+     * @return The square of the distance.
+     */
     double DistanceTo2(const SystemEntity *other) const;
 
 protected:
