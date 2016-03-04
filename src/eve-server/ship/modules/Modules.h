@@ -41,24 +41,13 @@
 class GenericModule
 {
 public:
-    GenericModule()
-    {
-        m_ModuleState = MOD_UNFITTED;
-        m_ChargeState = MOD_UNLOADED;
-    }
-    virtual ~GenericModule()
-    {
-    // ALL DERIVED CLASSES SHOULD OVERRIDE THIS
-    //    //warn user - yes be obnoxious
-    //    Log::Error("GenericModule","MEMORY LEAK!");
+    GenericModule(InventoryItemRef item, ShipRef ship);
+    virtual ~GenericModule();
 
-    //    //force the users to override the inherited destructor
-    //    assert(false); //crash if they don't
+    virtual void Process()											{ /* Do nothing here */
     }
-
-    virtual void Process()											{ /* Do nothing here */ }
-    virtual void Offline()											{ /* Do nothing here */ }
-    virtual void Online()											{ /* Do nothing here */ }
+    virtual void Offline();
+    virtual void Online();
 	virtual void Activate(SystemEntity * targetEntity)				{ /* Do nothing here */ }
     virtual void Deactivate()										{ /* Do nothing here */ }
     virtual void Load(InventoryItemRef charge)						{ /* Do nothing here */ }
@@ -125,7 +114,19 @@ public:
     virtual bool isSubSystem()                                    { return (m_Item->categoryID() == EVEDB::invCategories::Subsystem); }
 
     //override for rigs and subsystems
-    virtual ModulePowerLevel GetModulePowerLevel()                { return isHighPower() ? MODULE_BANK_HIGH_POWER : ( isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER); }
+
+    virtual ModulePowerLevel GetModulePowerLevel()
+    {
+        if (isSubSystem())
+        {
+            return MODULE_BANK_SUBSYSTEM;
+        }
+        if (isRig())
+        {
+            return MODULE_BANK_RIG;
+        }
+        return isHighPower() ? MODULE_BANK_HIGH_POWER : (isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER);
+    }
 
 	void SetLog(Task_Log * pLog) { m_pMM_Log = pLog; }
 	Task_Log * GetLog() { return m_pMM_Log; }
@@ -139,6 +140,21 @@ protected:
     ChargeStates m_ChargeState;
 
 	Task_Log * m_pMM_Log;		// We do not own this
+
+public:
+    void ModifyShipAttribute(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type);
+
+    void ModifyTargetShipAttribute(uint32 targetItemID, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type);
+
+private:
+
+    void _modifyShipAttributes(ShipRef ship, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type);
+
+    EvilNumber _calculateNewValue(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type, std::vector<GenericModule *> mods);
+
+    EvilNumber _calculateNewAttributeValue(EvilNumber sourceAttr, EvilNumber targetAttr, EVECalculationType type, int stackNumber);
+
+    std::vector<GenericModule *> _sortModules(uint32 sortAttrID, std::vector<GenericModule *> mods);
 };
 
 #endif /* __MODULES_H__ */

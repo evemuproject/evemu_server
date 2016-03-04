@@ -30,29 +30,14 @@
 #include "system/Damage.h"
 #include "ship/modules/electronics_modules/TractorBeam.h"
 
-TractorBeam::TractorBeam( InventoryItemRef item, ShipRef ship )
+TractorBeam::TractorBeam( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
-
-	m_ModuleState = MOD_UNFITTED;
-	m_ChargeState = MOD_UNLOADED;
 }
 
 TractorBeam::~TractorBeam()
 {
 
-}
-
-void TractorBeam::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void TractorBeam::Load(InventoryItemRef charge)
@@ -118,18 +103,18 @@ void TractorBeam::Activate(SystemEntity * targetEntity)
 			m_targetID = targetEntity->Item()->itemID();
 
 			// Activate active processing component timer:
-			m_ActiveModuleProc->ActivateCycle();
+			ActivateCycle();
 			m_ModuleState = MOD_ACTIVATED;
 			//_ShowCycle();
-			m_ActiveModuleProc->ProcessActiveCycle();
+			ProcessActiveCycle();
 		}
 	}
 }
 
-void TractorBeam::Deactivate() 
+void TractorBeam::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void TractorBeam::StopCycle(bool abort)
@@ -152,7 +137,7 @@ void TractorBeam::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -167,7 +152,7 @@ void TractorBeam::StopCycle(bool abort)
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
@@ -188,7 +173,7 @@ void TractorBeam::StopCycle(bool abort)
 
 void TractorBeam::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		// Check to see if our target is still in this bubble or has left or been destroyed:
 		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )

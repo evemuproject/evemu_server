@@ -27,26 +27,14 @@
 
 #include "ship/modules/propulsion_modules/Afterburner.h"
 
-Afterburner::Afterburner( InventoryItemRef item, ShipRef ship )
+Afterburner::Afterburner( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-//	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-//	m_chargeLoaded = false;
 }
 
 Afterburner::~Afterburner()
 {
 
-}
-
-void Afterburner::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void Afterburner::Load(InventoryItemRef charge)
@@ -82,16 +70,16 @@ void Afterburner::DestroyRig()
 void Afterburner::Activate(SystemEntity * targetEntity)
 {
 	// Activate active processing component timer:
-	m_ActiveModuleProc->ActivateCycle();
+	ActivateCycle();
 	m_ModuleState = MOD_ACTIVATED;
 	//_ShowCycle();
-	m_ActiveModuleProc->ProcessActiveCycle();
+	ProcessActiveCycle();
 }
 
-void Afterburner::Deactivate() 
+void Afterburner::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void Afterburner::StopCycle(bool abort)
@@ -114,7 +102,7 @@ void Afterburner::StopCycle(bool abort)
 	updates.push_back(speed.Encode());
 	updates.push_back(mass.Encode());
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 
 	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, false);
 
@@ -136,7 +124,7 @@ void Afterburner::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -151,7 +139,7 @@ void Afterburner::StopCycle(bool abort)
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
@@ -172,7 +160,7 @@ void Afterburner::StopCycle(bool abort)
 
 void Afterburner::DoCycle()
 {
-	if (m_ActiveModuleProc->ShouldProcessActiveCycle())
+	if (ShouldProcessActiveCycle())
 	{
 		_ShowCycle();
 	}

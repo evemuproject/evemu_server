@@ -30,29 +30,14 @@
 #include "system/Damage.h"
 #include "ship/modules/weapon_modules/HybridTurret.h"
 
-HybridTurret::HybridTurret( InventoryItemRef item, ShipRef ship )
+HybridTurret::HybridTurret( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
-
-	m_ModuleState = MOD_UNFITTED;
-	m_ChargeState = MOD_UNLOADED;
 }
 
 HybridTurret::~HybridTurret()
 {
 
-}
-
-void HybridTurret::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void HybridTurret::Load(InventoryItemRef charge)
@@ -95,10 +80,10 @@ void HybridTurret::Activate(SystemEntity * targetEntity)
 		m_targetID = targetEntity->Item()->itemID();
 
 		// Activate active processing component timer:
-		m_ActiveModuleProc->ActivateCycle();
+		ActivateCycle();
 		m_ModuleState = MOD_ACTIVATED;
 		//_ShowCycle();
-		m_ActiveModuleProc->ProcessActiveCycle();
+		ProcessActiveCycle();
 	}
 	else
 	{
@@ -107,10 +92,10 @@ void HybridTurret::Activate(SystemEntity * targetEntity)
 	}
 }
 
-void HybridTurret::Deactivate() 
+void HybridTurret::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void HybridTurret::StopCycle(bool abort)
@@ -135,7 +120,7 @@ void HybridTurret::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -166,12 +151,12 @@ void HybridTurret::StopCycle(bool abort)
 		0
 	);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void HybridTurret::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		// Check to see if our target is still in this bubble or has left or been destroyed:
 		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
@@ -232,7 +217,7 @@ void HybridTurret::DoCycle()
 			explosive_damage,		// explosive damage
 			effectProjectileFired	// from EVEEffectID::
 		);
-		
+
 		m_targetEntity->ApplyDamage( damageDealt );
 
 		// Reduce ammo charge by 1 unit:

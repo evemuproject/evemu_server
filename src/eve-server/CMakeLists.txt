@@ -404,9 +404,6 @@ SET( ship_modules_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/modules/ModuleEffects.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/ModuleFactory.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/Modules.h"
-     "${TARGET_INCLUDE_DIR}/ship/modules/PassiveModules.h"
-     "${TARGET_INCLUDE_DIR}/ship/modules/RigModule.h"
-     "${TARGET_INCLUDE_DIR}/ship/modules/SubSystemModules.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/armor_modules/ArmorRepairer.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/electronics_modules/TractorBeam.h"
      "${TARGET_INCLUDE_DIR}/ship/modules/mining_modules/MiningLaser.h"
@@ -420,9 +417,7 @@ SET( ship_modules_SOURCE
      "${TARGET_SOURCE_DIR}/ship/modules/ActiveModules.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ModuleDB.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/ModuleEffects.cpp"
-     "${TARGET_SOURCE_DIR}/ship/modules/PassiveModules.cpp"
-     "${TARGET_SOURCE_DIR}/ship/modules/RigModule.cpp"
-     "${TARGET_SOURCE_DIR}/ship/modules/SubSystemModules.cpp"
+     "${TARGET_SOURCE_DIR}/ship/modules/Modules.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/armor_modules/ArmorRepairer.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/electronics_modules/TractorBeam.cpp"
      "${TARGET_SOURCE_DIR}/ship/modules/mining_modules/MiningLaser.cpp"
@@ -432,15 +427,6 @@ SET( ship_modules_SOURCE
 	 "${TARGET_SOURCE_DIR}/ship/modules/weapon_modules/MissileLauncher.cpp"
 	 "${TARGET_SOURCE_DIR}/ship/modules/weapon_modules/ProjectileTurret.cpp"
 	 "${TARGET_SOURCE_DIR}/ship/modules/weapon_modules/SuperWeapon.cpp" )
-    #"${TARGET_SOURCE_DIR}/ship/modules/.cpp"
-    #"${TARGET_SOURCE_DIR}/ship/modules/.cpp" )
-
-SET( ship_modules_components_INCLUDE
-     "${TARGET_INCLUDE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.h"
-     "${TARGET_INCLUDE_DIR}/ship/modules/components/ModifyShipAttributesComponent.h" )
-SET( ship_modules_components_SOURCE
-     "${TARGET_SOURCE_DIR}/ship/modules/components/ActiveModuleProcessingComponent.cpp"
-     "${TARGET_SOURCE_DIR}/ship/modules/components/ModifyShipAttributesComponent.cpp" )
     #"${TARGET_SOURCE_DIR}/ship/modules/.cpp"
     #"${TARGET_SOURCE_DIR}/ship/modules/.cpp" )
 
@@ -538,7 +524,6 @@ SOURCE_GROUP( "src\\pos"           FILES ${pos_SOURCE} )
 SOURCE_GROUP( "src\\search"        FILES ${search_SOURCE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_SOURCE} )
 SOURCE_GROUP( "src\\ship\\modules" FILES ${ship_modules_SOURCE} )
-SOURCE_GROUP( "src\\ship\\modules\\components" FILES ${ship_modules_components_SOURCE} )
 SOURCE_GROUP( "src\\standing"      FILES ${standing_SOURCE} )
 SOURCE_GROUP( "src\\station"       FILES ${station_SOURCE} )
 SOURCE_GROUP( "src\\system"        FILES ${system_SOURCE} )
@@ -568,7 +553,6 @@ ${pos_SOURCE}
 ${search_SOURCE}
 ${ship_SOURCE}
 ${ship_modules_SOURCE}
-${ship_modules_components_SOURCE}
 ${standing_SOURCE}
 ${station_SOURCE}
 ${system_SOURCE} )

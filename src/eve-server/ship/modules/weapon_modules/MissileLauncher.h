@@ -34,8 +34,6 @@ public:
     MissileLauncher( InventoryItemRef item, ShipRef ship );
     ~MissileLauncher();
 
-	void Process();
-
     // Module Action Methods:
     void Load(InventoryItemRef charge);
     void Unload();

@@ -32,31 +32,15 @@
 #include "PyServiceMgr.h"
 #include "ship/modules/mining_modules/MiningLaser.h"
 
-MiningLaser::MiningLaser( InventoryItemRef item, ShipRef ship )
+MiningLaser::MiningLaser( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
-
-	m_ModuleState = MOD_UNFITTED;
-	m_ChargeState = MOD_UNLOADED;
-
 	//m_IsInitialCycle = true;
 }
 
 MiningLaser::~MiningLaser()
 {
 
-}
-
-void MiningLaser::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void MiningLaser::Load(InventoryItemRef charge)
@@ -134,7 +118,7 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
     m_targetEntity = targetEntity;
     m_targetID = targetEntity->Item()->itemID();
     // Activate active processing component timer:
-    m_ActiveModuleProc->ActivateCycle();
+    ActivateCycle();
     m_ModuleState = MOD_ACTIVATED;
     //m_IsInitialCycle = true;
     _ShowCycle();
@@ -143,12 +127,12 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
 void MiningLaser::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void MiningLaser::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		// Check to see if our target is still in this bubble or has left or been destroyed:
 		if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
@@ -191,7 +175,7 @@ void MiningLaser::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -231,7 +215,7 @@ void MiningLaser::StopCycle(bool abort)
 		0
 	);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void MiningLaser::_ProcessCycle()
@@ -245,7 +229,7 @@ void MiningLaser::_ProcessCycle()
     {
         // We must have drifted out of range.
         m_ModuleState = MOD_DEACTIVATING;
-        m_ActiveModuleProc->AbortCycle();
+        AbortCycle();
         // TO-DO: send proper out or range response.
         SysLog::Error("MiningLaser::Activate()", "ERROR: mining laser target moved out of range!");
         return;
@@ -270,8 +254,8 @@ void MiningLaser::_ProcessCycle()
         }
     }
     // Get percent cycle complete.
-    double cycleTime = 1; //m_ActiveModuleProc->GetTotalCycleTimeMS();
-    double usedTime = 1; //m_ActiveModuleProc->GetElapsedCycleTimeMS();
+    double cycleTime = 1; //GetTotalCycleTimeMS();
+    double usedTime = 1; //GetElapsedCycleTimeMS();
     double percent = usedTime / cycleTime;
     // Limit to range 0.0 - 1.0.
     percent = std::min(1.0, std::max(0.0, percent));
@@ -302,7 +286,7 @@ void MiningLaser::_ProcessCycle()
     {
         // No, hmmm... thats bad!
         m_ModuleState = MOD_DEACTIVATING;
-        m_ActiveModuleProc->AbortCycle();
+        AbortCycle();
         // TO-DO: send client miner deactivated because hold full message.
         SysLog::Warning("MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID());
         return;
@@ -347,7 +331,7 @@ void MiningLaser::_ProcessCycle()
     {
         // Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!
         m_ModuleState = MOD_DEACTIVATING;
-        m_ActiveModuleProc->AbortCycle();
+        AbortCycle();
         if (remainingOreUnits == 0)
         {
             // Asteroid is empty now, so remove it

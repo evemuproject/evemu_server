@@ -34,8 +34,6 @@ public:
     TractorBeam( InventoryItemRef item, ShipRef ship );
     ~TractorBeam();
 
-	void Process();
-
     // Module Action Methods:
     void Load(InventoryItemRef charge);
     void Unload();

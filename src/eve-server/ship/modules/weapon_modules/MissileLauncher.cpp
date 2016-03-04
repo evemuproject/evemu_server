@@ -30,26 +30,14 @@
 #include "system/Damage.h"
 #include "ship/modules/weapon_modules/MissileLauncher.h"
 
-MissileLauncher::MissileLauncher( InventoryItemRef item, ShipRef ship )
+MissileLauncher::MissileLauncher( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
 }
 
 MissileLauncher::~MissileLauncher()
 {
 
-}
-
-void MissileLauncher::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void MissileLauncher::Load(InventoryItemRef charge)
@@ -90,7 +78,7 @@ void MissileLauncher::Activate(SystemEntity * targetEntity)
 		m_targetID = targetEntity->Item()->itemID();
 
 		// Activate active processing component timer:
-		m_ActiveModuleProc->ActivateCycle();
+		ActivateCycle();
 	}
 	else
 	{
@@ -99,10 +87,10 @@ void MissileLauncher::Activate(SystemEntity * targetEntity)
 	}
 }
 
-void MissileLauncher::Deactivate() 
+void MissileLauncher::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void MissileLauncher::StopCycle(bool abort)
@@ -128,7 +116,7 @@ void MissileLauncher::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -159,12 +147,12 @@ void MissileLauncher::StopCycle(bool abort)
 		0
 	);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void MissileLauncher::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		// Check to see if our target is still in this bubble or has left or been destroyed:
 		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
@@ -225,7 +213,7 @@ void MissileLauncher::DoCycle()
 			explosive_damage,		// explosive damage
 			effectMissileLaunching	// from EVEEffectID::
 		);
-		
+
 		m_targetEntity->ApplyDamage( damageDealt );
 
 		// Reduce ammo charge by 1 unit:

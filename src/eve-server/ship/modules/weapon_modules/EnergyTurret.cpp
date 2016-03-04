@@ -30,26 +30,14 @@
 #include "system/Damage.h"
 #include "ship/modules/weapon_modules/EnergyTurret.h"
 
-EnergyTurret::EnergyTurret( InventoryItemRef item, ShipRef ship )
+EnergyTurret::EnergyTurret( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
 }
 
 EnergyTurret::~EnergyTurret()
 {
 
-}
-
-void EnergyTurret::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void EnergyTurret::Load(InventoryItemRef charge)
@@ -90,10 +78,10 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 		m_targetID = targetEntity->Item()->itemID();
 
 		// Activate active processing component timer:
-		m_ActiveModuleProc->ActivateCycle();
+		ActivateCycle();
 		m_ModuleState = MOD_ACTIVATED;
 		//_ShowCycle();
-		m_ActiveModuleProc->ProcessActiveCycle();
+		ProcessActiveCycle();
 	}
 	else
 	{
@@ -102,10 +90,10 @@ void EnergyTurret::Activate(SystemEntity * targetEntity)
 	}
 }
 
-void EnergyTurret::Deactivate() 
+void EnergyTurret::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void EnergyTurret::StopCycle()
@@ -128,7 +116,7 @@ void EnergyTurret::StopCycle()
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -143,7 +131,7 @@ void EnergyTurret::StopCycle()
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
@@ -164,7 +152,7 @@ void EnergyTurret::StopCycle()
 
 void EnergyTurret::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		// Check to see if our target is still in this bubble or has left or been destroyed:
 		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
@@ -219,7 +207,7 @@ void EnergyTurret::DoCycle()
 			explosive_damage,		// explosive damage
 			effectTargetAttack		// from EVEEffectID::
 		);
-		
+
 		m_targetEntity->ApplyDamage( damageDealt );
 	}
 }

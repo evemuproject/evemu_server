@@ -34,8 +34,6 @@ public:
     ProjectileTurret( InventoryItemRef item, ShipRef ship );
     ~ProjectileTurret();
 
-	void Process();
-
     // Module Action Methods:
     void Load(InventoryItemRef charge);
     void Unload();

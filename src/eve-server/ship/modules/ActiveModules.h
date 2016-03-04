@@ -27,8 +27,6 @@
 #define ACTIVE_MODULES_H
 
 #include "Modules.h"
-#include "ship/modules/components/ModifyShipAttributesComponent.h"
-#include "ship/modules/components/ActiveModuleProcessingComponent.h"
 
 class ActiveModule : public GenericModule
 {
@@ -36,7 +34,7 @@ public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
     ~ActiveModule();
 
-	virtual void Process()						{/*do nothing*/}
+    virtual void Process();
     void Offline();
     void Online();
 	void Activate(SystemEntity * targetEntity);
@@ -68,19 +66,39 @@ public:
 	virtual void StopCycle(bool abort=false)				{ /* Do nothing here */ }
 
 protected:
-    ModifyShipAttributesComponent * m_ShipAttrComp;
-	ActiveModuleProcessingComponent * m_ActiveModuleProc;
     uint32 m_targetID;  //passed to us by activate
 	SystemEntity * m_targetEntity;	// we do not own this
 
 	InventoryItemRef m_chargeRef;		// we do not own this
 	bool m_chargeLoaded;
 
-	//inheritance crap requires this be protected
-    ActiveModule();
+	virtual void _ProcessCycle()							{ /* Do nothing here */
+    }
 
-	virtual void _ProcessCycle()							{ /* Do nothing here */ }
-	virtual void _ShowCycle()								{ /* Do nothing here */ }
+    virtual void _ShowCycle()
+    {
+        /* Do nothing here */
+    }
+
+protected:
+    void ActivateCycle();
+    void DeactivateCycle();
+    void AbortCycle();
+
+    bool ShouldProcessActiveCycle();
+
+    void ProcessActiveCycle();
+    void ProcessDeactivateCycle();
+
+    double GetRemainingCycleTimeMS();
+    double GetElapsedCycleTimeMS();
+    double GetTotalCycleTimeMS();
+
+private:
+    //internal storage and record keeping
+    bool m_Stop;
+    Timer m_timer;
+
 };
 
 

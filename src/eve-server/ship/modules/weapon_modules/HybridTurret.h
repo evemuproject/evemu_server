@@ -34,8 +34,6 @@ public:
     HybridTurret( InventoryItemRef item, ShipRef ship );
     ~HybridTurret();
 
-	void Process();
-
     // Module Action Methods:
     void Load(InventoryItemRef charge);
     void Unload();

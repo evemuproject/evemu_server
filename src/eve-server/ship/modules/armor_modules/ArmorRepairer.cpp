@@ -30,26 +30,14 @@
 #include "system/Damage.h"
 #include "ship/modules/armor_modules/ArmorRepairer.h"
 
-ArmorRepairer::ArmorRepairer( InventoryItemRef item, ShipRef ship )
+ArmorRepairer::ArmorRepairer(InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
 }
 
 ArmorRepairer::~ArmorRepairer()
 {
 
-}
-
-void ArmorRepairer::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void ArmorRepairer::Load(InventoryItemRef charge)
@@ -85,16 +73,16 @@ void ArmorRepairer::DestroyRig()
 void ArmorRepairer::Activate(SystemEntity * targetEntity)
 {
 	// Activate active processing component timer:
-	m_ActiveModuleProc->ActivateCycle();
+	ActivateCycle();
 	m_ModuleState = MOD_ACTIVATED;
 	//_ShowCycle();
-	m_ActiveModuleProc->ProcessActiveCycle();
+	ProcessActiveCycle();
 }
 
-void ArmorRepairer::Deactivate() 
+void ArmorRepairer::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void ArmorRepairer::StopCycle(bool abort)
@@ -117,7 +105,7 @@ void ArmorRepairer::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -132,7 +120,7 @@ void ArmorRepairer::StopCycle(bool abort)
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
@@ -153,7 +141,7 @@ void ArmorRepairer::StopCycle(bool abort)
 
 void ArmorRepairer::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		_ShowCycle();
 

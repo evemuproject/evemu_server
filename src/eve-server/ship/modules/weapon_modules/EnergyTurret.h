@@ -34,8 +34,6 @@ public:
     EnergyTurret( InventoryItemRef item, ShipRef ship );
     ~EnergyTurret();
 
-	void Process();
-
     // Module Action Methods:
     void Load(InventoryItemRef charge);
     void Unload();

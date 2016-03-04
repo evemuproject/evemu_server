@@ -34,8 +34,6 @@ public:
     Afterburner( InventoryItemRef item, ShipRef ship );
     ~Afterburner();
 
-	void Process();
-
 	// Module Action Methods:
 	void Load(InventoryItemRef charge);
     void Unload();

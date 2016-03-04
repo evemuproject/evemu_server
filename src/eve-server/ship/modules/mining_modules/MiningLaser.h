@@ -34,8 +34,6 @@ public:
     MiningLaser( InventoryItemRef item, ShipRef ship );
     ~MiningLaser();
 
-	void Process();
-
     // Module Action Methods:
     void Load(InventoryItemRef charge);
     void Unload();

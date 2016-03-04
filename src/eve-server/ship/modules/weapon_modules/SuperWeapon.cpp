@@ -30,28 +30,16 @@
 #include "system/Damage.h"
 #include "ship/modules/weapon_modules/SuperWeapon.h"
 
-SuperWeapon::SuperWeapon( InventoryItemRef item, ShipRef ship )
-	: m_buildUpTimer(0), m_effectDurationTimer(0)
+SuperWeapon::SuperWeapon( InventoryItemRef item, ShipRef ship)
+: ActiveModule(item, ship),
+	m_buildUpTimer(0), m_effectDurationTimer(0)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ShipAttrComp = new ModifyShipAttributesComponent(this, ship);
-	m_ActiveModuleProc = new ActiveModuleProcessingComponent(item, this, ship, m_ShipAttrComp);
-
-	m_chargeRef = InventoryItemRef();		// Ensure ref is NULL
-	m_chargeLoaded = false;
 	m_effectID = 0;
 }
 
 SuperWeapon::~SuperWeapon()
 {
 
-}
-
-void SuperWeapon::Process()
-{
-	m_ActiveModuleProc->Process();
 }
 
 void SuperWeapon::Load(InventoryItemRef charge)
@@ -94,16 +82,16 @@ void SuperWeapon::Activate(SystemEntity * targetEntity)
 	m_targetID = targetEntity->Item()->itemID();
 
 	// Activate active processing component timer:
-	m_ActiveModuleProc->ActivateCycle();
+	ActivateCycle();
 	m_ModuleState = MOD_ACTIVATED;
 	//_ShowCycle();
-	m_ActiveModuleProc->ProcessActiveCycle();
+	ProcessActiveCycle();
 }
 
-void SuperWeapon::Deactivate() 
+void SuperWeapon::Deactivate()
 {
 	m_ModuleState = MOD_DEACTIVATING;
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 }
 
 void SuperWeapon::StopCycle(bool abort)
@@ -158,7 +146,7 @@ void SuperWeapon::StopCycle(bool abort)
 
 	shipEff.environment = env;
 	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//m_ActiveModuleProc->GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
+	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
 	shipEff.repeat = new PyInt(0);
 	shipEff.randomSeed = new PyNone;
 	shipEff.error = new PyNone;
@@ -173,7 +161,7 @@ void SuperWeapon::StopCycle(bool abort)
 
 	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
 
-	m_ActiveModuleProc->DeactivateCycle();
+	DeactivateCycle();
 
 	// Create Special Effect:
 	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
@@ -194,7 +182,7 @@ void SuperWeapon::StopCycle(bool abort)
 
 void SuperWeapon::DoCycle()
 {
-	if( m_ActiveModuleProc->ShouldProcessActiveCycle() )
+	if( ShouldProcessActiveCycle() )
 	{
 		_ShowCycle();
 
