@@ -33,6 +33,7 @@
 TractorBeam::TractorBeam( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
+    currentEffectString = "effects.TractorBeam";
 }
 
 TractorBeam::~TractorBeam()
@@ -40,39 +41,7 @@ TractorBeam::~TractorBeam()
 
 }
 
-void TractorBeam::Load(InventoryItemRef charge)
-{
-	ActiveModule::Load(charge);
-	m_ChargeState = MOD_LOADED;
-}
-
-void TractorBeam::Unload()
-{
-	ActiveModule::Unload();
-	m_ChargeState = MOD_UNLOADED;
-}
-
-void TractorBeam::Repair()
-{
-
-}
-
-void TractorBeam::Overload()
-{
-
-}
-
-void TractorBeam::DeOverload()
-{
-
-}
-
-void TractorBeam::DestroyRig()
-{
-
-}
-
-void TractorBeam::Activate(SystemEntity * targetEntity)
+bool TractorBeam::canActivate(SystemEntity * targetEntity)
 {
 	// Check to make sure target is NOT a static entity:
 	// TODO: Check for target = asteroid, ice, or gas cloud then only allow tractoring if ship = Orca
@@ -99,173 +68,29 @@ void TractorBeam::Activate(SystemEntity * targetEntity)
 				(targetEntity->Item()->groupID() == EVEDB::invGroups::Wreck)
 			)
 		{
-			m_targetEntity = targetEntity;
-			m_targetID = targetEntity->Item()->itemID();
-
-			// Activate active processing component timer:
-			ActivateCycle();
-			m_ModuleState = MOD_ACTIVATED;
-			//_ShowCycle();
-			ProcessActiveCycle();
+            return true;
 		}
 	}
+    return false;
 }
 
-void TractorBeam::Deactivate()
+void TractorBeam::startCycle(bool continuing)
 {
-	m_ModuleState = MOD_DEACTIVATING;
-	DeactivateCycle();
-}
-
-void TractorBeam::StopCycle(bool abort)
-{
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectTractorBeam;		// From EVEEffectID::
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 0;
-	shipEff.active = 0;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
-	shipEff.repeat = new PyInt(0);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyList* events = new PyList;
-	events->AddItem(shipEff.Encode());
-
-	Notify_OnMultiEvent multi;
-	multi.events = events;
-
-	PyTuple* tmp = multi.Encode();
-
-	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
-	DeactivateCycle();
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		0,
-		"effects.TractorBeam",
-		0,
-		0,
-		0,
-		m_Item->GetAttribute(AttrDuration).get_float(),
-		0
-	);
-}
-
-void TractorBeam::DoCycle()
-{
-	if( ShouldProcessActiveCycle() )
-	{
-		// Check to see if our target is still in this bubble or has left or been destroyed:
-		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
-		{
-			// Target has left our bubble or been destroyed, deactivate this module:
-			Deactivate();
-			return;
-		}
-		else
-		{
-			if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
-			{
-				// Target has left our bubble or been destroyed, deactivate this module:
-				Deactivate();
-				return;
-			}
-		}
-
-		_ShowCycle();
-
-		// Initiate continued Destiny Action to move tractored object toward ship
-		DynamicSystemEntity * targetEntity = static_cast<DynamicSystemEntity *>(m_targetEntity);
-		// Check for distance to target > 5000m + ship radius
-		GVector distanceToTarget(targetEntity->GetPosition(), m_Ship->position());
-		if (distanceToTarget.length() > (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()))
-		{
-			// Range higher?  Then start it moving toward ship @ 200m/s
-			targetEntity->Destiny()->SetMaxVelocity(1000.0);
-			targetEntity->Destiny()->SetSpeedFraction(1.0);
-			// Tractor objects at 1000m/s:
-			targetEntity->Destiny()->TractorBeamFollow(m_Ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()));
-		}
-		else
-		{
-			targetEntity->Destiny()->TractorBeamHalt();
-			Deactivate();
-		}
-	}
-}
-
-void TractorBeam::_ShowCycle()
-{
-	// Create Destiny Updates:
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectTractorBeam;		// From EVEEffectID::
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 1;
-	shipEff.active = 1;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrDuration).get_float();
-	shipEff.repeat = new PyInt(1000);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyTuple* tmp = new PyTuple(3);
-	//tmp->SetItem(1, dmgMsg.Encode());
-	tmp->SetItem(2, shipEff.Encode());
-
-	std::vector<PyTuple*> events;
-	//events.push_back(dmgMsg.Encode());
-	events.push_back(shipEff.Encode());
-
-	std::vector<PyTuple*> updates;
-	//updates.push_back(dmgChange.Encode());
-
-	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, false);
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		0,
-		"effects.TractorBeam",
-		0,
-		1,
-		1,
-		m_Item->GetAttribute(AttrDuration).get_float(),
-		1000
-	);
+    // Initiate continued Destiny Action to move tractored object toward ship
+    DynamicSystemEntity * targetEntity = static_cast<DynamicSystemEntity *>(m_targetEntity);
+    // Check for distance to target > 5000m + ship radius
+    GVector distanceToTarget(targetEntity->GetPosition(), m_Ship->position());
+    if (distanceToTarget.length() > (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()))
+    {
+        // Range higher?  Then start it moving toward ship @ 200m/s
+        targetEntity->Destiny()->SetMaxVelocity(1000.0);
+        targetEntity->Destiny()->SetSpeedFraction(1.0);
+        // Tractor objects at 1000m/s:
+        targetEntity->Destiny()->TractorBeamFollow(m_Ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()));
+    }
+    else
+    {
+        targetEntity->Destiny()->TractorBeamHalt();
+        deactivate();
+    }
 }

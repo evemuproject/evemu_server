@@ -35,22 +35,10 @@ public:
     ~EnergyTurret();
 
     // Module Action Methods:
-    void Load(InventoryItemRef charge);
-    void Unload();
-    void Repair();
-    void Overload();
-    void DeOverload();
-    void DestroyRig();
-	void Activate(SystemEntity * targetEntity);
-	void Deactivate();
-
-	// Calls Reserved for components usage only!
-	void DoCycle();
-	void StopCycle();
+	bool canActivate(SystemEntity * targetEntity);
+	void startCycle(bool continuing);
 
 protected:
-	void _ProcessCycle() {}
-	void _ShowCycle();
 };
 
 #endif

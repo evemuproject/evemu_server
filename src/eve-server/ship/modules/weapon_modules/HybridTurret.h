@@ -35,22 +35,12 @@ public:
     ~HybridTurret();
 
     // Module Action Methods:
-    void Load(InventoryItemRef charge);
-    void Unload();
-    void Repair();
-    void Overload();
-    void DeOverload();
-    void DestroyRig();
-	void Activate(SystemEntity * targetEntity);
-	void Deactivate();
+	bool canActivate(SystemEntity * targetEntity);
 
 	// Calls Reserved for components usage only!
-	void DoCycle();
-	void StopCycle(bool abort=false);
+	void startCycle(bool continuing);
 
 protected:
-	void _ProcessCycle() {}
-	void _ShowCycle();
 };
 
 #endif

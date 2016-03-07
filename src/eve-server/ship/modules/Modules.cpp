@@ -34,143 +34,166 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
     m_Effects = new ModuleEffects(m_Item->typeID());
     m_ModuleState = MOD_UNFITTED;
     m_ChargeState = MOD_UNLOADED;
+
+    // Set up modifier sources.
+    m_ShipModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_ShipActiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_ShipPassiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_OverloadModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+
+    GenerateModifiers();
+    // attach overload modifiers.
+    m_OverloadModifiers->SetActive(false);
+    m_Item->AddAttributeModifier(m_OverloadModifiers);
+    // attach ship modifiers.
+    m_ShipActiveModifiers->SetActive(false);
+    m_ShipPassiveModifiers->SetActive(false);
+    m_Ship->AddAttributeModifier(m_ShipModifiers);
+    m_Ship->AddAttributeModifier(m_ShipPassiveModifiers);
+    m_Ship->AddAttributeModifier(m_ShipActiveModifiers);
 }
 
 GenericModule::~GenericModule()
 {
+    // remove overload modifiers.
+    m_Item->RemoveAttributeModifier(m_OverloadModifiers);
+    // remove ship modifiers.
+    m_Ship->RemoveAttributeModifier(m_ShipModifiers);
+    m_Ship->RemoveAttributeModifier(m_ShipPassiveModifiers);
+    m_Ship->RemoveAttributeModifier(m_ShipActiveModifiers);
+
     //delete members
     delete m_Effects;
-
     //null ptrs
     m_Effects = NULL;
 }
 
-void GenericModule::Offline()
+void GenericModule::offline()
 {
-    //remove item attributes
-    //m_Effects->SetDefaultEffectAsActive();
-    //for(uint32 i = 0; i < m_Effects->GetSizeOfAttributeList(); i++)
-    //{
-    //    m_ShipAttrComp->ModifyShipAttribute(m_Effects->GetTargetAttributeID(i), m_Effects->GetSourceAttributeID(i), m_Effects->GetReverseCalculationType(i));
-    //}
-
+    // Insure the module is inactive.
+    deactivate();
     //change item state
     m_Item->PutOffline();
     m_ModuleState = MOD_OFFLINE;
+
+    // Disable ALL modifiers.
+    m_ShipModifiers->SetActive(false);
+    m_ShipPassiveModifiers->SetActive(false);
+    m_ShipActiveModifiers->SetActive(false); // should be false anyway.
+    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
-void GenericModule::Online()
+void GenericModule::online()
 {
-    //add item attributes
-    //m_Effects->SetDefaultEffectAsActive();
-    //for(uint32 i = 0; i < m_Effects->GetSizeOfAttributeList(); i++)
-    //{
-    //    m_ShipAttrComp->ModifyShipAttribute(m_Effects->GetTargetAttributeID(i), m_Effects->GetSourceAttributeID(i), m_Effects->GetCalculationType(i));
-    //}
-
     //change item state
     m_Item->PutOnline();
     m_ModuleState = MOD_ONLINE;
+
+    // Trigger modifiers.
+    m_ShipModifiers->SetActive(true);
+    m_ShipPassiveModifiers->SetActive(true);
+    m_ShipActiveModifiers->SetActive(false); // should be false anyway.
+    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
 }
 
-//modify our ship
-void GenericModule::ModifyShipAttribute(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type)
+bool GenericModule::isTurretFitted()
 {
-    _modifyShipAttributes(m_Ship, targetAttrID, sourceAttrID, type);
+    // Try to make the effect called 'turretFitted' active, if it exists, to test for module being a turret:
+    return m_Effects->HasEffect(Effect_turretFitted); // Effect_turretFitted from enum EveAttrEnum::Effect_turretFitted
 }
 
-//modify target ship
-void GenericModule::ModifyTargetShipAttribute(uint32 targetItemID, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type)
+bool GenericModule::isLauncherFitted()
 {
-    //find the ship
-    ShipRef target = ItemFactory::GetShip(targetItemID);
+    // Try to make the effect called 'launcherFitted' active, if it exists, to test for module being a launcher:
+    return m_Effects->HasEffect(Effect_launcherFitted); // Effect_launcherFitted from enum EveAttrEnum::Effect_launcherFitted
+}
 
-    //check if we found the ship
-    if (target == 0)
+bool GenericModule::isMaxGroupFitLimited()
+{
+    return m_Item->HasAttribute(AttrMaxGroupFitted); // AttrMaxGroupFitted from enum EveAttrEnum::AttrMaxGroupFitted
+}
+
+bool GenericModule::isRig()
+{
+    uint32 i = m_Item->categoryID();
+    return ( (i >= 773 && i <= 782) || (i == 786) || (i == 787) || (i == 896) || (i == 904)); //need to use enums, but the enum system is a huge mess
+}
+
+bool GenericModule::isSubSystem()
+{
+    return (m_Item->categoryID() == EVEDB::invCategories::Subsystem);
+}
+
+ModulePowerLevel GenericModule::GetModulePowerLevel()
+{
+    if (isSubSystem())
     {
-        SysLog::Error("GenericModule", "Failed to find target ship %u", targetItemID);
-        return;
+        return MODULE_BANK_SUBSYSTEM;
     }
-
-    //modify the attributes properly
-    _modifyShipAttributes(target, targetAttrID, sourceAttrID, type);
-
-}
-
-
-// /////////////// PRIVATE METHODS ///////////////////
-
-// implements a rudimentary but working stacking penalty.  Currently only penalizes for stacking same item,
-// but should penalize for modifying the same attribute, with some exceptions.  These exceptions are why
-// it has not been implemented fully, as more data is needed and this is just a proof of concept.
-// No module code will have to be changed to implement the fully functional stacking penalty
-
-void GenericModule::_modifyShipAttributes(ShipRef ship, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type)
-{
-    //first we must reset the attribute in order to properly recalculate the attribute
-    ship->ResetAttribute(targetAttrID, false);
-
-    //recalculate the attribute for the ship with the new modifier
-    ship->SetAttribute(targetAttrID, _calculateNewValue(targetAttrID, sourceAttrID, type, m_Ship->GetStackedItems(typeID(), GetModulePowerLevel())));
-}
-
-EvilNumber GenericModule::_calculateNewValue(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type, std::vector<GenericModule *> mods)
-{
-    //based on http://wiki.eve-id.net/Stacking
-    //EVEDev had a mistake in their formula, however I have corrected it and verified my results in excel
-
-    //note - we must have already been put online to be on the list.  This is just a check for people
-    //who may have implemented their Online function incorrectly
-    if (!(isOnline()))
-        mods.push_back(this);
-
-    std::vector<GenericModule *> sortedMods = _sortModules(targetAttrID, mods);
-
-    EvilNumber finalVal;
-    EvilNumber startVal = m_Ship->GetAttribute(targetAttrID); //start value
-
-    //iterate through all the modules, largest first
-    for (uint32 i = 0; i < mods.size(); i++)
+    if (isRig())
     {
-        finalVal = _calculateNewAttributeValue(mods[i]->GetAttribute(sourceAttrID), startVal, type, i);
-        startVal = finalVal; //set the starting value as the calculated value
+        return MODULE_BANK_RIG;
     }
-
-
-    return finalVal;
+    return isHighPower() ? MODULE_BANK_HIGH_POWER : (isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER);
 }
 
-//calculate the new value including the stacking penalty
-EvilNumber GenericModule::_calculateNewAttributeValue(EvilNumber sourceAttr, EvilNumber targetAttr, EVECalculationType type, int stackNumber)
+void GenericModule::GenerateModifiers()
 {
-    EvilNumber effectiveness = exp(-pow((double) (stackNumber - 1), 2) / 7.1289); //should be correct, but should be checked
-    return CalculateNewAttributeValue(targetAttr, sourceAttr * effectiveness, type);
-}
-
-//sorts a vector of modules in descending order by arbitrary attribute.  That is array[0] > array[1]
-std::vector<GenericModule *> GenericModule::_sortModules(uint32 sortAttrID, std::vector<GenericModule *> mods)
-{
-
-    //begin basic bubble sort - this needs to be checked thoroughly for bugs
-    bool done = false;
-
-    while (!done) //check if sorted
+    // load and setup ONLINE effects
+    auto map = m_Effects->GetEffects();
+    for (auto itr : map)
     {
-        done = true; //assume sorted
-
-        for (int i = 0; i != mods.size() + 1; i++) //iterate though list
+        std::shared_ptr<MEffect> effect = itr.second;
+        int nEffects = effect->GetSizeOfAttributeList();
+        if (nEffects == 0)
+            continue;
+        for (int i = 0; i < nEffects; i++)
         {
-            if (mods[i]->GetAttribute(sortAttrID) > mods[i + 1]->GetAttribute(sortAttrID)) //check if each pair is sorted
+            // ignore anything that affects a non attribute.
+            if (effect->GetSourceAttributeID(i) == 0 || effect->GetTargetAttributeID(i) == 0)
+                continue;
+            bool Stack = false;
+            if (effect->GetStackingPenaltyApplied(i) != 0)
+                Stack = true;
+            AttributeModifierRef mod = AttributeModifierRef(new AttributeModifier(m_Item, effect, i, true));
+            // get the module type that causes the effect.
+            uint32 affecting = effect->GetAffectingID(i);
+            uint32 state = effect->GetModuleStateWhenEffectApplied(i);
+            if (affecting == 0 || affecting == m_Item->groupID())
             {
-                //it's not, so flip the values
-                GenericModule * tmp = mods[i];
-                mods[i] = mods[i + 1];
-                mods[i] = tmp;
-
-                done = false; //we weren't sorted, so now go back and check if we are
+                typeTargetGroupIDlist *groups = effect->GetTargetGroupIDlist(i);
+                typeTargetGroupIDlist::iterator tItr = groups->begin();
+                for (; tItr != groups->end(); tItr++)
+                {
+                    uint32 groupID = *tItr;
+                    if (groupID == 6) // target ship
+                    {
+                        if (state == EFFECT_ONLINE)
+                            m_ShipModifiers->AddModifier(mod);
+                        if (state == EFFECT_ACTIVE)
+                            m_ShipActiveModifiers->AddModifier(mod);
+                        if (state == EFFECT_PASSIVE)
+                            m_ShipPassiveModifiers->AddModifier(mod);
+                    }
+                    else if (groupID == 0) // target self
+                    {
+                        if (state == EFFECT_OVERLOAD)
+                            m_OverloadModifiers->AddModifier(mod);
+                    }
+                    else // target module
+                    {
+                        // to-do: add module modifiers.
+                        if (state == EFFECT_ONLINE)
+                        {
+                            if (m_ModuleModifiers.find(groupID) == m_ModuleModifiers.end())
+                                m_ModuleModifiers[groupID] = AttributeModifierSourceRef(new AttributeModifierSource(m_Item));
+                            m_ModuleModifiers[groupID]->AddModifier(mod);
+                        }
+                    }
+                }
             }
         }
     }
-
-    return mods; //return sorted list
 }

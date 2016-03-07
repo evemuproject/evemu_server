@@ -1373,5 +1373,55 @@ bool InventoryItem::SaveAttributes()
 
 bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
 {
-    return mAttributeMap.ResetAttribute(attrID, notify);
+    if (attrID >= 10000)
+    {
+        // These are out of range attributes that the client does not like!
+        return true;
+    }
+    bool success = mAttributeMap.ResetAttribute(attrID, true);
+    EvilNumber nVal = mAttributeMap.GetAttribute(attrID);
+    // modify the value by attribute modifiers applied by modules and enemy's.
+    double amount = 0;
+    AttributeModifierSource::FactorList factors;
+    AttributeModifierSource::FactorList stackedfactors;
+    for (auto src : m_attributeModifiers)
+    {
+        if (src.get() == NULL)
+        {
+            continue;
+        }
+        src->GetModification(attrID, amount, factors, stackedfactors);
+    }
+    double value = AttributeModifierSource::FinalizeModification(nVal.get_float(), amount, factors, stackedfactors);
+    if (nVal.get_type() == EVIL_NUMBER_TYPE::evil_number_int)
+    {
+        nVal = EvilNumber((int64) value);
+    }
+    else
+    {
+        nVal = EvilNumber((double) value);
+    }
+    return mAttributeMap.SetAttribute(attrID, nVal, notify);
+}
+
+void InventoryItem::AddAttributeModifier(AttributeModifierSourceRef modifier)
+{
+    if (modifier.get() == NULL)
+        return;
+    if (std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier) == m_attributeModifiers.end())
+    {
+        m_attributeModifiers.push_back(modifier);
+        modifier->UpdateModifiers(this, true);
+    }
+}
+
+void InventoryItem::RemoveAttributeModifier(AttributeModifierSourceRef modifier)
+{
+    std::vector<AttributeModifierSourceRef>::iterator itr = std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier);
+    if (itr != m_attributeModifiers.end())
+    {
+        AttributeModifierSourceRef src = *itr;
+        m_attributeModifiers.erase(itr);
+        src->UpdateModifiers(this, true);
+    }
 }

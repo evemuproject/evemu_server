@@ -34,23 +34,10 @@ public:
     MissileLauncher( InventoryItemRef item, ShipRef ship );
     ~MissileLauncher();
 
-    // Module Action Methods:
-    void Load(InventoryItemRef charge);
-    void Unload();
-    void Repair();
-    void Overload();
-    void DeOverload();
-    void DestroyRig();
-	void Activate(SystemEntity * targetEntity);
-	void Deactivate();
-
-	// Calls Reserved for components usage only!
-	void DoCycle();
-	void StopCycle(bool abort=false);
+	bool canActivate(SystemEntity * targetEntity);
+	void startCycle(bool continuing);
 
 protected:
-	void _ProcessCycle() {}
-	void _ShowCycle();
 };
 
 #endif

@@ -25,8 +25,6 @@
 
 #include "eve-server.h"
 
-#include "EntityList.h"
-#include "system/SystemBubble.h"
 #include "system/Damage.h"
 #include "ship/modules/weapon_modules/SuperWeapon.h"
 
@@ -35,6 +33,33 @@ SuperWeapon::SuperWeapon( InventoryItemRef item, ShipRef ship)
 	m_buildUpTimer(0), m_effectDurationTimer(0)
 {
 	m_effectID = 0;
+	switch (m_Item->typeID())
+	{
+		case 24550:
+			currentEffectString = "effects.SuperWeaponAmarr";
+			m_effectID = effectSuperWeaponAmarr;
+			break;
+
+		case 24552:
+			currentEffectString = "effects.SuperWeaponCaldari";
+			m_effectID = effectSuperWeaponCaldari;
+			break;
+
+		case 24554:
+			currentEffectString = "effects.SuperWeaponGallente";
+			m_effectID = effectSuperWeaponGallente;
+			break;
+
+		case 23674:
+			currentEffectString = "effects.SuperWeaponMinmatar";
+			m_effectID = effectSuperWeaponMinmatar;
+			break;
+
+		default:
+			currentEffectString = "";
+			m_effectID = 0;
+			break;
+    }
 }
 
 SuperWeapon::~SuperWeapon()
@@ -42,150 +67,17 @@ SuperWeapon::~SuperWeapon()
 
 }
 
-void SuperWeapon::Load(InventoryItemRef charge)
-{
-
-}
-
-void SuperWeapon::Unload()
-{
-
-}
-
-void SuperWeapon::Repair()
-{
-
-}
-
-void SuperWeapon::Overload()
-{
-
-}
-
-void SuperWeapon::DeOverload()
-{
-
-}
-
-void SuperWeapon::DestroyRig()
-{
-
-}
-
-void SuperWeapon::Activate(SystemEntity * targetEntity)
+bool SuperWeapon::canActivate(SystemEntity * targetEntity)
 {
 	// TODO:
 	// 1. Prevent activation on certain targets: asteroids, NPC stations, ice, clouds...  Perhaps restrict to ships and structures.
 	// 2. Check for minimum qty of consumable materials needed according to the 'consumptionType' attribute value in appropriate cargo bay on board the ship
 
-	m_targetEntity = targetEntity;
-	m_targetID = targetEntity->Item()->itemID();
-
-	// Activate active processing component timer:
-	ActivateCycle();
-	m_ModuleState = MOD_ACTIVATED;
-	//_ShowCycle();
-	ProcessActiveCycle();
+    return true;
 }
 
-void SuperWeapon::Deactivate()
+void SuperWeapon::startCycle(bool continuing)
 {
-	m_ModuleState = MOD_DEACTIVATING;
-	DeactivateCycle();
-}
-
-void SuperWeapon::StopCycle(bool abort)
-{
-	// TODO:
-	// 1. Enable warping and jump drive
-
-	std::string effectString;
-	switch (m_Item->typeID())
-	{
-		case 24550:
-			effectString = "effects.SuperWeaponAmarr";
-			m_effectID = effectSuperWeaponAmarr;
-			break;
-
-		case 24552:
-			effectString = "effects.SuperWeaponCaldari";
-			m_effectID = effectSuperWeaponCaldari;
-			break;
-
-		case 24554:
-			effectString = "effects.SuperWeaponGallente";
-			m_effectID = effectSuperWeaponGallente;
-			break;
-
-		case 23674:
-			effectString = "effects.SuperWeaponMinmatar";
-			m_effectID = effectSuperWeaponMinmatar;
-			break;
-
-		default:
-			effectString = "";
-			m_effectID = 0;
-			break;
-	}
-
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = m_effectID;
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 0;
-	shipEff.active = 0;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
-	shipEff.repeat = new PyInt(0);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyList* events = new PyList;
-	events->AddItem(shipEff.Encode());
-
-	Notify_OnMultiEvent multi;
-	multi.events = events;
-
-	PyTuple* tmp = multi.Encode();
-
-	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
-	DeactivateCycle();
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-		(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		0,
-		effectString,
-		1,
-		0,
-		0,
-		1.0,
-		0
-		);
-}
-
-void SuperWeapon::DoCycle()
-{
-	if( ShouldProcessActiveCycle() )
-	{
-		_ShowCycle();
-
 		// Do massive, crazy damage to targets within a sphere of damage, screw CCP and their 'this can only target capital ships' junk ;)
 		// NOTE: due to the small bit of time to "build up" the weapon firing action, we need a timer to delay application of damage to the target(s)
 		// Avatar:  5 seconds to build after activation,  5 seconds duration, instant reach to target
@@ -242,90 +134,4 @@ void SuperWeapon::DoCycle()
 
 		// Reduce consumable in cargo:
 		// TODO
-	}
-}
-
-void SuperWeapon::_ShowCycle()
-{
-	std::string effectString;
-	switch (m_Item->typeID())
-	{
-	case 24550:
-		effectString = "effects.SuperWeaponAmarr";
-		m_effectID = effectSuperWeaponAmarr;
-		break;
-
-	case 24552:
-		effectString = "effects.SuperWeaponCaldari";
-		m_effectID = effectSuperWeaponCaldari;
-		break;
-
-	case 24554:
-		effectString = "effects.SuperWeaponGallente";
-		m_effectID = effectSuperWeaponGallente;
-		break;
-
-	case 23674:
-		effectString = "effects.SuperWeaponMinmatar";
-		m_effectID = effectSuperWeaponMinmatar;
-		break;
-
-	default:
-		effectString = "";
-		m_effectID = 0;
-		break;
-	}
-
-	// Create Destiny Updates:
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = m_effectID;		// From EVEEffectID::
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 1;
-	shipEff.active = 1;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrDuration).get_float();
-	shipEff.repeat = new PyInt(1000);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyTuple* tmp = new PyTuple(3);
-	//tmp->SetItem(1, dmgMsg.Encode());
-	tmp->SetItem(2, shipEff.Encode());
-
-	std::vector<PyTuple*> events;
-	//events.push_back(dmgMsg.Encode());
-	events.push_back(shipEff.Encode());
-
-	std::vector<PyTuple*> updates;
-	//updates.push_back(dmgChange.Encode());
-
-	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, false);
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-		(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		0,
-		effectString,
-		1,
-		1,
-		1,
-		m_Item->GetAttribute(AttrDuration).get_float(),
-		1000
-		);
 }

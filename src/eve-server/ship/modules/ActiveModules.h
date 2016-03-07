@@ -34,36 +34,50 @@ public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
     ~ActiveModule();
 
-    virtual void Process();
-    void Offline();
-    void Online();
-	void Activate(SystemEntity * targetEntity);
-    void Deactivate();
-    void Load(InventoryItemRef charge);
-    void Unload();
+    virtual void process();
+    void activate(SystemEntity * targetEntity);
+    void deactivate();
+    void load(InventoryItemRef charge);
+    void unload();
 
     //access functions
-    ModulePowerLevel GetModulePowerLevel()                    { return isHighPower() ? MODULE_BANK_HIGH_POWER : ( isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER); }
-
-	InventoryItemRef GetLoadedChargeRef()					{ return m_chargeRef; }
-
-	bool isLoaded()											{ return m_chargeLoaded; }
-    bool isHighPower()                                        { return m_Effects->isHighSlot(); }
-    bool isMediumPower()                                    { return m_Effects->isMediumSlot(); }
-    bool isLowPower()                                        { return m_Effects->isLowSlot(); }
-    bool isRig()                                            { return false; }
-    bool isSubSystem()                                        { return false; }
+	InventoryItemRef getLoadedChargeRef() { return m_chargeRef; }
+	bool isLoaded() { return m_chargeLoaded; }
     bool requiresTarget()
     {
         if( m_Effects->HasDefaultEffect() )
-            return m_Effects->GetDefaultEffect()->GetIsAssistance() || m_Effects->GetDefaultEffect()->GetIsOffensive();
-        else
-            return false;
+        {
+            //return m_Effects->GetDefaultEffect()->GetIsAssistance() || m_Effects->GetDefaultEffect()->GetIsOffensive();
+            return m_Effects->GetDefaultEffect()->GetIsOffensive();
+        }
+        return false;
     }
 
-	// Calls Reserved for components usage only!
-	virtual void DoCycle()									{ /* Do nothing here */ }
-	virtual void StopCycle(bool abort=false)				{ /* Do nothing here */ }
+    /**
+     * Check module specific activation requirements.
+     * @param targetEntity The target.
+     * @return true if the module can activate.
+     */
+    virtual bool canActivate(SystemEntity *targetEntity);
+    /**
+     * Get the modules cycle time.
+     * @return The cycle time.
+     */
+    virtual uint32 getCycleTime();
+    /**
+     * A cycle has started.
+     * @param continuing True if this is continuing from a previous cycle.
+     */
+    virtual void startCycle(bool continuing) {};
+    /**
+     * A cycle has ended.
+     */
+    virtual void endCycle(bool continuing) {};
+    /**
+     * Can the module abort a cycle?
+     * @return True if the cycle can be aborted.
+     */
+    virtual bool canAbort() {return false;};
 
 protected:
     uint32 m_targetID;  //passed to us by activate
@@ -72,33 +86,30 @@ protected:
 	InventoryItemRef m_chargeRef;		// we do not own this
 	bool m_chargeLoaded;
 
-	virtual void _ProcessCycle()							{ /* Do nothing here */
-    }
+    void doStop();
+    /**
+     * Show cycle effects.
+     */
+    virtual void showEffects() { doEffect(true); }
+    /**
+     * Hide cycle effects.
+     */
+    virtual void hideEffects() { doEffect(false); }
+    std::string currentEffectString;
 
-    virtual void _ShowCycle()
-    {
-        /* Do nothing here */
-    }
+    void doEffect(bool active);
+    void doEffect(bool active, std::string effectString);
+    void doEffect(bool active, std::shared_ptr<MEffect> effect);
+    void doEffect(bool active, std::shared_ptr<MEffect> effect, std::string effectString);
 
-protected:
-    void ActivateCycle();
-    void DeactivateCycle();
-    void AbortCycle();
-
-    bool ShouldProcessActiveCycle();
-
-    void ProcessActiveCycle();
-    void ProcessDeactivateCycle();
-
-    double GetRemainingCycleTimeMS();
-    double GetElapsedCycleTimeMS();
-    double GetTotalCycleTimeMS();
+    double getRemainingCycleTimeMS();
+    double getElapsedCycleTimeMS();
+    double getTotalCycleTimeMS();
 
 private:
     //internal storage and record keeping
     bool m_Stop;
     Timer m_timer;
-
 };
 
 

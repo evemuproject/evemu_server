@@ -33,6 +33,7 @@
 
 // ////////////////////// Effects Class ////////////////////////////
 typedef std::vector<uint32> typeTargetGroupIDlist;
+typedef std::map<uint32, std::shared_ptr<class MEffect>> EffectMap;
 
 class MEffect
 {
@@ -76,9 +77,18 @@ public:
     EVECalculationType GetCalculationType(uint32 index)            { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? (EVECalculationType)0 : (EVECalculationType)m_CalculationTypeIDs[index];}
 	EVECalculationType GetReverseCalculationType(uint32 index)    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? (EVECalculationType)0 : (EVECalculationType)m_ReverseCalculationTypeIDs[index];}
     typeTargetGroupIDlist * GetTargetGroupIDlist(uint32 index)    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_TargetGroupIDlists.find(index)->second; }
-    uint32 GetStackingPenaltyApplied(uint32 index)              { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_StackingPenaltyAppliedIDs[index]; }
-    uint32 GetModuleStateWhenEffectApplied()                    { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_EffectAppliedInStateIDs[0]; }
-    uint32 GetAffectingID()										{ return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectingIDs[0]; }
+    uint32 GetStackingPenaltyApplied(uint32 index)              { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_StackingPenaltyAppliedIDs[index];
+    }
+
+    uint32 GetModuleStateWhenEffectApplied(uint32 index)
+    {
+        return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_EffectAppliedInStateIDs[index];
+    }
+
+    uint32 GetAffectingID(uint32 index)
+    {
+        return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectingIDs[index];
+    }
 	uint32 GetTargetTypeToWhichEffectApplied(uint32 index)        { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectedTypes[index]; }
     uint32 GetEffectApplicationType(uint32 index)               { return ((m_EffectID == 0) || (!m_EffectsInfoLoaded)) ? 0 : m_AffectingTypes[index]; }
 
@@ -370,29 +380,9 @@ public:
     }
     std::shared_ptr<MEffect> GetEffect(uint32 effectID);
 
-    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetOnlineEffectsConstIterator()
+    EffectMap &GetEffects()
     {
-        return m_OnlineEffects.begin();
-    }
-
-    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetActiveEffectsConstIterator()
-    {
-        return m_ActiveEffects.begin();
-    }
-
-    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetOverloadEffectsConstIterator()
-    {
-        return m_OverloadEffects.begin();
-    }
-
-    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetGangEffectsConstIterator()
-    {
-        return m_GangEffects.begin();
-    }
-
-    std::map<uint32, std::shared_ptr<MEffect>>::const_iterator GetFleetEffectsConstIterator()
-    {
-        return m_FleetEffects.begin();
+        return m_Effects;
     }
 
 private:
@@ -400,11 +390,7 @@ private:
     void _populate(uint32 typeID);
 
     //data members
-    std::map<uint32, std::shared_ptr<MEffect>> m_OnlineEffects;
-    std::map<uint32, std::shared_ptr<MEffect>> m_ActiveEffects;
-    std::map<uint32, std::shared_ptr<MEffect>> m_OverloadEffects;
-    std::map<uint32, std::shared_ptr<MEffect>> m_GangEffects;
-    std::map<uint32, std::shared_ptr<MEffect>> m_FleetEffects;
+    EffectMap m_Effects;
     std::shared_ptr<MEffect> m_defaultEffect;
 
     uint32 m_typeID;

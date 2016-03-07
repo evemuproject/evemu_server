@@ -28,6 +28,7 @@
 #include "inventory/EVEAttributeMgr.h"
 #include "inventory/ItemFactory.h"
 #include "inventory/ItemType.h"
+#include "inventory/AttributeModifier.h"
 
 class PyRep;
 class PyDict;
@@ -216,6 +217,18 @@ public:
      *@note this function will force reload the default value for the specified attribute
      */
     bool ResetAttribute(uint32 attrID, bool notify);
+
+    /**
+     * Add an attribute modifier to the item.
+     * @param modifier The modifier.
+     */
+    void AddAttributeModifier(AttributeModifierSourceRef modifier);
+    /**
+     * Remove an attribute modifier from the item.
+     * @param modifier The modifier.
+     */
+    void RemoveAttributeModifier(AttributeModifierSourceRef modifier);
+
     /************************************************************************/
     /* end experimental new attribute system                                */
     /************************************************************************/
@@ -309,6 +322,7 @@ protected:
     std::string         m_customInfo;
 
 	std::map<EVEItemFlags, double> m_cargoHoldsUsedVolumeByFlag;
+    std::vector<AttributeModifierSourceRef> m_attributeModifiers;
 };
 
 #endif

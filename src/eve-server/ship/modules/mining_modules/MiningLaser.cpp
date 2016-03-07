@@ -35,7 +35,15 @@
 MiningLaser::MiningLaser( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
-	//m_IsInitialCycle = true;
+    std::string effectsString;
+    if (item->groupID() == EVEDB::invGroups::Gas_Cloud_Harvester)
+    {
+        currentEffectString = "effects.CloudMining";
+    }
+    else
+    {
+        currentEffectString = "effects.Mining";
+    }
 }
 
 MiningLaser::~MiningLaser()
@@ -43,39 +51,7 @@ MiningLaser::~MiningLaser()
 
 }
 
-void MiningLaser::Load(InventoryItemRef charge)
-{
-	ActiveModule::Load(charge);
-	m_ChargeState = MOD_LOADED;
-}
-
-void MiningLaser::Unload()
-{
-	ActiveModule::Unload();
-	m_ChargeState = MOD_UNLOADED;
-}
-
-void MiningLaser::Repair()
-{
-
-}
-
-void MiningLaser::Overload()
-{
-
-}
-
-void MiningLaser::DeOverload()
-{
-
-}
-
-void MiningLaser::DestroyRig()
-{
-
-}
-
-void MiningLaser::Activate(SystemEntity * targetEntity)
+bool MiningLaser::canActivate(SystemEntity *targetEntity)
 {
     InventoryItemRef miner = getItem();
     bool isIceMiner = (miner->typeID() == 16278 || miner->typeID() == 22229 || miner->typeID() == 28752);
@@ -115,110 +91,10 @@ void MiningLaser::Activate(SystemEntity * targetEntity)
         SysLog::Error("MiningLaser::Activate()", "ERROR: Cannot activate mining laser target out of range!");
         throw PyException(MakeCustomError("ERROR!  Cannot activate mining laser target out of range!"));
     }
-    m_targetEntity = targetEntity;
-    m_targetID = targetEntity->Item()->itemID();
-    // Activate active processing component timer:
-    ActivateCycle();
-    m_ModuleState = MOD_ACTIVATED;
-    //m_IsInitialCycle = true;
-    _ShowCycle();
+    return true;
 }
 
-void MiningLaser::Deactivate()
-{
-	m_ModuleState = MOD_DEACTIVATING;
-	DeactivateCycle();
-}
-
-void MiningLaser::DoCycle()
-{
-	if( ShouldProcessActiveCycle() )
-	{
-		// Check to see if our target is still in this bubble or has left or been destroyed:
-		if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
-		{
-			// Target has left our bubble or been destroyed, deactivate this module:
-			Deactivate();
-			return;
-		}
-
-		_ShowCycle();
-
-		// Actually pull in the ore
-		_ProcessCycle();
-	}
-}
-
-void MiningLaser::StopCycle(bool abort)
-{
-    if (!abort)
-    {
-        // On end of last cycle, make sure we pull in one more batch of ore:
-        _ProcessCycle();
-    }
-
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectMiningLaser;
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 0;
-	shipEff.active = 0;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
-	shipEff.repeat = new PyInt(0);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyList* events = new PyList;
-	events->AddItem(shipEff.Encode());
-
-	Notify_OnMultiEvent multi;
-	multi.events = events;
-
-	PyTuple* tmp = multi.Encode();
-
-	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
-	// Create Special Effect:
-	uint32 chargeID = 0;
-	if( m_chargeLoaded )
-		chargeID = m_chargeRef->itemID();
-
-	std::string effectsString;
-	if (getItem()->groupID() == EVEDB::invGroups::Gas_Cloud_Harvester)
-		effectsString = "effects.CloudMining";
-	else
-		effectsString = "effects.Mining";
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		chargeID,
-		effectsString,
-		0,
-		0,
-		0,
-		1.0,
-		0
-	);
-
-	DeactivateCycle();
-}
-
-void MiningLaser::_ProcessCycle()
+void MiningLaser::endCycle(bool continuing)
 {
     InventoryItemRef moduleRef = getItem();
     // Check range
@@ -228,8 +104,7 @@ void MiningLaser::_ProcessCycle()
     if (targetRange > maxRange)
     {
         // We must have drifted out of range.
-        m_ModuleState = MOD_DEACTIVATING;
-        AbortCycle();
+        deactivate();
         // TO-DO: send proper out or range response.
         SysLog::Error("MiningLaser::Activate()", "ERROR: mining laser target moved out of range!");
         return;
@@ -254,11 +129,15 @@ void MiningLaser::_ProcessCycle()
         }
     }
     // Get percent cycle complete.
-    double cycleTime = 1; //GetTotalCycleTimeMS();
-    double usedTime = 1; //GetElapsedCycleTimeMS();
-    double percent = usedTime / cycleTime;
-    // Limit to range 0.0 - 1.0.
-    percent = std::min(1.0, std::max(0.0, percent));
+    double cycleTime = getTotalCycleTimeMS();
+    double percent = 1.0; // Assume full cycle if timer disabled.
+    if(cycleTime != -1)
+    {
+        double usedTime = getElapsedCycleTimeMS();
+        percent = usedTime / cycleTime;
+        // Limit to range 0.0 - 1.0.
+        percent = std::min(1.0, std::max(0.0, percent));
+    }
     // Round down to next lowest integer value.
     oreUnitsToPull = floor(oreUnitsToPull * percent);
 
@@ -285,8 +164,7 @@ void MiningLaser::_ProcessCycle()
     if (oreUnitsToPull <= 0.0)
     {
         // No, hmmm... thats bad!
-        m_ModuleState = MOD_DEACTIVATING;
-        AbortCycle();
+        deactivate();
         // TO-DO: send client miner deactivated because hold full message.
         SysLog::Warning("MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID());
         return;
@@ -330,8 +208,7 @@ void MiningLaser::_ProcessCycle()
     if ((remainingCargoVolume < oreUnitVolume) || remainingOreUnits == 0)
     {
         // Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!
-        m_ModuleState = MOD_DEACTIVATING;
-        AbortCycle();
+        deactivate();
         if (remainingOreUnits == 0)
         {
             // Asteroid is empty now, so remove it
@@ -340,70 +217,4 @@ void MiningLaser::_ProcessCycle()
             // To-Do: send client asteroid depleted message.
         }
     }
-
-}
-
-void MiningLaser::_ShowCycle()
-{
-	// Create Destiny Updates:
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectMiningLaser;		// From EVEEffectID::
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 1;
-	shipEff.active = 1;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrDuration).get_float();
-	shipEff.repeat = new PyInt(1000);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyTuple* tmp = new PyTuple(3);
-	//tmp->SetItem(1, dmgMsg.Encode());
-	tmp->SetItem(1, shipEff.Encode());
-
-	std::vector<PyTuple*> events;
-	//events.push_back(dmgMsg.Encode());
-	events.push_back(shipEff.Encode());
-
-	std::vector<PyTuple*> updates;
-	//updates.push_back(dmgChange.Encode());
-
-	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, false);
-
-	// Create Special Effect:
-	uint32 chargeID = 0;
-	if( m_chargeLoaded )
-		chargeID = m_chargeRef->itemID();
-
-	std::string effectsString;
-	if (getItem()->groupID() == EVEDB::invGroups::Gas_Cloud_Harvester)
-		effectsString = "effects.CloudMining";
-	else
-		effectsString = "effects.Mining";
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		chargeID,
-		effectsString,
-		0,
-		1,
-		1,
-		m_Item->GetAttribute(AttrDuration).get_float(),
-		1000
-	);
 }

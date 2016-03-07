@@ -597,7 +597,7 @@ void ModuleContainer::_processEx(processType p, slotType t)
             if(*cur == NULL)
                 continue;
 
-            (*cur)->Online();
+            (*cur)->online();
         }
         break;
 
@@ -607,7 +607,7 @@ void ModuleContainer::_processEx(processType p, slotType t)
             if(cur == NULL)
                 continue;
 
-            (*cur)->Offline();
+            (*cur)->offline();
         }
         break;
 
@@ -617,7 +617,7 @@ void ModuleContainer::_processEx(processType p, slotType t)
             if(*cur == NULL)
                 continue;
 
-            (*cur)->Deactivate();
+            (*cur)->deactivate();
         }
         break;
 
@@ -627,7 +627,7 @@ void ModuleContainer::_processEx(processType p, slotType t)
             if(*cur == NULL)
                 continue;
 
-            (*cur)->Unload();
+            (*cur)->unload();
         }
         break;
 
@@ -637,7 +637,7 @@ void ModuleContainer::_processEx(processType p, slotType t)
             if(*cur == NULL)
                 continue;
 
-            (*cur)->Process();
+            (*cur)->process();
         }
 
         break;
@@ -820,7 +820,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 					else
 						Offline(moduleRef->itemID());
 					if( chargeRef )
-						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
+						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->load(chargeRef);
 				}
 				else
 				{
@@ -859,7 +859,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 					else
 						Offline(moduleRef->itemID());
 					if( chargeRef )
-						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
+						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->load(chargeRef);
 				}
 				else
 				{
@@ -897,7 +897,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 					else
 						Offline(moduleRef->itemID());
 					if( chargeRef )
-						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->Load(chargeRef);
+						((ActiveModule *)GetModule((EVEItemFlags)flagIndex))->load(chargeRef);
 				}
 				else
 				{
@@ -1100,14 +1100,14 @@ void ModuleManager::UnfitModule(uint32 itemID)
 				//if( m_Ship->ValidateAddItem(flagCargoHold,loadedChargeRef) )
 				//{
 					loadedChargeRef->Move(m_Ship->itemID(), flagCargoHold);		// used to be (m_pOperator->GetLocationID(), flag)
-					mod->Unload();
+					mod->unload();
 				//}
 				//else
 				//	throw PyException( MakeCustomError( "Not enough cargo space!") );
 			}
 		}
 
-		mod->Offline();
+		mod->offline();
 		m_Modules->RemoveModule(itemID);
     }
 }
@@ -1191,7 +1191,7 @@ void ModuleManager::Online(uint32 itemID)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL )
 	{
-        mod->Online();
+        mod->online();
 		m_pLog->Log("ModuleManager::Online()", "Module '%s' going Online", mod->getItem()->itemName().c_str());
 	}
 }
@@ -1206,7 +1206,7 @@ void ModuleManager::Offline(uint32 itemID)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL )
 	{
-        mod->Offline();
+        mod->offline();
 		m_pLog->Log("ModuleManager::Offline()", "Module '%s' going Offline", mod->getItem()->itemName().c_str());
 	}
 }
@@ -1227,7 +1227,7 @@ int32 ModuleManager::Activate(uint32 itemID, std::string effectName, uint32 targ
 		if(effectName == "online")
 		{
 			//ModuleCommand cmd = _translateEffectName(effectName);		// GET RID of this function, effectName should be passed into the module's calls
-			mod->Online();
+			mod->online();
 
 			// We should check for "online" here or something else, then either call the mod->Online() or mod->Activate()
 			//if(cmd == ONLINE)
@@ -1237,7 +1237,7 @@ int32 ModuleManager::Activate(uint32 itemID, std::string effectName, uint32 targ
 		else
 		{
 			SystemEntity * targetEntity = this->m_Ship->GetOperator()->GetDestiny()->GetCurrentBubble()->GetEntity(targetID);
-			mod->Activate(targetEntity);
+			mod->activate(targetEntity);
 			m_pLog->Log("ModuleManager::Activate()", "Module '%s' Activating...", mod->getItem()->itemName().c_str());
 		}
     }
@@ -1253,7 +1253,7 @@ void ModuleManager::Deactivate(uint32 itemID, std::string effectName)
 		if(effectName == "online")
 		{
 			//ModuleCommand cmd = _translateEffectName(effectName);		// GET RID of this function, effectName should be passed into the module's calls
-			mod->Offline();
+			mod->offline();
 
 			// We should check for "online" here or something else, then either call the mod->Offline() or mod->Deactivate()
 			//if(cmd == OFFLINE)
@@ -1262,7 +1262,7 @@ void ModuleManager::Deactivate(uint32 itemID, std::string effectName)
 		}
 		else
 		{
-			mod->Deactivate();
+			mod->deactivate();
 			m_pLog->Log("ModuleManager::Deactivate()", "Module '%s' Deactivating...", mod->getItem()->itemName().c_str());
 		}
     }
@@ -1341,7 +1341,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 		if( mod->isLoaded() )
 		{
 			// Module is loaded, let's check available capacity:
-			InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
+			InventoryItemRef loadedChargeRef = mod->getLoadedChargeRef();
 			EvilNumber loadedChargeVolume = loadedChargeRef->GetAttribute(AttrVolume);
 			EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
 			modCapacity -= (loadedChargeVolume * loadedChargeQty);		// Calculate remaining capacity
@@ -1355,7 +1355,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 					m_Ship->ValidateAddItem(flagCargoHold,loadedChargeRef);
 					loadedChargeRef->Move(m_Ship->itemID(), flagCargoHold);
 				}
-				mod->Unload();
+				mod->unload();
 
 				// Loading of charge will be performed below
 			}
@@ -1375,7 +1375,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 							InventoryItemRef loadableChargeQtyRef = chargeRef->Split( quantityWeCanLoad );
 							loadableChargeQtyRef->ChangeOwner( chargeRef->ownerID() );
 							loadedChargeRef->Merge( loadableChargeQtyRef );
-							mod->Load( loadedChargeRef );
+							mod->load( loadedChargeRef );
 							loadedChargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
 						}
 						else
@@ -1383,7 +1383,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 							// Merge chargeRef with loadedChargeRef
 							// Load this merged charge Ref into module
 							loadedChargeRef->Merge( chargeRef );
-							mod->Load( loadedChargeRef );
+							mod->load( loadedChargeRef );
 							loadedChargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
 						}
 					}
@@ -1408,7 +1408,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 			{
 				// We can insert entire stack of chargeRef into module
 				// Load chargeRef as-is into module
-				mod->Load( chargeRef );
+				mod->load( chargeRef );
 				chargeRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
 			}
 			else
@@ -1423,7 +1423,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 					// Load this merged charge Ref into module
 					InventoryItemRef loadableChargeQtyRef = chargeRef->Split( quantityWeCanLoad );
 					loadableChargeQtyRef->ChangeOwner( chargeRef->ownerID() );
-					mod->Load( loadableChargeQtyRef );
+					mod->load( loadableChargeQtyRef );
 					loadableChargeQtyRef->Move(m_Ship->itemID(), flag);		// used to be (m_pOperator->GetLocationID(), flag)
 				}
 				else
@@ -1444,7 +1444,7 @@ void ModuleManager::UnloadCharge(EVEItemFlags flag)
 			if( mod->isLoaded() )
 			{
 				InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
-				mod->Unload();
+				mod->unload();
 			}
 		}
 	}

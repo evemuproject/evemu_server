@@ -33,181 +33,22 @@
 ArmorRepairer::ArmorRepairer(InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
+    currentEffectString  = "effects.ArmorRepair";
 }
 
 ArmorRepairer::~ArmorRepairer()
 {
-
 }
 
-void ArmorRepairer::Load(InventoryItemRef charge)
+void ArmorRepairer::startCycle(bool continuing)
 {
+    // Apply repair amount:
+    EvilNumber newDamageAmount;
+    newDamageAmount = m_Ship->GetAttribute(AttrArmorDamage) - m_Item->GetAttribute(AttrArmorDamageAmount);
+    if( newDamageAmount < 0.0 )
+    {
+        newDamageAmount = 0.0;
+    }
 
-}
-
-void ArmorRepairer::Unload()
-{
-
-}
-
-void ArmorRepairer::Repair()
-{
-
-}
-
-void ArmorRepairer::Overload()
-{
-
-}
-
-void ArmorRepairer::DeOverload()
-{
-
-}
-
-void ArmorRepairer::DestroyRig()
-{
-
-}
-
-void ArmorRepairer::Activate(SystemEntity * targetEntity)
-{
-	// Activate active processing component timer:
-	ActivateCycle();
-	m_ModuleState = MOD_ACTIVATED;
-	//_ShowCycle();
-	ProcessActiveCycle();
-}
-
-void ArmorRepairer::Deactivate()
-{
-	m_ModuleState = MOD_DEACTIVATING;
-	DeactivateCycle();
-}
-
-void ArmorRepairer::StopCycle(bool abort)
-{
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectArmorRepair;
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 0;
-	shipEff.active = 0;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
-	shipEff.repeat = new PyInt(0);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyList* events = new PyList;
-	events->AddItem(shipEff.Encode());
-
-	Notify_OnMultiEvent multi;
-	multi.events = events;
-
-	PyTuple* tmp = multi.Encode();
-
-	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
-	DeactivateCycle();
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		0,
-		0,
-		"effects.ArmorRepair",
-		0,
-		0,
-		0,
-		1.0,
-		0
-	);
-}
-
-void ArmorRepairer::DoCycle()
-{
-	if( ShouldProcessActiveCycle() )
-	{
-		_ShowCycle();
-
-		// Apply repair amount:
-		EvilNumber newDamageAmount;
-		if( m_Item->GetAttribute(AttrArmorDamageAmount) <= m_Ship->GetAttribute(AttrArmorDamage) )
-			newDamageAmount = m_Ship->GetAttribute(AttrArmorDamage) - m_Item->GetAttribute(AttrArmorDamageAmount);
-		else
-			newDamageAmount = 0.0;
-
-        m_Ship->SetAttribute(AttrArmorDamage, newDamageAmount);
-	}
-}
-
-void ArmorRepairer::_ShowCycle()
-{
-	// Create Destiny Updates:
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectArmorRepair;		// From EVEEffectID::
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 1;
-	shipEff.active = 1;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
-	shipEff.repeat = new PyInt(1000);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyTuple* tmp = new PyTuple(3);
-	//tmp->SetItem(1, dmgMsg.Encode());
-	tmp->SetItem(2, shipEff.Encode());
-
-	std::vector<PyTuple*> events;
-	//events.push_back(dmgMsg.Encode());
-	events.push_back(shipEff.Encode());
-
-	std::vector<PyTuple*> updates;
-	//updates.push_back(dmgChange.Encode());
-
-	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, false);
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		0,
-		0,
-		"effects.ArmorRepair",
-		0,
-		1,
-		1,
-		m_Item->GetAttribute(AttrDuration).get_float(),
-		1000
-	);
+    m_Ship->SetAttribute(AttrArmorDamage, newDamageAmount);
 }

@@ -237,6 +237,7 @@ SET( imageserver_SOURCE
 SET( inventory_INCLUDE
      "${TARGET_INCLUDE_DIR}/inventory/AttributeEnum.h"
      "${TARGET_INCLUDE_DIR}/inventory/AttributeMgr.h"
+     "${TARGET_INCLUDE_DIR}/inventory/AttributeModifier.h"
      "${TARGET_INCLUDE_DIR}/inventory/EffectsEnum.h"
      "${TARGET_INCLUDE_DIR}/inventory/EVEAttributeMgr.h"
      "${TARGET_INCLUDE_DIR}/inventory/EVEAttributes.h"
@@ -251,6 +252,7 @@ SET( inventory_INCLUDE
      "${TARGET_INCLUDE_DIR}/inventory/ItemType.h"
      "${TARGET_INCLUDE_DIR}/inventory/Owner.h" )
 SET( inventory_SOURCE
+     "${TARGET_SOURCE_DIR}/inventory/AttributeModifier.cpp"
      "${TARGET_SOURCE_DIR}/inventory/EVEAttributeMgr.cpp"
      "${TARGET_SOURCE_DIR}/inventory/InvBrokerService.cpp"
      "${TARGET_SOURCE_DIR}/inventory/Inventory.cpp"

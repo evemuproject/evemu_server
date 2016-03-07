@@ -25,14 +25,13 @@
 
 #include "eve-server.h"
 
-#include "EntityList.h"
-#include "system/SystemBubble.h"
 #include "system/Damage.h"
 #include "ship/modules/weapon_modules/MissileLauncher.h"
 
 MissileLauncher::MissileLauncher( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
+    currentEffectString = "effects.MissileDeployment";
 }
 
 MissileLauncher::~MissileLauncher()
@@ -40,145 +39,18 @@ MissileLauncher::~MissileLauncher()
 
 }
 
-void MissileLauncher::Load(InventoryItemRef charge)
+bool MissileLauncher::canActivate(SystemEntity * targetEntity)
 {
-	ActiveModule::Load(charge);
-}
-
-void MissileLauncher::Unload()
-{
-	ActiveModule::Unload();
-}
-
-void MissileLauncher::Repair()
-{
-
-}
-
-void MissileLauncher::Overload()
-{
-
-}
-
-void MissileLauncher::DeOverload()
-{
-
-}
-
-void MissileLauncher::DestroyRig()
-{
-
-}
-
-void MissileLauncher::Activate(SystemEntity * targetEntity)
-{
-	if( this->m_chargeRef )
-	{
-		m_targetEntity = targetEntity;
-		m_targetID = targetEntity->Item()->itemID();
-
-		// Activate active processing component timer:
-		ActivateCycle();
-	}
-	else
+	if( !this->m_chargeRef )
 	{
 		SysLog::Error( "MissileLauncher::Activate()", "ERROR: Cannot find charge that is supposed to be loaded into this module!" );
 		throw PyException( MakeCustomError( "ERROR!  Cannot find charge that is supposed to be loaded into this module!" ) );
 	}
+    return true;
 }
 
-void MissileLauncher::Deactivate()
+void MissileLauncher::startCycle(bool continuing)
 {
-	m_ModuleState = MOD_DEACTIVATING;
-	DeactivateCycle();
-}
-
-void MissileLauncher::StopCycle(bool abort)
-{
-	// Do one last cycle:
-	DoCycle();
-
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectMissileLaunching;
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 0;
-	shipEff.active = 0;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = 1.0;		//GetRemainingCycleTimeMS();		// At least, I'm assuming this is the remaining time left in the cycle
-	shipEff.repeat = new PyInt(0);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyList* events = new PyList;
-	events->AddItem(shipEff.Encode());
-
-	Notify_OnMultiEvent multi;
-	multi.events = events;
-
-	PyTuple* tmp = multi.Encode();
-
-	m_Ship->GetOperator()->SendDogmaNotification("OnMultiEvent", "clientID", &tmp);
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		m_chargeRef->itemID(),
-		"effects.MissileDeployment",
-		1,
-		0,
-		0,
-		1.0,
-		0
-	);
-
-	DeactivateCycle();
-}
-
-void MissileLauncher::DoCycle()
-{
-	if( ShouldProcessActiveCycle() )
-	{
-		// Check to see if our target is still in this bubble or has left or been destroyed:
-		if( m_Ship->GetOperator()->GetSystemEntity()->Bubble() == NULL )
-		{
-			// Target has left our bubble or been destroyed, deactivate this module:
-			Deactivate();
-			return;
-		}
-		else
-		{
-			if( !(m_Ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID)) )
-			{
-				// Target has left our bubble or been destroyed, deactivate this module:
-				Deactivate();
-				return;
-			}
-		}
-
-		if( m_chargeRef->quantity() == 0 )
-		{
-			Deactivate();
-			return;
-		}
-
-		_ShowCycle();
-
 		// Create Damage action:
 		//Damage( SystemEntity *_source,
         //    InventoryItemRef _weapon,
@@ -218,64 +90,7 @@ void MissileLauncher::DoCycle()
 
 		// Reduce ammo charge by 1 unit:
 		m_chargeRef->SetQuantity(m_chargeRef->quantity() - 1);
-	}
-}
-
-void MissileLauncher::_ShowCycle()
-{
-	// Create Destiny Updates:
-	Notify_OnGodmaShipEffect shipEff;
-	shipEff.itemID = m_Item->itemID();
-	shipEff.effectID = effectMissileLaunching;		// From EVEEffectID::
-	shipEff.when = Win32TimeNow();
-	shipEff.start = 1;
-	shipEff.active = 1;
-
-	PyList* env = new PyList;
-	env->AddItem(new PyInt(shipEff.itemID));
-	env->AddItem(new PyInt(m_Ship->ownerID()));
-	env->AddItem(new PyInt(m_Ship->itemID()));
-	env->AddItem(new PyInt(m_targetID));
-	env->AddItem(new PyNone);
-	env->AddItem(new PyNone);
-	env->AddItem(new PyInt(shipEff.effectID));
-
-	shipEff.environment = env;
-	shipEff.startTime = shipEff.when;
-	shipEff.duration = m_Item->GetAttribute(AttrSpeed).get_float();
-	shipEff.repeat = new PyInt(1000);
-	shipEff.randomSeed = new PyNone;
-	shipEff.error = new PyNone;
-
-	PyTuple* tmp = new PyTuple(3);
-	//tmp->SetItem(1, dmgMsg.Encode());
-	tmp->SetItem(2, shipEff.Encode());
-
-	std::vector<PyTuple*> events;
-	//events.push_back(dmgMsg.Encode());
-	events.push_back(shipEff.Encode());
-
-	std::vector<PyTuple*> updates;
-	//updates.push_back(dmgChange.Encode());
-
-	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, events, false);
-
-	// Create Special Effect:
-	m_Ship->GetOperator()->GetDestiny()->SendSpecialEffect
-	(
-		m_Ship,
-		m_Item->itemID(),
-		m_Item->typeID(),
-		m_targetID,
-		m_chargeRef->typeID(),
-		"effects.MissileDeployment",
-		1,
-		1,
-		1,
-		m_Item->GetAttribute(AttrSpeed).get_float(),
-		1000
-	);
-
+        
 	// Actually Launch a missile, creating a new Destiny object for it, but we don't know how to do this yet...
 
 	// TODO - RESEARCH

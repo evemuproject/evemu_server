@@ -594,7 +594,7 @@ std::shared_ptr<MEffect> DGM_Effects_Table::GetEffect(uint32 effectID)
 {
     // return MEffect * corresponding to effectID from m_EffectsMap
     std::shared_ptr<MEffect> mEffectPtr;
-    std::map<uint32, std::shared_ptr < MEffect>>::iterator mEffectMapIterator;
+    EffectMap::iterator mEffectMapIterator;
 
     if ((mEffectMapIterator = m_EffectsMap.find(effectID)) != m_EffectsMap.end())
     {
@@ -821,21 +821,9 @@ ModuleEffects::~ModuleEffects()
 //useful accessors - probably a better way to do this, but at least it's fast
 bool ModuleEffects::isHighSlot()
 {
-    if( m_Cached )
-        return m_HighPower;
-    else
+    if (m_Cached)
     {
-    /*    for(uint32 i = 0; i < m_EffectCount; i++)
-        {
-            if( m_EffectIDs[i] == effectHiPower )
-            {
-                m_HighPower = true;
-                m_MediumPower = false;
-                m_LowPower = false;
-                m_Cached = true; //cache the result
-                return true;
-            }
-        }*/
+        return m_HighPower;
     }
 
     return false;
@@ -843,21 +831,9 @@ bool ModuleEffects::isHighSlot()
 
 bool ModuleEffects::isMediumSlot()
 {
-    if( m_Cached )
-        return m_MediumPower;
-    else
+    if (m_Cached)
     {
-    /*    for(uint32 i = 0; i < m_EffectCount; i++)
-        {
-            if( m_EffectIDs[i] == effectMedPower )
-            {
-                m_HighPower = false;
-                m_MediumPower = true;
-                m_LowPower = false;
-                m_Cached = true;  //cache the result
-                return true;
-            }
-        }*/
+        return m_MediumPower;
     }
 
     return false;
@@ -865,21 +841,9 @@ bool ModuleEffects::isMediumSlot()
 
 bool ModuleEffects::isLowSlot()
 {
-    if( m_Cached )
-        return m_LowPower;
-    else
+    if (m_Cached)
     {
-    /*    for(uint32 i = 0; i < m_EffectCount; i++)
-        {
-            if( m_EffectIDs[i] == effectLoPower )
-            {
-                m_HighPower = false;
-                m_MediumPower = false;
-                m_LowPower = true;
-                m_Cached = true; //cache the result
-                return true;
-            }
-        }*/
+        return m_LowPower;
     }
 
     return false;
@@ -887,34 +851,16 @@ bool ModuleEffects::isLowSlot()
 
 bool ModuleEffects::HasEffect(uint32 effectID)
 {
-    std::map<uint32, std::shared_ptr < MEffect>>::const_iterator cur, end;
-
-    if( m_OnlineEffects.find(effectID) != m_OnlineEffects.end() )
-        return true;
-
-    if( m_ActiveEffects.find(effectID) != m_ActiveEffects.end() )
-        return true;
-
-    if( m_OverloadEffects.find(effectID) != m_OverloadEffects.end() )
-        return true;
-
-    return false;
+    return m_Effects.find(effectID) != m_Effects.end();
 }
 
 std::shared_ptr<MEffect> ModuleEffects::GetEffect(uint32 effectID)
 {
-    // WARNING: This function MUST be defined!
-    std::shared_ptr<MEffect> effectPtr = NULL;
-    std::map<uint32, std::shared_ptr < MEffect>>::const_iterator cur, end;
-
-    if( (cur = m_OnlineEffects.find(effectID)) != m_OnlineEffects.end() )
-		return cur->second;
-
-    if( (cur = m_ActiveEffects.find(effectID)) != m_ActiveEffects.end() )
+    EffectMap::const_iterator cur;
+    if ((cur = m_Effects.find(effectID)) != m_Effects.end())
+    {
         return cur->second;
-
-    if( (cur = m_OverloadEffects.find(effectID)) != m_OverloadEffects.end() )
-        return cur->second;
+    }
 
     return NULL;
 }
@@ -942,19 +888,16 @@ void ModuleEffects::_populate(uint32 typeID)
     uint32 isDefault;
 
     //go through and find each effect, then add pointer to effect to our own map
-	std::map<uint32,uint32>::iterator cur, end;
-	cur = effectsList.begin();
-	end = effectsList.end();
-    for(; cur != end; cur++)
+    for (auto cur : effectsList)
     {
-		effectID = (*cur).first;
+        effectID = cur.first;
         mEffectPtr.reset(new MEffect(effectID));
 
         if (mEffectPtr)
 		{
 			if( mEffectPtr->IsEffectLoaded() )
 			{
-				isDefault = (*cur).second;
+				isDefault = cur.second;
 				switch( effectID )
 				{
 					case 11:    // loPower
@@ -970,38 +913,46 @@ void ModuleEffects::_populate(uint32 typeID)
 				}
 
 				// Just in case our 'mEffectPtr' gets deleted above for certain cases, let's not proceed further lest we crash!
-				if( mEffectPtr )
-				{
-					if( isDefault > 0 )
-						m_defaultEffect = mEffectPtr;
+				if( mEffectPtr)
+                {
+                    // Save all effects.
+                    m_Effects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
+                    if (isDefault > 0)
+                    {
+                        m_defaultEffect = mEffectPtr;
+                    }
 
 					// This switch is assuming that all entries in 'dgmEffectsInfo' for this effectID are applied during the same module state,
 					// which should really be the case anyway, for every effectID, so we just check the list of attributes
 					// that are modified by this effect for which module state during which the effect is active:
-					uint32 moduleStateWhenEffectApplied = mEffectPtr->GetModuleStateWhenEffectApplied();
-					if( moduleStateWhenEffectApplied == MOD_UNFITTED)
-                        SysLog::Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", mEffectPtr->GetModuleStateWhenEffectApplied());
+                    uint32 moduleStateWhenEffectApplied = mEffectPtr->GetModuleStateWhenEffectApplied(0);
+                    if (moduleStateWhenEffectApplied == MOD_UNFITTED)
+                    {
+                        SysLog::Error("ModuleEffects::_populate()", "Illegal value '%u' obtained from the 'effectAppliedInState' field of the 'dgmEffectsInfo' table", moduleStateWhenEffectApplied);
+                    }
 
-					if( moduleStateWhenEffectApplied & MOD_OFFLINE )
-						;	// nothing
+                    if (moduleStateWhenEffectApplied & MOD_OFFLINE)
+                    {
+                        // nothing
+                    }
 
-					if( moduleStateWhenEffectApplied & MOD_ONLINE)
-                        m_OnlineEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
-
-					if( moduleStateWhenEffectApplied & MOD_ACTIVATED)
-                        m_ActiveEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
-
-					if( moduleStateWhenEffectApplied & MOD_OVERLOADED)
-                        m_OverloadEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
-
-					if( moduleStateWhenEffectApplied & MOD_GANG)
-                        m_GangEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
-
-					if( moduleStateWhenEffectApplied & MOD_FLEET)
-                        m_FleetEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
-
-					if( moduleStateWhenEffectApplied & MOD_DEACTIVATING )
-						;	// nothing
+                    //					if( moduleStateWhenEffectApplied & MOD_ONLINE)
+                    //                        m_OnlineEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
+                    //
+                    //					if( moduleStateWhenEffectApplied & MOD_ACTIVATED)
+                    //                        m_ActiveEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
+                    //
+                    //					if( moduleStateWhenEffectApplied & MOD_OVERLOADED)
+                    //                        m_OverloadEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
+                    //
+                    //					if( moduleStateWhenEffectApplied & MOD_GANG)
+                    //                        m_GangEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
+                    //
+                    //					if( moduleStateWhenEffectApplied & MOD_FLEET)
+                    //                        m_FleetEffects.insert(std::pair<uint32, std::shared_ptr < MEffect >> (effectID, mEffectPtr));
+                    //
+                    //					if( moduleStateWhenEffectApplied & MOD_DEACTIVATING )
+                    //						;	// nothing
 				}
 			}
         }

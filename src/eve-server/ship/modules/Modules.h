@@ -21,7 +21,7 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:        Luck
-*/
+ */
 
 
 #ifndef __MODULES_H__
@@ -38,98 +38,103 @@
 #include "ship/ModuleManager.h"
 
 //generic module base class - possibly should inherit from RefPtr...
+
 class GenericModule
 {
 public:
     GenericModule(InventoryItemRef item, ShipRef ship);
     virtual ~GenericModule();
 
-    virtual void Process()											{ /* Do nothing here */
+    virtual void process() {  }
+    /**
+     * Put the module offline.
+     * Client command.
+     */
+    virtual void offline();
+    /**
+     * Put the module online.
+     * Client command.
+     */
+    virtual void online();
+
+    /**
+     * Activate the module.
+     * Client command.
+     * @param targetEntity The currently selected target.
+     */
+    virtual void activate(SystemEntity * targetEntity) {  }
+
+    /**
+     * Deactivate the module.
+     * Client command.
+     */
+    virtual void deactivate() {  }
+
+    /**
+     * Load a charge into the module.
+     * Client command.
+     * @param charge The charge to load.
+     */
+    virtual void load(InventoryItemRef charge) {  }
+
+    /**
+     * Unload the charge from the module.
+     * Client command.
+     */
+    virtual void unload() {  }
+
+    /**
+     * Put the module into overload mode.
+     * Client command.
+     */
+    virtual void Overload() {  }
+
+    /**
+     * Stop overloading the module.
+     * Client command.
+     */
+    virtual void DeOverload() {  }
+
+    /**
+     * Destroy a rig module.
+     */
+    virtual void DestroyRig() {  }
+
+    virtual void Repair()
+    {
+        m_Item->ResetAttribute(AttrHp, true);
     }
-    virtual void Offline();
-    virtual void Online();
-	virtual void Activate(SystemEntity * targetEntity)				{ /* Do nothing here */ }
-    virtual void Deactivate()										{ /* Do nothing here */ }
-    virtual void Load(InventoryItemRef charge)						{ /* Do nothing here */ }
-    virtual void Unload()											{ /* Do nothing here */ }
-    virtual void Overload()											{ /* Do nothing here */ }
-    virtual void DeOverload()										{ /* Do nothing here */ }
-    virtual void DestroyRig()										{ /* Do nothing here */ }
 
-
-    virtual void Repair()                                        { m_Item->ResetAttribute(AttrHp, true); }
-    virtual void Repair(EvilNumber amount)                        { m_Item->SetAttribute(AttrHp, m_Item->GetAttribute(AttrHp) + amount); }
-
-    virtual void SetAttribute(uint32 attrID, EvilNumber val)    { m_Item->SetAttribute(attrID, val); }
-    virtual EvilNumber GetAttribute(uint32 attrID)                { return m_Item->GetAttribute(attrID); }
-	virtual bool HasAttribute(uint32 attrID)					{ return m_Item->HasAttribute(attrID); }
+    virtual void Repair(EvilNumber amount) { m_Item->SetAttribute(AttrHp, m_Item->GetAttribute(AttrHp) + amount); }
+    virtual void SetAttribute(uint32 attrID, EvilNumber val) { m_Item->SetAttribute(attrID, val); }
+    virtual EvilNumber GetAttribute(uint32 attrID) { return m_Item->GetAttribute(attrID); }
+    virtual bool HasAttribute(uint32 attrID) { return m_Item->HasAttribute(attrID); }
 
     //access functions
-    InventoryItemRef getItem()                                  { return m_Item; }
-    virtual uint32 itemID()                                        { return m_Item->itemID(); }
-    virtual EVEItemFlags flag()                                    { return m_Item->flag(); }
-    virtual uint32 typeID()                                        { return m_Item->typeID(); }
-    virtual bool isOnline()                                        { return (m_Item->GetAttribute(AttrIsOnline) == 1); }
-    virtual bool isHighPower()                                    { return m_Effects->isHighSlot(); }
-    virtual bool isMediumPower()                                { return m_Effects->isMediumSlot(); }
-    virtual bool isLowPower()                                    { return m_Effects->isLowSlot(); }
-	virtual bool isLoaded()										{ return false; }
-	ModuleStates GetModuleState()								{ return m_ModuleState; }
-	ChargeStates GetChargeState()								{ return m_ChargeState; }
 
-	InventoryItemRef GetLoadedChargeRef()					{ return InventoryItemRef(); }
+    InventoryItemRef getItem() { return m_Item; }
+    virtual uint32 itemID() { return m_Item->itemID(); }
+    virtual EVEItemFlags flag() { return m_Item->flag(); }
+    virtual uint32 typeID() { return m_Item->typeID(); }
+    virtual bool isOnline() { return (m_Item->GetAttribute(AttrIsOnline) == 1); }
+    virtual bool isHighPower() { return m_Effects->isHighSlot(); }
+    virtual bool isMediumPower() { return m_Effects->isMediumSlot(); }
+    virtual bool isLowPower() { return m_Effects->isLowSlot(); }
+    virtual bool isRig();
+    virtual bool isSubSystem();
+    virtual bool isLoaded() { return false; }
+    ModuleStates GetModuleState() { return m_ModuleState; }
+    ChargeStates GetChargeState() { return m_ChargeState; }
+    InventoryItemRef GetLoadedChargeRef() { return InventoryItemRef(); }
 
-    virtual bool isTurretFitted()
-    {
-        // Try to make the effect called 'turretFitted' active, if it exists, to test for module being a turret:
-        if( m_Effects->HasEffect(Effect_turretFitted) )     // Effect_turretFitted from enum EveAttrEnum::Effect_turretFitted
-            return true;
-        else
-            return false;
-    }
+    virtual bool isTurretFitted();
+    virtual bool isLauncherFitted();
 
-    virtual bool isLauncherFitted()
-    {
-        // Try to make the effect called 'launcherFitted' active, if it exists, to test for module being a launcher:
-        if( m_Effects->HasEffect(Effect_launcherFitted) )   // Effect_launcherFitted from enum EveAttrEnum::Effect_launcherFitted
-            return true;
-        else
-            return false;
-    }
+    virtual bool isMaxGroupFitLimited();
+    ModulePowerLevel GetModulePowerLevel();
 
-    virtual bool isMaxGroupFitLimited()
-    {
-        if( m_Item->HasAttribute(AttrMaxGroupFitted) )  // AttrMaxGroupFitted from enum EveAttrEnum::AttrMaxGroupFitted
-            return true;
-        else
-            return false;
-    }
-
-    virtual bool isRig()
-    {
-        uint32 i = m_Item->categoryID();
-        return ( (i >= 773 && i <= 782) || (i == 786) || (i == 787) || (i == 896) || (i == 904) );  //need to use enums, but the enum system is a huge mess
-    }
-
-    virtual bool isSubSystem()                                    { return (m_Item->categoryID() == EVEDB::invCategories::Subsystem); }
-
-    //override for rigs and subsystems
-
-    virtual ModulePowerLevel GetModulePowerLevel()
-    {
-        if (isSubSystem())
-        {
-            return MODULE_BANK_SUBSYSTEM;
-        }
-        if (isRig())
-        {
-            return MODULE_BANK_RIG;
-        }
-        return isHighPower() ? MODULE_BANK_HIGH_POWER : (isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER);
-    }
-
-	void SetLog(Task_Log * pLog) { m_pMM_Log = pLog; }
-	Task_Log * GetLog() { return m_pMM_Log; }
+    void SetLog(Task_Log * pLog) { m_pMM_Log = pLog; }
+    Task_Log * GetLog() { return m_pMM_Log; }
 
 protected:
     InventoryItemRef m_Item;
@@ -139,22 +144,15 @@ protected:
     ModuleStates m_ModuleState;
     ChargeStates m_ChargeState;
 
-	Task_Log * m_pMM_Log;		// We do not own this
+    Task_Log * m_pMM_Log; // We do not own this
 
-public:
-    void ModifyShipAttribute(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type);
+    AttributeModifierSourceRef m_ShipModifiers;
+    AttributeModifierSourceRef m_ShipPassiveModifiers;
+    AttributeModifierSourceRef m_ShipActiveModifiers;
+    AttributeModifierSourceRef m_OverloadModifiers;
+    std::map<uint32, AttributeModifierSourceRef> m_ModuleModifiers;
 
-    void ModifyTargetShipAttribute(uint32 targetItemID, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type);
-
-private:
-
-    void _modifyShipAttributes(ShipRef ship, uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type);
-
-    EvilNumber _calculateNewValue(uint32 targetAttrID, uint32 sourceAttrID, EVECalculationType type, std::vector<GenericModule *> mods);
-
-    EvilNumber _calculateNewAttributeValue(EvilNumber sourceAttr, EvilNumber targetAttr, EVECalculationType type, int stackNumber);
-
-    std::vector<GenericModule *> _sortModules(uint32 sortAttrID, std::vector<GenericModule *> mods);
+    void GenerateModifiers();
 };
 
 #endif /* __MODULES_H__ */
