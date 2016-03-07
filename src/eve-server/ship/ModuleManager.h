@@ -346,7 +346,6 @@ public:
 	uint32 GetAvailableSlotInBank(EveEffectEnum slotBank);
 
     bool InstallRig(InventoryItemRef item, EVEItemFlags flag);
-    void UninstallRig(uint32 itemID);
     bool InstallSubSystem(InventoryItemRef item, EVEItemFlags flag);
     bool SwapSubSystem(InventoryItemRef item, EVEItemFlags flag);
     bool FitModule(InventoryItemRef item, EVEItemFlags flag);

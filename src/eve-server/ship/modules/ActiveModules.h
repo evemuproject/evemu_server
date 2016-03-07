@@ -45,10 +45,10 @@ public:
 	bool isLoaded() { return m_chargeLoaded; }
     bool requiresTarget()
     {
-        if( m_Effects->HasDefaultEffect() )
+        if( m_effects->HasDefaultEffect() )
         {
             //return m_Effects->GetDefaultEffect()->GetIsAssistance() || m_Effects->GetDefaultEffect()->GetIsOffensive();
-            return m_Effects->GetDefaultEffect()->GetIsOffensive();
+            return m_effects->GetDefaultEffect()->GetIsOffensive();
         }
         return false;
     }
@@ -95,7 +95,7 @@ protected:
      * Hide cycle effects.
      */
     virtual void hideEffects() { doEffect(false); }
-    std::string currentEffectString;
+    std::string m_effectString;
 
     void doEffect(bool active);
     void doEffect(bool active, std::string effectString);
@@ -108,7 +108,7 @@ protected:
 
 private:
     //internal storage and record keeping
-    bool m_Stop;
+    bool m_stop;
     Timer m_timer;
 };
 

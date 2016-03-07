@@ -38,11 +38,11 @@ MiningLaser::MiningLaser( InventoryItemRef item, ShipRef ship)
     std::string effectsString;
     if (item->groupID() == EVEDB::invGroups::Gas_Cloud_Harvester)
     {
-        currentEffectString = "effects.CloudMining";
+        m_effectString = "effects.CloudMining";
     }
     else
     {
-        currentEffectString = "effects.Mining";
+        m_effectString = "effects.Mining";
     }
 }
 
@@ -83,7 +83,7 @@ bool MiningLaser::canActivate(SystemEntity *targetEntity)
     // We have a valid target, are we in range?
     double maxRange = miner->GetAttribute(AttrMaxRange).get_float();
     maxRange = maxRange * maxRange;
-    double targetRange = targetEntity->DistanceTo2(m_Ship->GetOperator()->GetSystemEntity());
+    double targetRange = targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
     if (targetRange > maxRange)
     {
         // We are not targeting a valid target.
@@ -100,7 +100,7 @@ void MiningLaser::endCycle(bool continuing)
     // Check range
     double maxRange = moduleRef->GetAttribute(AttrMaxRange).get_float();
     maxRange = maxRange * maxRange;
-    double targetRange = m_targetEntity->DistanceTo2(m_Ship->GetOperator()->GetSystemEntity());
+    double targetRange = m_targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
     if (targetRange > maxRange)
     {
         // We must have drifted out of range.
@@ -147,13 +147,13 @@ void MiningLaser::endCycle(bool continuing)
     // Find what cargo hold to use.
     EVEItemFlags cargoFlag = flagCargoHold;
     // Check for specialized cargo hold.
-    if (m_Ship->HasAttribute(AttrSpecialOreHoldCapacity))
+    if (m_ship->HasAttribute(AttrSpecialOreHoldCapacity))
     {
         // We have a specialized ore hold all or goes here.
         cargoFlag = flagSpecializedOreHold;
     }
     // Get cargo hold and remaining capacity.
-    remainingCargoVolume = m_Ship->GetRemainingVolumeByFlag(cargoFlag);
+    remainingCargoVolume = m_ship->GetRemainingVolumeByFlag(cargoFlag);
     // Do we have enough room for the whole stack?
     if (remainingCargoVolume < (oreUnitsToPull * oreUnitVolume))
     {
@@ -171,18 +171,18 @@ void MiningLaser::endCycle(bool continuing)
     }
 
     // Check for an existing ore item in the cargo.
-    InventoryItemRef existing = m_Ship->GetByTypeFlag(asteroidRef->typeID(), cargoFlag);
+    InventoryItemRef existing = m_ship->GetByTypeFlag(asteroidRef->typeID(), cargoFlag);
     if (existing.get() != nullptr)
     {
         // We have an existing ore sample, add to it.
-        m_Ship->AlterCargoQty(existing, oreUnitsToPull);
+        m_ship->AlterCargoQty(existing, oreUnitsToPull);
     }
     else
     {
         // No existing ore sample, create one.
         ItemData idata(
                        asteroidRef->typeID(),
-                       m_Ship->ownerID(),
+                       m_ship->ownerID(),
                        0, //temp location
                        cargoFlag,
                        oreUnitsToPull
@@ -191,11 +191,11 @@ void MiningLaser::endCycle(bool continuing)
         InventoryItemRef ore = ItemFactory::SpawnItem(idata);
         if (ore)
         {
-            m_Ship->AddItem(cargoFlag, ore);
+            m_ship->AddItem(cargoFlag, ore);
         }
         else
         {
-            SysLog::Error("MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_Ship->itemName().c_str(), m_Ship->itemID());
+            SysLog::Error("MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_ship->itemName().c_str(), m_ship->itemID());
             ore->Delete();
         }
     }
@@ -204,7 +204,7 @@ void MiningLaser::endCycle(bool continuing)
     asteroidRef->SetAttribute(AttrQuantity, remainingOreUnits);
 
     // Check to see is ship is full or asteroid depleted.
-    remainingCargoVolume = m_Ship->GetRemainingVolumeByFlag(cargoFlag);
+    remainingCargoVolume = m_ship->GetRemainingVolumeByFlag(cargoFlag);
     if ((remainingCargoVolume < oreUnitVolume) || remainingOreUnits == 0)
     {
         // Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!

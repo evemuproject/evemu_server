@@ -30,7 +30,7 @@
 Afterburner::Afterburner( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
-    currentEffectString = "effects.SpeedBoost";
+    m_effectString = "effects.SpeedBoost";
 }
 
 Afterburner::~Afterburner()
@@ -45,22 +45,22 @@ void Afterburner::endCycle(bool continuing)
         return;
     }
 	// Tell Destiny Manager about our new speed so it properly tracks ship movement:
-	m_Ship->GetOperator()->GetDestiny()->SetMaxVelocity(m_Ship->GetDefaultAttribute(AttrMaxVelocity).get_float());
-	m_Ship->GetOperator()->GetDestiny()->SetSpeedFraction(1.0);
+	m_ship->GetOperator()->GetDestiny()->SetMaxVelocity(m_ship->GetDefaultAttribute(AttrMaxVelocity).get_float());
+	m_ship->GetOperator()->GetDestiny()->SetSpeedFraction(1.0);
 
 	DoDestiny_SetMaxSpeed speed;
-	speed.entityID = m_Ship->itemID();
-	speed.speedValue = m_Ship->GetDefaultAttribute(AttrMaxVelocity).get_float();
+	speed.entityID = m_ship->itemID();
+	speed.speedValue = m_ship->GetDefaultAttribute(AttrMaxVelocity).get_float();
 
 	DoDestiny_SetBallMass mass;
-	mass.entityID = m_Ship->itemID();
-	mass.mass = m_Ship->GetAttribute(AttrMass).get_float();
+	mass.entityID = m_ship->itemID();
+	mass.mass = m_ship->GetAttribute(AttrMass).get_float();
 
 	std::vector<PyTuple *> updates;
 	updates.push_back(speed.Encode());
 	updates.push_back(mass.Encode());
 
-	m_Ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, false);
+	m_ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, false);
 }
 
 void Afterburner::startCycle(bool continuing)
@@ -71,18 +71,18 @@ void Afterburner::startCycle(bool continuing)
     }
 	double implantBonuses = 1.0;	// TODO: gather and accumulate all implant bonuses for MWDs/Afterburners
 	double accelerationControlSkillLevel = 0.0;	// TODO: Figure out how to get access to skills list of character running this ship and get this value
-	double boostSpeed = m_Ship->GetAttribute(AttrMaxVelocity).get_float() * (1.0 + (m_Item->GetAttribute(AttrSpeedFactor).get_float() / 100.0 * (1 + accelerationControlSkillLevel * 0.05) * (implantBonuses) * (m_Item->GetAttribute(AttrSpeedBoostFactor).get_float() / (m_Ship->GetAttribute(AttrMass).get_float()))));
+	double boostSpeed = m_ship->GetAttribute(AttrMaxVelocity).get_float() * (1.0 + (m_item->GetAttribute(AttrSpeedFactor).get_float() / 100.0 * (1 + accelerationControlSkillLevel * 0.05) * (implantBonuses) * (m_item->GetAttribute(AttrSpeedBoostFactor).get_float() / (m_ship->GetAttribute(AttrMass).get_float()))));
 
 	// Tell Destiny Manager about our new speed so it properly tracks ship movement:
-	m_Ship->GetOperator()->GetDestiny()->SetMaxVelocity(boostSpeed);
-	m_Ship->GetOperator()->GetDestiny()->SetSpeedFraction(1.0);
+	m_ship->GetOperator()->GetDestiny()->SetMaxVelocity(boostSpeed);
+	m_ship->GetOperator()->GetDestiny()->SetSpeedFraction(1.0);
 
 	DoDestiny_SetBallMass mass;
-	mass.entityID = m_Ship->itemID();
-	mass.mass = m_Ship->GetAttribute(AttrMass).get_float();
+	mass.entityID = m_ship->itemID();
+	mass.mass = m_ship->GetAttribute(AttrMass).get_float();
 
 	DoDestiny_SetMaxSpeed speed;
-	speed.entityID = m_Ship->itemID();
+	speed.entityID = m_ship->itemID();
 	speed.speedValue = boostSpeed;
 
 	std::vector<PyTuple *> updates;

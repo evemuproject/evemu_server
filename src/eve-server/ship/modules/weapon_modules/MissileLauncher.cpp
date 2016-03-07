@@ -31,7 +31,7 @@
 MissileLauncher::MissileLauncher( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
-    currentEffectString = "effects.MissileDeployment";
+    m_effectString = "effects.MissileDeployment";
 }
 
 MissileLauncher::~MissileLauncher()
@@ -67,18 +67,18 @@ void MissileLauncher::startCycle(bool continuing)
 		// This still somehow needs skill, ship, module, and implant bonuses to be applied:
 		// This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
 		if( m_chargeRef->HasAttribute(AttrKineticDamage) )
-			kinetic_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrKineticDamage)).get_float();
+			kinetic_damage = (m_item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrKineticDamage)).get_float();
 		if( m_chargeRef->HasAttribute(AttrThermalDamage) )
-			thermal_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrThermalDamage)).get_float();
+			thermal_damage = (m_item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrThermalDamage)).get_float();
 		if( m_chargeRef->HasAttribute(AttrEmDamage) )
-			em_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrEmDamage)).get_float();
+			em_damage = (m_item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrEmDamage)).get_float();
 		if( m_chargeRef->HasAttribute(AttrExplosiveDamage) )
-			explosive_damage = (m_Item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrExplosiveDamage)).get_float();
+			explosive_damage = (m_item->GetAttribute(AttrDamageMultiplier) * m_chargeRef->GetAttribute(AttrExplosiveDamage)).get_float();
 
 		Damage damageDealt
 		(
-			m_Ship->GetOperator()->GetSystemEntity(),
-			m_Item,
+			m_ship->GetOperator()->GetSystemEntity(),
+			m_item,
 			kinetic_damage,			// kinetic damage
 			thermal_damage,			// thermal damage
 			em_damage,				// em damage

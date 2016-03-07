@@ -971,10 +971,7 @@ void Ship::CancelOverloading()
 
 void Ship::RemoveRig( InventoryItemRef item, uint32 inventoryID )
 {
-    m_ModuleManager->UninstallRig(item->itemID());
-
-    //move the item to the void or w/e
-    m_pOperator->MoveItem(item->itemID(), inventoryID, flagAutoFit);
+    m_ModuleManager->UnfitModule(item->itemID());
 
     //delete the item
     item->Delete();

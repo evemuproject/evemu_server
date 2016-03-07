@@ -29,43 +29,43 @@
 
 GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
 {
-    m_Item = item;
-    m_Ship = ship;
-    m_Effects = new ModuleEffects(m_Item->typeID());
-    m_ModuleState = MOD_UNFITTED;
-    m_ChargeState = MOD_UNLOADED;
+    m_item = item;
+    m_ship = ship;
+    m_effects = new ModuleEffects(m_item->typeID());
+    m_moduleState = MOD_UNFITTED;
+    m_chargeState = MOD_UNLOADED;
 
     // Set up modifier sources.
-    m_ShipModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
-    m_ShipActiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
-    m_ShipPassiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
-    m_OverloadModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_shipModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_shipActiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_shipPassiveModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
+    m_overloadModifiers = AttributeModifierSourceRef(new AttributeModifierSource(item));
 
-    GenerateModifiers();
+    generateModifiers();
     // attach overload modifiers.
-    m_OverloadModifiers->SetActive(false);
-    m_Item->AddAttributeModifier(m_OverloadModifiers);
+    m_overloadModifiers->SetActive(false);
+    m_item->AddAttributeModifier(m_overloadModifiers);
     // attach ship modifiers.
-    m_ShipActiveModifiers->SetActive(false);
-    m_ShipPassiveModifiers->SetActive(false);
-    m_Ship->AddAttributeModifier(m_ShipModifiers);
-    m_Ship->AddAttributeModifier(m_ShipPassiveModifiers);
-    m_Ship->AddAttributeModifier(m_ShipActiveModifiers);
+    m_shipActiveModifiers->SetActive(false);
+    m_shipPassiveModifiers->SetActive(false);
+    m_ship->AddAttributeModifier(m_shipModifiers);
+    m_ship->AddAttributeModifier(m_shipPassiveModifiers);
+    m_ship->AddAttributeModifier(m_shipActiveModifiers);
 }
 
 GenericModule::~GenericModule()
 {
     // remove overload modifiers.
-    m_Item->RemoveAttributeModifier(m_OverloadModifiers);
+    m_item->RemoveAttributeModifier(m_overloadModifiers);
     // remove ship modifiers.
-    m_Ship->RemoveAttributeModifier(m_ShipModifiers);
-    m_Ship->RemoveAttributeModifier(m_ShipPassiveModifiers);
-    m_Ship->RemoveAttributeModifier(m_ShipActiveModifiers);
+    m_ship->RemoveAttributeModifier(m_shipModifiers);
+    m_ship->RemoveAttributeModifier(m_shipPassiveModifiers);
+    m_ship->RemoveAttributeModifier(m_shipActiveModifiers);
 
     //delete members
-    delete m_Effects;
+    delete m_effects;
     //null ptrs
-    m_Effects = NULL;
+    m_effects = NULL;
 }
 
 void GenericModule::offline()
@@ -73,60 +73,60 @@ void GenericModule::offline()
     // Insure the module is inactive.
     deactivate();
     //change item state
-    m_Item->PutOffline();
-    m_ModuleState = MOD_OFFLINE;
+    m_item->PutOffline();
+    m_moduleState = MOD_OFFLINE;
 
     // Disable ALL modifiers.
-    m_ShipModifiers->SetActive(false);
-    m_ShipPassiveModifiers->SetActive(false);
-    m_ShipActiveModifiers->SetActive(false); // should be false anyway.
-    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
-    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_shipModifiers->SetActive(false);
+    m_shipPassiveModifiers->SetActive(false);
+    m_shipActiveModifiers->SetActive(false); // should be false anyway.
+    m_shipModifiers->UpdateModifiers(m_ship.get(), true);
+    m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
 }
 
 void GenericModule::online()
 {
     //change item state
-    m_Item->PutOnline();
-    m_ModuleState = MOD_ONLINE;
+    m_item->PutOnline();
+    m_moduleState = MOD_ONLINE;
 
     // Trigger modifiers.
-    m_ShipModifiers->SetActive(true);
-    m_ShipPassiveModifiers->SetActive(true);
-    m_ShipActiveModifiers->SetActive(false); // should be false anyway.
-    m_ShipModifiers->UpdateModifiers(m_Ship.get(), true);
-    m_ShipPassiveModifiers->UpdateModifiers(m_Ship.get(), true);
+    m_shipModifiers->SetActive(true);
+    m_shipPassiveModifiers->SetActive(true);
+    m_shipActiveModifiers->SetActive(false); // should be false anyway.
+    m_shipModifiers->UpdateModifiers(m_ship.get(), true);
+    m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
 }
 
 bool GenericModule::isTurretFitted()
 {
     // Try to make the effect called 'turretFitted' active, if it exists, to test for module being a turret:
-    return m_Effects->HasEffect(Effect_turretFitted); // Effect_turretFitted from enum EveAttrEnum::Effect_turretFitted
+    return m_effects->HasEffect(Effect_turretFitted); // Effect_turretFitted from enum EveAttrEnum::Effect_turretFitted
 }
 
 bool GenericModule::isLauncherFitted()
 {
     // Try to make the effect called 'launcherFitted' active, if it exists, to test for module being a launcher:
-    return m_Effects->HasEffect(Effect_launcherFitted); // Effect_launcherFitted from enum EveAttrEnum::Effect_launcherFitted
+    return m_effects->HasEffect(Effect_launcherFitted); // Effect_launcherFitted from enum EveAttrEnum::Effect_launcherFitted
 }
 
 bool GenericModule::isMaxGroupFitLimited()
 {
-    return m_Item->HasAttribute(AttrMaxGroupFitted); // AttrMaxGroupFitted from enum EveAttrEnum::AttrMaxGroupFitted
+    return m_item->HasAttribute(AttrMaxGroupFitted); // AttrMaxGroupFitted from enum EveAttrEnum::AttrMaxGroupFitted
 }
 
 bool GenericModule::isRig()
 {
-    uint32 i = m_Item->categoryID();
+    uint32 i = m_item->categoryID();
     return ( (i >= 773 && i <= 782) || (i == 786) || (i == 787) || (i == 896) || (i == 904)); //need to use enums, but the enum system is a huge mess
 }
 
 bool GenericModule::isSubSystem()
 {
-    return (m_Item->categoryID() == EVEDB::invCategories::Subsystem);
+    return (m_item->categoryID() == EVEDB::invCategories::Subsystem);
 }
 
-ModulePowerLevel GenericModule::GetModulePowerLevel()
+ModulePowerLevel GenericModule::getModulePowerLevel()
 {
     if (isSubSystem())
     {
@@ -139,10 +139,10 @@ ModulePowerLevel GenericModule::GetModulePowerLevel()
     return isHighPower() ? MODULE_BANK_HIGH_POWER : (isMediumPower() ? MODULE_BANK_MEDIUM_POWER : MODULE_BANK_LOW_POWER);
 }
 
-void GenericModule::GenerateModifiers()
+void GenericModule::generateModifiers()
 {
     // load and setup ONLINE effects
-    auto map = m_Effects->GetEffects();
+    auto map = m_effects->GetEffects();
     for (auto itr : map)
     {
         std::shared_ptr<MEffect> effect = itr.second;
@@ -157,11 +157,11 @@ void GenericModule::GenerateModifiers()
             bool Stack = false;
             if (effect->GetStackingPenaltyApplied(i) != 0)
                 Stack = true;
-            AttributeModifierRef mod = AttributeModifierRef(new AttributeModifier(m_Item, effect, i, true));
+            AttributeModifierRef mod = AttributeModifierRef(new AttributeModifier(m_item, effect, i, true));
             // get the module type that causes the effect.
             uint32 affecting = effect->GetAffectingID(i);
             uint32 state = effect->GetModuleStateWhenEffectApplied(i);
-            if (affecting == 0 || affecting == m_Item->groupID())
+            if (affecting == 0 || affecting == m_item->groupID())
             {
                 typeTargetGroupIDlist *groups = effect->GetTargetGroupIDlist(i);
                 typeTargetGroupIDlist::iterator tItr = groups->begin();
@@ -171,25 +171,25 @@ void GenericModule::GenerateModifiers()
                     if (groupID == 6) // target ship
                     {
                         if (state == EFFECT_ONLINE)
-                            m_ShipModifiers->AddModifier(mod);
+                            m_shipModifiers->AddModifier(mod);
                         if (state == EFFECT_ACTIVE)
-                            m_ShipActiveModifiers->AddModifier(mod);
+                            m_shipActiveModifiers->AddModifier(mod);
                         if (state == EFFECT_PASSIVE)
-                            m_ShipPassiveModifiers->AddModifier(mod);
+                            m_shipPassiveModifiers->AddModifier(mod);
                     }
                     else if (groupID == 0) // target self
                     {
                         if (state == EFFECT_OVERLOAD)
-                            m_OverloadModifiers->AddModifier(mod);
+                            m_overloadModifiers->AddModifier(mod);
                     }
                     else // target module
                     {
                         // to-do: add module modifiers.
                         if (state == EFFECT_ONLINE)
                         {
-                            if (m_ModuleModifiers.find(groupID) == m_ModuleModifiers.end())
-                                m_ModuleModifiers[groupID] = AttributeModifierSourceRef(new AttributeModifierSource(m_Item));
-                            m_ModuleModifiers[groupID]->AddModifier(mod);
+                            if (m_moduleModifiers.find(groupID) == m_moduleModifiers.end())
+                                m_moduleModifiers[groupID] = AttributeModifierSourceRef(new AttributeModifierSource(m_item));
+                            m_moduleModifiers[groupID]->AddModifier(mod);
                         }
                     }
                 }

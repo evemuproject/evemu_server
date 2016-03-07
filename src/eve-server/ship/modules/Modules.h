@@ -87,72 +87,67 @@ public:
      * Put the module into overload mode.
      * Client command.
      */
-    virtual void Overload() {  }
+    virtual void overload() {  }
 
     /**
      * Stop overloading the module.
      * Client command.
      */
-    virtual void DeOverload() {  }
+    virtual void deOverload() {  }
 
-    /**
-     * Destroy a rig module.
-     */
-    virtual void DestroyRig() {  }
-
-    virtual void Repair()
+    virtual void repair()
     {
-        m_Item->ResetAttribute(AttrHp, true);
+        m_item->ResetAttribute(AttrHp, true);
     }
 
-    virtual void Repair(EvilNumber amount) { m_Item->SetAttribute(AttrHp, m_Item->GetAttribute(AttrHp) + amount); }
-    virtual void SetAttribute(uint32 attrID, EvilNumber val) { m_Item->SetAttribute(attrID, val); }
-    virtual EvilNumber GetAttribute(uint32 attrID) { return m_Item->GetAttribute(attrID); }
-    virtual bool HasAttribute(uint32 attrID) { return m_Item->HasAttribute(attrID); }
+    virtual void repair(EvilNumber amount) { m_item->SetAttribute(AttrHp, m_item->GetAttribute(AttrHp) + amount); }
+    virtual void setAttribute(uint32 attrID, EvilNumber val) { m_item->SetAttribute(attrID, val); }
+    virtual EvilNumber getAttribute(uint32 attrID) { return m_item->GetAttribute(attrID); }
+    virtual bool hasAttribute(uint32 attrID) { return m_item->HasAttribute(attrID); }
 
     //access functions
 
-    InventoryItemRef getItem() { return m_Item; }
-    virtual uint32 itemID() { return m_Item->itemID(); }
-    virtual EVEItemFlags flag() { return m_Item->flag(); }
-    virtual uint32 typeID() { return m_Item->typeID(); }
-    virtual bool isOnline() { return (m_Item->GetAttribute(AttrIsOnline) == 1); }
-    virtual bool isHighPower() { return m_Effects->isHighSlot(); }
-    virtual bool isMediumPower() { return m_Effects->isMediumSlot(); }
-    virtual bool isLowPower() { return m_Effects->isLowSlot(); }
+    InventoryItemRef getItem() { return m_item; }
+    virtual uint32 itemID() { return m_item->itemID(); }
+    virtual EVEItemFlags flag() { return m_item->flag(); }
+    virtual uint32 typeID() { return m_item->typeID(); }
+    virtual bool isOnline() { return (m_item->GetAttribute(AttrIsOnline) == 1); }
+    virtual bool isHighPower() { return m_effects->isHighSlot(); }
+    virtual bool isMediumPower() { return m_effects->isMediumSlot(); }
+    virtual bool isLowPower() { return m_effects->isLowSlot(); }
     virtual bool isRig();
     virtual bool isSubSystem();
     virtual bool isLoaded() { return false; }
-    ModuleStates GetModuleState() { return m_ModuleState; }
-    ChargeStates GetChargeState() { return m_ChargeState; }
-    InventoryItemRef GetLoadedChargeRef() { return InventoryItemRef(); }
+    ModuleStates getModuleState() { return m_moduleState; }
+    ChargeStates getChargeState() { return m_chargeState; }
+    InventoryItemRef getLoadedChargeRef() { return InventoryItemRef(); }
 
     virtual bool isTurretFitted();
     virtual bool isLauncherFitted();
 
     virtual bool isMaxGroupFitLimited();
-    ModulePowerLevel GetModulePowerLevel();
+    ModulePowerLevel getModulePowerLevel();
 
-    void SetLog(Task_Log * pLog) { m_pMM_Log = pLog; }
-    Task_Log * GetLog() { return m_pMM_Log; }
+    void setLog(Task_Log * pLog) { m_pMM_Log = pLog; }
+    Task_Log * getLog() { return m_pMM_Log; }
 
 protected:
-    InventoryItemRef m_Item;
-    ShipRef m_Ship;
-    ModuleEffects * m_Effects;
+    InventoryItemRef m_item;
+    ShipRef m_ship;
+    ModuleEffects * m_effects;
 
-    ModuleStates m_ModuleState;
-    ChargeStates m_ChargeState;
+    ModuleStates m_moduleState;
+    ChargeStates m_chargeState;
 
     Task_Log * m_pMM_Log; // We do not own this
 
-    AttributeModifierSourceRef m_ShipModifiers;
-    AttributeModifierSourceRef m_ShipPassiveModifiers;
-    AttributeModifierSourceRef m_ShipActiveModifiers;
-    AttributeModifierSourceRef m_OverloadModifiers;
-    std::map<uint32, AttributeModifierSourceRef> m_ModuleModifiers;
+    AttributeModifierSourceRef m_shipModifiers;
+    AttributeModifierSourceRef m_shipPassiveModifiers;
+    AttributeModifierSourceRef m_shipActiveModifiers;
+    AttributeModifierSourceRef m_overloadModifiers;
+    std::map<uint32, AttributeModifierSourceRef> m_moduleModifiers;
 
-    void GenerateModifiers();
+    void generateModifiers();
 };
 
 #endif /* __MODULES_H__ */

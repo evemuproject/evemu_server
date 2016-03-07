@@ -33,30 +33,30 @@ SuperWeapon::SuperWeapon( InventoryItemRef item, ShipRef ship)
 	m_buildUpTimer(0), m_effectDurationTimer(0)
 {
 	m_effectID = 0;
-	switch (m_Item->typeID())
+	switch (m_item->typeID())
 	{
 		case 24550:
-			currentEffectString = "effects.SuperWeaponAmarr";
+			m_effectString = "effects.SuperWeaponAmarr";
 			m_effectID = effectSuperWeaponAmarr;
 			break;
 
 		case 24552:
-			currentEffectString = "effects.SuperWeaponCaldari";
+			m_effectString = "effects.SuperWeaponCaldari";
 			m_effectID = effectSuperWeaponCaldari;
 			break;
 
 		case 24554:
-			currentEffectString = "effects.SuperWeaponGallente";
+			m_effectString = "effects.SuperWeaponGallente";
 			m_effectID = effectSuperWeaponGallente;
 			break;
 
 		case 23674:
-			currentEffectString = "effects.SuperWeaponMinmatar";
+			m_effectString = "effects.SuperWeaponMinmatar";
 			m_effectID = effectSuperWeaponMinmatar;
 			break;
 
 		default:
-			currentEffectString = "";
+			m_effectString = "";
 			m_effectID = 0;
 			break;
     }
@@ -110,19 +110,19 @@ void SuperWeapon::startCycle(bool continuing)
 
 		// This still somehow needs skill, ship, module, and implant bonuses to be applied:
 		// This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-		if (m_Item->HasAttribute(AttrKineticDamage))
-			kinetic_damage = (m_Item->GetAttribute(AttrKineticDamage)).get_float();
-		if (m_Item->HasAttribute(AttrThermalDamage))
-			thermal_damage = (m_Item->GetAttribute(AttrThermalDamage)).get_float();
-		if (m_Item->HasAttribute(AttrEmDamage))
-			em_damage = (m_Item->GetAttribute(AttrEmDamage)).get_float();
-		if (m_Item->HasAttribute(AttrExplosiveDamage))
-			explosive_damage = (m_Item->GetAttribute(AttrExplosiveDamage)).get_float();
+		if (m_item->HasAttribute(AttrKineticDamage))
+			kinetic_damage = (m_item->GetAttribute(AttrKineticDamage)).get_float();
+		if (m_item->HasAttribute(AttrThermalDamage))
+			thermal_damage = (m_item->GetAttribute(AttrThermalDamage)).get_float();
+		if (m_item->HasAttribute(AttrEmDamage))
+			em_damage = (m_item->GetAttribute(AttrEmDamage)).get_float();
+		if (m_item->HasAttribute(AttrExplosiveDamage))
+			explosive_damage = (m_item->GetAttribute(AttrExplosiveDamage)).get_float();
 
 		Damage damageDealt
 			(
-			m_Ship->GetOperator()->GetSystemEntity(),
-			m_Item,
+			m_ship->GetOperator()->GetSystemEntity(),
+			m_item,
 			kinetic_damage,			// kinetic damage
 			thermal_damage,			// thermal damage
 			em_damage,				// em damage

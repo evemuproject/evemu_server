@@ -33,7 +33,7 @@
 TractorBeam::TractorBeam( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
-    currentEffectString = "effects.TractorBeam";
+    m_effectString = "effects.TractorBeam";
 }
 
 TractorBeam::~TractorBeam()
@@ -50,7 +50,7 @@ bool TractorBeam::canActivate(SystemEntity * targetEntity)
 	{
 		if (
 		     (
-				(m_Ship->typeID() == 28606)		// Orca is the only ship allowed to tractor asteroids and ice chunks
+				(m_ship->typeID() == 28606)		// Orca is the only ship allowed to tractor asteroids and ice chunks
 				&&
 				(
 				((getItem()->typeID() == 16278 || getItem()->typeID() == 22229) && (targetEntity->Item()->groupID() == EVEDB::invGroups::Ice))
@@ -79,14 +79,14 @@ void TractorBeam::startCycle(bool continuing)
     // Initiate continued Destiny Action to move tractored object toward ship
     DynamicSystemEntity * targetEntity = static_cast<DynamicSystemEntity *>(m_targetEntity);
     // Check for distance to target > 5000m + ship radius
-    GVector distanceToTarget(targetEntity->GetPosition(), m_Ship->position());
-    if (distanceToTarget.length() > (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()))
+    GVector distanceToTarget(targetEntity->GetPosition(), m_ship->position());
+    if (distanceToTarget.length() > (5000.0 + m_ship->GetAttribute(AttrRadius).get_float()))
     {
         // Range higher?  Then start it moving toward ship @ 200m/s
         targetEntity->Destiny()->SetMaxVelocity(1000.0);
         targetEntity->Destiny()->SetSpeedFraction(1.0);
         // Tractor objects at 1000m/s:
-        targetEntity->Destiny()->TractorBeamFollow(m_Ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_Ship->GetAttribute(AttrRadius).get_float()));
+        targetEntity->Destiny()->TractorBeamFollow(m_ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_ship->GetAttribute(AttrRadius).get_float()));
     }
     else
     {

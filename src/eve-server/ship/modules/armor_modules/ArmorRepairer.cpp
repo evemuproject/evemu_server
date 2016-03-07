@@ -33,7 +33,7 @@
 ArmorRepairer::ArmorRepairer(InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
-    currentEffectString  = "effects.ArmorRepair";
+    m_effectString  = "effects.ArmorRepair";
 }
 
 ArmorRepairer::~ArmorRepairer()
@@ -44,11 +44,11 @@ void ArmorRepairer::startCycle(bool continuing)
 {
     // Apply repair amount:
     EvilNumber newDamageAmount;
-    newDamageAmount = m_Ship->GetAttribute(AttrArmorDamage) - m_Item->GetAttribute(AttrArmorDamageAmount);
+    newDamageAmount = m_ship->GetAttribute(AttrArmorDamage) - m_item->GetAttribute(AttrArmorDamageAmount);
     if( newDamageAmount < 0.0 )
     {
         newDamageAmount = 0.0;
     }
 
-    m_Ship->SetAttribute(AttrArmorDamage, newDamageAmount);
+    m_ship->SetAttribute(AttrArmorDamage, newDamageAmount);
 }

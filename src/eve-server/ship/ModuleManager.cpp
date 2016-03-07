@@ -1046,13 +1046,6 @@ bool ModuleManager::InstallRig(InventoryItemRef item, EVEItemFlags flag)
     return false;
 }
 
-void ModuleManager::UninstallRig(uint32 itemID)
-{
-    GenericModule * mod = m_Modules->GetModule(itemID);
-    if( mod != NULL )
-        mod->DestroyRig();
-}
-
 bool ModuleManager::SwapSubSystem(InventoryItemRef item, EVEItemFlags flag)
 {
     if(item->groupID() >= 954 && item->groupID() <= 958)
@@ -1091,7 +1084,7 @@ void ModuleManager::UnfitModule(uint32 itemID)
     {
 		if( mod->isLoaded() )
 		{
-			InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
+			InventoryItemRef loadedChargeRef = mod->getLoadedChargeRef();
 			if( IsStation(m_Ship->locationID()) )
 				loadedChargeRef->Move(m_Ship->locationID(), flagHangar);		// used to be (m_pOperator->GetLocationID(), flag)
 			else
@@ -1137,7 +1130,7 @@ bool ModuleManager::_fitModule(InventoryItemRef item, EVEItemFlags flag)
 		mod = ModuleFactory(item, ShipRef(m_Ship));
 
 		// Set module's pointer to its owner ModuleManager's log object:
-		mod->SetLog(m_pLog);
+		mod->setLog(m_pLog);
 
 		// Check for max turret modules allowed:
 		if( mod->isTurretFitted() && (m_Modules->GetFittedTurretCount() == m_Ship->GetMaxTurrentHardpoints().get_int()) )
@@ -1278,7 +1271,7 @@ void ModuleManager::Overload(uint32 itemID)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL )
     {
-        mod->Overload();
+        mod->overload();
     }
 }
 
@@ -1287,7 +1280,7 @@ void ModuleManager::DeOverload(uint32 itemID)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL )
     {
-        mod->DeOverload();
+        mod->deOverload();
     }
 }
 
@@ -1296,7 +1289,7 @@ void ModuleManager::DamageModule(uint32 itemID, EvilNumber val)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL)
     {
-        mod->SetAttribute(AttrHp, val);
+        mod->setAttribute(AttrHp, val);
     }
 }
 
@@ -1305,7 +1298,7 @@ void ModuleManager::RepairModule(uint32 itemID)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL )
     {
-        mod->Repair();
+        mod->repair();
     }
 }
 
@@ -1443,7 +1436,7 @@ void ModuleManager::UnloadCharge(EVEItemFlags flag)
 		{
 			if( mod->isLoaded() )
 			{
-				InventoryItemRef loadedChargeRef = mod->GetLoadedChargeRef();
+				InventoryItemRef loadedChargeRef = mod->getLoadedChargeRef();
 				mod->unload();
 			}
 		}
@@ -1460,7 +1453,7 @@ InventoryItemRef ModuleManager::GetLoadedChargeOnModule(EVEItemFlags flag)
 		if( mod != NULL )
 		{
 			if( mod->isLoaded() )
-				return mod->GetLoadedChargeRef();
+				return mod->getLoadedChargeRef();
 			else
 				return InventoryItemRef();
 		}
@@ -1816,8 +1809,8 @@ void ModuleManager::_processExternalEffect(SubEffect * s)
     if( mod != NULL )
     {
         //calculate new attribute
-        mod->SetAttribute(s->AttributeID(),
-                          CalculateNewAttributeValue(mod->GetAttribute(s->AttributeID()),
+        mod->setAttribute(s->AttributeID(),
+                          CalculateNewAttributeValue(mod->getAttribute(s->AttributeID()),
                                                                        s->AppliedValue(), s->CalculationType()));
     }
     else if( s->TargetItemID() == m_Ship->itemID() ) //guess it's not, but that means it should be targeting our ship itself
