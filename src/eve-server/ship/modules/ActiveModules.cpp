@@ -152,10 +152,10 @@ void ActiveModule::activate(SystemEntity * targetEntity)
     // Tell the module that we started a new cycle.
     startCycle(false);
     // Apply modifiers.
-    m_shipActiveModifiers->SetActive(true);
-    m_shipPassiveModifiers->SetActive(false);
-    m_shipActiveModifiers->UpdateModifiers(m_ship.get(), true);
-    m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
+    m_shipActiveModifiers->setActive(true);
+    m_shipPassiveModifiers->setActive(false);
+    m_shipActiveModifiers->updateModifiers(m_ship.get(), true);
+    m_shipPassiveModifiers->updateModifiers(m_ship.get(), true);
 }
 
 void ActiveModule::deactivate()
@@ -238,10 +238,10 @@ void ActiveModule::doStop()
         m_moduleState = MOD_ONLINE;
     }
     // Remove modifiers.
-    m_shipActiveModifiers->SetActive(false);
-    m_shipPassiveModifiers->SetActive(m_moduleState != MOD_OFFLINE);
-    m_shipActiveModifiers->UpdateModifiers(m_ship.get(), true);
-    m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
+    m_shipActiveModifiers->setActive(false);
+    m_shipPassiveModifiers->setActive(m_moduleState != MOD_OFFLINE);
+    m_shipActiveModifiers->updateModifiers(m_ship.get(), true);
+    m_shipPassiveModifiers->updateModifiers(m_ship.get(), true);
 }
 
 void ActiveModule::doEffect(bool active)

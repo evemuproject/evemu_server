@@ -51,7 +51,7 @@ void test()
     }
 }
     </pre>
-    Class and structure names should be in upper camel case.<br/>
+    Class, structure, and typedef names should be in upper camel case.<br/>
 Function names in should be in lower camel case.<br/>
 Defines should be in all upper case.<br/>
 Class member functions should be in lower camel case with a 'm_' appended to the beginning.<br/>
@@ -63,7 +63,9 @@ class TestClass
 public:
     TestClass();
     virtual ~TestClass();
-    
+
+    typedef std::vector<int> IdentifierList;
+
     void testFunction();
     void emptyTestFunction() {}; // Correct, empty code block.
     int BadFunctionName(); // Incorrect, first letter is upper case.

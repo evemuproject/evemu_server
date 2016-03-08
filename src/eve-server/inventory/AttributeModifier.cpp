@@ -30,52 +30,52 @@
 
 AttributeModifier::AttributeModifier(InventoryItemRef item, std::shared_ptr<MEffect> effect, int effect_index, bool active)
 : RefObject( 0 ),
-  m_Effect(effect)
+  m_effect(effect)
 {
-    m_Item = item;
-    m_EffectIndex = effect_index;
-    m_Active = active;
+    m_item = item;
+    m_effectIndex = effect_index;
+    m_active = active;
 }
 
-void AttributeModifier::SetActive(bool state)
+void AttributeModifier::setActive(bool state)
 {
-    if (state != m_Active)
+    if (state != m_active)
     {
-        m_Active = state;
+        m_active = state;
     }
 }
 
-double AttributeModifier::GetAmount()
+double AttributeModifier::getAmount()
 {
-    if (m_Effect.get() == NULL)
+    if (m_effect.get() == NULL)
     {
         return 0;
     }
-    EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
+    EVECalculationType m_Type = m_effect->GetCalculationType(m_effectIndex);
     if (m_Type == CALC_ADDITION)
     {
-        return m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float();
+        return m_item->GetAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float();
     }
     if (m_Type == CALC_SUBTRACTION)
     {
-        return -(m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float());
+        return -(m_item->GetAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float());
     }
     return 0;
 }
 
-double AttributeModifier::GetFactor()
+double AttributeModifier::getFactor()
 {
-    if (m_Effect.get() == NULL)
+    if (m_effect.get() == NULL)
     {
         return 0;
     }
-    double source = m_Item->GetAttribute(m_Effect->GetSourceAttributeID(m_EffectIndex)).get_float();
-    EVECalculationType m_Type = m_Effect->GetCalculationType(m_EffectIndex);
+    double source = m_item->GetAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float();
+    EVECalculationType m_Type = m_effect->GetCalculationType(m_effectIndex);
     if(m_Type == CALC_PERCENTAGE)
     {
 // possible problem with effectInfo 657 in groupID 78 with calc_percentage.
 // some modules have value 1 that should be 1% not 0% change
-        if (source < 2 && source > 0 && m_Effect->GetEffectID() != 657)
+        if (source < 2 && source > 0 && m_effect->GetEffectID() != 657)
         {
             return (1.0 - source) * 100;
         }
@@ -105,66 +105,66 @@ double AttributeModifier::GetFactor()
 AttributeModifierSource::AttributeModifierSource(InventoryItemRef sourceItem)
 : RefObject( 0 )
 {
-    m_Source = sourceItem;
-    m_Active = true;
+    m_source = sourceItem;
+    m_active = true;
 }
 
 AttributeModifierSource::~AttributeModifierSource()
 {
-    m_Modifiers.clear();
-    m_Source = InventoryItemRef();
+    m_modifiers.clear();
+    m_source = InventoryItemRef();
 }
 
-void AttributeModifierSource::AddModifier(AttributeModifierRef modifier)
+void AttributeModifierSource::addModifier(AttributeModifierRef modifier)
 {
-    std::vector<AttributeModifierRef>::iterator itr = std::find(m_Modifiers.begin(), m_Modifiers.end(), modifier);
-    if (itr == m_Modifiers.end())
+    std::vector<AttributeModifierRef>::iterator itr = std::find(m_modifiers.begin(), m_modifiers.end(), modifier);
+    if (itr == m_modifiers.end())
     {
-        m_Modifiers.push_back(modifier);
+        m_modifiers.push_back(modifier);
     }
 }
 
-void AttributeModifierSource::RemoveModifier(AttributeModifierRef modifier)
+void AttributeModifierSource::removeModifier(AttributeModifierRef modifier)
 {
-    std::vector<AttributeModifierRef>::iterator itr = std::find(m_Modifiers.begin(), m_Modifiers.end(), modifier);
-    if (itr != m_Modifiers.end())
+    std::vector<AttributeModifierRef>::iterator itr = std::find(m_modifiers.begin(), m_modifiers.end(), modifier);
+    if (itr != m_modifiers.end())
     {
-        m_Modifiers.erase(itr);
+        m_modifiers.erase(itr);
     }
 }
 
-void AttributeModifierSource::GetModification(uint32 attrib, double &amount, FactorList &nonStackingFactors, FactorList &stackingFactors)
+void AttributeModifierSource::getModification(uint32 attrib, double &amount, FactorList &nonStackingFactors, FactorList &stackingFactors)
 {
-    if (m_Active == false)
+    if (m_active == false)
     {
         return;
     }
-    for (AttributeModifierRef modifier : m_Modifiers)
+    for (AttributeModifierRef modifier : m_modifiers)
     {
-        if (modifier->Modifies(attrib) && modifier->IsActive() == true)
+        if (modifier->modifies(attrib) && modifier->isActive() == true)
         {
             // add fixed change amount.
-            amount += modifier->GetAmount();
+            amount += modifier->getAmount();
             // check for change factor.
-            if (modifier->GetFactor() == 0)
+            if (modifier->getFactor() == 0)
             {
                 continue;
             }
-            if (modifier->StackPenalty())
+            if (modifier->stackPenalty())
             {
                 // yes this has a stacking penalty.
-                stackingFactors.push_back(modifier->GetFactor());
+                stackingFactors.push_back(modifier->getFactor());
             }
             else
             {
                 // no stack penalty.
-                nonStackingFactors.push_back(modifier->GetFactor());
+                nonStackingFactors.push_back(modifier->getFactor());
             }
         }
     }
 }
 
-double AttributeModifierSource::FinalizeModification(double value, double amount, FactorList &nonStackingFactors, FactorList &stackingFactors)
+double AttributeModifierSource::finalizeModification(double value, double amount, FactorList &nonStackingFactors, FactorList &stackingFactors)
 {
     // Add the fixed adjustment amount.
     value += amount;
@@ -198,22 +198,22 @@ double AttributeModifierSource::FinalizeModification(double value, double amount
     return value;
 }
 
-void AttributeModifierSource::SetActive(bool state)
+void AttributeModifierSource::setActive(bool state)
 {
-    if (state != m_Active)
+    if (state != m_active)
     {
-        m_Active = state;
+        m_active = state;
     }
 }
 
-void AttributeModifierSource::UpdateModifiers(InventoryItem *item, bool notify)
+void AttributeModifierSource::updateModifiers(InventoryItem *item, bool notify)
 {
     if (item == NULL)
     {
         return;
     }
-    for (AttributeModifierRef modifier : m_Modifiers)
+    for (AttributeModifierRef modifier : m_modifiers)
     {
-        item->ResetAttribute(modifier->GetTargetAttribute(), notify);
+        item->ResetAttribute(modifier->getTargetAttribute(), notify);
     }
 }

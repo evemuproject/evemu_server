@@ -1390,9 +1390,9 @@ bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)
         {
             continue;
         }
-        src->GetModification(attrID, amount, factors, stackedfactors);
+        src->getModification(attrID, amount, factors, stackedfactors);
     }
-    double value = AttributeModifierSource::FinalizeModification(nVal.get_float(), amount, factors, stackedfactors);
+    double value = AttributeModifierSource::finalizeModification(nVal.get_float(), amount, factors, stackedfactors);
     if (nVal.get_type() == EVIL_NUMBER_TYPE::evil_number_int)
     {
         nVal = EvilNumber((int64) value);
@@ -1411,7 +1411,7 @@ void InventoryItem::AddAttributeModifier(AttributeModifierSourceRef modifier)
     if (std::find(m_attributeModifiers.begin(), m_attributeModifiers.end(), modifier) == m_attributeModifiers.end())
     {
         m_attributeModifiers.push_back(modifier);
-        modifier->UpdateModifiers(this, true);
+        modifier->updateModifiers(this, true);
     }
 }
 
@@ -1422,6 +1422,6 @@ void InventoryItem::RemoveAttributeModifier(AttributeModifierSourceRef modifier)
     {
         AttributeModifierSourceRef src = *itr;
         m_attributeModifiers.erase(itr);
-        src->UpdateModifiers(this, true);
+        src->updateModifiers(this, true);
     }
 }

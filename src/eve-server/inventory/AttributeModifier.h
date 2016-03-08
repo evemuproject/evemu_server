@@ -46,62 +46,62 @@ public:
      * @param active Is the modifier active?
      */
     AttributeModifier(InventoryItemRef item, std::shared_ptr<MEffect> effect, int effect_index, bool active);
-    ~AttributeModifier() { m_Item = InventoryItemRef(); };
+    ~AttributeModifier() { m_item = InventoryItemRef(); };
 
     /**
      * Checks to see if the modifier modifies the specified attribute.
      * @param attribute The attribute to check.
      * @return true if the modifier affects the attribute.
      */
-    bool Modifies(uint32 attribute) { return attribute == GetTargetAttribute(); };
+    bool modifies(uint32 attribute) { return attribute == getTargetAttribute(); };
     /**
      * Checks for stacking penalty.
      * @return true if there is a stacking penalty.
      */
-    bool StackPenalty() { return m_Effect.get() == NULL ? false : m_Effect->GetStackingPenaltyApplied(m_EffectIndex) != 0; };
+    bool stackPenalty() { return m_effect.get() == NULL ? false : m_effect->GetStackingPenaltyApplied(m_effectIndex) != 0; };
     /**
      * Get whether the modifier is active;
      * @return Ture if the modifier should be applied.
      */
-    bool IsActive() { return m_Active; };
+    bool isActive() { return m_active; };
     /**
      * Get the attribute modified by this modifier.
      * @return The modified attribute.
      */
-    uint32 GetTargetAttribute() { return m_Effect.get() == NULL ? 0 : m_Effect->GetTargetAttributeID(m_EffectIndex); };
+    uint32 getTargetAttribute() { return m_effect.get() == NULL ? 0 : m_effect->GetTargetAttributeID(m_effectIndex); };
     /**
      * Sets the modifiers active state.
      * @param state The new modifier state.
      */
-    void SetActive(bool state);
+    void setActive(bool state);
     /**
      * Gets the amount the attribute is modified by.
      * @return The fixed amount to modify the attribute by.
      */
-    double GetAmount();
+    double getAmount();
     /**
      * Gets the modification factor.
      * @return The factor to modify the attribute by.
      */
-    double GetFactor();
+    double getFactor();
 
 private:
     /**
      * The item creating the modifier.
      */
-    InventoryItemRef m_Item;
+    InventoryItemRef m_item;
     /**
      * The Effect to use.
      */
-    std::shared_ptr<MEffect> m_Effect;
+    std::shared_ptr<MEffect> m_effect;
     /**
      * The index of the effect info.
      */
-    int m_EffectIndex;
+    int m_effectIndex;
     /**
      * Indicate if the effect is currently active.
      */
-    bool m_Active;
+    bool m_active;
 };
 
 /**
@@ -116,24 +116,24 @@ public:
 
     typedef std::vector<double> FactorList;
 
-    void AddModifier(AttributeModifierRef modifier);
-    void RemoveModifier(AttributeModifierRef modifier);
-    void GetModification(uint32 attrib, double &amount, FactorList &nonStackingFactors, FactorList &stackingFactors);
-    static double FinalizeModification(double value, double amount, FactorList &nonStackingFactors, FactorList &stackingFactors);
+    void addModifier(AttributeModifierRef modifier);
+    void removeModifier(AttributeModifierRef modifier);
+    void getModification(uint32 attrib, double &amount, FactorList &nonStackingFactors, FactorList &stackingFactors);
+    static double finalizeModification(double value, double amount, FactorList &nonStackingFactors, FactorList &stackingFactors);
     /**
      * Sets the modifier source active state.
      * @param state The new source state.
      */
-    void SetActive(bool state);
-    void UpdateModifiers(InventoryItem *item, bool notify);
+    void setActive(bool state);
+    void updateModifiers(InventoryItem *item, bool notify);
 
 private:
-    InventoryItemRef m_Source;
-    std::vector<AttributeModifierRef> m_Modifiers;
+    InventoryItemRef m_source;
+    std::vector<AttributeModifierRef> m_modifiers;
     /**
      * Indicate if the source is currently active.
      */
-    bool m_Active;
+    bool m_active;
 
 };
 

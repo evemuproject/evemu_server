@@ -43,11 +43,11 @@ GenericModule::GenericModule(InventoryItemRef item, ShipRef ship)
 
     generateModifiers();
     // attach overload modifiers.
-    m_overloadModifiers->SetActive(false);
+    m_overloadModifiers->setActive(false);
     m_item->AddAttributeModifier(m_overloadModifiers);
     // attach ship modifiers.
-    m_shipActiveModifiers->SetActive(false);
-    m_shipPassiveModifiers->SetActive(false);
+    m_shipActiveModifiers->setActive(false);
+    m_shipPassiveModifiers->setActive(false);
     m_ship->AddAttributeModifier(m_shipModifiers);
     m_ship->AddAttributeModifier(m_shipPassiveModifiers);
     m_ship->AddAttributeModifier(m_shipActiveModifiers);
@@ -77,11 +77,11 @@ void GenericModule::offline()
     m_moduleState = MOD_OFFLINE;
 
     // Disable ALL modifiers.
-    m_shipModifiers->SetActive(false);
-    m_shipPassiveModifiers->SetActive(false);
-    m_shipActiveModifiers->SetActive(false); // should be false anyway.
-    m_shipModifiers->UpdateModifiers(m_ship.get(), true);
-    m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
+    m_shipModifiers->setActive(false);
+    m_shipPassiveModifiers->setActive(false);
+    m_shipActiveModifiers->setActive(false); // should be false anyway.
+    m_shipModifiers->updateModifiers(m_ship.get(), true);
+    m_shipPassiveModifiers->updateModifiers(m_ship.get(), true);
 }
 
 void GenericModule::online()
@@ -91,11 +91,11 @@ void GenericModule::online()
     m_moduleState = MOD_ONLINE;
 
     // Trigger modifiers.
-    m_shipModifiers->SetActive(true);
-    m_shipPassiveModifiers->SetActive(true);
-    m_shipActiveModifiers->SetActive(false); // should be false anyway.
-    m_shipModifiers->UpdateModifiers(m_ship.get(), true);
-    m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
+    m_shipModifiers->setActive(true);
+    m_shipPassiveModifiers->setActive(true);
+    m_shipActiveModifiers->setActive(false); // should be false anyway.
+    m_shipModifiers->updateModifiers(m_ship.get(), true);
+    m_shipPassiveModifiers->updateModifiers(m_ship.get(), true);
 }
 
 bool GenericModule::isTurretFitted()
@@ -171,16 +171,16 @@ void GenericModule::generateModifiers()
                     if (groupID == 6) // target ship
                     {
                         if (state == EFFECT_ONLINE)
-                            m_shipModifiers->AddModifier(mod);
+                            m_shipModifiers->addModifier(mod);
                         if (state == EFFECT_ACTIVE)
-                            m_shipActiveModifiers->AddModifier(mod);
+                            m_shipActiveModifiers->addModifier(mod);
                         if (state == EFFECT_PASSIVE)
-                            m_shipPassiveModifiers->AddModifier(mod);
+                            m_shipPassiveModifiers->addModifier(mod);
                     }
                     else if (groupID == 0) // target self
                     {
                         if (state == EFFECT_OVERLOAD)
-                            m_overloadModifiers->AddModifier(mod);
+                            m_overloadModifiers->addModifier(mod);
                     }
                     else // target module
                     {
@@ -189,7 +189,7 @@ void GenericModule::generateModifiers()
                         {
                             if (m_moduleModifiers.find(groupID) == m_moduleModifiers.end())
                                 m_moduleModifiers[groupID] = AttributeModifierSourceRef(new AttributeModifierSource(m_item));
-                            m_moduleModifiers[groupID]->AddModifier(mod);
+                            m_moduleModifiers[groupID]->addModifier(mod);
                         }
                     }
                 }
