@@ -32,7 +32,6 @@ class ProjectileTurret: public ActiveModule
 {
 public:
     ProjectileTurret( InventoryItemRef item, ShipRef ship );
-    ~ProjectileTurret();
 
 	bool canActivate(SystemEntity * targetEntity);
 

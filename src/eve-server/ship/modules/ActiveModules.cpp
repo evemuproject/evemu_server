@@ -40,10 +40,6 @@ ActiveModule::ActiveModule(InventoryItemRef item, ShipRef ship)
 	m_chargeLoaded = false;
 }
 
-ActiveModule::~ActiveModule()
-{
-}
-
 void ActiveModule::process()
 {
     if( m_ship->GetOperator()->GetSystemEntity()->Bubble() == nullptr )

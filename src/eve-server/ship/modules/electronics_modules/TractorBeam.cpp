@@ -36,11 +36,6 @@ TractorBeam::TractorBeam( InventoryItemRef item, ShipRef ship)
     m_effectString = "effects.TractorBeam";
 }
 
-TractorBeam::~TractorBeam()
-{
-
-}
-
 bool TractorBeam::canActivate(SystemEntity * targetEntity)
 {
 	// Check to make sure target is NOT a static entity:

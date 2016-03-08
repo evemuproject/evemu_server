@@ -32,7 +32,6 @@ class TractorBeam: public ActiveModule
 {
 public:
     TractorBeam( InventoryItemRef item, ShipRef ship );
-    ~TractorBeam();
 
 	bool canActivate(SystemEntity * targetEntity);
 

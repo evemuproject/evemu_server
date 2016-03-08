@@ -34,9 +34,6 @@ HybridTurret::HybridTurret(InventoryItemRef item, ShipRef ship)
     m_effectString = "effects.HybridFired";
 }
 
-HybridTurret::~HybridTurret() {
- }
-
 bool HybridTurret::canActivate(SystemEntity * targetEntity)
 {
     if (!this->m_chargeRef)

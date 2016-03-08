@@ -46,11 +46,6 @@ MiningLaser::MiningLaser( InventoryItemRef item, ShipRef ship)
     }
 }
 
-MiningLaser::~MiningLaser()
-{
-
-}
-
 bool MiningLaser::canActivate(SystemEntity *targetEntity)
 {
     if(targetEntity == nullptr)
@@ -100,6 +95,12 @@ bool MiningLaser::canActivate(SystemEntity *targetEntity)
 
 bool MiningLaser::endCycle(bool continuing)
 {
+    // Check to see if our target is still in this bubble or has left or been destroyed:
+    if( m_ship->GetOperator()->GetSystemEntity()->Bubble()->GetEntity(m_targetID) == nullptr )
+    {
+        // Target has left our bubble or been destroyed, deactivate this module:
+        return false;
+    }
     InventoryItemRef moduleRef = getItem();
     // Check range
     double maxRange = moduleRef->GetAttribute(AttrMaxRange).get_float();

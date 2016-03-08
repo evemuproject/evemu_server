@@ -32,7 +32,6 @@ class MissileLauncher: public ActiveModule
 {
 public:
     MissileLauncher( InventoryItemRef item, ShipRef ship );
-    ~MissileLauncher();
 
 	bool canActivate(SystemEntity * targetEntity);
 	void startCycle(bool continuing);

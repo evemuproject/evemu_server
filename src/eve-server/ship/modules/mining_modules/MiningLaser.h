@@ -32,7 +32,6 @@ class MiningLaser: public ActiveModule
 {
 public:
     MiningLaser( InventoryItemRef item, ShipRef ship );
-    ~MiningLaser();
 
     bool canActivate(SystemEntity *targetEntity);
     virtual bool canAbort() {return true;};

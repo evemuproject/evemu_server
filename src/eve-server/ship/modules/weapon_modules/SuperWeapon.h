@@ -32,7 +32,6 @@ class SuperWeapon: public ActiveModule
 {
 public:
     SuperWeapon( InventoryItemRef item, ShipRef ship );
-    ~SuperWeapon();
 
     // Module Action Methods:
 	bool canActivate(SystemEntity * targetEntity);

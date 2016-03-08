@@ -34,11 +34,6 @@ EnergyTurret::EnergyTurret( InventoryItemRef item, ShipRef ship)
     m_effectString = "effects.Laser";
 }
 
-EnergyTurret::~EnergyTurret()
-{
-
-}
-
 bool EnergyTurret::canActivate(SystemEntity * targetEntity)
 {
 	if( !m_chargeRef )

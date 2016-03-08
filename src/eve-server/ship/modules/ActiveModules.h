@@ -32,7 +32,6 @@ class ActiveModule : public GenericModule
 {
 public:
     ActiveModule(InventoryItemRef item, ShipRef ship);
-    ~ActiveModule();
 
     virtual void process();
     void activate(SystemEntity * targetEntity);

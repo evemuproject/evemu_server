@@ -33,11 +33,6 @@ Afterburner::Afterburner( InventoryItemRef item, ShipRef ship)
     m_effectString = "effects.SpeedBoost";
 }
 
-Afterburner::~Afterburner()
-{
-
-}
-
 bool Afterburner::endCycle(bool continuing)
 {
     if(continuing)

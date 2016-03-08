@@ -36,10 +36,6 @@ ArmorRepairer::ArmorRepairer(InventoryItemRef item, ShipRef ship)
     m_effectString  = "effects.ArmorRepair";
 }
 
-ArmorRepairer::~ArmorRepairer()
-{
-}
-
 void ArmorRepairer::startCycle(bool continuing)
 {
     // Apply repair amount:

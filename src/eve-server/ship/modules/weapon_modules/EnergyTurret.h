@@ -32,7 +32,6 @@ class EnergyTurret: public ActiveModule
 {
 public:
     EnergyTurret( InventoryItemRef item, ShipRef ship );
-    ~EnergyTurret();
 
     // Module Action Methods:
 	bool canActivate(SystemEntity * targetEntity);

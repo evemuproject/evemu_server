@@ -62,11 +62,6 @@ SuperWeapon::SuperWeapon( InventoryItemRef item, ShipRef ship)
     }
 }
 
-SuperWeapon::~SuperWeapon()
-{
-
-}
-
 bool SuperWeapon::canActivate(SystemEntity * targetEntity)
 {
 	// TODO:

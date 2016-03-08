@@ -34,11 +34,6 @@ ProjectileTurret::ProjectileTurret( InventoryItemRef item, ShipRef ship)
     m_effectString = "effects.ProjectileFired";
 }
 
-ProjectileTurret::~ProjectileTurret()
-{
-
-}
-
 bool ProjectileTurret::canActivate(SystemEntity * targetEntity)
 {
 	if( !this->m_chargeRef )

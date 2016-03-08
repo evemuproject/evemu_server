@@ -32,7 +32,6 @@ class Afterburner: public ActiveModule
 {
 public:
     Afterburner( InventoryItemRef item, ShipRef ship );
-    ~Afterburner();
 
 	void startCycle(bool continuing);
 	bool endCycle(bool continuing);

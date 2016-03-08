@@ -32,7 +32,6 @@ class ArmorRepairer: public ActiveModule
 {
 public:
     ArmorRepairer( InventoryItemRef item, ShipRef ship );
-    ~ArmorRepairer();
 
 	void startCycle(bool continuing);
 

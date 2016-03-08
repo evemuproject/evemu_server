@@ -32,7 +32,6 @@ class HybridTurret: public ActiveModule
 {
 public:
     HybridTurret( InventoryItemRef item, ShipRef ship );
-    ~HybridTurret();
 
     // Module Action Methods:
 	bool canActivate(SystemEntity * targetEntity);

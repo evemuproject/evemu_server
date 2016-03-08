@@ -34,11 +34,6 @@ MissileLauncher::MissileLauncher( InventoryItemRef item, ShipRef ship)
     m_effectString = "effects.MissileDeployment";
 }
 
-MissileLauncher::~MissileLauncher()
-{
-
-}
-
 bool MissileLauncher::canActivate(SystemEntity * targetEntity)
 {
 	if( !this->m_chargeRef )
