@@ -29,12 +29,18 @@
     Indents should be 4 spaces, no tabs.<br/>
     Brackets for function blocks, if, for, while, and switch statements should be on a new line.<br/>
     Brackets may be on the same line for empty code blocks.<br/>
+    Even single line code blocks must be in brackets.
     <pre class="brush: cpp">
-// Incorrect
+// Incorrect, brackets on same line.
 void test() {
     for(int i = 0;i < 10;i++) {
         std::cout << i << endl;
     }
+}
+// Incorrect, no brackets.
+void test() {
+    for(int i = 0;i < 10;i++)
+        std::cout << i << endl;
 }
 // Correct
 void test()
