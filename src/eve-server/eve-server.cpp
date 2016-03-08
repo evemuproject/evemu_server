@@ -355,10 +355,6 @@ int main( int argc, char* argv[] )
   DGM_Effects_Table::Initialize();
   SysLog::Log("Server Init", "---> sDGM_Type_Effects_Table: Loading...");
   DGM_Type_Effects_Table::Initialize();
-  SysLog::Log("Server Init", "---> sDGM_Skill_Bonus_Modifiers_Table: Loading...");
-  DGM_Skill_Bonus_Modifiers_Table::Initialize();
-  //Log::Log("Server Init", "---> sDGM_Ship_Bonus_Modifiers_Table: Loading...");
-  //DGM_Ship_Bonus_Modifiers_Table::Initialize();
   SysLog::Log("Server Init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
   DGM_Types_to_Wrecks_Table::Initialize();
 

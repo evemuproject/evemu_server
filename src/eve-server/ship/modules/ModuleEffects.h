@@ -296,53 +296,6 @@ protected:
 
 // -----------------------------------------------------------------------
 
-
-// This class is a singleton object, containing all Skill Bonus Modifiers loaded from dgmSkillBonusModifiers table as memory objects of type SkillBonusModifier:
-class DGM_Skill_Bonus_Modifiers_Table
-{
-private:
-    DGM_Skill_Bonus_Modifiers_Table();
-    ~DGM_Skill_Bonus_Modifiers_Table();
-public:
-
-    // Initializes the Table:
-    static int Initialize();
-
-    // Returns pointer to SkillBonusModifier object corresponding to the skillID supplied:
-    static std::shared_ptr<SkillBonusModifier> GetSkillModifier(uint32 skillID);
-
-protected:
-    static void _Populate();
-
-    static std::map<uint32, std::shared_ptr<SkillBonusModifier>> m_SkillBonusModifiersMap;
-};
-
-// -----------------------------------------------------------------------
-
-
-// This class is a singleton object, containing all Effects loaded from dgmShipBonusModifiers table as memory objects of type MEffect:
-class DGM_Ship_Bonus_Modifiers_Table
-{
-private:
-    DGM_Ship_Bonus_Modifiers_Table();
-    ~DGM_Ship_Bonus_Modifiers_Table();
-public:
-
-    // Initializes the Table:
-    static int Initialize();
-
-    // Returns pointer to ShipBonusModifier object corresponding to the shipID supplied:
-    static std::shared_ptr<ShipBonusModifier> GetShipModifier(uint32 shipID);
-
-protected:
-    static void _Populate();
-
-    static std::map<uint32, std::shared_ptr<ShipBonusModifier>> m_ShipBonusModifiersMap;
-};
-
-// -----------------------------------------------------------------------
-
-
 // This class is a singleton object, containing all Modifiers loaded from dgmImplantBonusModifiers table as memory objects of type MEffect:
 //class DGM_Implant_Bonus_Modifiers_Table
 //: public Singleton< DGM_Implant_Bonus_Modifiers_Table >
