@@ -53,6 +53,10 @@ MiningLaser::~MiningLaser()
 
 bool MiningLaser::canActivate(SystemEntity *targetEntity)
 {
+    if(targetEntity == nullptr)
+    {
+        return false;
+    }
     InventoryItemRef miner = getItem();
     bool isIceMiner = (miner->typeID() == 16278 || miner->typeID() == 22229 || miner->typeID() == 28752);
     if (isIceMiner)
@@ -94,7 +98,7 @@ bool MiningLaser::canActivate(SystemEntity *targetEntity)
     return true;
 }
 
-void MiningLaser::endCycle(bool continuing)
+bool MiningLaser::endCycle(bool continuing)
 {
     InventoryItemRef moduleRef = getItem();
     // Check range
@@ -104,29 +108,28 @@ void MiningLaser::endCycle(bool continuing)
     if (targetRange > maxRange)
     {
         // We must have drifted out of range.
-        deactivate();
         // TO-DO: send proper out or range response.
         SysLog::Error("MiningLaser::Activate()", "ERROR: mining laser target moved out of range!");
-        return;
+        return false;
     }
     // Retrieve ore from target Asteroid and put into flagCargoHold
     InventoryItemRef asteroidRef = m_targetEntity->Item();
 	uint32 remainingOreUnits = asteroidRef->GetAttribute(AttrQuantity).get_int();
 	double oreUnitVolume = asteroidRef->GetAttribute(AttrVolume).get_float();
-	double oreUnitsToPull = 0.0;
-	double remainingCargoVolume = 0.0;
 
     // Calculate how many units of ore to pull from the asteroid on this cycle:
     // Get base mining amount.
-    oreUnitsToPull = moduleRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
+    double oreUnitsToPull = moduleRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
     // Do we have a crystal?
 	if( m_chargeRef )
     {
         // Yes, apply yield multiplier.
         if (m_chargeRef->HasAttribute(AttrSpecialisationAsteroidYieldMultiplier))
         {
+            // TO-DO: check for correct type of crystal.
             oreUnitsToPull *= m_chargeRef->GetAttribute(AttrSpecialisationAsteroidYieldMultiplier).get_float();
         }
+        // TO-DO: do crystal damage.
     }
     // Get percent cycle complete.
     double cycleTime = getTotalCycleTimeMS();
@@ -137,6 +140,10 @@ void MiningLaser::endCycle(bool continuing)
         percent = usedTime / cycleTime;
         // Limit to range 0.0 - 1.0.
         percent = std::min(1.0, std::max(0.0, percent));
+        if(percent == 0.0)
+        {
+            percent = 1.0;
+        }
     }
     // Round down to next lowest integer value.
     oreUnitsToPull = floor(oreUnitsToPull * percent);
@@ -153,9 +160,9 @@ void MiningLaser::endCycle(bool continuing)
         cargoFlag = flagSpecializedOreHold;
     }
     // Get cargo hold and remaining capacity.
-    remainingCargoVolume = m_ship->GetRemainingVolumeByFlag(cargoFlag);
+    double remainingCargoVolume = m_ship->GetRemainingVolumeByFlag(cargoFlag);
     // Do we have enough room for the whole stack?
-    if (remainingCargoVolume < (oreUnitsToPull * oreUnitVolume))
+    if (remainingCargoVolume < (floor((oreUnitsToPull * oreUnitVolume) * 100.0)/100.0))
     {
         // No, reduce the stack size.
         oreUnitsToPull = floor(remainingCargoVolume / oreUnitVolume);
@@ -164,10 +171,10 @@ void MiningLaser::endCycle(bool continuing)
     if (oreUnitsToPull <= 0.0)
     {
         // No, hmmm... thats bad!
-        deactivate();
         // TO-DO: send client miner deactivated because hold full message.
         SysLog::Warning("MiningLaser::DoCycle()", "Somehow MiningLaser could not extract ore from current target asteroid '%s' (id %u)", m_targetEntity->Item()->itemName().c_str(), m_targetEntity->GetID());
-        return;
+        checkAsteroidDepleted(remainingOreUnits);
+        return false;
     }
 
     // Check for an existing ore item in the cargo.
@@ -196,7 +203,7 @@ void MiningLaser::endCycle(bool continuing)
         else
         {
             SysLog::Error("MiningLaser::DoCycle()", "ERROR: Could not create ore stack for '%s' ship (id %u)!", m_ship->itemName().c_str(), m_ship->itemID());
-            ore->Delete();
+            return false;
         }
     }
     // Finally, reduce the amount of ore in the asteroid by how much we took out:
@@ -208,13 +215,19 @@ void MiningLaser::endCycle(bool continuing)
     if ((remainingCargoVolume < oreUnitVolume) || remainingOreUnits == 0)
     {
         // Asteroid is empty OR cargo hold is entirely full, either way, DEACTIVATE module immediately!
-        deactivate();
-        if (remainingOreUnits == 0)
-        {
-            // Asteroid is empty now, so remove it
-            m_targetEntity->Bubble()->Remove(m_targetEntity);
-            m_targetEntity->Item()->Delete();
-            // To-Do: send client asteroid depleted message.
-        }
+        checkAsteroidDepleted(remainingOreUnits);
+        return false;
+    }
+    return true;
+}
+
+void MiningLaser::checkAsteroidDepleted(uint32 remainingOreUnits)
+{
+    if (remainingOreUnits == 0)
+    {
+        // Asteroid is empty now, so remove it
+        m_targetEntity->Bubble()->Remove(m_targetEntity);
+        m_targetEntity->Item()->Delete();
+        // To-Do: send client asteroid depleted message.
     }
 }

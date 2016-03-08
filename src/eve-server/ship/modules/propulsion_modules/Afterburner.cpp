@@ -38,11 +38,11 @@ Afterburner::~Afterburner()
 
 }
 
-void Afterburner::endCycle(bool continuing)
+bool Afterburner::endCycle(bool continuing)
 {
     if(continuing)
     {
-        return;
+        return true;
     }
 	// Tell Destiny Manager about our new speed so it properly tracks ship movement:
 	m_ship->GetOperator()->GetDestiny()->SetMaxVelocity(m_ship->GetDefaultAttribute(AttrMaxVelocity).get_float());
@@ -61,6 +61,8 @@ void Afterburner::endCycle(bool continuing)
 	updates.push_back(mass.Encode());
 
 	m_ship->GetOperator()->GetDestiny()->SendDestinyUpdate(updates, false);
+    
+    return true;
 }
 
 void Afterburner::startCycle(bool continuing)

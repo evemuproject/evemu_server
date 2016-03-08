@@ -71,8 +71,10 @@ public:
     virtual void startCycle(bool continuing) {};
     /**
      * A cycle has ended.
+     * @param continuing True if this is continuing from a previous cycle.
+     * @return True if cycling can continue.
      */
-    virtual void endCycle(bool continuing) {};
+    virtual bool endCycle(bool continuing) { return true; };
     /**
      * Can the module abort a cycle?
      * @return True if the cycle can be aborted.

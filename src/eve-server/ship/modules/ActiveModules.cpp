@@ -93,11 +93,12 @@ void ActiveModule::process()
         else
         {
             // Tell the module we finished a cycle and will be starting another.
-            endCycle(true);
             doEffect(false);
-            if(m_stop)
+            if(!endCycle(true))
             {
-                deactivate();
+                // Disable timer to prevent extra call to endCycle()
+                m_timer.Disable();
+                doStop();
                 return;
             }
             // Drain capacitor.
@@ -227,17 +228,22 @@ void ActiveModule::doStop()
 {
     //m_Item->SetActive(false, 1253, 0, false);
     // Tell the module we finished a cycle and will NOT be starting another.
-    endCycle(false);
-    doEffect(false);
-    // Disable timer.
-    m_timer.Disable();
+    if(m_timer.Enabled())
+    {
+        // The timer is still active, end the final cycle.
+        endCycle(false);
+        doEffect(false);
+        // Disable timer.
+        m_timer.Disable();
+        m_stop = true;
+    }
     if(m_moduleState != MOD_OFFLINE)
     {
         m_moduleState = MOD_ONLINE;
     }
     // Remove modifiers.
     m_shipActiveModifiers->SetActive(false);
-    m_shipPassiveModifiers->SetActive(true);
+    m_shipPassiveModifiers->SetActive(m_moduleState != MOD_OFFLINE);
     m_shipActiveModifiers->UpdateModifiers(m_ship.get(), true);
     m_shipPassiveModifiers->UpdateModifiers(m_ship.get(), true);
 }

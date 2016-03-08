@@ -36,9 +36,10 @@ public:
 
     bool canActivate(SystemEntity *targetEntity);
     virtual bool canAbort() {return true;};
-	void endCycle(bool continuing);
+	bool endCycle(bool continuing);
 
 protected:
+    void checkAsteroidDepleted(uint32 remainingOreUnits);
 };
 
 #endif

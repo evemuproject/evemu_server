@@ -35,7 +35,7 @@ public:
     ~Afterburner();
 
 	void startCycle(bool continuing);
-	void endCycle(bool continuing);
+	bool endCycle(bool continuing);
 
 protected:
 };
