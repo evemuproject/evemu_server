@@ -39,7 +39,7 @@ SystemEntity::SystemEntity()
 }
 
 void SystemEntity::Process() {
-    targets.Process();
+    targets.process();
 }
 
 uint32 SystemEntity::GetLocationID()

@@ -55,31 +55,6 @@ CREATE TABLE sysAsteroids
 );
 #endif
 
-
-
-/*
-class SystemAsteroidEntity : public InanimateSystemEntity {
-public:
-    SystemAsteroidEntity(const GPoint &pos);
-    virtual ~SystemAsteroidEntity() { targets.DoDestruction(); }
-
-    virtual void Process();
-
-    virtual PyDict *MakeSlimItem() const;
-    //return ownership of a new damage state tuple.
-    virtual PyList *MakeDamageState() const;
-    virtual void MakeAddBall(DoDestiny_AddBall &into, uint32 updateID) const;
-
-    //overload the parts of SystemEntity which we care about
-    //virtual uint32 GetID() const;
-    //virtual double GetRadius() const;
-    //virtual const GPoint &GetPosition() const;
-    virtual void EncodeDestiny(std::vector<byte> &into) const;
-
-protected:
-    const GPoint m_position;
-};*/
-
 /**
  * DynamicSystemEntity which represents structure object in space
  */
@@ -118,11 +93,6 @@ public:
     virtual const AsteroidEntity *CastToAsteroidEntity() const { return(this); }
     virtual void Process();
     virtual void EncodeDestiny( Buffer& into ) const;
-    virtual void TargetAdded(SystemEntity *who) {}
-    virtual void TargetLost(SystemEntity *who) {}
-    virtual void TargetedAdd(SystemEntity *who) {}
-    virtual void TargetedLost(SystemEntity *who) {}
-    virtual void TargetsCleared() {}
     virtual void QueueDestinyUpdate(PyTuple **du) {/* not required to consume */}
     virtual void QueueDestinyEvent(PyTuple **multiEvent) {/* not required to consume */}
     virtual uint32 GetCorporationID() const { return(1); }
@@ -167,11 +137,6 @@ public:
     //SystemEntity interface:
     virtual void QueueDestinyUpdate(PyTuple **du) {}
     virtual void QueueDestinyEvent(PyTuple **multiEvent) {}
-    virtual void TargetAdded(SystemEntity *who) {}
-    virtual void TargetLost(SystemEntity *who) {}
-    virtual void TargetedAdd(SystemEntity *who) {}
-    virtual void TargetedLost(SystemEntity *who) {}
-    virtual void TargetsCleared() {}
     virtual void ProcessDestiny() {}
     virtual SystemManager *System() const { return(m_system); }
     virtual bool IsStaticEntity() const { return(true); }

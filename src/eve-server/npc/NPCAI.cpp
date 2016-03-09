@@ -135,10 +135,11 @@ void NPCAIMgr::Process() {
 
     case Chasing: {
         //NOTE: getting our target like this is pretty weak...
-        SystemEntity *target = m_npc->targets.GetFirstTarget(false);
+        SystemEntity *target = m_npc->targets.getFirstTarget(false);
         if(target == NULL) {
             //no valid target...
-            if(m_npc->targets.HasNoTargets()) {
+            if (!m_npc->targets.hasTargets())
+            {
                 _log(NPC__AI_TRACE, "[%u] Stopped chasing, no targets remain.", m_npc->GetID());
                 m_state = Idle;
                 return;
@@ -161,10 +162,11 @@ void NPCAIMgr::Process() {
 
     case Following: {
         //NOTE: getting our target like this is pretty weak...
-        SystemEntity *target = m_npc->targets.GetFirstTarget(false);
+        SystemEntity *target = m_npc->targets.getFirstTarget(false);
         if(target == NULL) {
             //no valid target...
-            if(m_npc->targets.HasNoTargets()) {
+            if (!m_npc->targets.hasTargets())
+            {
                 _log(NPC__AI_TRACE, "[%u] Stopped chasing, no targets remain.", m_npc->GetID());
                 m_state = Idle;
                 return;
@@ -186,11 +188,12 @@ void NPCAIMgr::Process() {
 
     case Engaged: {
         //NOTE: getting our target like this is pretty weak...
-        SystemEntity *target = m_npc->targets.GetFirstTarget(false);
+        SystemEntity *target = m_npc->targets.getFirstTarget(false);
 
         if(target == NULL) {
             //no valid target...
-            if(m_npc->targets.HasNoTargets()) {
+            if (!m_npc->targets.hasTargets())
+            {
                 _log(NPC__AI_TRACE, "[%u] Stopped chasing, no targets remain.", m_npc->GetID());
                 _EnterIdle();
                 return;
@@ -215,7 +218,7 @@ void NPCAIMgr::Process() {
 
 void NPCAIMgr::ClearAllTargets()
 {
-	m_npc->targets.ClearAllTargets();
+	m_npc->targets.removeFromBubble();
 }
 
 void NPCAIMgr::_EnterChasing(SystemEntity *target) {
@@ -257,9 +260,9 @@ void NPCAIMgr::Targeted(SystemEntity *by_who) {
     //TODO: determind lock speed.
     //TODO: obey maxLockedTargets
     //m_npc->targets.StartTargeting(by_who, 1000);
-    //if( m_npc->Item()->GetAttribute(AttrMaxLockedTargets) > m_npc->targets.GetTotalTargets())
+    //if( m_npc->Item()->GetAttribute(AttrMaxLockedTargets) > m_npc->targets.getTotalTargets())
         //m_npc->targets.StartTargeting( by_who, NEED_A_SHIPREF_HERE );		// TO BE UPDATED DUE TO StartTargeting() signature change
-    m_npc->targets.StartTargeting( by_who, (uint32)m_npc->Item()->GetAttribute(AttrSpeed).get_int(), (uint32)m_npc->Item()->GetAttribute(AttrMaxAttackTargets).get_int(), m_npc->Item()->GetAttribute(AttrEntityAttackRange).get_float() );
+    m_npc->targets.startTargeting( by_who, (uint32)m_npc->Item()->GetAttribute(AttrSpeed).get_int(), (uint32)m_npc->Item()->GetAttribute(AttrMaxAttackTargets).get_int(), m_npc->Item()->GetAttribute(AttrEntityAttackRange).get_float() );
 
     switch(m_state) 
 	{
@@ -299,7 +302,8 @@ void NPCAIMgr::TargetLost(SystemEntity *by_who) {
     case Chasing:
     case Following:
     case Engaged:
-        if(m_npc->targets.HasNoTargets()) {
+        if (!m_npc->targets.hasTargets())
+        {
             _log(NPC__AI_TRACE, "[%u] Target of %u lost. No targets remain.", m_npc->GetID(), by_who->GetID());
             _EnterIdle();
         } else {
@@ -323,13 +327,13 @@ void NPCAIMgr::CheckAttacks(SystemEntity *target) {
 			{
 				if( target->CastToClient()->Destiny()->IsCloaked() )
 				{
-					m_npc->targets.ClearTarget(target);
+					m_npc->targets.clearTarget(target);
 					return;
 				}
 			}
 			else
 			{
-				m_npc->targets.ClearTarget(target);
+				m_npc->targets.clearTarget(target);
 				return;
 			}
 		}
@@ -337,7 +341,7 @@ void NPCAIMgr::CheckAttacks(SystemEntity *target) {
 		// Check to see if the target still in the bubble (Client warped out)
 		if( !m_npc->Bubble()->InBubble(target->GetPosition()) )
 		{
-			m_npc->targets.ClearTarget(target);
+			m_npc->targets.clearTarget(target);
 			return;
 		}
 

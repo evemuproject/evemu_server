@@ -38,51 +38,142 @@ public:
     TargetManager(SystemEntity *self);
     virtual ~TargetManager();
 
-    void DoDestruction();
+    void doDestruction();
 
-    void Process();
+    void process();
 
-    //clear out our targeting information (incoming and outgoing)
-    void ClearTargets(bool notify_self=true);
-    void ClearTarget(SystemEntity *who);
-    bool StartTargeting(SystemEntity *who, ShipRef ship);
-	bool StartTargeting(SystemEntity *who, double lockTime, uint32 maxLockedTargets, double maxTargetLockRange);
-    void ClearAllTargets(bool notify_self=true);
+    /**
+     * Start targeting an entity.
+     * @param who The entity to target.
+     * @param ship The ship that's targeting the entity.
+     * @return True if successful.
+     */
+    bool startTargeting(SystemEntity *who, ShipRef ship);
+    /**
+     * Start targeting an entity.
+     * @param who The entity to target.
+     * @param lockTime The amount of time it will take to target.
+     * @param maxLockedTargets The maximum number of target.
+     * @param maxTargetLockRange The maximum targeting range.
+     * @return True if successful.
+     */
+    bool startTargeting(SystemEntity *who, double lockTime, uint32 maxLockedTargets, double maxTargetLockRange);
 
-    //Methods for AI:
-    SystemEntity *GetFirstTarget(bool need_locked);
-    bool HasNoTargets() const { return(m_targets.empty()); }
-    bool IsTargetedBySomething() const { return(!m_targetedBy.empty()); }
-    uint32 GetTotalTargets() const { return m_targets.size(); }
-
-    SystemEntity *GetTarget(uint32 targetID, bool need_locked=true) const;
-    void QueueTBDestinyEvent(PyTuple **up) const;    //queue a destiny event to all people targeting me.
-    void QueueTBDestinyUpdate(PyTuple **up) const;    //queue a destiny update to all people targeting me.
-
-    void Dump() const;
-    uint32 TimeToLock(ShipRef ship, SystemEntity *target) const;
-
-    //Packet builders:
-    PyList *GetTargets() const;
-    PyList *GetTargeters() const;
+    /**
+     * Clear all targets.
+     * @param notify_self Whether or not to notify self.
+     * @note Does not clear targeted by other entities.
+     */
+    void clearTargets(bool notify_self = true);
+    /**
+     * Clear a specific target.
+     * @param who The target to clear.
+     * @note Does not clear targeted by other entities.
+     */
+    void clearTarget(SystemEntity *who);
+    /**
+     * Remove self from bubble.
+     * @param notify_self Whether or not to notify self.
+     */
+    void removeFromBubble(bool notify_self = true);
 
 protected:
-    void ClearFromTargets();
-    //called by other target managers when they are clearing their targeting out.
-    void TargetLost(SystemEntity *who);
+    /**
+     * Clear this entity from all targeting entities.
+     */
+    void clearFromTargets();
+    /**
+     * An outside force caused us to loose a target.
+     * @param who The target we lost.
+     */
+    void targetLost(SystemEntity *who);
 
-    //called in reaction to outgoing targeting events in other target managers.
     //void TargetedByLocking(SystemEntity *from_who);
-    void TargetedByLocked(SystemEntity *from_who);
-    void TargetedByLost(SystemEntity *from_who);
+    /**
+     * Another entity has targeted this entity.
+     * @param from_who Who targeted this entity.
+     */
+    void targetedByLocked(SystemEntity *from_who);
+    /**
+     * An entity targeting this entity has lost it's targeting.
+     * @param from_who Who lost there targeting.
+     */
+    void targetedByLost(SystemEntity *from_who);
 
+public:
+    /**
+     * Gets the target from the targetID
+     * @param targetID The targetID to look for.
+     * @param need_locked True if the target must be fully locked.
+     * @return The entity that has been targeted.
+     */
+    SystemEntity *getTarget(uint32 targetID, bool need_locked = true) const;
+    /**
+     * Get the first target.
+     * @param need_locked True if the target must be fully locked.
+     * @return The target or nullptr.
+     */
+    SystemEntity *getFirstTarget(bool need_locked);
+
+    /**
+     * Does this entity have any targets?
+     * @return True if this entity has targets.
+     */
+    bool hasTargets() const
+    {
+        return (m_targets.empty());
+    }
+
+    /**
+     * Is this entity targeted?
+     * @return True if this entity is targeted.
+     */
+    bool isTargeted() const
+    {
+        return (!m_targetedBy.empty());
+    }
+
+    /**
+     * Get the total number of targets.
+     * @return The number of targets.
+     */
+    uint32 getTotalTargets() const
+    {
+        return m_targets.size();
+    }
+
+    /**
+     * Queue a damage message to update target indicators.
+     * @param up The message to send.
+     */
+    void queueTBDestinyEvent(PyTuple **up) const; //queue a destiny event to all people targeting me.
+    /**
+     * Queue a damage message to update target indicators.
+     * @param up The message to send.
+     */
+    void queueTBDestinyUpdate(PyTuple **up) const; //queue a destiny update to all people targeting me.
+
+    void dump() const;
+    /**
+     * Calculate the time needed to target an entity
+     * @param ship The ship doing the targeting.
+     * @param target The target entity.
+     * @return 
+     */
+    uint32 timeToLock(ShipRef ship, SystemEntity *target) const;
+
+    //Packet builders:
+    PyList *getTargets() const;
+    PyList *getTargeters() const;
+
+protected:
 
 	class TargetedByEntry {
     public:
         TargetedByEntry(SystemEntity *_who)
-            : state(Idle), who(_who) {}
+            : state(Idle), who(_who) { }
 
-        void Dump() const;
+        void dump() const;
 
         enum {
             Idle,
@@ -95,9 +186,9 @@ protected:
     class TargetEntry {
     public:
         TargetEntry(SystemEntity *_who)
-            : state(Idle), who(_who), timer(0) {}
+            : state(Idle), who(_who), timer(0) { }
 
-        void Dump() const;
+        void dump() const;
 
         enum {
             Idle,

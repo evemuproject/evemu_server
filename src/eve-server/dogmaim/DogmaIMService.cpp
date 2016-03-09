@@ -200,12 +200,12 @@ PyResult DogmaIMBound::Handle_CheckSendLocationInfo( PyCallArgs& call )
 
 PyResult DogmaIMBound::Handle_GetTargets(PyCallArgs &call) {
     //no arguments
-    return call.client->targets.GetTargets();
+    return call.client->targets.getTargets();
 }
 
 PyResult DogmaIMBound::Handle_GetTargeters(PyCallArgs &call) {
     //no arguments
-    return call.client->targets.GetTargeters();
+    return call.client->targets.getTargeters();
 }
 
 
@@ -414,7 +414,7 @@ PyResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
 
     ShipRef ship = call.client->GetShip();
 
-    if( !call.client->targets.StartTargeting(target, ship) )
+    if( !call.client->targets.startTargeting(target, ship) )
         return NULL;
 
     // For Debugging purposes, put a message in the log to print out the range to the target:
@@ -453,7 +453,7 @@ PyResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
     double rangeToTarget = vectorToTarget.length();
     SysLog::Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET REMOVED - Range to Target = %f meters.", rangeToTarget );
 
-    call.client->targets.ClearTarget(target);
+    call.client->targets.clearTarget(target);
 
     return NULL;
 }
@@ -461,7 +461,7 @@ PyResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
 PyResult DogmaIMBound::Handle_ClearTargets(PyCallArgs &call) {
     //no arguments.
 
-    call.client->targets.ClearTargets();
+    call.client->targets.clearTargets();
 
     return NULL;
 }

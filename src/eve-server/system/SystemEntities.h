@@ -43,11 +43,6 @@ public:
     //I really dislike having this here...
     virtual InventoryItemRef Item() const { return InventoryItemRef(); }
 
-    virtual void TargetAdded(SystemEntity *who) {}
-    virtual void TargetLost(SystemEntity *who) {}
-    virtual void TargetedAdd(SystemEntity *who) {}
-    virtual void TargetedLost(SystemEntity *who) {}
-    virtual void TargetsCleared() {}
     virtual void ProcessDestiny() {}
     virtual void QueueDestinyUpdate(PyTuple **du);
     virtual void QueueDestinyEvent(PyTuple **multiEvent);
@@ -88,7 +83,7 @@ public:
 class SystemPlanetEntity : public SimpleSystemEntity {
 public:
     SystemPlanetEntity(SystemManager *system, const DBSystemEntity &entity);
-    virtual ~SystemPlanetEntity() { targets.DoDestruction(); }
+    virtual ~SystemPlanetEntity() { targets.doDestruction(); }
 
     virtual void EncodeDestiny( Buffer& into ) const;
 };
@@ -96,7 +91,7 @@ public:
 class SystemStationEntity : public SimpleSystemEntity {
 public:
     SystemStationEntity(SystemManager *system, const DBSystemEntity &entity);
-    virtual ~SystemStationEntity() { targets.DoDestruction(); }
+    virtual ~SystemStationEntity() { targets.doDestruction(); }
 
     virtual void EncodeDestiny( Buffer& into ) const;
     virtual PyDict *MakeSlimItem() const;
@@ -120,14 +115,14 @@ class SystemSimpleEntity : public SystemPlanetEntity {
 public:
     //"fallback" entity... just treat as a planet for now...
     SystemSimpleEntity(SystemManager *system, const DBSystemEntity &entity) : SystemPlanetEntity(system, entity) {}
-    virtual ~SystemSimpleEntity() { targets.DoDestruction(); }
+    virtual ~SystemSimpleEntity() { targets.doDestruction(); }
 };
 
 
 class SystemDungeonEntranceEntity : public ItemSystemEntity {
 public:
     SystemDungeonEntranceEntity(SystemManager *system, InventoryItemRef self);
-    virtual ~SystemDungeonEntranceEntity() { targets.DoDestruction(); }
+    virtual ~SystemDungeonEntranceEntity() { targets.doDestruction(); }
 
     virtual SystemManager *System() const { return(m_system); }
     virtual bool IsVisibleSystemWide() const { return true; }

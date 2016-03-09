@@ -116,11 +116,12 @@ public:
     //return ownership of a new damage state tuple (calls MakeDamageState)
     PyTuple *MakeDamageState() const;
     //Im not happy with these being here..
-    virtual void TargetAdded(SystemEntity *who) = 0;
-    virtual void TargetLost(SystemEntity *who) = 0;
-    virtual void TargetedAdd(SystemEntity *who) = 0;
-    virtual void TargetedLost(SystemEntity *who) = 0;
-    virtual void TargetsCleared() = 0;
+
+    virtual void TargetAdded(SystemEntity *who) { }
+    virtual void TargetLost(SystemEntity *who) { }
+    virtual void TargetedAdd(SystemEntity *who) { }
+    virtual void TargetedLost(SystemEntity *who) { }
+    virtual void TargetsCleared() { }
 
     //process outgoing damage, applying any bonuses...
     virtual void ApplyDamageModifiers(Damage &d, SystemEntity *target) = 0;

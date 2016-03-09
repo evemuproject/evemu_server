@@ -226,6 +226,8 @@ void SystemBubble::Remove(SystemEntity *ent, bool notify) {
     ent->m_bubble = NULL;
     m_entities.erase(ent->GetID());
     m_dynamicEntities.erase(ent);
+    // Remove targeting.
+    ent->targets.removeFromBubble();
     //notify after removal so we do not remove ourself.
     if(notify) {
         _SendRemoveBalls(ent);

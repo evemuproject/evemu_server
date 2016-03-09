@@ -1362,7 +1362,7 @@ PyResult DestinyManager::AttemptDockOperation()
     who->SetPendingDockOperation( false );
 
     //clear all targets
-    who->targets.ClearAllTargets();
+    who->targets.removeFromBubble();
 
 	//inform ship object that it is docking:
 	who->GetShip()->Dock();

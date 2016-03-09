@@ -66,12 +66,8 @@ public:
     virtual const DeployableEntity *CastToDeployableEntity() const { return(this); }
     virtual void Process();
     virtual void EncodeDestiny( Buffer& into ) const;
-    virtual void TargetAdded(SystemEntity *who) {}
-    virtual void TargetLost(SystemEntity *who) {}
-    virtual void TargetedAdd(SystemEntity *who) {}
-    virtual void TargetedLost(SystemEntity *who) {}
-    virtual void TargetsCleared() {}
-    virtual void QueueDestinyUpdate(PyTuple **du) {/* not required to consume */}
+
+    virtual void QueueDestinyUpdate(PyTuple **du) {/* not required to consume */ }
     virtual void QueueDestinyEvent(PyTuple **multiEvent) {/* not required to consume */}
     virtual uint32 GetCorporationID() const { return(1); }
     virtual uint32 GetAllianceID() const { return(0); }

@@ -142,7 +142,7 @@ NPC::~NPC() {
     //m_system->RemoveNPC(this);
     if(m_spawner != NULL)
         m_spawner->SpawnDepoped(m_self->itemID());
-    targets.DoDestruction();
+    targets.doDestruction();
     delete m_AI;
 }
 

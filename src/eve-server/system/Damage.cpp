@@ -420,9 +420,10 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
     //Notifications to others:
     //I am not sure what the correct scope of this broadcast
     //should be. For now, it goes to anybody targeting us.
-    if(targets.IsTargetedBySomething()) {
+    if (targets.isTargeted())
+    {
         up = noeh.Encode();
-        targets.QueueTBDestinyEvent(&up);
+        targets.queueTBDestinyEvent(&up);
         PySafeDecRef( up );
 
         Notify_OnDamageMessage_Other ondamo;
@@ -434,7 +435,7 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
         ondamo.splash = "";
 
         up = ondamo.Encode();
-        targets.QueueTBDestinyEvent(&up);
+        targets.queueTBDestinyEvent(&up);
         PySafeDecRef( up );
     }
 
@@ -691,9 +692,10 @@ bool NPC::ApplyDamage(Damage &d) {
     //Notifications to others:
     //I am not sure what the correct scope of this broadcast
     //should be. For now, it goes to anybody targeting us.
-    if(targets.IsTargetedBySomething()) {
+    if (targets.isTargeted())
+    {
         up = noeh.Encode();
-        targets.QueueTBDestinyEvent(&up);
+        targets.queueTBDestinyEvent(&up);
         PySafeDecRef( up );
 
         Notify_OnDamageMessage_Other ondamo;
@@ -705,7 +707,7 @@ bool NPC::ApplyDamage(Damage &d) {
         ondamo.splash = "";
 
         up = ondamo.Encode();
-        targets.QueueTBDestinyEvent(&up);
+        targets.queueTBDestinyEvent(&up);
         PySafeDecRef( up );
     }
 
@@ -748,7 +750,7 @@ void NPC::_SendDamageStateChanged() const
 
     PyTuple *up;
     up = dmgChange.Encode();
-    targets.QueueTBDestinyUpdate(&up);
+    targets.queueTBDestinyUpdate(&up);
 }
 
 void ItemSystemEntity::_SendDamageStateChanged() const {
@@ -777,11 +779,11 @@ void ItemSystemEntity::_SendDamageStateChanged() const {
 
     PyTuple *up;
     up = dmgChange.Encode();
-    targets.QueueTBDestinyUpdate(&up);
+    targets.queueTBDestinyUpdate(&up);
 }
 
 void SystemEntity::Killed(Damage &fatal_blow) {
-    targets.ClearAllTargets(false);    //I assume a client does not need this notification.
+    targets.removeFromBubble(false);    //I assume a client does not need this notification.
 }
 
 void DynamicSystemEntity::Killed(Damage &fatal_blow) {
@@ -856,7 +858,7 @@ void Client::Killed(Damage &fatal_blow) {
 
         BoardShip(updatedCapsuleRef);
 
-		targets.ClearAllTargets();
+		targets.removeFromBubble();
 
 		//TODO: spawn a corpsed named for this client's character
 		uint32 corpseTypeID = 10041;	// typeID from 'invTypes' table for "Frozen Corpse"

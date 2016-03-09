@@ -29,6 +29,7 @@
 #include "ship/Ship.h"
 #include "ship/TargetManager.h"
 #include "system/SystemEntity.h"
+#include "system/SystemBubble.h"
 
 TargetManager::TargetManager(SystemEntity *self)
 : m_destroyed(false),
@@ -36,8 +37,9 @@ TargetManager::TargetManager(SystemEntity *self)
 {
 }
 
-TargetManager::~TargetManager() {
-    //DO NOT call DoDestruction here! it calls virtuals!
+TargetManager::~TargetManager()
+{
+    doDestruction();
 }
 
 //I am not happy with this:
@@ -49,112 +51,195 @@ TargetManager::~TargetManager() {
 // first child class in its hierarchy (such as Client or NPC) are
 // destroyed. Thus, all terminal children of SystemEntity must call
 // this from their destructor.
-void TargetManager::DoDestruction() {
-    if(!m_destroyed) {
-        ClearAllTargets(false);
+
+void TargetManager::doDestruction()
+{
+    if(!m_destroyed)
+    {
+        m_destroyed = true;
+        removeFromBubble(false);
     }
 }
 
-void TargetManager::Process() {
+void TargetManager::process()
+{
     //process outgoing targeting
+    for (auto cur : m_targets)
     {
-        std::map<SystemEntity *, TargetEntry *>::iterator cur, end;
-        cur = m_targets.begin();
-        end = m_targets.end();
-        for(; cur != end; cur++) {
-            switch(cur->second->state) {
-                case TargetEntry::Locking: {
-                    //see if we are finished locking...
-                    if(cur->second->timer.Check()) {
-                        cur->second->timer.Disable();
-                        //yay, they are locked..
-                        cur->second->state = TargetEntry::Locked;
-                        _log(TARGET__TRACE, "%u has finished locking %u", m_self->GetID(), cur->first->GetID());
-                        m_self->TargetAdded(cur->first);
-                        cur->first->targets.TargetedByLocked(m_self);
-                    }
-                } break;
-
-                case TargetEntry::Idle:
-                case TargetEntry::Locked:
-                case TargetEntry::PassiveLocking: {
-                    //nothing to do right now...
-                } break;
-            }
+        TargetEntry *target = cur.second;
+        switch (target->state)
+        {
+            case TargetEntry::Locking:
+                //see if we are finished locking...
+                if (target->timer.Check())
+                {
+                    // They are locked.
+                    target->timer.Disable();
+                    target->state = TargetEntry::Locked;
+                    _log(TARGET__TRACE, "%u has finished locking %u", m_self->GetID(), cur.first->GetID());
+                    m_self->TargetAdded(cur.first);
+                    cur.first->targets.targetedByLocked(m_self);
+                }
+                break;
+            case TargetEntry::Idle:
+            case TargetEntry::Locked:
+            case TargetEntry::PassiveLocking:
+                //nothing to do right now...
+                break;
         }
     }
-    //now incoming...?
-    //nothing to do right now...
-    /*{
-        std::map<SystemEntity *, TargetedByEntry *>::iterator cur, end;
-        cur = m_targetedBy.begin();
-        end = m_targetedBy.end();
-        for(; cur != end; cur++) {
-            cur->first->targets.TargetLost(m_self);
-        }
-    }*/
 }
 
-void TargetManager::ClearTargets(bool notify_self) {
+bool TargetManager::startTargeting(SystemEntity *who, ShipRef ship)
+{ // needs another argument: "ShipRef ship" to access ship attributes
+    //first make sure they are not already in the list
+    std::map<SystemEntity *, TargetEntry *>::iterator res;
+    res = m_targets.find(who);
+    if (res != m_targets.end())
+    {
+        //what to do?
+        _log(TARGET__TRACE, "Told to start targeting %u, but we are already processing them. Ignoring request.", who->GetID());
+        return false;
+    }
+
+    //Check that they aren't targeting themselves
+    if (who == m_self)
+    {
+        return false;
+    }
+
+    // Check against max locked target count
+    uint32 maxLockedTargets = ship->GetAttribute(AttrMaxLockedTargets).get_int();
+    if (m_targets.size() >= maxLockedTargets)
+    {
+        return false;
+    }
+
+    if (m_self->Bubble()->GetEntity(who->GetID()) == nullptr)
+    {
+        // Target not in our bubble.
+        return false;
+    }
+
+    // Check against max locked target range
+    double maxTargetLockRange = ship->GetAttribute(AttrMaxTargetRange).get_float();
+    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
+    if (rangeToTarget.length() > maxTargetLockRange)
+    {
+        return false;
+    }
+
+    // Calculate Time to Lock target:
+    uint32 lockTime = timeToLock(ship, who);
+
+    TargetEntry *te = new TargetEntry(who);
+    te->state = TargetEntry::Locking;
+    te->timer.Start(lockTime);
+    m_targets[who] = te;
+
+    _log(TARGET__TRACE, "%u started targeting %u (%u ms lock time)", m_self->GetID(), who->GetID(), lockTime);
+    return true;
+}
+
+bool TargetManager::startTargeting(SystemEntity *who, double lockTime, uint32 maxLockedTargets, double maxTargetLockRange)
+{
+    //first make sure they are not already in the list
+    std::map<SystemEntity *, TargetEntry *>::iterator res;
+    res = m_targets.find(who);
+    if (res != m_targets.end())
+    {
+        //what to do?
+        _log(TARGET__TRACE, "Told to start targeting %u, but we are already processing them. Ignoring request.", who->GetID());
+        return false;
+    }
+
+    //Check that they aren't targeting themselves
+    if (who == m_self)
+    {
+        return false;
+    }
+
+    // Check against max locked target count
+    if (m_targets.size() >= maxLockedTargets)
+    {
+        return false;
+    }
+
+    if (m_self->Bubble()->GetEntity(who->GetID()) == nullptr)
+    {
+        // Target not in our bubble.
+        return false;
+    }
+
+    // Check against max locked target range
+    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
+    if (rangeToTarget.length() > maxTargetLockRange)
+    {
+        return false;
+    }
+
+    TargetEntry *te = new TargetEntry(who);
+    te->state = TargetEntry::Locking;
+    te->timer.Start(lockTime);
+    m_targets[who] = te;
+
+    _log(TARGET__TRACE, "%u started targeting %u (%u ms lock time)", m_self->GetID(), who->GetID(), lockTime);
+    return true;
+}
+
+void TargetManager::clearTargets(bool notify_self)
+{
     _log(TARGET__TRACE, "%u is clearing all targets", m_self->GetID());
+    for (auto cur : m_targets)
     {
-        std::map<SystemEntity *, TargetEntry *>::iterator cur, end;
-        cur = m_targets.begin();
-        end = m_targets.end();
-        for(; cur != end; cur++) {
-            _log(TARGET__TRACE, "%u has cleared target %u during clear all.", m_self->GetID(), cur->first->GetID());
-            cur->first->targets.TargetedByLost(m_self);
-            delete cur->second;
-        }
-        m_targets.clear();
+        _log(TARGET__TRACE, "%u has cleared target %u during clear all.", m_self->GetID(), cur.first->GetID());
+        cur.first->targets.targetedByLost(m_self);
+        delete cur.second;
     }
-    if(notify_self)
+    m_targets.clear();
+    if (notify_self)
+    {
         m_self->TargetsCleared();
+    }
 }
 
-void TargetManager::ClearAllTargets(bool notify_self) {
-    ClearFromTargets();
-    ClearTargets(notify_self);
+void TargetManager::clearTarget(SystemEntity *who)
+{
+    //let the other entity know they are no longer targeted.
+    who->targets.targetedByLost(m_self);
+    //clear it from our own state
+    targetLost(who);
+}
+
+void TargetManager::removeFromBubble(bool notify_self)
+{
+    clearFromTargets();
+    clearTargets(notify_self);
     _log(TARGET__TRACE, "%u has cleared all targeting information.", m_self->GetID());
 }
 
-void TargetManager::ClearFromTargets() {
-    std::vector<SystemEntity *> ToNotify;
-    ToNotify.reserve(m_targetedBy.size());
+void TargetManager::clearFromTargets()
+{
+    std::vector<SystemEntity *> toNotify;
+    toNotify.reserve(m_targetedBy.size());
 
     //first, clean up our internal structure.
+    for (auto cur : m_targetedBy)
     {
-        std::map<SystemEntity *, TargetedByEntry *>::iterator cur, end;
-        cur = m_targetedBy.begin();
-        end = m_targetedBy.end();
-        for(; cur != end; cur++) {
-            //do not notify until we clear our target list! otherwise bad things happen.
-            ToNotify.push_back(cur->first);
-            delete cur->second;
-        }
-        m_targetedBy.clear();
+        //do not notify until we clear our target list! otherwise bad things happen.
+        toNotify.push_back(cur.first);
+        delete cur.second;
     }
+    m_targetedBy.clear();
 
+    for (auto notify : toNotify)
     {
-        std::vector<SystemEntity *>::iterator curn, endn;
-        curn = ToNotify.begin();
-        endn = ToNotify.end();
-        for(; curn != endn; curn++) {
-
-            (*curn)->targets.TargetLost(m_self);
-        }
+        notify->targets.targetLost(m_self);
     }
 }
 
-void TargetManager::ClearTarget(SystemEntity *who) {
-    //let the other entity know they are no longer targeted.
-    who->targets.TargetedByLost(m_self);
-    //clear it from our own state
-    TargetLost(who);
-}
-
-//called directly when a
-void TargetManager::TargetLost(SystemEntity *who) {
+void TargetManager::targetLost(SystemEntity *who)
+{
     std::map<SystemEntity *, TargetEntry *>::iterator res;
     res = m_targets.find(who);
     if(res == m_targets.end()) {
@@ -167,208 +252,6 @@ void TargetManager::TargetLost(SystemEntity *who) {
     _log(TARGET__TRACE, "%u has lost target %u", m_self->GetID(), who->GetID());
 
     m_self->TargetLost(who);
-}
-
-bool TargetManager::StartTargeting(SystemEntity *who, ShipRef ship) {   // needs another argument: "ShipRef ship" to access ship attributes
-    //first make sure they are not already in the list
-    std::map<SystemEntity *, TargetEntry *>::iterator res;
-    res = m_targets.find(who);
-    if(res != m_targets.end()) {
-        //what to do?
-        _log(TARGET__TRACE, "Told to start targeting %u, but we are already processing them. Ignoring request.", who->GetID());
-        return false;
-    }
-
-    //Check that they aren't targeting themselves
-    if(who == m_self)
-        return false;
-
-	// Calculate Time to Lock target:
-	uint32 lockTime = TimeToLock( ship, who );
-
-    // Check against max locked target count
-	uint32 maxLockedTargets = ship->GetAttribute(AttrMaxLockedTargets).get_int();
-    if( m_targets.size() >= maxLockedTargets )
-        return false;
-
-    // Check against max locked target range
-	double maxTargetLockRange = ship->GetAttribute(AttrMaxTargetRange).get_float();
-    GVector rangeToTarget( who->GetPosition(), m_self->GetPosition() );
-    if( rangeToTarget.length() > maxTargetLockRange )
-        return false;
-
-    TargetEntry *te = new TargetEntry(who);
-    te->state = TargetEntry::Locking;
-    te->timer.Start(lockTime);
-	m_targets[who] = te;
-
-    _log(TARGET__TRACE, "%u started targeting %u (%u ms lock time)", m_self->GetID(), who->GetID(), lockTime);
-    return true;
-}
-
-bool TargetManager::StartTargeting(SystemEntity *who, double lockTime, uint32 maxLockedTargets, double maxTargetLockRange)
-{
-    //first make sure they are not already in the list
-    std::map<SystemEntity *, TargetEntry *>::iterator res;
-    res = m_targets.find(who);
-    if(res != m_targets.end()) {
-        //what to do?
-        _log(TARGET__TRACE, "Told to start targeting %u, but we are already processing them. Ignoring request.", who->GetID());
-        return false;
-    }
-
-    //Check that they aren't targeting themselves
-    if(who == m_self)
-        return false;
-
-    // Check against max locked target count
-    if( m_targets.size() >= maxLockedTargets )
-        return false;
-
-    // Check against max locked target range
-    GVector rangeToTarget( who->GetPosition(), m_self->GetPosition() );
-    if( rangeToTarget.length() > maxTargetLockRange )
-        return false;
-
-    TargetEntry *te = new TargetEntry(who);
-    te->state = TargetEntry::Locking;
-	te->timer.Start(lockTime);
-	m_targets[who] = te;
-
-    _log(TARGET__TRACE, "%u started targeting %u (%u ms lock time)", m_self->GetID(), who->GetID(), lockTime);
-    return true;
-}
-
-void TargetManager::TargetEntry::Dump() const {
-    const char *sname = "Unknown State";
-    switch(state) {
-        case Idle:
-            sname = "Idle Entry";
-            break;
-        case PassiveLocking:
-            sname = "Passive Locking";
-            break;
-        case Locking:
-            sname = "Locking";
-            break;
-        case Locked:
-            sname = "Locked";
-            break;
-        //no default on purpose.
-    }
-    _log(TARGET__TRACE, "    Targeted %s (%u): %s (%s %d ms)",
-        who->GetName(),
-        who->GetID(),
-        sname,
-        timer.Enabled() ? "Running" : "Disabled",
-        timer.GetRemainingTime()
-    );
-}
-
-void TargetManager::TargetedByEntry::Dump() const {
-    const char *sname = "Unknown State";
-    switch(state) {
-        case Idle:
-            sname = "Idle Entry";
-            break;
-        case Locking:
-            sname = "Locking";
-            break;
-        case Locked:
-            sname = "Locked";
-            break;
-        //no default on purpose.
-    }
-    _log(TARGET__TRACE, "    Targeted By %s (%u): %s",
-        who->GetName(),
-        who->GetID(),
-        sname
-    );
-}
-
-void TargetManager::Dump() const {
-    _log(TARGET__TRACE, "Target Dump for %u:", m_self->GetID());
-    {
-        std::map<SystemEntity *, TargetEntry *>::const_iterator cur, end;
-        cur = m_targets.begin();
-        end = m_targets.end();
-        for(; cur != end; cur++) {
-            cur->second->Dump();
-        }
-    }
-    {
-        std::map<SystemEntity *, TargetedByEntry *>::const_iterator cur, end;
-        cur = m_targetedBy.begin();
-        end = m_targetedBy.end();
-        for(; cur != end; ++cur) {
-            cur->second->Dump();
-        }
-    }
-}
-
-SystemEntity *TargetManager::GetTarget(uint32 targetID, bool need_locked) const {
-    std::map<SystemEntity *, TargetEntry *>::const_iterator cur, end;
-    cur = m_targets.begin();
-    end = m_targets.end();
-    for(; cur != end; cur++) {
-        if(cur->first->GetID() != targetID)
-            continue;
-        //found it...
-        if(need_locked && cur->second->state != TargetEntry::Locked) {
-            _log(TARGET__TRACE, "Found target %u, but it is not locked.", targetID);
-            continue;
-        }
-        //_log(TARGET__TRACE, "Found target %u: %s (nl? %s)", targetID, cur->first->GetName(), need_locked?"yes":"no");
-        return(cur->first);
-    }
-    //_log(TARGET__TRACE, "Unable to find target %u (nl? %s)", targetID, need_locked?"yes":"no");
-    return NULL;    //not found.
-}
-
-void TargetManager::QueueTBDestinyEvent( PyTuple** up_in ) const
-{
-    PyTuple* up = *up_in;
-    *up_in = NULL;    //could optimize out one of the Clones in here...
-
-    PyTuple* up_dup = NULL;
-
-    std::map<SystemEntity*, TargetedByEntry*>::const_iterator cur, end;
-    cur = m_targetedBy.begin();
-    end = m_targetedBy.end();
-    for(; cur != end; ++cur)
-    {
-        if( NULL == up_dup )
-            up_dup = new PyTuple( *up );
-
-        cur->first->QueueDestinyEvent( &up_dup );
-        //they may not have consumed it (NPCs for example), so dont re-dup it in that case.
-    }
-
-    PySafeDecRef( up_dup );
-    PyDecRef( up );
-}
-
-void TargetManager::QueueTBDestinyUpdate( PyTuple** up_in ) const
-{
-    PyTuple* up = *up_in;
-    *up_in = NULL;    //could optimize out one of the Clones in here...
-
-    PyTuple* up_dup = NULL;
-
-    std::map<SystemEntity*, TargetedByEntry*>::const_iterator cur, end;
-    cur = m_targetedBy.begin();
-    end = m_targetedBy.end();
-    for(; cur != end; ++cur)
-    {
-        if( NULL == up_dup )
-            up_dup = new PyTuple( *up );
-
-        cur->first->QueueDestinyUpdate( &up_dup );
-        //they may not have consumed it (NPCs for example), so dont re-dup it in that case.
-    }
-
-    PySafeDecRef( up_dup );
-    PyDecRef( up );
 }
 
 /*void TargetManager::TargetedByLocking(SystemEntity *from_who) {
@@ -386,14 +269,18 @@ void TargetManager::QueueTBDestinyUpdate( PyTuple** up_in ) const
     //no notification, should we even track this event??
 }*/
 
-void TargetManager::TargetedByLocked(SystemEntity *from_who) {
+void TargetManager::targetedByLocked(SystemEntity *from_who)
+{
     //first make sure they are not already in the list
     std::map<SystemEntity *, TargetedByEntry *>::iterator res;
     res = m_targetedBy.find(from_who);
-    if(res != m_targetedBy.end()) {
+    if (res != m_targetedBy.end())
+    {
         //just re-use the old entry...
         res->second->state = TargetedByEntry::Locked;
-    } else {
+    }
+    else
+    {
         //new entry.
         TargetedByEntry *te = new TargetedByEntry(from_who);
         te->state = TargetedByEntry::Locking;
@@ -403,73 +290,225 @@ void TargetManager::TargetedByLocked(SystemEntity *from_who) {
     m_self->TargetedAdd(from_who);
 }
 
-void TargetManager::TargetedByLost(SystemEntity *from_who) {
+void TargetManager::targetedByLost(SystemEntity *from_who)
+{
     //first make sure they are not already in the list
     std::map<SystemEntity *, TargetedByEntry *>::iterator res;
     res = m_targetedBy.find(from_who);
-    if(res != m_targetedBy.end()) {
+    if (res != m_targetedBy.end())
+    {
         delete res->second;
         m_targetedBy.erase(res);
         m_self->TargetedLost(from_who);
         _log(TARGET__TRACE, "%u is no longer locked by %u", m_self->GetID(), from_who->GetID());
-    } else {
+    }
+    else
+    {
         //not found.. do nothing to our state, no notification?
         _log(TARGET__TRACE, "%u was notified of targeted lost by %u, but they did not have us targeted in the first place.", m_self->GetID(), from_who->GetID());
     }
 }
 
-SystemEntity *TargetManager::GetFirstTarget(bool need_locked) {
-    if(m_targets.empty())
-        return NULL;
-    if(!need_locked) {
+SystemEntity *TargetManager::getTarget(uint32 targetID, bool need_locked) const
+{
+    for (auto cur : m_targets)
+    {
+        if (cur.first->GetID() != targetID)
+        {
+            // Not the target we are looking for.
+            continue;
+        }
+        // Found our target, are we locked?
+        if (need_locked && cur.second->state != TargetEntry::Locked)
+        {
+            // Nope, and we need a locked target.
+            return nullptr;
+        }
+        return (cur.first);
+    }
+    // Target not found.
+    return nullptr;
+}
+
+SystemEntity *TargetManager::getFirstTarget(bool need_locked)
+{
+    if (m_targets.empty())
+    {
+        return nullptr;
+    }
+    if (!need_locked)
+    {
         //we know there is at least one entry here...
-        return(m_targets.begin()->first);
+        return (m_targets.begin()->first);
     }
 
-    std::map<SystemEntity *, TargetEntry *>::const_iterator cur, end;
-    cur = m_targets.begin();
-    end = m_targets.end();
-    for(; cur != end; cur++) {
-        if(cur->second->state == TargetEntry::Locked)
-            return(cur->first);
+    for (auto cur : m_targets)
+    {
+        if (cur.second->state == TargetEntry::Locked)
+        {
+            return (cur.first);
+        }
     }
-    return NULL;
+    return nullptr;
 }
 
-PyList *TargetManager::GetTargets() const {
+void TargetManager::queueTBDestinyEvent(PyTuple** up_in) const
+{
+    PyTuple* up = *up_in;
+    *up_in = nullptr; //could optimize out one of the Clones in here...
+
+    PyTuple* up_dup = nullptr;
+
+    for (auto cur : m_targetedBy)
+    {
+        if (up_dup == nullptr)
+        {
+            up_dup = new PyTuple(*up);
+        }
+
+        cur.first->QueueDestinyEvent(&up_dup);
+        //they may not have consumed it (NPCs for example), so dont re-dup it in that case.
+    }
+
+    PySafeDecRef( up_dup );
+    PyDecRef( up );
+}
+
+void TargetManager::queueTBDestinyUpdate(PyTuple** up_in) const
+{
+    PyTuple* up = *up_in;
+    *up_in = nullptr; //could optimize out one of the Clones in here...
+
+    PyTuple* up_dup = nullptr;
+
+    for (auto cur : m_targetedBy)
+    {
+        if (up_dup == nullptr)
+        {
+            up_dup = new PyTuple(*up);
+        }
+
+        cur.first->QueueDestinyUpdate(&up_dup);
+        //they may not have consumed it (NPCs for example), so dont re-dup it in that case.
+    }
+
+    PySafeDecRef( up_dup );
+    PyDecRef( up );
+}
+
+PyList *TargetManager::getTargets() const
+{
     PyList *result = new PyList();
-
-    std::map<SystemEntity *, TargetEntry *>::const_iterator cur, end;
-    cur = m_targets.begin();
-    end = m_targets.end();
-    for(; cur != end; cur++)
-        result->AddItemInt( cur->first->GetID() );
-
+    for (auto cur : m_targets)
+    {
+        result->AddItemInt(cur.first->GetID());
+    }
     return result;
 }
 
-PyList *TargetManager::GetTargeters() const {
+PyList *TargetManager::getTargeters() const
+{
     PyList *result = new PyList();
-
-    std::map<SystemEntity *, TargetedByEntry *>::const_iterator cur, end;
-    cur = m_targetedBy.begin();
-    end = m_targetedBy.end();
-    for(; cur != end; cur++)
-        result->AddItemInt( cur->first->GetID() );
-
+    for (auto cur : m_targetedBy)
+    {
+        result->AddItemInt(cur.first->GetID());
+    }
     return result;
 }
 
-uint32 TargetManager::TimeToLock(ShipRef ship, SystemEntity *target) const {
+uint32 TargetManager::timeToLock(ShipRef ship, SystemEntity *target) const
+{
+    if (target == nullptr)
+    {
+        return 0;
+    }
+    double scanRes = ship->GetAttribute(AttrScanResolution).get_float();
+    InventoryItemRef item = target->Item();
+    double sigRad = 500;
+    if (item.get() != nullptr)
+    {
+        if (item->HasAttribute(AttrSignatureRadius))
+        {
+            sigRad = item->GetAttribute(AttrSignatureRadius).get_float();
+        }
+    }
 
-    EvilNumber scanRes = ship->GetAttribute(AttrScanResolution);
-    EvilNumber sigRad(500);
+    double sigFactor = std::asinh(sigRad);
+    double time = (40000.0 / scanRes) / (sigFactor * sigFactor);
 
-	if( target->Item().get() != NULL )
-		if( target->Item()->HasAttribute(AttrSignatureRadius) )
-			sigRad = target->Item()->GetAttribute(AttrSignatureRadius);
+    return static_cast<uint32> (time * 1000); // Timer uses ms instead of seconds
+}
 
-    EvilNumber time = ( EvilNumber(40000) / ( scanRes ) ) /( EvilNumber::pow( e_log( sigRad + e_sqrt( sigRad * sigRad + 1) ), 2) );
+void TargetManager::TargetEntry::dump() const
+{
+    const char *sname = "Unknown State";
+    switch (state)
+    {
+    case Idle:
+        sname = "Idle Entry";
+        break;
+    case PassiveLocking:
+        sname = "Passive Locking";
+        break;
+    case Locking:
+        sname = "Locking";
+        break;
+    case Locked:
+        sname = "Locked";
+        break;
+        //no default on purpose.
+    }
+    _log(TARGET__TRACE, "    Targeted %s (%u): %s (%s %d ms)",
+         who->GetName(),
+         who->GetID(),
+         sname,
+         timer.Enabled() ? "Running" : "Disabled",
+         timer.GetRemainingTime()
+         );
+}
 
-	return static_cast<uint32>(time.get_float() * 1000); // Timer uses ms instead of seconds
+void TargetManager::TargetedByEntry::dump() const
+{
+    const char *sname = "Unknown State";
+    switch (state)
+    {
+    case Idle:
+        sname = "Idle Entry";
+        break;
+    case Locking:
+        sname = "Locking";
+        break;
+    case Locked:
+        sname = "Locked";
+        break;
+        //no default on purpose.
+    }
+    _log(TARGET__TRACE, "    Targeted By %s (%u): %s",
+         who->GetName(),
+         who->GetID(),
+         sname
+         );
+}
+
+void TargetManager::dump() const
+{
+    _log(TARGET__TRACE, "Target Dump for %u:", m_self->GetID());
+    {
+        std::map<SystemEntity *, TargetEntry *>::const_iterator cur, end;
+        cur = m_targets.begin();
+        end = m_targets.end();
+        for (; cur != end; cur++)
+        {
+            cur->second->dump();
+        }
+    }
+    {
+        std::map<SystemEntity *, TargetedByEntry *>::const_iterator cur, end;
+        cur = m_targetedBy.begin();
+        end = m_targetedBy.end();
+        for (; cur != end; ++cur)
+        {
+            cur->second->dump();
+        }
+    }
 }

@@ -165,7 +165,7 @@ SystemStargateEntity::SystemStargateEntity(SystemManager *system, const DBSystem
 }
 
 SystemStargateEntity::~SystemStargateEntity() {
-    targets.DoDestruction();
+    targets.doDestruction();
     PySafeDecRef( m_jumps );
 }
 
@@ -198,7 +198,7 @@ SystemAsteroidBeltEntity::SystemAsteroidBeltEntity(SystemManager *system, const 
 }
 
 SystemAsteroidBeltEntity::~SystemAsteroidBeltEntity() {
-    targets.DoDestruction();
+    targets.doDestruction();
     delete m_manager;
 }
 

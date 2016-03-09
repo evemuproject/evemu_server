@@ -104,7 +104,7 @@ Client::~Client() {
 
     PyServiceMgr::ClearBoundObjects(this);
 
-    targets.DoDestruction();
+    targets.doDestruction();
 
     PyDecRef( m_destinyEventQueue );
     PyDecRef( m_destinyUpdateQueue );
