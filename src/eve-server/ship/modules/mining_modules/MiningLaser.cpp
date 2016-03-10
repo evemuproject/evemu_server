@@ -102,6 +102,11 @@ bool MiningLaser::endCycle(bool continuing)
         // Target has left our bubble or been destroyed, deactivate this module:
         return false;
     }
+    if (m_ship->GetOperator()->GetSystemEntity()->targets.getTarget(m_targetID, true) == nullptr)
+    {
+        // Target no longer targeted.
+        return false;
+    }
     // Check range
     double maxRange = m_item->GetAttribute(AttrMaxRange).get_float();
     double targetRange = m_targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
