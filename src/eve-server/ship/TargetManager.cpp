@@ -63,6 +63,8 @@ void TargetManager::doDestruction()
 
 void TargetManager::process()
 {
+    int targetNum = 0;
+    std::vector<SystemEntity *> targetLost;
     //process outgoing targeting
     for (auto cur : m_targets)
     {
@@ -84,9 +86,26 @@ void TargetManager::process()
             case TargetEntry::Idle:
             case TargetEntry::Locked:
             case TargetEntry::PassiveLocking:
+                targetNum++;
                 //nothing to do right now...
+                if (targetNum > m_maxLockedTargets)
+                {
+                    // This is a hack fix.
+                    targetLost.push_back(cur.first);
+                    continue;
+                }
+                GVector rangeToTarget(cur.first->GetPosition(), m_self->GetPosition());
+                if (rangeToTarget.length() - cur.first->GetRadius() > m_maxTargetLockRange)
+                {
+                    targetLost.push_back(cur.first);
+                    continue;
+                }
                 break;
         }
+    }
+    for (auto target : targetLost)
+    {
+        clearTarget(target);
     }
 }
 
@@ -109,11 +128,12 @@ bool TargetManager::startTargeting(SystemEntity *who, ShipRef ship)
     }
 
     // Check against max locked target count
-    uint32 maxLockedTargets = ship->GetAttribute(AttrMaxLockedTargets).get_int();
-    if (m_targets.size() >= maxLockedTargets)
-    {
-        return false;
-    }
+    m_maxLockedTargets = ship->GetAttribute(AttrMaxLockedTargets).get_int();
+    //    if (m_targets.size() >= m_maxLockedTargets)
+    //    {
+    //        // TO-DO: send real max targets notice.
+    //        return false;
+    //    }
 
     if (m_self->Bubble()->GetEntity(who->GetID()) == nullptr)
     {
@@ -122,12 +142,13 @@ bool TargetManager::startTargeting(SystemEntity *who, ShipRef ship)
     }
 
     // Check against max locked target range
-    double maxTargetLockRange = ship->GetAttribute(AttrMaxTargetRange).get_float();
-    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
-    if (rangeToTarget.length() > maxTargetLockRange)
-    {
-        return false;
-    }
+    m_maxTargetLockRange = ship->GetAttribute(AttrMaxTargetRange).get_float();
+    //    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
+    //    if (rangeToTarget.length() - who->GetRadius() > m_maxTargetLockRange)
+    //    {
+    //        // TO-DO: send real out of range notice.
+    //        return false;
+    //    }
 
     // Calculate Time to Lock target:
     uint32 lockTime = timeToLock(ship, who);
@@ -160,10 +181,12 @@ bool TargetManager::startTargeting(SystemEntity *who, double lockTime, uint32 ma
     }
 
     // Check against max locked target count
-    if (m_targets.size() >= maxLockedTargets)
-    {
-        return false;
-    }
+    m_maxLockedTargets = maxLockedTargets;
+    //    if (m_targets.size() >= m_maxLockedTargets)
+    //    {
+    //        // TO-DO: send real max targets notice.
+    //        return false;
+    //    }
 
     if (m_self->Bubble()->GetEntity(who->GetID()) == nullptr)
     {
@@ -172,11 +195,13 @@ bool TargetManager::startTargeting(SystemEntity *who, double lockTime, uint32 ma
     }
 
     // Check against max locked target range
-    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
-    if (rangeToTarget.length() > maxTargetLockRange)
-    {
-        return false;
-    }
+    m_maxTargetLockRange = maxTargetLockRange;
+    //    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
+    //    if (rangeToTarget.length() - who->GetRadius() > m_maxTargetLockRange)
+    //    {
+    //        // TO-DO: send real out of range notice.
+    //        return false;
+    //    }
 
     TargetEntry *te = new TargetEntry(who);
     te->state = TargetEntry::Locking;

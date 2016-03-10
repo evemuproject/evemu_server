@@ -204,11 +204,9 @@ protected:
     SystemEntity *const m_self;    //we do not own this.
     std::map<SystemEntity *, TargetedByEntry *> m_targetedBy;    //we own these values, not the keys
     std::map<SystemEntity *, TargetEntry *> m_targets;    //we own these values, not the keys
+    uint32 m_maxLockedTargets = 0;
+    double m_maxTargetLockRange = 0;
 };
-
-
-
-
 
 #endif
 
