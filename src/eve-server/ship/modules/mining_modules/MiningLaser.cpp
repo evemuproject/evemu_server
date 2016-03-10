@@ -81,14 +81,15 @@ bool MiningLaser::canActivate(SystemEntity *targetEntity)
     }
     // We have a valid target, are we in range?
     double maxRange = miner->GetAttribute(AttrMaxRange).get_float();
-    maxRange = maxRange * maxRange;
     double targetRange = targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
+    targetRange = std::sqrt(targetRange);
+    targetRange -= targetEntity->GetRadius();
     if (targetRange > maxRange)
     {
         // We are not targeting a valid target.
         // TO-DO: send proper out or range response.
-        SysLog::Error("MiningLaser::Activate()", "ERROR: Cannot activate mining laser target out of range!");
-        throw PyException(MakeCustomError("ERROR!  Cannot activate mining laser target out of range!"));
+        SysLog::Error("MiningLaser::Activate()", "ERROR: Cannot activate mining laser target out of range! (%f/%f)", targetRange, maxRange);
+        throw PyException(MakeCustomError("ERROR!  Cannot activate mining laser target out of range! (%f/%f)", targetRange, maxRange));
     }
     return true;
 }
@@ -101,11 +102,11 @@ bool MiningLaser::endCycle(bool continuing)
         // Target has left our bubble or been destroyed, deactivate this module:
         return false;
     }
-    InventoryItemRef moduleRef = getItem();
     // Check range
-    double maxRange = moduleRef->GetAttribute(AttrMaxRange).get_float();
-    maxRange = maxRange * maxRange;
+    double maxRange = m_item->GetAttribute(AttrMaxRange).get_float();
     double targetRange = m_targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
+    targetRange = std::sqrt(targetRange);
+    targetRange -= m_targetEntity->GetRadius();
     if (targetRange > maxRange)
     {
         // We must have drifted out of range.
@@ -120,7 +121,7 @@ bool MiningLaser::endCycle(bool continuing)
 
     // Calculate how many units of ore to pull from the asteroid on this cycle:
     // Get base mining amount.
-    double oreUnitsToPull = moduleRef->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
+    double oreUnitsToPull = m_item->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
     // Do we have a crystal?
 	if( m_chargeRef )
     {
