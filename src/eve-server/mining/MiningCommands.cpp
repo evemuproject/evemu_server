@@ -60,10 +60,29 @@ PyResult Command_roid( Client* who, const Seperator& args )
     return new PyString( "Spawn successsfull." );
 }
 
+/*
+ * SQL to remove all asteroids from space in ALL systems.
+ * Important, run in this order or the attributes will not be deleted!
+ * 
+DELETE FROM entity_default_attributes WHERE attributeID > 0 and itemID in
+(SELECT itemID from entity where ownerID=1 AND typeID in
+(SELECT typeID from invTypes where groupID in
+(select groupID FROM invGroups where categoryID=25) or groupID=711));
+DELETE FROM entity_attributes WHERE attributeID > 0 and itemID in
+(SELECT itemID from entity where ownerID=1 AND typeID in
+(SELECT typeID from invTypes where groupID in
+(select groupID FROM invGroups where categoryID=25) or groupID=711));
+DELETE FROM entity WHERE itemID>=140000000 AND ownerID=1 AND typeID in
+(SELECT typeID from invTypes where groupID in
+(select groupID FROM invGroups where categoryID=25) or groupID=711);
+ * 
+ */
 PyResult Command_spawnbelt( Client* who, const Seperator& args )
 {
-    if( !who->IsInSpace() )
-        throw PyException( MakeCustomError( "You must be in space to spawn things." ) );
+    if (!who->IsInSpace())
+    {
+        throw PyException(MakeCustomError("You must be in space to spawn things."));
+    }
 
 	bool makeIceBelt = false;
 	bool makeRareIce = false;
@@ -101,84 +120,135 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
 				makeIceBelt = true;
 				makeRareIce = true;
 			}
-	}
+    }
 
-    const double beltradius = 100000.0;
-    const double beltdistance = 25000.0;
-    double roidradius;
-    const double beltangle = M_PI * 2.0 / 3.0;
+    double beltradius = 25000.0; // 25 KM
+    if(makeIceBelt)
+    {
+        beltradius = 100000.0; // 100 KM
+    }
     uint32 pcs = 0;
 
-	if( customCount > 15 )
-		pcs = customCount + static_cast<uint32>(MakeRandomInt( -10, 10 ));
-	else
-		pcs = 30 + static_cast<uint32>(MakeRandomInt( -10, 10 ));
-
-    const GPoint position( who->GetPosition() );
-
-    const double R = sqrt( position.x * position.x + position.z * position.z );
-    const GPoint r = position * ( R + beltdistance - beltradius ) / R;
-
-    double phi = atan( position.x / position.z );
-    if( position.z < 0 )
-        phi += M_PI;
+    if (customCount > 15)
+    {
+        pcs = customCount + static_cast<uint32> (MakeRandomInt(-10, 10));
+    }
+    else
+    {
+        pcs = 200 + static_cast<uint32> (MakeRandomInt(-10, 10));
+    }
 
     SystemManager* sys = who->System();
     std::map<double, uint32> roidDist;
-	if( makeIceBelt )
-	{
-		std::string securityStatus = sys->GetSystemSecurity();
-		if( !makeRareIce )
-		{
-			roidDist.insert(std::pair<double,uint32>(0.60,16264));		// Blue Ice
-			roidDist.insert(std::pair<double,uint32>(0.45,17975));		// Thick Blue Ice
-			roidDist.insert(std::pair<double,uint32>(0.30,28627));		// Azure Ice
-			roidDist.insert(std::pair<double,uint32>(0.20,16262));		// Clear Icicle
-			roidDist.insert(std::pair<double,uint32>(0.10,16267));		// Dark Glitter
-		}
-		if( makeRareIce )
-		{
-			roidDist.insert(std::pair<double,uint32>(0.90,16263));		// Glacial Mass
-			roidDist.insert(std::pair<double,uint32>(0.80,16265));		// White Glaze
-			roidDist.insert(std::pair<double,uint32>(0.70,16266));		// Glare Crust
-			roidDist.insert(std::pair<double,uint32>(0.60,16268));		// Gelidus
-			roidDist.insert(std::pair<double,uint32>(0.50,16269));		// Krystallos
-			roidDist.insert(std::pair<double,uint32>(0.40,17976));		// Pristine White Glaze
-			roidDist.insert(std::pair<double,uint32>(0.30,17977));		// Smooth Glacial Mass
-			roidDist.insert(std::pair<double,uint32>(0.20,17978));		// Enriched Clear Icicle
-			roidDist.insert(std::pair<double,uint32>(0.10,28628));		// Crystalline Icicle
-		}
-	}
-	else
+    if (makeIceBelt)
+    {
+        pcs /= 8;
+        std::string securityStatus = sys->GetSystemSecurity();
+        if (!makeRareIce)
+        {
+            roidDist.insert(std::pair<double, uint32>(0.60, 16264)); // Blue Ice
+            roidDist.insert(std::pair<double, uint32>(0.45, 17975)); // Thick Blue Ice
+            roidDist.insert(std::pair<double, uint32>(0.30, 28627)); // Azure Ice
+            roidDist.insert(std::pair<double, uint32>(0.20, 16262)); // Clear Icicle
+            roidDist.insert(std::pair<double, uint32>(0.10, 16267)); // Dark Glitter
+        }
+        if (makeRareIce)
+        {
+            roidDist.insert(std::pair<double, uint32>(0.90, 16263)); // Glacial Mass
+            roidDist.insert(std::pair<double, uint32>(0.80, 16265)); // White Glaze
+            roidDist.insert(std::pair<double, uint32>(0.70, 16266)); // Glare Crust
+            roidDist.insert(std::pair<double, uint32>(0.60, 16268)); // Gelidus
+            roidDist.insert(std::pair<double, uint32>(0.50, 16269)); // Krystallos
+            roidDist.insert(std::pair<double, uint32>(0.40, 17976)); // Pristine White Glaze
+            roidDist.insert(std::pair<double, uint32>(0.30, 17977)); // Smooth Glacial Mass
+            roidDist.insert(std::pair<double, uint32>(0.20, 17978)); // Enriched Clear Icicle
+            roidDist.insert(std::pair<double, uint32>(0.10, 28628)); // Crystalline Icicle
+        }
+    }
+    else
     {
         if (!CommandDB::GetRoidDist(sys->GetSystemSecurity(), roidDist))
-		{
-			SysLog::Error( "Command", "Couldn't get roid list for system security %s", sys->GetSystemSecurity() );
+        {
+            SysLog::Error("Command", "Couldn't get roid list for system security %s", sys->GetSystemSecurity());
 
-			throw PyException( MakeCustomError( "Couldn't get roid list for system security %s", sys->GetSystemSecurity() ) );
-		}
-	}
+            throw PyException(MakeCustomError("Couldn't get roid list for system security %s", sys->GetSystemSecurity()));
+        }
+    }
 
-    double distanceToMe;
+    const GPoint position(who->GetPosition());
+    double phi = atan(position.x / position.z);
+    if (position.z == 0)
+    {
+        phi = M_PI / 2;
+    }
+    if (position.z < 0)
+    {
+        phi += M_PI;
+    }
+    GPoint beltOffset;
+    if (makeIceBelt)
+    {
+        beltOffset.x = (beltradius * 0.75) * sin(phi);
+        beltOffset.z = (beltradius * 0.75) * cos(phi);
+    }
     double alpha;
     GPoint mposition;
-
-	if( makeIceBelt )
-		pcs *= 2;
-
-    for( uint32 i = 0; i < pcs; ++i )
+    double beltThickness = 3000;
+    double height;
+    double roidradius;
+    const double beltangle = M_PI * 2.0 / 3.0;
+    int triesLeft = pcs * 25;
+    int pcsLeft = pcs;
+    std::vector<std::pair<GPoint, double>> spawned;
+    while (triesLeft-- && pcsLeft)
     {
-        alpha = beltangle * MakeRandomFloat( -0.5, 0.5 );
-
-		if( makeIceBelt )
-			roidradius = MakeRandomFloat( 1000.0, 10000.0 );
-		else
+        uint32 typeID = GetAsteroidType(MakeRandomFloat(), roidDist);
+        // Generate asteroid parameters.
+		if( makeIceBelt)
+        {
+            height = MakeRandomFloat(-0.2, 1.8);
+            alpha = beltangle * ((M_PI / 8) * height);
+            roidradius = MakeRandomFloat(4000.0, 10000.0);
+            height *= 8;
+        }
+        else
+        {
+            alpha = beltangle * MakeRandomFloat(-M_PI / 4, M_PI / 4);
 			roidradius = MakeRandomFloat( 100.0, 1000.0 );
-        mposition.x = beltradius * sin( phi + alpha ) + roidradius * MakeRandomFloat( 0, 15 );
-        mposition.z = beltradius * cos( phi + alpha ) + roidradius * MakeRandomFloat( 0, 15 );
-        mposition.y = position.y - r.y + roidradius * MakeRandomFloat( 0, 15 );
-        distanceToMe = (r + mposition - position).length();
-        SpawnAsteroid( who->System(), GetAsteroidType( MakeRandomFloat(), roidDist ), roidradius, r + mposition );
+            height = MakeRandomFloat(-1, 1);
+            const ItemType *type = ItemFactory::GetType(typeID);
+            if (type->groupID() == EVEDB::invGroups::Veldspar)
+            {
+                roidradius *= 2;
+            }
+        }
+        // Calculate new position.
+        mposition.y = beltThickness * height;
+        mposition.x = beltradius * sin(phi + alpha) + beltThickness * MakeRandomFloat(-1, 1);
+        mposition.z = beltradius * cos(phi + alpha) + beltThickness * MakeRandomFloat(-1, 1);
+        // Check for collision.
+        bool collision = false;
+        for (auto pair : spawned)
+        {
+            GPoint point = pair.first;
+            double dist = (mposition - point).length();
+            double radii = (roidradius + pair.second);
+            if ((dist - radii) < 0)
+            {
+                collision = true;
+                continue;
+            }
+        }
+        if (collision)
+        {
+            // There was a collision, try again.
+            continue;
+        }
+        // Were good, add the asteroid.
+        pcsLeft--;
+        SpawnAsteroid(who->System(), typeID, roidradius, mposition + position - beltOffset);
+        // Save the location for collision checks.
+        spawned.push_back(std::pair<GPoint, double>(mposition, roidradius));
     }
 
     return new PyString( "Spawn successsfull." );
@@ -206,40 +276,37 @@ uint32 GetAsteroidType( double p, const std::map<double, uint32>& roids )
 
 void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const GVector& position )
 {
-    //TODO: make item in IsUniverseAsteroid() range...
     ItemData idata( typeID,
-                    1 /* who->GetCorporationID() */, //owner
+                    1,
                     system->GetID(),
                     flagAutoFit,
                     "",    //name
                     position );
 
     InventoryItemRef i = ItemFactory::SpawnItem(idata);
-    if( !i )
-        throw PyException( MakeCustomError( "Unable to spawn item of type %u.", typeID ) );
+    if (!i)
+    {
+        throw PyException(MakeCustomError("Unable to spawn item of type %u.", typeID));
+    }
 
-    //i->Set_radius( radius );
     // Calculate 1/10000th of the volume of a sphere with radius 'radius':
     // (this should yield around 90,000 units of Veldspar in an asteroid with 1000.0m radius)
-    double volume = (1.0/10000.0) * (4.0/3.0) * M_PI * pow(radius,3);
+    double volume = (1.0/100000.0) * (4.0/3.0) * M_PI * pow(radius,3);
+    //uint32 qty = floor((volume/(i->GetAttribute(AttrVolume).get_float())));
+    uint32 qty = (radius * 10) / std::sqrt(i->GetAttribute(AttrVolume).get_float());
+    if (i->groupID() == EVEDB::invGroups::Veldspar)
+    {
+        qty *= 2;
+    }
+    i->SetAttribute(AttrQuantity, qty);
+    i->SetAttribute(AttrRadius, radius);
 
-	i->SetAttribute(AttrQuantity, EvilNumber(floor(100*(volume/(i->GetAttribute(AttrVolume).get_float())))));
-    i->SetAttribute(AttrRadius, EvilNumber(radius));
-    //i->SetAttribute(AttrVolume, EvilNumber(volume));
-    //i->SetAttribute(AttrIsOnline,EvilNumber(1));                            // Is Online
-    //i->SetAttribute(AttrDamage,EvilNumber(0.0));                            // Structure Damage
-    //i->SetAttribute(AttrShieldCharge,i->GetAttribute(AttrShieldCapacity));  // Shield Charge
-    //i->SetAttribute(AttrArmorDamage,EvilNumber(0.0));                       // Armor Damage
-    //i->SetAttribute(AttrMass,EvilNumber(i->type().attributes.mass()));      // Mass
-    //i->SetAttribute(AttrRadius,EvilNumber(i->type().attributes.radius()));  // Radius
-    //i->SetAttribute(AttrVolume,EvilNumber(i->type().attributes.volume()));  // Volume
-
-    // TODO: Rework this code now that
-    AsteroidEntity* new_roid = NULL;
-    new_roid = new AsteroidEntity( i, system, position );
-    if( new_roid != NULL )
-        SysLog::Debug( "SpawnAsteroid()", "Spawned new asteroid of radius= %fm and volume= %f m3", radius, volume );
-    //TODO: check for a local asteroid belt object?
-    //TODO: actually add this to the asteroid belt too...
-    system->AddEntity( new_roid );
+    // Create astroid entity.
+    AsteroidEntity* new_roid = new AsteroidEntity(i, system, position);
+    if (new_roid != nullptr)
+    {
+        SysLog::Debug("SpawnAsteroid()", "Spawned new asteroid of radius= %fm and volume= %f m3", radius, volume);
+        // Add entity to system.
+        system->AddEntity(new_roid);
+    }
 }
