@@ -295,7 +295,15 @@ void ActiveModule::doEffect(bool active, std::shared_ptr<MEffect> effect, std::s
     shipEff.duration = active ? cycleTime : 1.0;
     shipEff.repeat = new PyInt(active ? 1000 : 0);
     shipEff.randomSeed = new PyNone;
-    shipEff.error = new PyNone;
+    if (m_error != nullptr)
+    {
+        shipEff.error = m_error;
+        m_error = nullptr;
+    }
+    else
+    {
+        shipEff.error = new PyNone;
+    }
 
     if(active)
     {

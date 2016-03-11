@@ -35,7 +35,6 @@
 MiningLaser::MiningLaser( InventoryItemRef item, ShipRef ship)
 : ActiveModule(item, ship)
 {
-    std::string effectsString;
     if (item->groupID() == EVEDB::invGroups::Gas_Cloud_Harvester)
     {
         m_effectString = "effects.CloudMining";
@@ -171,7 +170,22 @@ bool MiningLaser::endCycle(bool continuing)
     // Do we have enough room for the whole stack?
     if (remainingCargoVolume < (floor((oreUnitsToPull * oreUnitVolume) * 100.0)/100.0))
     {
-        // No, reduce the stack size.
+        // No, Do we have room for at least one unit?
+        if (remainingCargoVolume < oreUnitVolume)
+        {
+            // No, Send cargo full message.
+            PyDict *dict = new PyDict();
+            PyTuple *tuple = new PyTuple(2);
+            tuple->SetItem(0, new PyInt(MOD_ACTIVATED)); //???? what is this really?
+            tuple->SetItem(1, new PyInt(m_item->typeID()));
+            dict->SetItem(new PyString("modulename"), tuple);
+            PyTuple *error = new PyTuple(2);
+            error->SetItem(0, new PyString("MiningDronesDeactivatedCargoHoldNowFull"));
+            error->SetItem(1, dict);
+            m_error = error;
+            return false;
+        }
+        // Yes, reduce the stack size.
         oreUnitsToPull = floor(remainingCargoVolume / oreUnitVolume);
     }
     // Are we actually pulling anything?
@@ -235,6 +249,16 @@ void MiningLaser::checkAsteroidDepleted(uint32 remainingOreUnits)
         // Asteroid is empty now, so remove it
         m_targetEntity->Bubble()->Remove(m_targetEntity);
         m_targetEntity->Item()->Delete();
-        // To-Do: send client asteroid depleted message.
+        // Send client asteroid depleted message.
+        PyDict *dict = new PyDict();
+        dict->SetItem(new PyString("asteroidname"), new PyString(""));
+        PyTuple *tuple = new PyTuple(2);
+        tuple->SetItem(0, new PyInt(MOD_ACTIVATED)); //???? what is this really?
+        tuple->SetItem(1, new PyInt(m_item->typeID()));
+        dict->SetItem(new PyString("modulename"), tuple);
+        PyTuple *error = new PyTuple(2);
+        error->SetItem(0, new PyString("MiningDronesDeactivatedAsteroidEmpty"));
+        error->SetItem(1, dict);
+        m_error = error;
     }
 }

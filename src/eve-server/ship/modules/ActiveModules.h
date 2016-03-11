@@ -87,6 +87,8 @@ protected:
 	InventoryItemRef m_chargeRef;		// we do not own this
 	bool m_chargeLoaded;
 
+    PyRep *m_error = nullptr;
+
     void doStop();
     /**
      * Show cycle effects.
