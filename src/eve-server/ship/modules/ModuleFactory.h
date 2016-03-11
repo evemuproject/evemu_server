@@ -31,6 +31,7 @@
 #include "ship/modules/armor_modules/ArmorRepairer.h"
 #include "ship/modules/electronics_modules/TractorBeam.h"
 #include "ship/modules/mining_modules/MiningLaser.h"
+#include "ship/modules/mining_modules/SurveyScanner.h"
 #include "ship/modules/propulsion_modules/Afterburner.h"
 #include "ship/modules/weapon_modules/EnergyTurret.h"
 #include "ship/modules/weapon_modules/HybridTurret.h"
@@ -67,7 +68,8 @@ static GenericModule* ModuleFactory(InventoryItemRef item, ShipRef ship)
             // Electronics Modules Subgroup:
             case EVEDB::invGroups::Cargo_Scanner:                           return (new ActiveModule(item, ship)); break;    // Active - external
             case EVEDB::invGroups::Ship_Scanner:                            return (new ActiveModule(item, ship)); break;    // Active - external
-            case EVEDB::invGroups::Survey_Scanner:                          return (new ActiveModule(item, ship)); break;    // Active - external
+            case EVEDB::invGroups::Survey_Scanner: return (new SurveyScanner(item, ship));
+                break; // Active - external
             case EVEDB::invGroups::Cloaking_Device:                         return (new ActiveModule(item, ship)); break;    // Active  -  SELF
             case EVEDB::invGroups::Target_Painter:                          return (new ActiveModule(item, ship)); break;    // Active - external
             case EVEDB::invGroups::Drone_Control_Unit:                      return (new GenericModule(item, ship)); break;
