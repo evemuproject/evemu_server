@@ -106,7 +106,8 @@
 #include "missions/DungeonExplorationMgrService.h"
 #include "missions/MissionMgrService.h"
 // network
-#include "network/EVETCPServer.h"
+#include "network/TCPServer.h"
+#include "network/EVETCPConnection.h"
 // pos services
 #include "pos/PlanetMgr.h"
 #include "pos/PosMgrService.h"
@@ -226,10 +227,10 @@ int main( int argc, char* argv[] )
     _sDgmTypeAttrMgr = new dgmtypeattributemgr(); // needs to be after db init as its using it
 
     //Start up the TCP server
-    EVETCPServer tcps;
+    TCPServer<EVETCPConnection> tcps;
 
     char errbuf[ TCPCONN_ERRBUF_SIZE ];
-    if( tcps.Open( EVEServerConfig::net.port, errbuf ) )
+    if( tcps.open( EVEServerConfig::net.port, errbuf ) )
     {
         SysLog::Success( "Server Init", "TCP listener started on port %u.", EVEServerConfig::net.port );
     }
@@ -405,7 +406,7 @@ int main( int argc, char* argv[] )
 
         //check for timeouts in other threads
         //timeout_manager.CheckTimeouts();
-        while( ( tcpc = tcps.PopConnection() ) )
+        while( ( tcpc = tcps.popConnection() ) )
         {
             Client* c = new Client( &tcpc );
 
@@ -427,7 +428,7 @@ int main( int argc, char* argv[] )
     SysLog::Log("Server Shutdown", "Main loop stopped" );
 
     // Shutting down EVE Client TCP listener
-    tcps.Close();
+    tcps.close();
     SysLog::Log("Server Shutdown", "TCP listener stopped." );
 
     // Shutting down API Server:

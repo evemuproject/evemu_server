@@ -62,7 +62,6 @@ SET( network_INCLUDE
      "${TARGET_INCLUDE_DIR}/network/EVEPktDispatch.h"
      "${TARGET_INCLUDE_DIR}/network/EVESession.h"
      "${TARGET_INCLUDE_DIR}/network/EVETCPConnection.h"
-     "${TARGET_INCLUDE_DIR}/network/EVETCPServer.h"
      "${TARGET_INCLUDE_DIR}/network/packet_types.h" )
 SET( network_SOURCE
      "${TARGET_SOURCE_DIR}/network/EVEPktDispatch.cpp"

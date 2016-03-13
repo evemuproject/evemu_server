@@ -38,7 +38,6 @@
 // network
 #include "network/StreamPacketizer.h"
 #include "network/TCPConnection.h"
-#include "network/TCPServer.h"
 // threading
 #include "threading/Mutex.h"
 // utils
@@ -70,8 +69,6 @@
 #include "destiny/DestinyBinDump.h"
 #include "destiny/DestinyStructs.h"
 // network
-#include "network/EVETCPConnection.h"
-#include "network/EVETCPServer.h"
 #include "network/EVEPktDispatch.h"
 #include "network/EVESession.h"
 // marshal

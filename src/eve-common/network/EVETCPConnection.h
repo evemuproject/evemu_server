@@ -27,7 +27,8 @@
 #define __NETWORK__EVE_TCP_CONNECTION_H__INCL__
 
 class PyRep;
-class EVETCPServer;
+template<typename X>
+class TCPServer;
 
 /**
  * @brief EVE derivation of TCP connection.
@@ -37,7 +38,7 @@ class EVETCPServer;
 class EVETCPConnection
 : public TCPConnection
 {
-    friend class EVETCPServer;
+    friend class TCPServer<EVETCPConnection>;
 
 public:
     /// Time (in milliseconds) after which the connection is dropped if no data were received.

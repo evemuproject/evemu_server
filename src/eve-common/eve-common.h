@@ -40,7 +40,6 @@
 #include "network/Socket.h"
 #include "network/StreamPacketizer.h"
 #include "network/TCPConnection.h"
-#include "network/TCPServer.h"
 // utils
 #include "utils/Buffer.h"
 #include "utils/Deflate.h"

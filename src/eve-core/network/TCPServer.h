@@ -21,40 +21,75 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:     Zhur, Bloody.Rabbit
-*/
+ */
 
 #ifndef __NETWORK__TCP_SERVER_H__INCL__
 #define __NETWORK__TCP_SERVER_H__INCL__
 
 #include "network/Socket.h"
-#include "threading/Mutex.h"
+#include "log/SystemLog.h"
 
-/** Size of error buffer BaseTCPServer uses. */
-extern const uint32 TCPSRV_ERRBUF_SIZE;
-/** Time (in milliseconds) between periodical checks of socket for new connections. */
-extern const uint32 TCPSRV_LOOP_GRANULARITY;
+#include <thread>
+#include <mutex>
+
+/**
+ * Size of error buffer TCPServer uses.
+ */
+#define TCPSRV_ERRBUF_SIZE 1024
+/**
+ * Time (in milliseconds) between periodical checks of socket for new connections.
+ */
+#define TCPSRV_LOOP_GRANULARITY 5
 
 /**
  * @brief Generic class for TCP server.
- *
  * @author Zhur, Bloody.Rabbit
  */
-class BaseTCPServer
+template<typename X>
+class TCPServer
 {
 public:
+
     /**
      * @brief Creates empty TCP server.
      */
-    BaseTCPServer();
+    TCPServer()
+    : m_socket(nullptr),
+    m_port(0) { }
+
     /**
      * @brief Cleans server up.
      */
-    virtual ~BaseTCPServer();
+    virtual ~TCPServer()
+    {
+        // Close socket
+        close();
+        // Clear the connections.
+        X* conn;
+        while ((conn = popConnection()))
+        {
+            SafeDelete(conn);
+        }
 
-    /** @return TCP port the server listens on. */
-    uint16 GetPort() const { return mPort; }
-    /** @return True if listening has been opened, false if not. */
-    bool IsOpen() const;
+        // Wait until worker thread terminates
+        auto loopLock = getLoopLock();
+    }
+
+    /**
+     * @return TCP port the server listens on.
+     */
+    uint16 getPort() const
+    {
+        return m_port;
+    }
+
+    /**
+     *  @return True if listening has been opened, false if not.
+     */
+    bool isOpen() const
+    {
+        return ( m_socket != nullptr);
+    }
 
     /**
      * @brief Start listening on specified port.
@@ -64,130 +99,256 @@ public:
      *
      * @return True if listening has been started successfully, false if not.
      */
-    bool Open( uint16 port, char* errbuf = 0 );
+    bool open(uint16 port, char* errbuf = 0)
+    {
+        if (errbuf != nullptr)
+        {
+            errbuf[0] = 0;
+        }
+
+        // mutex lock
+        auto lock = getSocketLock();
+        if (m_socket != nullptr)
+        {
+            if (errbuf != nullptr)
+            {
+                snprintf(errbuf, TCPSRV_ERRBUF_SIZE, "Listening socket already open");
+            }
+            return false;
+        }
+        else
+        {
+            lock.unlock();
+            // Wait for thread to terminate
+            auto loopLock = getLoopLock();
+            loopLock.unlock();
+            lock.lock();
+        }
+
+        // Setting up TCP port for new TCP connections
+        m_socket = new Socket(AF_INET, SOCK_STREAM, 0);
+
+        // Quag: don't think following is good stuff for TCP, good for UDP
+        // Mis: SO_REUSEADDR shouldn't be a problem for tcp - allows you to restart
+        //      without waiting for conn's in TIME_WAIT to die
+        unsigned int reuse_addr = 1;
+        m_socket->setopt(SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof ( reuse_addr));
+
+        // Setup internet address information.
+        // This is used with the bind() call
+        sockaddr_in address;
+        memset(&address, 0, sizeof ( address));
+
+        address.sin_family = AF_INET;
+        address.sin_port = htons(port);
+        address.sin_addr.s_addr = htonl(INADDR_ANY);
+
+        if (m_socket->bind((sockaddr*) & address, sizeof ( address)) < 0)
+        {
+            if (errbuf != nullptr)
+            {
+                snprintf(errbuf, TCPSRV_ERRBUF_SIZE, "bind(): < 0");
+            }
+
+            SafeDelete(m_socket);
+            return false;
+        }
+
+        unsigned int bufsize = 64 * 1024; // 64kbyte receive buffer, up from default of 8k
+        m_socket->setopt(SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof ( bufsize));
+
+#ifdef HAVE_WINSOCK2_H
+        unsigned long nonblocking = 1;
+        m_socket->ioctl(FIONBIO, &nonblocking);
+#else /* !HAVE_WINSOCK2_H */
+        m_socket->fcntl(F_SETFL, O_NONBLOCK);
+#endif /* !HAVE_WINSOCK2_H */
+
+        if (m_socket->listen() == SOCKET_ERROR)
+        {
+            if (errbuf != nullptr)
+            {
+#ifdef HAVE_WINSOCK2_H
+                snprintf(errbuf, TCPSRV_ERRBUF_SIZE, "listen() failed, Error: %u", WSAGetLastError());
+#else /* !HAVE_WINSOCK2_H */
+                snprintf(errbuf, TCPSRV_ERRBUF_SIZE, "listen() failed, Error: %s", strerror(errno));
+#endif /* !HAVE_WINSOCK2_H */
+            }
+
+            SafeDelete(m_socket);
+            return false;
+        }
+
+        m_port = port;
+
+        // Start processing thread
+        m_thread = std::thread(&TCPServer::serverLoop, this);
+        m_thread.detach();
+
+        return true;
+    }
+
     /**
      * @brief Stops started listening.
      */
-    void Close();
-
-protected:
-    /**
-     * @brief Starts worker thread.
-     *
-     * This function just starts worker thread; it doesn't check
-     * whether there already is one running!
-     */
-    void StartLoop();
-    /**
-     * @brief Waits for worker thread to terminate.
-     */
-    void WaitLoop();
-
-    /**
-     * @brief Does periodical stuff to keep the server alive.
-     *
-     * @return True if the server should be further processed, false if not (eg. error occurred).
-     */
-    virtual bool Process();
-    /**
-     * @brief Accepts all new connections.
-     */
-    void ListenNewConnections();
-
-    /**
-     * @brief Processes new connection.
-     *
-     * This function must be overloaded by children to process new connections.
-     * Called every time a new connection is accepted.
-     */
-    virtual void CreateNewConnection( Socket* sock, uint32 rIP, uint16 rPort ) = 0;
-
-    /**
-     * @brief Loop for worker threads.
-     *
-     * This function only casts arg to BaseTCPServer and calls
-     * member TCPServerLoop().
-     *
-     * @param[in] arg Pointer to BaseTCPServer.
-     */
-#ifdef HAVE_WINDOWS_H
-    static DWORD WINAPI TCPServerLoop( LPVOID arg );
-#else /* !HAVE_WINDOWS_H */
-    static void* TCPServerLoop( void* arg );
-#endif /* !HAVE_WINDOWS_H */
-    /**
-     * @brief Loop for worker threads.
-     */
-    void TCPServerLoop();
-
-    /** Mutex to protect socket and associated variables. */
-    mutable Mutex mMSock;
-    /** Socket used for listening. */
-    Socket* mSock;
-    /** Port the socket is listening on. */
-    uint16 mPort;
-
-    /** Worker thread acquires this mutex before it starts processing; used for thread synchronization. */
-    mutable Mutex mMLoopRunning;
-};
-
-/**
- * @brief Connection-type-dependent version of TCP server.
- *
- * @author Zhur, Bloody.Rabbit
- */
-template<typename X>
-class TCPServer : public BaseTCPServer
-{
-public:
-    /**
-     * @brief Deletes all stored connections.
-     */
-    ~TCPServer()
+    void close()
     {
-        MutexLock lock( mMQueue );
-
-        X* conn;
-        while( ( conn = PopConnection() ) )
-            SafeDelete( conn );
+        auto lock = getSocketLock();
+        SafeDelete(m_socket);
+        m_port = 0;
     }
 
     /**
      * @brief Pops connection from queue.
-     *
      * @return Popped connection.
      */
-    X* PopConnection()
+    X* popConnection()
     {
-        MutexLock lock( mMQueue );
-
+        auto lock = getQueueLock();
         X* ret = NULL;
-        if( !mQueue.empty() )
+        if (!m_queue.empty())
         {
-            ret = mQueue.front();
-            mQueue.pop();
+            ret = m_queue.front();
+            m_queue.pop();
         }
-
         return ret;
     }
 
 protected:
-    /**
-     * @brief Adds connection to the queue.
-     *
-     * @param[in] con Connection to be added to the queue.
-     */
-    void AddConnection( X* con )
-    {
-        MutexLock lock( mMQueue );
 
-        mQueue.push( con );
+    /**
+     * @brief Accepts all new connections.
+     */
+    bool listenForNewConnections()
+    {
+        Socket* sock;
+        sockaddr_in from;
+        unsigned int fromlen;
+
+        from.sin_family = AF_INET;
+        fromlen = sizeof ( from);
+
+        auto lock = getSocketLock();
+        if (m_socket == nullptr)
+        {
+            // The socket has been closed.
+            return false;
+        }
+
+        // Check for pending connects
+        while ((sock = m_socket->accept((sockaddr*) & from, &fromlen)) != nullptr)
+        {
+#ifdef HAVE_WINSOCK2_H
+            unsigned long nonblocking = 1;
+            sock->ioctl(FIONBIO, &nonblocking);
+#else /* !HAVE_WINSOCK2_H */
+            sock->fcntl(F_SETFL, O_NONBLOCK);
+#endif /* !HAVE_WINSOCK2_H */
+
+            unsigned int bufsize = 64 * 1024; // 64kbyte receive buffer, up from default of 8k
+            sock->setopt(SOL_SOCKET, SO_RCVBUF, &bufsize, sizeof ( bufsize));
+
+            // New TCP connection, this must consume the socket.
+            addConnection(new X(sock, from.sin_addr.s_addr, ntohs(from.sin_port)));
+        }
+        return true;
     }
 
-    /** Mutex to protect connection queue. */
-    Mutex mMQueue;
-    /** Connection queue. */
-    std::queue<X*> mQueue;
+    /**
+     * @brief Loop for worker threads.
+     */
+    void serverLoop()
+    {
+#ifdef HAVE_WINDOWS_H
+        SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
+#endif /* HAVE_WINDOWS_H */
+
+#ifndef HAVE_WINDOWS_H
+        SysLog::Log("Threading", "Starting TCPServerLoop with thread ID %d", pthread_self());
+#endif /* !HAVE_WINDOWS_H */
+
+        auto lock = getLoopLock();
+
+        uint32 start = GetTickCount();
+        uint32 etime;
+        uint32 last_time;
+
+        while (listenForNewConnections())
+        {
+            /* UPDATE */
+            last_time = GetTickCount();
+            etime = last_time - start;
+
+            // do the stuff for thread sleeping
+            if (TCPSRV_LOOP_GRANULARITY > etime)
+            {
+                Sleep(TCPSRV_LOOP_GRANULARITY - etime);
+            }
+
+            start = GetTickCount();
+        }
+
+#ifndef HAVE_WINDOWS_H
+        SysLog::Log("Threading", "Ending TCPServerLoop with thread ID %d", pthread_self());
+#endif /* !HAVE_WINDOWS_H */
+    }
+
+    /**
+     * Mutex to protect socket and associated variables.
+     */
+    mutable std::mutex m_socketMutex;
+
+    std::unique_lock<std::mutex> getSocketLock() const
+    {
+        return std::unique_lock<std::mutex>(m_socketMutex);
+    }
+    /**
+     * Socket used for listening.
+     */
+    Socket* m_socket;
+    /**
+     * Port the socket is listening on.
+     */
+    uint16 m_port;
+
+    /**
+     * Worker thread acquires this mutex before it starts processing; used for thread synchronization.
+     */
+    mutable std::mutex m_loopRunningMutex;
+
+    std::unique_lock<std::mutex> getLoopLock() const
+    {
+        return std::unique_lock<std::mutex>(m_loopRunningMutex);
+    }
+
+    /**
+     * @brief Adds connection to the queue.
+     * @param[in] con Connection to be added to the queue.
+     */
+    void addConnection(X* con)
+    {
+        auto lock = getQueueLock();
+        m_queue.push(con);
+    }
+
+    /**
+     *  Mutex to protect connection queue.
+     */
+    std::mutex m_queueMutex;
+
+    std::unique_lock<std::mutex> getQueueLock()
+    {
+        return std::unique_lock<std::mutex>(m_queueMutex);
+    }
+    /**
+     * Connection queue.
+     */
+    std::queue<X*> m_queue;
+
+    /**
+     * The worker thread.
+     */
+    std::thread m_thread;
 };
 
 #endif /* !__NETWORK__TCP_SERVER_H__INCL__ */

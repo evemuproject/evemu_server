@@ -47,8 +47,7 @@ SET( network_SOURCE
      "${TARGET_SOURCE_DIR}/network/NetUtils.cpp"
      "${TARGET_SOURCE_DIR}/network/Socket.cpp"
      "${TARGET_SOURCE_DIR}/network/StreamPacketizer.cpp"
-     "${TARGET_SOURCE_DIR}/network/TCPConnection.cpp"
-     "${TARGET_SOURCE_DIR}/network/TCPServer.cpp" )
+     "${TARGET_SOURCE_DIR}/network/TCPConnection.cpp" )
 
 SET( threading_INCLUDE
      "${TARGET_INCLUDE_DIR}/threading/Mutex.h" )
