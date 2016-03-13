@@ -11,15 +11,15 @@ MySQL - 5.0.67-community-nt : Database - eve_evemu_dynamic
 
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-/*Table structure for table `account` */
+/*Table structure for table `svrAccount` */
 
-DROP TABLE IF EXISTS `account`;
+DROP TABLE IF EXISTS `svrAccount`;
 
 -- ----------------------------
--- Table structure for `account`
+-- Table structure for `svrAccount`
 -- ----------------------------
-DROP TABLE IF EXISTS `account`;
-CREATE TABLE `account` (
+DROP TABLE IF EXISTS `svrAccount`;
+CREATE TABLE `svrAccount` (
   `accountID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `accountName` varchar(43) NOT NULL DEFAULT '',
   `password` varchar(43) NOT NULL DEFAULT '',
@@ -29,11 +29,12 @@ CREATE TABLE `account` (
   `banned` tinyint(1) NOT NULL DEFAULT '0',
   `logonCount` int(10) unsigned NOT NULL DEFAULT '0',
   `lastLogin` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `lastLogout` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`accountID`),
   UNIQUE KEY `accountName` (`accountName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-/*Data for the table `account` */
+/*Data for the table `svrAccount` */
 
 /*Table structure for table `alliance_ShortNames` */
 

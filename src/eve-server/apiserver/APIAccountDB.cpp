@@ -70,14 +70,14 @@ bool APIAccountDB::GetAccountInfo(uint32 accountID, std::vector<std::string> & a
 {
     DBQueryResult res;
 
-    // Get account table info using the accountID:
+    // Get srvAccount table info using the accountID:
     if( !DBcore::RunQuery(res,
         " SELECT "
         "   online, "
         "   banned, "
         "   logonCount, "
         "   lastLogin "
-        " FROM account "
+                          " FROM srvAccount "
         " WHERE `accountID` = %u ", accountID ))
     {
         SysLog::Error( "APIAccountDB::GetAccountInfo()", "Cannot find accountID %u", accountID );

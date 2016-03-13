@@ -43,7 +43,7 @@ bool ServiceDB::GetAccountInformation( const char* username, const char* passwor
     DBcore::DoEscapeString(_escaped_username, _username);
 
     DBQueryResult res;
-    if( !DBcore::RunQuery( res, "SELECT accountID, password, hash, role, online, banned, logonCount, lastLogin FROM account WHERE accountName = '%s'", _escaped_username.c_str() ) )
+    if (!DBcore::RunQuery(res, "SELECT accountID, password, hash, role, online, banned, logonCount, lastLogin FROM srvAccount WHERE accountName = '%s'", _escaped_username.c_str()))
     {
         SysLog::Error( "ServiceDB", "Error in query: %s.", res.error.c_str() );
         return false;
@@ -97,7 +97,8 @@ bool ServiceDB::UpdateAccountHash( const char* username, std::string & hash )
     DBcore::DoEscapeString(escaped_hash, hash);
     DBcore::DoEscapeString(escaped_username, user_name);
 
-    if(!DBcore::RunQuery(err, "UPDATE account SET password='',hash='%s' where accountName='%s'", escaped_hash.c_str(), escaped_username.c_str())) {
+    if (!DBcore::RunQuery(err, "UPDATE srvAccount SET password='',hash='%s' where accountName='%s'", escaped_hash.c_str(), escaped_username.c_str()))
+    {
 
         SysLog::Error( "AccountDB", "Unable to update account information for: %s.", username );
         return false;
@@ -113,7 +114,8 @@ bool ServiceDB::UpdateAccountInformation( const char* username, bool isOnline )
     std::string escaped_username;
 
     DBcore::DoEscapeString(escaped_username, user_name);
-    if(!DBcore::RunQuery(err, "UPDATE account SET lastLogin=now(), logonCount=logonCount+1, online=%u where accountName='%s'", isOnline, escaped_username.c_str())) {
+    if (!DBcore::RunQuery(err, "UPDATE srvAccount SET lastLogin=now(), logonCount=logonCount+1, online=%u where accountName='%s'", isOnline, escaped_username.c_str()))
+    {
         SysLog::Error( "AccountDB", "Unable to update account information for: %s.", username );
         return false;
     }
@@ -127,7 +129,7 @@ uint32 ServiceDB::CreateNewAccount( const char* login, const char* pass, uint64 
 
     DBerror err;
     if( !DBcore::RunQueryLID( err, accountID,
-        "INSERT INTO account ( accountName, hash, role )"
+                             "INSERT INTO srvAccount ( accountName, hash, role )"
         " VALUES ( '%s', '%s', %" PRIu64 " )",
         login, pass, role ) )
     {
@@ -508,9 +510,9 @@ void ServiceDB::SetServerOnlineStatus(bool onoff_status) {
     _log(CLIENT__TRACE, "ChrStatus: Setting all characters and accounts offline.");
 
     if(!DBcore::RunQuery(err,
-        "UPDATE character_, account"
+                         "UPDATE character_, srvAccount"
         " SET character_.online = 0,"
-        "     account.online = 0"))
+                         "     srvAccount.online = 0"))
         {
                 codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
         }
@@ -522,8 +524,8 @@ void ServiceDB::SetAccountOnlineStatus(uint32 accountID, bool onoff_status) {
     _log(CLIENT__TRACE, "AccStatus: Setting account %u %s.", accountID, onoff_status ? "Online" : "Offline");
 
     if(!DBcore::RunQuery(err,
-        "UPDATE account "
-        " SET account.online = %d "
+                         "UPDATE srvAccount "
+                         " SET srvAccount.online = %d "
         " WHERE accountID = %u ",
         onoff_status, accountID))
     {
@@ -537,8 +539,8 @@ void ServiceDB::SetAccountBanStatus(uint32 accountID, bool onoff_status) {
     _log(CLIENT__TRACE, "AccStatus: %s account %u.", onoff_status ? "Banned" : "Removed ban on", accountID );
 
     if(!DBcore::RunQuery(err,
-        " UPDATE account "
-        " SET account.banned = %d "
+                         " UPDATE srvAccount "
+                         " SET srvAccount.banned = %d "
         " WHERE accountID = %u ",
         onoff_status, accountID))
     {

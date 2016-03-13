@@ -367,11 +367,11 @@ bool APIServiceDB::GetAccountIdFromUsername(std::string username, std::string * 
 {
     DBQueryResult res;
 
-    // Find accountID in 'account' table using accountName:
+    // Find accountID in 'srvAccount' table using accountName:
     if( !DBcore::RunQuery(res,
         "SELECT"
         "    accountID "
-        " FROM account "
+        " FROM srvAccount "
         " WHERE accountName='%s'" , username.c_str() ))
     {
         Log::Error( "APIServiceDB::GetAccountIdFromUsername()", "Cannot find accountID for username %s", username.c_str() );
