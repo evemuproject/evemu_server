@@ -195,7 +195,7 @@ public:
 
     /*
      * Character stuff
-     * (character_, chrSkillQueue)
+     * (srvCharacter, chrSkillQueue)
      */
     static bool GetCharacter(uint32 characterID, CharacterData &into);
     static bool GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into);

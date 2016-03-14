@@ -290,7 +290,7 @@ PyObject *CorporationDB::GetEmploymentRecord(uint32 charID) {
     //do we really need this order by??
     if (!DBcore::RunQuery(res,
         "SELECT startDate, corporationID, deleted "
-        "   FROM chrEmployment "
+        "   FROM srvChrEmployment "
         "   WHERE characterID = %u "
         "   ORDER BY startDate DESC", charID
         ))
@@ -553,7 +553,7 @@ bool CorporationDB::JoinCorporation(uint32 charID, uint32 corpID, uint32 oldCorp
 
     // Set new corp
     if (!DBcore::RunQuery(err,
-        "UPDATE character_ SET "
+        "UPDATE srvCharacter SET "
         "   corporationID = %u, corporationDateTime = %" PRIu64 ", "
         "   corpRole = %" PRIu64 ", rolesAtAll = %" PRIu64 ", rolesAtBase = %" PRIu64 ", rolesAtHQ = %" PRIu64 ", rolesAtOther = %" PRIu64 " "
         "   WHERE characterID = %u",
@@ -581,7 +581,7 @@ bool CorporationDB::JoinCorporation(uint32 charID, uint32 corpID, uint32 oldCorp
 
     // Add new employment history record
     if (!DBcore::RunQuery(err,
-        "INSERT INTO chrEmployment VALUES (%u, %u, %" PRIu64 ", 0)",
+        "INSERT INTO srvChrEmployment VALUES (%u, %u, %" PRIu64 ", 0)",
         charID, corpID, Win32TimeNow()
         ))
     {
@@ -915,7 +915,7 @@ PyRep *CorporationDB::GetMyApplications(uint32 charID) {
     if (!DBcore::RunQuery(res,
         " SELECT corporationID, characterID, applicationText, roles, grantableRoles, "
         " status, applicationDateTime, deleted, lastCorpUpdaterID "
-        " FROM chrApplications "
+        " FROM srvChrApplications "
         " WHERE characterID = %u ", charID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -933,7 +933,7 @@ bool CorporationDB::InsertApplication(const ApplicationInfo & aInfo) {
     std::string safeMessage;
     DBcore::DoEscapeString(safeMessage, aInfo.appText);
     if (!DBcore::RunQuery(err,
-        " INSERT INTO chrApplications ("
+        " INSERT INTO srvChrApplications ("
         " corporationID, characterID, applicationText, roles, grantableRoles, status, "
         " applicationDateTime, deleted, lastCorpUpdaterID "
         " ) VALUES ( "
@@ -954,7 +954,7 @@ PyRep *CorporationDB::GetApplications(uint32 corpID) {
         " SELECT "
         " corporationID, characterID, applicationText, roles, grantableRoles, status, "
         " applicationDateTime, deleted, lastCorpUpdaterID "
-        " FROM chrApplications "
+        " FROM srvChrApplications "
         " WHERE corporationID = %u ", corpID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -1024,7 +1024,7 @@ bool CorporationDB::GetCurrentApplicationInfo(uint32 charID, uint32 corpID, Appl
     if (!DBcore::RunQuery(res,
         " SELECT "
         " status, applicationText, applicationDateTime, roles, grantableRoles, lastCorpUpdaterID, deleted "
-        " FROM chrApplications "
+        " FROM srvChrApplications "
         " WHERE characterID = %u AND corporationID = %u ",
         charID, corpID))
     {
@@ -1063,7 +1063,7 @@ bool CorporationDB::UpdateApplication(const ApplicationInfo & info) {
     std::string clear;
     DBcore::DoEscapeString(clear, info.appText);
     if (!DBcore::RunQuery(err,
-        " UPDATE chrApplications "
+        " UPDATE srvChrApplications "
         " SET status = %u, lastCorpUpdaterID = %u, applicationText = '%s' "
         " WHERE corporationID = %u AND characterID = %u ", info.status, info.lastCID, clear.c_str(), info.corpID, info.charID))
     {
@@ -1076,7 +1076,7 @@ bool CorporationDB::UpdateApplication(const ApplicationInfo & info) {
 bool CorporationDB::DeleteApplication(const ApplicationInfo & info) {
     DBerror err;
     if (!DBcore::RunQuery(err,
-        " DELETE FROM chrApplications "
+        " DELETE FROM srvChrApplications "
         " WHERE corporationID = %u AND characterID = %u ", info.corpID, info.charID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
@@ -1097,8 +1097,8 @@ bool CorporationDB::CreateMemberAttributeUpdate(MemberAttributeUpdate & attrib, 
         "   title, corporationDateTime, corporationID, "
         "   corpRole, rolesAtAll, rolesAtBase, "
         "   rolesAtHQ, rolesAtOther "
-        " FROM character_ "
-        " WHERE character_.characterID = %u ", charID))
+        " FROM srvCharacter "
+        " WHERE srvCharacter.characterID = %u ", charID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return false;
@@ -1340,7 +1340,7 @@ PyDict* CorporationDB::GetBookmarks(uint32 corporationID)
         " note,"
         " creatorID,"
         " folderID"
-        " FROM bookmarks"
+        " FROM srvBookmarks"
         " WHERE ownerID = %u",
         corporationID))
     {

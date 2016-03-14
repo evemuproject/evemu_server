@@ -114,28 +114,28 @@ bool APICharacterDB::GetCharacterInfo(uint32 characterID, std::vector<std::strin
     // Get list of characters and their corporation info from the accountID:
     if( !DBcore::RunQuery(res,
         " SELECT "
-        "  character_.balance, "
-        "  character_.skillPoints, "
-        "  character_.corporationID, "
-        "  character_.corpRole, "
-        "  character_.rolesAtAll, "
-        "  character_.rolesAtBase, "
-        "  character_.rolesAtHQ, "
-        "  character_.rolesAtOther, "
-        "  character_.startDateTime, "
-        "  character_.gender, "
+        "  srvCharacter.balance, "
+        "  srvCharacter.skillPoints, "
+        "  srvCharacter.corporationID, "
+        "  srvCharacter.corpRole, "
+        "  srvCharacter.rolesAtAll, "
+        "  srvCharacter.rolesAtBase, "
+        "  srvCharacter.rolesAtHQ, "
+        "  srvCharacter.rolesAtOther, "
+        "  srvCharacter.startDateTime, "
+        "  srvCharacter.gender, "
         "  chrAncestries.ancestryName, "
         "  chrBloodlines.bloodlineName, "
         "  chrRaces.raceName, "
         "  entity.itemName, "
         "  corporation.corporationName "
-        " FROM character_ "
-        "  LEFT JOIN chrAncestries ON character_.ancestryID = chrAncestries.ancestryID "
+        " FROM srvCharacter "
+        "  LEFT JOIN chrAncestries ON srvCharacter.ancestryID = chrAncestries.ancestryID "
         "  LEFT JOIN chrBloodlines ON chrAncestries.bloodlineID = chrBloodlines.bloodlineID "
         "  LEFT JOIN chrRaces ON chrBloodlines.raceID = chrRaces.raceID "
-        "  LEFT JOIN entity ON entity.itemID = character_.characterID "
-        "  LEFT JOIN corporation ON corporation.corporationID = character_.corporationID "
-        " WHERE character_.characterID = %u ", characterID ))
+        "  LEFT JOIN entity ON entity.itemID = srvCharacter.characterID "
+        "  LEFT JOIN corporation ON corporation.corporationID = srvCharacter.corporationID "
+        " WHERE srvCharacter.characterID = %u ", characterID ))
     {
         SysLog::Error( "APIAccountDB::GetCharacterSkillsTrained()", "Cannot find characterID %u", characterID );
         return false;

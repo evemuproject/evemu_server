@@ -74,18 +74,18 @@ bool SystemDB::LoadSystemDynamicEntities(uint32 systemID, std::vector<DBSystemDy
         "   entity.flag,"
         "    invTypes.groupID,"
         "    invGroups.categoryID,"
-        "   0,"//"   character_.corporationID,"
+        "   0,"//"   srvCharacter.corporationID,"
         "   0,"//"   corporation.allianceID,"
         "   x,"
         "   y,"
         "   z"
-        " FROM entity, invTypes, invGroups"//, character_, corporation"
+        " FROM entity, invTypes, invGroups"//, srvCharacter, corporation"
         " WHERE"
         "        entity.typeID=invTypes.typeID"
         "    AND invTypes.groupID=invGroups.groupID"
         "    AND invGroups.categoryID NOT IN (%d,%d)"
-        //"   AND character_.characterID = entity.ownerID"
-        //"   AND corporation.corporationID = character_.corporationID"
+        //"   AND srvCharacter.characterID = entity.ownerID"
+        //"   AND corporation.corporationID = srvCharacter.corporationID"
         "    AND locationID=%u",
         //excluded categories:
             //celestials:

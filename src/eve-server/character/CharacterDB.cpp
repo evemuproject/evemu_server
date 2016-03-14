@@ -41,7 +41,7 @@ void CharacterDB::Init()
 bool CharacterDB::ReportRespec(uint32 characterId)
 {
     DBerror error;
-    if (!DBcore::RunQuery(error, "UPDATE character_ SET freeRespecs = freeRespecs - 1, lastRespecDateTime = %" PRIu64 ", nextRespecDateTime = %" PRIu64 " WHERE characterId = %u AND freeRespecs > 0",
+    if (!DBcore::RunQuery(error, "UPDATE srvCharacter SET freeRespecs = freeRespecs - 1, lastRespecDateTime = %" PRIu64 ", nextRespecDateTime = %" PRIu64 " WHERE characterId = %u AND freeRespecs > 0",
         Win32TimeNow(), Win32TimeNow() + Win32Time_Year, characterId))
         return false;
     return true;
@@ -50,7 +50,7 @@ bool CharacterDB::ReportRespec(uint32 characterId)
 bool CharacterDB::GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec)
 {
     DBQueryResult res;
-    if (!DBcore::RunQuery(res, "SELECT freeRespecs, lastRespecDateTime, nextRespecDateTime FROM character_ WHERE characterID = %u", characterId))
+    if (!DBcore::RunQuery(res, "SELECT freeRespecs, lastRespecDateTime, nextRespecDateTime FROM srvCharacter WHERE characterID = %u", characterId))
         return false;
     if (res.GetRowCount() < 1)
         return false;
@@ -74,7 +74,7 @@ bool CharacterDB::GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uin
 
         // reflect this in the database, too
         DBerror err;
-        DBcore::RunQuery(err, "UPDATE character_ SET freeRespecs = %u, nextRespecDateTime = %" PRIu64 " WHERE characterId = %u",
+        DBcore::RunQuery(err, "UPDATE srvCharacter SET freeRespecs = %u, nextRespecDateTime = %" PRIu64 " WHERE characterId = %u",
             out_freeRespecs, out_nextRespec, characterId);
     }
 
@@ -91,7 +91,7 @@ uint64 CharacterDB::PrepareCharacterForDelete(uint32 accountID, uint32 charID)
 
     DBerror error;
     uint32 affectedRows;
-    DBcore::RunQuery(error, affectedRows, "UPDATE character_ SET deletePrepareDateTime = %" PRIu64 " WHERE accountID = %u AND characterID = %u", deleteTime, accountID, charID);
+    DBcore::RunQuery(error, affectedRows, "UPDATE srvCharacter SET deletePrepareDateTime = %" PRIu64 " WHERE accountID = %u AND characterID = %u", deleteTime, accountID, charID);
     if (affectedRows != 1)
         return 0;
 
@@ -102,7 +102,7 @@ void CharacterDB::CancelCharacterDeletePrepare(uint32 accountID, uint32 charID)
 {
     DBerror error;
     uint32 affectedRows;
-    DBcore::RunQuery(error, affectedRows, "UPDATE character_ SET deletePrepareDateTime = 0 WHERE accountID = %u AND characterID = %u", accountID, charID);
+    DBcore::RunQuery(error, affectedRows, "UPDATE srvCharacter SET deletePrepareDateTime = 0 WHERE accountID = %u AND characterID = %u", accountID, charID);
     if (affectedRows != 1)
         codelog(CLIENT__ERROR, "Failed to cancel character deletion, affected rows: %u", affectedRows);
 }
@@ -111,7 +111,7 @@ PyRep* CharacterDB::DeleteCharacter(uint32 accountID, uint32 charID)
 {
     DBerror error;
     uint32 affectedRows;
-    DBcore::RunQuery(error, affectedRows, "DELETE FROM character_ WHERE deletePrepareDateTime > 0 AND deletePrepareDateTime <= %" PRIu64 " AND accountID = %u AND characterID = %u", Win32TimeNow(), accountID, charID);
+    DBcore::RunQuery(error, affectedRows, "DELETE FROM srvCharacter WHERE deletePrepareDateTime > 0 AND deletePrepareDateTime <= %" PRIu64 " AND accountID = %u AND characterID = %u", Win32TimeNow(), accountID, charID);
 
     if (affectedRows == 1)
     {
@@ -134,7 +134,7 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
         " deletePrepareDateTime,"
         " gender,"
         " typeID"
-        " FROM character_ "
+        " FROM srvCharacter "
         "    LEFT JOIN entity ON characterID = itemID"
         " WHERE accountID=%u", accountID))
     {
@@ -173,7 +173,7 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
     uint32 shipTypeID = 606;
 
     DBQueryResult res2;
-    if(!DBcore::RunQuery(res2, "SELECT itemName, typeID FROM entity WHERE itemID = (SELECT shipID FROM character_ WHERE characterID = %u)", characterID))
+    if(!DBcore::RunQuery(res2, "SELECT itemName, typeID FROM entity WHERE itemID = (SELECT shipID FROM srvCharacter WHERE characterID = %u)", characterID))
     {
         codelog(SERVICE__WARNING, "Unable to get current ship: %s", res.error.c_str());
     }
@@ -197,13 +197,13 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " itemName AS shortName,bloodlineID,gender,bounty,character_.corporationID,allianceID,title,startDateTime,createDateTime,"
-        " securityRating,character_.balance, 0 As aurBalance,character_.stationID,solarSystemID,constellationID,regionID,"
+        " itemName AS shortName,bloodlineID,gender,bounty,srvCharacter.corporationID,allianceID,title,startDateTime,createDateTime,"
+        " securityRating,srvCharacter.balance, 0 As aurBalance,srvCharacter.stationID,solarSystemID,constellationID,regionID,"
         " petitionMessage,logonMinutes,tickerName, %u AS worldSpaceID, '%s' AS shipName, %u AS shipTypeID, %u AS unreadMailCount,"
         " %u AS upcomingEventCount, %u AS unprocessedNotifications, %u AS daysLeft, %u AS userType, 0 AS paperDollState, 0 AS newPaperdollState,"
         " 0 AS oldPaperdollState, skillPoints, skillQueueEndTime, %" PRIu64 " AS allianceMemberStartDate, %" PRIu64 " AS startDate,"
         " 0 AS locationSecurity"
-        " FROM character_ "
+        " FROM srvCharacter "
         "    LEFT JOIN entity ON characterID = itemID"
         "    LEFT JOIN corporation USING (corporationID)"
         "    LEFT JOIN bloodlineTypes USING (typeID)"
@@ -222,21 +222,21 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         " entity.typeID,"
-        " character_.corporationID,"
+        " srvCharacter.corporationID,"
         " chrBloodlines.raceID,"
         " bloodlineTypes.bloodlineID,"
-        " character_.ancestryID,"
-        " character_.careerID,"
-        " character_.schoolID,"
-        " character_.careerSpecialityID,"
+        " srvCharacter.ancestryID,"
+        " srvCharacter.careerID,"
+        " srvCharacter.schoolID,"
+        " srvCharacter.careerSpecialityID,"
         " entity.itemName AS characterName,"
         " 0 as age,"    //hack
-        " character_.createDateTime,"
-        " character_.gender,"
-        " character_.characterID,"
-        " character_.description,"
-        " character_.corporationDateTime"
-        " FROM character_ "
+        " srvCharacter.createDateTime,"
+        " srvCharacter.gender,"
+        " srvCharacter.characterID,"
+        " srvCharacter.description,"
+        " srvCharacter.corporationDateTime"
+        " FROM srvCharacter "
         "    LEFT JOIN entity ON characterID = itemID"
         "    LEFT JOIN bloodlineTypes USING (typeID)"
         "    LEFT JOIN chrBloodlines USING (bloodlineID)"
@@ -263,23 +263,23 @@ void CharacterDB::GetCharacterData(uint32 characterID, std::map<std::string, uin
 
     if(!DBcore::RunQuery(res,
         "SELECT "
-        "  character_.corporationID, "
-        "  character_.stationID, "
-        "  character_.solarSystemID, "
-        "  character_.constellationID, "
-        "  character_.regionID, "
+        "  srvCharacter.corporationID, "
+        "  srvCharacter.stationID, "
+        "  srvCharacter.solarSystemID, "
+        "  srvCharacter.constellationID, "
+        "  srvCharacter.regionID, "
         "  corporation.stationID, "
-        "  character_.corpRole, "
-        "  character_.rolesAtAll, "
-        "  character_.rolesAtBase, "
-        "  character_.rolesAtHQ, "
-        "  character_.rolesAtOther, "
-        "  character_.shipID, "
-		"  character_.gender, "
+        "  srvCharacter.corpRole, "
+        "  srvCharacter.rolesAtAll, "
+        "  srvCharacter.rolesAtBase, "
+        "  srvCharacter.rolesAtHQ, "
+        "  srvCharacter.rolesAtOther, "
+        "  srvCharacter.shipID, "
+		"  srvCharacter.gender, "
         "  entity.locationID "
-        " FROM character_ "
+        " FROM srvCharacter "
         "  LEFT JOIN corporation USING (corporationID) "
-        "  LEFT JOIN entity ON entity.itemID = character_.characterID "
+        "  LEFT JOIN entity ON entity.itemID = srvCharacter.characterID "
         " WHERE characterID = %u",
         characterID))
     {
@@ -317,12 +317,12 @@ PyObject *CharacterDB::GetCharPublicInfo3(uint32 characterID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " character_.bounty,"
-        " character_.title,"
-        " character_.startDateTime,"
-        " character_.description,"
-        " character_.corporationID"
-        " FROM character_"
+        " srvCharacter.bounty,"
+        " srvCharacter.title,"
+        " srvCharacter.startDateTime,"
+        " srvCharacter.description,"
+        " srvCharacter.corporationID"
+        " FROM srvCharacter"
         " WHERE characterID=%u", characterID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -787,7 +787,7 @@ PyString *CharacterDB::GetNote(uint32 ownerID, uint32 itemID) {
     DBQueryResult res;
 
     if (!DBcore::RunQuery(res,
-            "SELECT `note` FROM `chrNotes` WHERE ownerID = %u AND itemID = %u",
+            "SELECT `note` FROM `srvChrNotes` WHERE ownerID = %u AND itemID = %u",
             ownerID, itemID)
         )
     {
@@ -807,7 +807,7 @@ bool CharacterDB::SetNote(uint32 ownerID, uint32 itemID, const char *str) {
     if (str[0] == '\0') {
         // str is empty
         if (!DBcore::RunQuery(err,
-            "DELETE FROM `chrNotes` "
+            "DELETE FROM `srvChrNotes` "
             " WHERE itemID = %u AND ownerID = %u LIMIT 1",
             ownerID, itemID)
             )
@@ -821,7 +821,7 @@ bool CharacterDB::SetNote(uint32 ownerID, uint32 itemID, const char *str) {
         DBcore::DoEscapeString(escaped, str);
 
         if (!DBcore::RunQuery(err,
-            "REPLACE INTO `chrNotes` (itemID, ownerID, note)    "
+            "REPLACE INTO `srvChrNotes` (itemID, ownerID, note)    "
             "VALUES (%u, %u, '%s')",
             ownerID, itemID, escaped.c_str())
             )
@@ -913,7 +913,7 @@ void CharacterDB::load_name_validation_set()
     if(!DBcore::RunQuery(res,
         "SELECT"
         " characterID, itemName AS characterName"
-        " FROM character_"
+        " FROM srvCharacter"
         "    JOIN entity ON characterID = itemID"
         ))
     {
@@ -989,7 +989,7 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
 
 PyObject *CharacterDB::GetTopBounties() {
     DBQueryResult res;
-    if(!DBcore::RunQuery(res, "SELECT `characterID`, `itemName` as `ownerName`, `bounty`, `online`  FROM character_  LEFT JOIN `entity` ON `characterID` = `itemID` WHERE `characterID` >= %u AND `bounty` > 0 ORDER BY `bounty` DESC LIMIT 0,100" , EVEMU_MINIMUM_ID)) {
+    if(!DBcore::RunQuery(res, "SELECT `characterID`, `itemName` as `ownerName`, `bounty`, `online`  FROM srvCharacter  LEFT JOIN `entity` ON `characterID` = `itemID` WHERE `characterID` >= %u AND `bounty` > 0 ORDER BY `bounty` DESC LIMIT 0,100" , EVEMU_MINIMUM_ID)) {
         SysLog::Error("CharacterDB", "Error in GetTopBounties query: %s", res.error.c_str());
         return NULL;
     }
@@ -998,7 +998,7 @@ PyObject *CharacterDB::GetTopBounties() {
 
 uint32 CharacterDB::GetBounty(uint32 charID) {
     DBQueryResult res;
-    if(!DBcore::RunQuery(res, "SELECT `bounty` FROM character_ WHERE `characterID` = %u", charID)) {
+    if(!DBcore::RunQuery(res, "SELECT `bounty` FROM srvCharacter WHERE `characterID` = %u", charID)) {
         SysLog::Error("CharacterDB", "Error in GetBounty query: %s", res.error.c_str());
         return 0;
     }
@@ -1012,7 +1012,7 @@ uint32 CharacterDB::GetBounty(uint32 charID) {
 bool CharacterDB::AddBounty(uint32 charID, uint32 ammount) {
     DBerror err;
     uint32 total = GetBounty(charID) + ammount;
-    if(!DBcore::RunQuery(err, "UPDATE character_ SET `bounty` = %u WHERE `characterID` = %u", total, charID))
+    if(!DBcore::RunQuery(err, "UPDATE srvCharacter SET `bounty` = %u WHERE `characterID` = %u", total, charID))
         return false;
     else
         return true;

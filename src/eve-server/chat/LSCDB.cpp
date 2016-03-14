@@ -37,7 +37,7 @@ PyObject *LSCDB::LookupChars(const char *match, bool exact) {
         if(!DBcore::RunQuery(res,
             "SELECT "
             "    characterID, itemName AS characterName, typeID"
-            " FROM character_"
+            " FROM srvCharacter"
             "  LEFT JOIN entity ON characterID = itemID"
             " WHERE characterID >= %u", EVEMU_MINIMUM_ID))
         {
@@ -48,7 +48,7 @@ PyObject *LSCDB::LookupChars(const char *match, bool exact) {
         if(!DBcore::RunQuery(res,
             "SELECT "
             "    characterID, itemName AS characterName, typeID"
-            " FROM character_"
+            " FROM srvCharacter"
             "  LEFT JOIN entity ON characterID = itemID"
             " WHERE itemName %s '%s'",
             exact?"=":"RLIKE", matchEsc.c_str()
@@ -76,13 +76,13 @@ PyObject *LSCDB::LookupOwners(const char *match, bool exact) {
 
     if(!DBcore::RunQuery(res,
         "SELECT"
-        "  character_.characterID AS ownerID,"
+        "  srvCharacter.characterID AS ownerID,"
         "  entity.itemName AS ownerName,"
         "  invTypes.groupID AS groupID"
-        " FROM character_"
+        " FROM srvCharacter"
         "  LEFT JOIN entity ON characterID = itemID"
         "  LEFT JOIN invTypes ON entity.typeID = invTypes.typeID"
-        " WHERE character_.characterID >= %u"
+        " WHERE srvCharacter.characterID >= %u"
         "  AND entity.itemName %s '%s'"
         " UNION "
         "SELECT"
@@ -110,7 +110,7 @@ PyObject *LSCDB::LookupPlayerChars(const char *match, bool exact) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         " characterID, itemName AS characterName, typeID"
-        " FROM character_"
+        " FROM srvCharacter"
         "  LEFT JOIN entity ON characterID = itemID"
         " WHERE characterID >= %u"
         "  AND itemName %s '%s'",
@@ -383,13 +383,13 @@ void LSCDB::GetChannelNames(uint32 charID, std::vector<std::string> & names) {
         "    mapSolarSystems.solarSystemName, "
         "    mapConstellations.constellationName, "
         "    mapRegions.regionName "
-        " FROM character_ "
-        "    LEFT JOIN entity ON character_.characterID = entity.itemID "
-        "    LEFT JOIN corporation ON character_.corporationID = corporation.corporationID "
-        "    LEFT JOIN mapSolarSystems ON character_.solarSystemID = mapSolarSystems.solarSystemID "
-        "    LEFT JOIN mapConstellations ON character_.constellationID = mapConstellations.constellationID "
-        "    LEFT JOIN mapRegions ON character_.regionID = mapRegions.regionID "
-        " WHERE character_.characterID = %u ", charID))
+        " FROM srvCharacter "
+        "    LEFT JOIN entity ON srvCharacter.characterID = entity.itemID "
+        "    LEFT JOIN corporation ON srvCharacter.corporationID = corporation.corporationID "
+        "    LEFT JOIN mapSolarSystems ON srvCharacter.solarSystemID = mapSolarSystems.solarSystemID "
+        "    LEFT JOIN mapConstellations ON srvCharacter.constellationID = mapConstellations.constellationID "
+        "    LEFT JOIN mapRegions ON srvCharacter.regionID = mapRegions.regionID "
+        " WHERE srvCharacter.characterID = %u ", charID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return;
@@ -517,7 +517,7 @@ bool LSCDB::IsChannelSubscribedByThisChar(uint32 charID, uint32 channelID)
         " SELECT "
         "    channelID, "
         "   charID "
-        " FROM channelChars "
+        " FROM srvChannelChars "
         " WHERE channelID = %u AND charID = %u", channelID, charID ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -636,7 +636,7 @@ void LSCDB::GetChannelInformation(uint32 channelID, std::string & name,
 
 
 
-// Function: Query the 'channelChars' table for all channels subscribed to by the character specified by charID and
+// Function: Query the 'srvChannelChars' table for all channels subscribed to by the character specified by charID and
 // return lists of parameters for all of those channels as well as a total channel count.
 void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & ids, std::vector<std::string> & names,
         std::vector<std::string> & MOTDs, std::vector<unsigned long> & ownerids, std::vector<std::string> & compkeys,
@@ -645,7 +645,7 @@ void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & 
 {
     DBQueryResult res;
 
-    // Cross-reference "channelchars" table with "channels" table using the charID
+    // Cross-reference "srvChannelChars" table with "channels" table using the charID
     // The result is a two column multi-row structure where each row is a channel
     // that the character (charID) is subscribed to where the channel ID is presented
     // in the first column and the display name of that channel in the second column
@@ -664,7 +664,7 @@ void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & 
         "   mode "
         " FROM channels "
         " WHERE channelID = ANY ("
-        "   SELECT channelID FROM channelChars WHERE charID = %u )", charID))
+        "   SELECT channelID FROM srvChannelChars WHERE charID = %u )", charID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return;
@@ -789,7 +789,7 @@ std::string LSCDB::GetChannelName(uint32 id, const char * table, const char * co
 
 
 // Take the channelID of a chat channel that a character specified by characterID just subscribed to
-// and create a new entry in the 'channelChars' table for this subscription.
+// and create a new entry in the 'srvChannelChars' table for this subscription.
 int LSCDB::WriteNewChannelSubscriptionToDatabase(uint32 characterID, uint32 channelID, uint32 corpID, uint32 allianceID, uint32 role, uint32 extra)
 {
     DBQueryResult res;
@@ -797,7 +797,7 @@ int LSCDB::WriteNewChannelSubscriptionToDatabase(uint32 characterID, uint32 chan
     DBResultRow row;
 
     if (!DBcore::RunQuery(err,
-        " INSERT INTO channelChars "
+        " INSERT INTO srvChannelChars "
         " (channelID, corpID, charID, allianceID, role, extra) VALUES (%u, %u, %u, %u, %u, %u) ",
         channelID, corpID, characterID, allianceID, role, extra
         ))
@@ -888,14 +888,14 @@ int LSCDB::UpdateChannelConfigureInfo(LSCChannel * channel)
 
 
 // Function: Remove subscription to the chat channel specified by channelID for the character
-// specified by charID from the 'channelChars' table
+// specified by charID from the 'srvChannelChars' table
 int LSCDB::RemoveChannelSubscriptionFromDatabase(uint32 channelID, uint32 charID)
 {
     DBerror err;
     bool ret = true;
 
     if (!DBcore::RunQuery(err,
-        " DELETE FROM channelChars "
+        " DELETE FROM srvChannelChars "
         " WHERE channelID=%u AND charID=%u", channelID, charID
         ))
     {

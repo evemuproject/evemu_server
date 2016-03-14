@@ -962,7 +962,7 @@ bool InventoryDB::GetCharacter(uint32 characterID, CharacterData &into) {
         "  chr.createDateTime,"
         "  chr.corporationDateTime,"
         "  chr.shipID"
-        " FROM character_ AS chr"
+        " FROM srvCharacter AS chr"
         " LEFT JOIN corporation AS crp USING (corporationID)"
         " WHERE characterID = %u",
         characterID))
@@ -1015,7 +1015,7 @@ bool InventoryDB::GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into) {
         "  rolesAtBase,"
         "  rolesAtHQ,"
         "  rolesAtOther"
-        " FROM character_"
+        " FROM srvCharacter"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1038,7 +1038,7 @@ bool InventoryDB::GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  corporation.stationID"
-        " FROM character_"
+        " FROM srvCharacter"
         "  LEFT JOIN corporation USING (corporationID)"
         " WHERE characterID = %u",
         characterID))
@@ -1091,9 +1091,9 @@ bool InventoryDB::NewCharacter(uint32 characterID, const CharacterData &data, co
     DBcore::DoEscapeString(titleEsc, data.title);
     DBcore::DoEscapeString(descriptionEsc, data.description);
 
-    // Table character_ goes first
+    // Table srvCharacter goes first
     if(!DBcore::RunQuery(err,
-        "INSERT INTO character_"
+        "INSERT INTO srvCharacter"
         // CharacterData:
         "  (characterID, accountID, title, description, bounty, balance, securityRating, petitionMessage,"
         "   logonMinutes, corporationID, corpRole, rolesAtAll, rolesAtBase, rolesAtHQ, rolesAtOther,"
@@ -1121,7 +1121,7 @@ bool InventoryDB::NewCharacter(uint32 characterID, const CharacterData &data, co
     // Hack in the first employment record
     // TODO: Eventually, this should go under corp stuff...
     if(!DBcore::RunQuery(err,
-        "INSERT INTO chrEmployment"
+        "INSERT INTO srvChrEmployment"
         "  (characterID, corporationID, startDate, deleted)"
         " VALUES"
         "  (%u, %u, %" PRIu64 ", 0)",
@@ -1155,7 +1155,7 @@ bool InventoryDB::SaveCharacter(uint32 characterID, const CharacterData &data) {
     DBcore::DoEscapeString(descriptionEsc, data.description);
 
     if(!DBcore::RunQuery(err,
-        "UPDATE character_"
+        "UPDATE srvCharacter"
         " SET"
         "  accountID = %u,"
         "  title = '%s',"
@@ -1217,7 +1217,7 @@ bool InventoryDB::SaveCorpMemberInfo(uint32 characterID, const CorpMemberInfo &d
     DBerror err;
 
     if(!DBcore::RunQuery(err,
-        "UPDATE character_"
+        "UPDATE srvCharacter"
         " SET"
         "  corpRole = %" PRIu64 ","
         "  rolesAtAll = %" PRIu64 ","
@@ -1282,13 +1282,13 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // bookmarks
+    // srvBookmarks
     if(!DBcore::RunQuery(err,
-        "DELETE FROM bookmarks"
+        "DELETE FROM srvBookmarks"
         " WHERE ownerID = %u",
         characterID))
     {
-        _log(DATABASE__ERROR, "Failed to delete bookmarks of character %u: %s.", characterID, err.c_str());
+        _log(DATABASE__ERROR, "Failed to delete srvBookmarks of character %u: %s.", characterID, err.c_str());
         // ignore the error
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
@@ -1337,9 +1337,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // chrNPCStandings
+    // srvChrNPCStandings
     if(!DBcore::RunQuery(err,
-        "DELETE FROM chrNPCStandings"
+        "DELETE FROM srvChrNPCStandings"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1348,9 +1348,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // chrEmployment
+    // srvChrEmployment
     if(!DBcore::RunQuery(err,
-        "DELETE FROM chrEmployment"
+        "DELETE FROM srvChrEmployment"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1361,7 +1361,7 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
 
     // certificates
     if( !DBcore::RunQuery( err,
-         "DELETE FROM chrCertificates"
+         "DELETE FROM srvChrCertificates"
          " WHERE characterID=%u", characterID))
     {
         _log(DATABASE__ERROR, "Failed to delete certificates of character %u: %s", characterID, err.c_str() );
@@ -1369,9 +1369,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error." );
     }
 
-    // character_
+    // srvCharacter
     if(!DBcore::RunQuery(err,
-        "DELETE FROM character_"
+        "DELETE FROM srvCharacter"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1564,7 +1564,7 @@ bool InventoryDB::LoadCertificates( uint32 characterID, Certificates &into )
           " certificateID,"
          " grantDate,"
          " visibilityFlags"
-         " FROM chrCertificates"
+         " FROM srvChrCertificates"
          " WHERE characterID=%u",
          characterID ))
     {
@@ -1593,7 +1593,7 @@ bool InventoryDB::SaveCertificates( uint32 characterID, const Certificates &from
 
     if( !DBcore::RunQuery( err,
          "DELETE"
-         " FROM chrCertificates"
+         " FROM srvChrCertificates"
          " WHERE characterID = %u",
          characterID ))
     {
@@ -1620,7 +1620,7 @@ bool InventoryDB::SaveCertificates( uint32 characterID, const Certificates &from
 
     if( !DBcore::RunQuery( err,
          "INSERT"
-         " INTO chrCertificates (id, characterID, certificateID, grantDate, visibilityFlags)"
+         " INTO srvChrCertificates (id, characterID, certificateID, grantDate, visibilityFlags)"
          " VALUES %s",
          query.c_str() ))
     {

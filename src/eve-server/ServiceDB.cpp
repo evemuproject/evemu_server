@@ -464,7 +464,7 @@ void ServiceDB::SetCharacterOnlineStatus(uint32 char_id, bool onoff_status) {
     _log(CLIENT__TRACE, "ChrStatus: Setting character %u %s.", char_id, onoff_status ? "Online" : "Offline");
 
     if(!DBcore::RunQuery(err,
-        "UPDATE character_"
+        "UPDATE srvCharacter"
         " SET online = %d"
         " WHERE characterID = %u",
         onoff_status, char_id))
@@ -510,8 +510,8 @@ void ServiceDB::SetServerOnlineStatus(bool onoff_status) {
     _log(CLIENT__TRACE, "ChrStatus: Setting all characters and accounts offline.");
 
     if(!DBcore::RunQuery(err,
-                         "UPDATE character_, srvAccount"
-        " SET character_.online = 0,"
+                         "UPDATE srvCharacter, srvAccount"
+        " SET srvCharacter.online = 0,"
                          "     srvAccount.online = 0"))
         {
                 codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());

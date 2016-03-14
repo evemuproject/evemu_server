@@ -359,12 +359,12 @@ PyObject *MarketDB::GetCorporationBills(uint32 corpID, bool payable)
     if ( payable == true )
     {
         success = DBcore::RunQuery(res, "SELECT billID, billTypeID, debtorID, creditorID, amount, dueDateTime, interest,"
-            "externalID, paid externalID2 FROM billsPayable WHERE debtorID = %u", corpID);
+            "externalID, paid externalID2 FROM srvBillsPayable WHERE debtorID = %u", corpID);
     }
     else
     {
         success = DBcore::RunQuery(res, "SELECT billID, billTypeID, debtorID, creditorID, amount, dueDateTime, interest,"
-            "externalID, paid externalID2 FROM billsReceivable WHERE creditorID = %u", corpID);
+            "externalID, paid externalID2 FROM srvBillsReceivable WHERE creditorID = %u", corpID);
     }
 
     if ( success == false )
@@ -692,7 +692,7 @@ bool MarketDB::AddCharacterBalance(uint32 char_id, double delta)
     DBerror err;
 
     if(!DBcore::RunQuery(err,
-        "UPDATE character_ SET balance=balance+%.2f WHERE characterID=%u",delta,char_id))
+        "UPDATE srvCharacter SET balance=balance+%.2f WHERE characterID=%u",delta,char_id))
     {
         _log(SERVICE__ERROR, "Error in query : %s", err.c_str());
         return false;

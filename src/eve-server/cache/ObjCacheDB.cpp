@@ -421,10 +421,10 @@ PyRep *ObjCacheDB::Generate_BillTypes()
 PyRep *ObjCacheDB::Generate_AllianceShortnames()
 {
     DBQueryResult res;
-    const char *q = "SELECT allianceID,shortName FROM alliance_ShortNames";
+    const char *q = "SELECT allianceID,shortName FROM srvAlliance_ShortNames";
     if(DBcore::RunQuery(res, q)==false)
     {
-        _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.alliance_ShortNames': %s",res.error.c_str());
+        _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.srvAlliance_ShortNames': %s",res.error.c_str());
         return NULL;
     }
     return DBResultToCRowset(res);
@@ -661,7 +661,7 @@ PyRep *ObjCacheDB::Generate_invShipTypes()
 PyRep *ObjCacheDB::Generate_cacheLocations()
 {
     DBQueryResult res;
-    const char *q = "SELECT locationID, locationName, x, y, z FROM cacheLocations";
+    const char *q = "SELECT locationID, locationName, x, y, z FROM srvCacheLocations";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.locations': %s", res.error.c_str());
@@ -769,7 +769,7 @@ PyRep *ObjCacheDB::Generate_eveBulkDataUnits()
 PyRep *ObjCacheDB::Generate_cacheOwners()
 {
     DBQueryResult res;
-    const char *q = "SELECT ownerID, ownerName, typeID FROM cacheOwners";
+    const char *q = "SELECT ownerID, ownerName, typeID FROM srvCacheOwners";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.owners': %s", res.error.c_str());

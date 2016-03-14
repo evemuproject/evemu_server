@@ -59,7 +59,7 @@ uint32 BookmarkService::GetNextAvailableBookmarkID()
     if (!DBcore::RunQuery(res,
         "SELECT"
         "  bookmarkID "
-        " FROM bookmarks "
+        " FROM srvBookmarks "
         " WHERE bookmarkID > %u ", 0))
     {
         SysLog::Error( "BookmarkDB::GetNextAvailableBookmarkID()", "Error in query: %s", res.error.c_str() );
@@ -96,7 +96,7 @@ uint32 BookmarkService::GetNextAvailableFolderID()
     if (!DBcore::RunQuery(res,
         "SELECT"
         "  folderID "
-        " FROM bookmarkFolders "
+        " FROM srvBookmarkFolders "
         " WHERE folderID > %u ", 0))
     {
         SysLog::Error( "BookmarkDB::GetNextAvailableFolderID()", "Error in query: %s", res.error.c_str() );
@@ -260,7 +260,7 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
 
     PyTuple* tuple0 = new PyTuple( 7 );
 
-    tuple0->items[ 0 ] = new PyInt( bookmarkID );           // Bookmark ID from Database 'bookmarks' table
+    tuple0->items[ 0 ] = new PyInt( bookmarkID );           // Bookmark ID from Database 'srvBookmarks' table
     tuple0->items[ 1 ] = new PyInt( itemID );               // itemID
     tuple0->items[ 2 ] = new PyInt( typeID );               // typeID from invTypes
     tuple0->items[ 3 ] = new PyInt( (uint32)(point.x) );    // X coordinate
@@ -410,7 +410,7 @@ PyResult BookmarkService::Handle_UpdateBookmark(PyCallArgs &call)       // worki
 
     PyTuple* tuple0 = new PyTuple( 7 );
 
-    tuple0->items[ 0 ] = new PyInt( bookmarkID );           // Bookmark ID from Database 'bookmarks' table
+    tuple0->items[ 0 ] = new PyInt( bookmarkID );           // Bookmark ID from Database 'srvBookmarks' table
     tuple0->items[ 1 ] = new PyInt( itemID);                // itemID
     tuple0->items[ 2 ] = new PyInt( typeID );               // typeID from invTypes
     tuple0->items[ 3 ] = new PyInt( (uint32)x );            // X

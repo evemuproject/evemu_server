@@ -45,7 +45,7 @@ PyObjectEx *BookmarkDB::GetBookmarks(uint32 ownerID) {
         " note,"
         " creatorID,"
         " folderID"
-        " FROM bookmarks"
+        " FROM srvBookmarks"
         " WHERE ownerID = %u",
         ownerID))
     {
@@ -65,7 +65,7 @@ PyObjectEx *BookmarkDB::GetFolders(uint32 ownerID) {
         " folderID,"
         " folderName,"
         " creatorID"
-        " FROM bookmarkFolders"
+        " FROM srvBookmarkFolders"
         " WHERE ownerID = %u",
         ownerID))
     {
@@ -143,7 +143,7 @@ bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint
     DBQueryResult res;
        DBResultRow row;
 
-    // Query database 'bookmarks' table for the supplied bookmarkID and retrieve entire row:
+    // Query database 'srvBookmarks' table for the supplied bookmarkID and retrieve entire row:
     if (!DBcore::RunQuery(res,
         " SELECT "
         "    bookmarkID, "
@@ -160,7 +160,7 @@ bool BookmarkDB::GetBookmarkInformation(uint32 bookmarkID, uint32 &ownerID, uint
         "  note,"
         "  creatorID,"
         "  folderID"
-        " FROM bookmarks "
+        " FROM srvBookmarks "
         " WHERE bookmarkID = %u ", bookmarkID))
     {
         SysLog::Error( "BookmarkDB::GetBookmarkInformation()", "Error in query: %s", res.error.c_str() );
@@ -198,7 +198,7 @@ bool BookmarkDB::SaveNewBookmarkToDatabase(uint32 &bookmarkID, uint32 ownerID, u
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " INSERT INTO bookmarks "
+        " INSERT INTO srvBookmarks "
         " (bookmarkID, ownerID, itemID, typeID, flag, memo, created, x, y, z, locationID, note, creatorID, folderID)"
         " VALUES (%u, %u, %u, %u, %u, '%s', %" PRIu64 ", %f, %f, %f, %u, '%s', %u, %u) ",
         bookmarkID, ownerID, itemID, typeID, flag, memo.c_str(), created, x, y, z, locationID, note.c_str(), creatorID, folderID
@@ -216,7 +216,7 @@ bool BookmarkDB::DeleteBookmarkFromDatabase(uint32 ownerID, uint32 bookmarkID)
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " DELETE FROM bookmarks "
+        " DELETE FROM srvBookmarks "
         " WHERE ownerID = %u AND bookmarkID = %u", ownerID, bookmarkID
         ))
     {
@@ -244,7 +244,7 @@ bool BookmarkDB::DeleteBookmarksFromDatabase(uint32 ownerID, std::vector<unsigne
     }
 
     if (!DBcore::RunQuery(err,
-        " DELETE FROM bookmarks "
+        " DELETE FROM srvBookmarks "
         " WHERE ownerID = %u AND bookmarkID IN (%s)", ownerID, st.str().c_str()
         ))
     {
@@ -261,7 +261,7 @@ bool BookmarkDB::UpdateBookmarkInDatabase(uint32 bookmarkID, uint32 ownerID, std
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " UPDATE bookmarks "
+        " UPDATE srvBookmarks "
         " SET "
         " memo = '%s', note = '%s'"
         " WHERE bookmarkID = %u AND ownerID = %u",
@@ -284,7 +284,7 @@ bool BookmarkDB::SaveNewFolderToDatabase(uint32 &folderID, std::string folderNam
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " INSERT INTO bookmarkFolders"
+        " INSERT INTO srvBookmarkFolders"
         " (folderID, folderName, ownerID, creatorID )"
         " VALUES (%u, '%s', %u, %u) ",
         folderID, folderName.c_str(), ownerID, creatorID
@@ -303,7 +303,7 @@ bool BookmarkDB::UpdateFolderInDatabase(uint32 &folderID, std::string folderName
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " UPDATE bookmarkFolders"
+        " UPDATE srvBookmarkFolders"
         "  SET  folderName = '%s'"
         " WHERE folderID = %u AND ownerID = %u",
          folderName.c_str(), folderID, ownerID
@@ -321,7 +321,7 @@ bool BookmarkDB::DeleteFolderFromDatabase(uint32 folderID, uint32 ownerID)
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " DELETE FROM bookmarkFolders "
+        " DELETE FROM srvBookmarkFolders "
         " WHERE ownerID = %u AND folderID = %u",
         ownerID, folderID
         ))

@@ -166,7 +166,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
 	  case 4:	//searchResultAlliance = 4
             DBcore::RunQuery(res,
 	    "SELECT allianceID"
-            " FROM alliance_ShortNames"
+            " FROM srvAlliance_ShortNames"
             " WHERE shortName %s '%s'"
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str()  );
             break;

@@ -108,7 +108,7 @@ PyObject *StandingDB::GetCharNPCStandings(uint32 characterID) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         " fromID, standing"
-        " FROM chrNPCStandings"
+        " FROM srvChrNPCStandings"
         " WHERE characterID=%u", characterID
     ))
     {

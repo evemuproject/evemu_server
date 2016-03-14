@@ -435,7 +435,7 @@ PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
                 codelog(CLIENT__ERROR, "%s: Failed to spawn bookmark voucher for %u", call.client->GetName(), bookmarkID);
                 break;
             }
-            DBcore::RunQuery(res, "SELECT memo FROM bookmarks WHERE bookmarkID = %u", bookmarkID);
+            DBcore::RunQuery(res, "SELECT memo FROM srvBookmarks WHERE bookmarkID = %u", bookmarkID);
             res.GetRow(row);
             i->Rename(row.GetText(0));
             snprintf(ci, sizeof(ci), "%u", bookmarkID);

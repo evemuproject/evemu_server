@@ -473,7 +473,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
         return;
     }
 
-    //move the character_ record... we really should derive the char's location from the entity table...
+    //move the srvCharacter record... we really should derive the char's location from the entity table...
     GetChar()->SetLocation( stationID, solarSystemID, constellationID, regionID );
     //update session with new values
     _UpdateSession( GetChar() );

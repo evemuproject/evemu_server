@@ -36,23 +36,23 @@ CREATE TABLE `svrAccount` (
 
 /*Data for the table `svrAccount` */
 
-/*Table structure for table `alliance_ShortNames` */
+/*Table structure for table `srvAlliance_ShortNames` */
 
-DROP TABLE IF EXISTS `alliance_ShortNames`;
+DROP TABLE IF EXISTS `srvAlliance_ShortNames`;
 
-CREATE TABLE `alliance_ShortNames` (
+CREATE TABLE `srvAlliance_ShortNames` (
   `allianceID` int(10) unsigned NOT NULL default '0',
   `shortName` text NOT NULL,
   PRIMARY KEY  (`allianceID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `alliance_ShortNames` */
+/*Data for the table `srvAlliance_ShortNames` */
 
-/*Table structure for table `billsPayable` */
+/*Table structure for table `srvBillsPayable` */
 
-DROP TABLE IF EXISTS `billsPayable`;
+DROP TABLE IF EXISTS `srvBillsPayable`;
 
-CREATE TABLE `billsPayable` (
+CREATE TABLE `srvBillsPayable` (
   `billID` int(10) unsigned NOT NULL default '0',
   `billTypeID` int(10) unsigned default NULL,
   `debtorID` int(10) unsigned default NULL,
@@ -66,13 +66,13 @@ CREATE TABLE `billsPayable` (
   PRIMARY KEY  (`billID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `billsPayable` */
+/*Data for the table `srvBillsPayable` */
 
-/*Table structure for table `billsReceivable` */
+/*Table structure for table `srvBillsReceivable` */
 
-DROP TABLE IF EXISTS `billsReceivable`;
+DROP TABLE IF EXISTS `srvBillsReceivable`;
 
-CREATE TABLE `billsReceivable` (
+CREATE TABLE `srvBillsReceivable` (
   `billID` int(10) unsigned NOT NULL default '0',
   `billTypeID` int(10) unsigned default NULL,
   `debtorID` int(10) unsigned default NULL,
@@ -86,13 +86,13 @@ CREATE TABLE `billsReceivable` (
   PRIMARY KEY  (`billID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `billsReceivable` */
+/*Data for the table `srvBillsReceivable` */
 
-/*Table structure for table `bookmarks` */
+/*Table structure for table `srvBookmarks` */
 
-DROP TABLE IF EXISTS `bookmarks`;
+DROP TABLE IF EXISTS `srvBookmarks`;
 
-CREATE TABLE `bookmarks` (
+CREATE TABLE `srvBookmarks` (
   `bookmarkID` int(10) unsigned NOT NULL default '0',
   `ownerID` int(10) unsigned NOT NULL default '0',
   `itemID` bigint(20) unsigned NOT NULL default '0',
@@ -110,11 +110,11 @@ CREATE TABLE `bookmarks` (
   PRIMARY KEY  (`bookmarkID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `bookmarks` */
+/*Data for the table `srvBookmarks` */
 
-DROP TABLE IF EXISTS `bookmarkFolders`;
+DROP TABLE IF EXISTS `srvBookmarkFolders`;
 
-CREATE TABLE `bookmarkFolders` (
+CREATE TABLE `srvBookmarkFolders` (
 	`folderID` int (10),
 	`folderName` varchar (255),
 	`ownerID` int (10),
@@ -122,11 +122,11 @@ CREATE TABLE `bookmarkFolders` (
 	PRIMARY KEY (`folderID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Table structure for table `cacheLocations` */
+/*Table structure for table `srvCacheLocations` */
 
-DROP TABLE IF EXISTS `cacheLocations`;
+DROP TABLE IF EXISTS `srvCacheLocations`;
 
-CREATE TABLE `cacheLocations` (
+CREATE TABLE `srvCacheLocations` (
   `locationID` int(10) unsigned NOT NULL default '0',
   `locationName` varchar(100) NOT NULL default '',
   `x` double NOT NULL default '0',
@@ -135,26 +135,26 @@ CREATE TABLE `cacheLocations` (
   PRIMARY KEY  (`locationID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `cacheLocations` */
+/*Data for the table `srvCacheLocations` */
 
-/*Table structure for table `cacheOwners` */
+/*Table structure for table `srvCacheOwners` */
 
-DROP TABLE IF EXISTS `cacheOwners`;
+DROP TABLE IF EXISTS `srvCacheOwners`;
 
-CREATE TABLE `cacheOwners` (
+CREATE TABLE `srvCacheOwners` (
   `ownerID` int(10) unsigned NOT NULL default '0',
   `ownerName` varchar(100) NOT NULL default '',
   `typeID` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`ownerID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `cacheOwners` */
+/*Data for the table `srvCacheOwners` */
 
-/*Table structure for table `channelChars` */
+/*Table structure for table `srvChannelChars` */
 
-DROP TABLE IF EXISTS `channelChars`;
+DROP TABLE IF EXISTS `srvChannelChars`;
 
-CREATE TABLE `channelChars` (
+CREATE TABLE `srvChannelChars` (
   `channelID` int(10) unsigned NOT NULL default '0',
   `corpID` int(10) unsigned NOT NULL default '0',
   `charID` int(10) unsigned NOT NULL default '0',
@@ -167,13 +167,13 @@ CREATE TABLE `channelChars` (
   KEY `FK_CHANNELCHARS_ALLIANCES` (`allianceID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `channelChars` */
+/*Data for the table `srvChannelChars` */
 
-/*Table structure for table `channelMods` */
+/*Table structure for table `srvChannelMods` */
 
-DROP TABLE IF EXISTS `channelMods`;
+DROP TABLE IF EXISTS `srvChannelMods`;
 
-CREATE TABLE `channelMods` (
+CREATE TABLE `srvChannelMods` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `channelID` int(10) unsigned NOT NULL default '0',
   `accessor` int(10) unsigned default NULL,
@@ -186,13 +186,13 @@ CREATE TABLE `channelMods` (
   KEY `FK_CHANNELMODS_CHANNELS` (`channelID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `channelMods` */
+/*Data for the table `srvChannelMods` */
 
-/*Table structure for table `character_` */
+/*Table structure for table `srvCharacter` */
 
-DROP TABLE IF EXISTS `character_`;
+DROP TABLE IF EXISTS `srvCharacter`;
 
-CREATE TABLE `character_` (
+CREATE TABLE `srvCharacter` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `accountID` int(10) unsigned default NULL,
   `title` varchar(85) NOT NULL default '',
@@ -237,13 +237,13 @@ CREATE TABLE `character_` (
   KEY `FK_CHARACTER__CHRSCHOOLS` (`schoolID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `character_` */
+/*Data for the table `srvCharacter` */
 
-/*Table structure for table `chrApplications` */
+/*Table structure for table `srvChrApplications` */
 
-DROP TABLE IF EXISTS `chrApplications`;
+DROP TABLE IF EXISTS `srvChrApplications`;
 
-CREATE TABLE `chrApplications` (
+CREATE TABLE `srvChrApplications` (
   `corporationID` int(10) unsigned NOT NULL,
   `characterID` int(10) unsigned NOT NULL,
   `applicationText` text NOT NULL,
@@ -256,12 +256,12 @@ CREATE TABLE `chrApplications` (
   PRIMARY KEY  (`corporationID`,`characterID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrApplications` */
+/*Data for the table `srvChrApplications` */
 
-/*Table structure for table `chrCertificates` */
-DROP TABLE IF EXISTS `chrCertificates`;
+/*Table structure for table `srvChrCertificates` */
+DROP TABLE IF EXISTS `srvChrCertificates`;
 
-CREATE TABLE IF NOT EXISTS `chrCertificates` (
+CREATE TABLE IF NOT EXISTS `srvChrCertificates` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `characterID` int(10) NOT NULL,
   `certificateID` int(10) NOT NULL,
@@ -270,11 +270,11 @@ CREATE TABLE IF NOT EXISTS `chrCertificates` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-/*Table structure for table `chrEmployment` */
+/*Table structure for table `srvChrEmployment` */
 
-DROP TABLE IF EXISTS `chrEmployment`;
+DROP TABLE IF EXISTS `srvChrEmployment`;
 
-CREATE TABLE `chrEmployment` (
+CREATE TABLE `srvChrEmployment` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `corporationID` int(10) unsigned NOT NULL default '0',
   `startDate` bigint(20) unsigned NOT NULL default '0',
@@ -283,13 +283,13 @@ CREATE TABLE `chrEmployment` (
   KEY `corporationID` (`corporationID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrEmployment` */
+/*Data for the table `srvChrEmployment` */
 
-/*Table structure for table `chrMissionState` */
+/*Table structure for table `srvChrMissionState` */
 
-DROP TABLE IF EXISTS `chrMissionState`;
+DROP TABLE IF EXISTS `srvChrMissionState`;
 
-CREATE TABLE `chrMissionState` (
+CREATE TABLE `srvChrMissionState` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `missionID` int(10) unsigned NOT NULL default '0',
   `missionState` tinyint(3) unsigned NOT NULL default '0',
@@ -298,32 +298,32 @@ CREATE TABLE `chrMissionState` (
   KEY `missionID` (`missionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrMissionState` */
+/*Data for the table `srvChrMissionState` */
 
-/*Table structure for table `chrNotes` */
+/*Table structure for table `srvChrNotes` */
 
-DROP TABLE IF EXISTS `chrNotes`;
+DROP TABLE IF EXISTS `srvChrNotes`;
 
-CREATE TABLE `chrNotes` (
+CREATE TABLE `srvChrNotes` (
   `itemID` int(10) unsigned NOT NULL default '0',
   `ownerID` int(10) unsigned default NULL,
   `note` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrNotes` */
+/*Data for the table `srvChrNotes` */
 
-/*Table structure for table `chrNPCStandings` */
+/*Table structure for table `srvChrNPCStandings` */
 
-DROP TABLE IF EXISTS `chrNPCStandings`;
+DROP TABLE IF EXISTS `srvChrNPCStandings`;
 
-CREATE TABLE `chrNPCStandings` (
+CREATE TABLE `srvChrNPCStandings` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `fromID` int(10) unsigned NOT NULL default '0',
   `standing` double NOT NULL default '0',
   PRIMARY KEY  (`characterID`,`fromID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrNPCStandings` */
+/*Data for the table `srvChrNPCStandings` */
 
 /*Table structure for table `chrOffers` */
 
