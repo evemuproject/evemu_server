@@ -1016,7 +1016,7 @@ uint32 CorporationDB::GetCloneTypeCostByID(uint32 cloneTypeID) {
         SysLog::Error("CorporationDB","Query returned no results");
         return 0;
     }
-    return row.GetUInt(0);
+    return row.GetDouble(0);
 }
 
 bool CorporationDB::GetCurrentApplicationInfo(uint32 charID, uint32 corpID, ApplicationInfo & aInfo) {

@@ -987,9 +987,6 @@ PyResult Command_giveallskills( Client* who, const Seperator& args )
     // Clear the skill queue.
     character->ClearSkillQueue();
     // Query Database to get list of ALL skills, then LOOP through each one, checking character for skill, setting level to 5:
-    // QUERY DB FOR LIST OF ALL SKILLS:
-    //		SELECT * FROM `invTypes` WHERE `groupID` IN (SELECT groupID FROM invGroups WHERE categoryID = 16)
-    // LOOP through each skill
     std::vector<uint32> skillList;
     CommandDB::FullSkillList(skillList);
 

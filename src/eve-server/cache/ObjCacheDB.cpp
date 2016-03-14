@@ -709,7 +709,12 @@ PyRep *ObjCacheDB::Generate_eveGraphics()
 PyRep *ObjCacheDB::Generate_invTypes()
 {
     DBQueryResult res;
-    const char *q = "SELECT typeID, groupID, typeName, description, graphicID, radius, mass, volume, capacity, portionSize, raceID, basePrice, published, marketGroupID, chanceOfDuplicating, soundID, iconID, dataID, typeNameID, descriptionID FROM invTypes";
+    const char *q = "SELECT invTypes.typeID, groupID, typeName, description, graphicID, radius, mass, volume,"
+            " capacity, portionSize, raceID, basePrice, published, marketGroupID,"
+            " chanceOfDuplicating, srvInvTypesExtra.soundID, iconID, srvInvTypesExtra.dataID,"
+            " srvInvTypesExtra.typeNameID, srvInvTypesExtra.descriptionID"
+            " FROM invTypes"
+            " LEFT JOIN srvInvTypesExtra on srvInvTypesExtra.typeID = invTypes.typeID;";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.types': %s", res.error.c_str());

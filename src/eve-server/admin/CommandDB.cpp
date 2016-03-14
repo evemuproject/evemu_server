@@ -178,7 +178,7 @@ bool CommandDB::FullSkillList(std::vector<uint32> &skillList) {
     skillList.clear();
 
     if (!DBcore::RunQuery(result,
-        " SELECT * FROM `invTypes` WHERE "
+                          " SELECT typeID FROM `invTypes` WHERE "
 		" ((`groupID` IN (SELECT groupID FROM invGroups WHERE categoryID = 16)) AND (published = 1)) "
         ))
     {

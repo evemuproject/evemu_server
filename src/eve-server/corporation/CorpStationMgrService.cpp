@@ -226,7 +226,7 @@ PyResult CorpStationMgrIMBound::Handle_SetCloneTypeID(PyCallArgs &call) {
     }
 
     //Get cost of clone
-    int cost = CorporationDB::GetCloneTypeCostByID(arg.CloneTypeID);
+    double cost = CorporationDB::GetCloneTypeCostByID(arg.CloneTypeID);
 
     //Check if player has enough money
     if(call.client->GetBalance() > cost) {
