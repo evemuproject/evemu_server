@@ -74,12 +74,12 @@ public:
 
     static std::string GetCorporationName(uint32 id)
     {
-        return GetChannelName(id, "corporation", "corporationName", "corporationID");
+        return GetChannelName(id, "srvCorporation", "corporationName", "corporationID");
     }
 
     static std::string GetCharacterName(uint32 id)
     {
-        return GetChannelName(id, "entity", "itemName", "itemID");
+        return GetChannelName(id, "srvEntity", "itemName", "itemID");
     }
 
     static void GetChannelInformation(std::string & name, uint32 & id,

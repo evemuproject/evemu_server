@@ -38,7 +38,7 @@ PyObject *LSCDB::LookupChars(const char *match, bool exact) {
             "SELECT "
             "    characterID, itemName AS characterName, typeID"
             " FROM srvCharacter"
-            "  LEFT JOIN entity ON characterID = itemID"
+            "  LEFT JOIN srvEntity ON characterID = itemID"
             " WHERE characterID >= %u", EVEMU_MINIMUM_ID))
         {
             _log(SERVICE__ERROR, "Error in LookupChars query: %s", res.error.c_str());
@@ -49,7 +49,7 @@ PyObject *LSCDB::LookupChars(const char *match, bool exact) {
             "SELECT "
             "    characterID, itemName AS characterName, typeID"
             " FROM srvCharacter"
-            "  LEFT JOIN entity ON characterID = itemID"
+            "  LEFT JOIN srvEntity ON characterID = itemID"
             " WHERE itemName %s '%s'",
             exact?"=":"RLIKE", matchEsc.c_str()
         ))
@@ -77,21 +77,21 @@ PyObject *LSCDB::LookupOwners(const char *match, bool exact) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  srvCharacter.characterID AS ownerID,"
-        "  entity.itemName AS ownerName,"
+        "  srvEntity.itemName AS ownerName,"
         "  invTypes.groupID AS groupID"
         " FROM srvCharacter"
-        "  LEFT JOIN entity ON characterID = itemID"
-        "  LEFT JOIN invTypes ON entity.typeID = invTypes.typeID"
+        "  LEFT JOIN srvEntity ON characterID = itemID"
+        "  LEFT JOIN invTypes ON srvEntity.typeID = invTypes.typeID"
         " WHERE srvCharacter.characterID >= %u"
-        "  AND entity.itemName %s '%s'"
+        "  AND srvEntity.itemName %s '%s'"
         " UNION "
         "SELECT"
-        "  corporation.corporationID AS ownerID,"
-        "  corporation.corporationName AS ownerName,"
+        "  srvCorporation.corporationID AS ownerID,"
+        "  srvCorporation.corporationName AS ownerName,"
         "  invTypes.groupID AS groupID"
-        " FROM corporation"
+        " FROM srvCorporation"
         "  LEFT JOIN invTypes ON groupID = 2"
-        " WHERE corporation.corporationName %s '%s'",
+        " WHERE srvCorporation.corporationName %s '%s'",
         EVEMU_MINIMUM_ID, (exact?"=":"RLIKE"), matchEsc.c_str(), (exact?"=":"RLIKE"), matchEsc.c_str()))
     {
         _log(DATABASE__ERROR, "Failed to lookup player char '%s': %s.", matchEsc.c_str(), res.error.c_str());
@@ -111,7 +111,7 @@ PyObject *LSCDB::LookupPlayerChars(const char *match, bool exact) {
         "SELECT"
         " characterID, itemName AS characterName, typeID"
         " FROM srvCharacter"
-        "  LEFT JOIN entity ON characterID = itemID"
+        "  LEFT JOIN srvEntity ON characterID = itemID"
         " WHERE characterID >= %u"
         "  AND itemName %s '%s'",
         EVEMU_MINIMUM_ID, exact?"=":"RLIKE", matchEsc.c_str()))
@@ -132,7 +132,7 @@ PyObject *LSCDB::LookupCorporations(const std::string & search) {
     if (!DBcore::RunQuery(res,
         " SELECT "
         " corporationID, corporationName, corporationType "
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationName RLIKE '%s'", secure.c_str()))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -170,7 +170,7 @@ PyObject *LSCDB::LookupCorporationTickers(const std::string & search) {
     if (!DBcore::RunQuery(res,
         " SELECT "
         " corporationID, corporationName, tickerName "
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE tickerName RLIKE '%s'", secure.c_str()))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -208,7 +208,7 @@ PyObject *LSCDB::LookupKnownLocationsByGroup(const std::string & search, uint32 
     if (!DBcore::RunQuery(res,
         " SELECT "
         " itemID, itemName, typeID "
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE itemName RLIKE '%s' AND typeID = %u", secure.c_str(), typeID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -233,7 +233,7 @@ uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, c
     uint32 messageID;
     if (!DBcore::RunQueryLID(err, messageID,
         " INSERT INTO "
-        " eveMail "
+        " srvEveMail "
         " (channelID, senderID, subject, created) "
         " VALUES (%u, %u, '%s', %" PRIu64 ") ",
         recipID, senderID, escaped.c_str(), sentTime ))
@@ -249,14 +249,14 @@ uint32 LSCDB::StoreMail(uint32 senderID, uint32 recipID, const char * subject, c
 
     // Store message content
     if (!DBcore::RunQuery(err,
-        " INSERT INTO eveMailDetails "
+        " INSERT INTO srvEveMailDetails "
         " (messageID, mimeTypeID, attachment) VALUES (%u, 1, '%s') ",
         messageID, escaped.c_str()
         ))
     {
         codelog(SERVICE__ERROR, "Error in query, message content couldn't be saved: %s", err.c_str());
         // Delete message header
-        if (!DBcore::RunQuery(err, "DELETE FROM `eveMail` WHERE `messageID` = %u;", messageID))
+        if (!DBcore::RunQuery(err, "DELETE FROM `srvEveMail` WHERE `messageID` = %u;", messageID))
         {
             codelog(SERVICE__ERROR, "Failed to remove invalid header data for messgae id %u: %s", messageID, err.c_str());
         }
@@ -273,7 +273,7 @@ PyObject *LSCDB::GetMailHeaders(uint32 recID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT channelID, messageID, senderID, subject, created, `read` "
-        " FROM eveMail "
+        " FROM srvEveMail "
         " WHERE channelID=%u", recID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -291,16 +291,16 @@ PyRep *LSCDB::GetMailDetails(uint32 messageID, uint32 readerID) {
     //we need to query out the primary message here... not sure how to properly
     //grab the "main message" though... the text/plain clause is pretty hackish.
     if (!DBcore::RunQuery(result,
-        " SELECT eveMail.messageID, eveMail.senderID, eveMail.subject, " // need messageID as char*
-        " eveMailDetails.attachment, eveMailDetails.mimeTypeID, "
+        " SELECT srvEveMail.messageID, srvEveMail.senderID, srvEveMail.subject, " // need messageID as char*
+        " srvEveMailDetails.attachment, srvEveMailDetails.mimeTypeID, "
         " eveMailMimeType.mimeType, eveMailMimeType.`binary`, "
-        " eveMail.created, eveMail.channelID "
-        " FROM eveMail "
-        " LEFT JOIN eveMailDetails"
-        "    ON eveMailDetails.messageID = eveMail.messageID "
+        " srvEveMail.created, srvEveMail.channelID "
+        " FROM srvEveMail "
+        " LEFT JOIN srvEveMailDetails"
+        "    ON srvEveMailDetails.messageID = srvEveMail.messageID "
         " LEFT JOIN eveMailMimeType"
-        "    ON eveMailMimeType.mimeTypeID = eveMailDetails.mimeTypeID "
-        " WHERE eveMail.messageID=%u"
+        "    ON eveMailMimeType.mimeTypeID = srvEveMailDetails.mimeTypeID "
+        " WHERE srvEveMail.messageID=%u"
         "    AND channelID=%u",
             messageID, readerID
         ))
@@ -334,7 +334,7 @@ bool LSCDB::MarkMessageRead(uint32 messageID) {
     DBerror err;
 
     if (!DBcore::RunQuery(err,
-        " UPDATE eveMail "
+        " UPDATE srvEveMail "
         " SET `read` = 1 "
         " WHERE messageID=%u", messageID
         ))
@@ -352,7 +352,7 @@ bool LSCDB::DeleteMessage(uint32 messageID, uint32 readerID) {
     bool ret = true;
 
     if (!DBcore::RunQuery(err,
-        " DELETE FROM eveMail "
+        " DELETE FROM srvEveMail "
         " WHERE messageID=%u AND channelID=%u", messageID, readerID
         ))
     {
@@ -360,7 +360,7 @@ bool LSCDB::DeleteMessage(uint32 messageID, uint32 readerID) {
         ret = false;
     }
     if (!DBcore::RunQuery(err,
-        " DELETE FROM eveMailDetails "
+        " DELETE FROM srvEveMailDetails "
         " WHERE messageID=%u", messageID
         ))
     {
@@ -378,14 +378,14 @@ void LSCDB::GetChannelNames(uint32 charID, std::vector<std::string> & names) {
 
     if (!DBcore::RunQuery(res,
         " SELECT "
-        "    entity.itemName AS characterName, "
-        "    corporation.corporationName, "
+        "    srvEntity.itemName AS characterName, "
+        "    srvCorporation.corporationName, "
         "    mapSolarSystems.solarSystemName, "
         "    mapConstellations.constellationName, "
         "    mapRegions.regionName "
         " FROM srvCharacter "
-        "    LEFT JOIN entity ON srvCharacter.characterID = entity.itemID "
-        "    LEFT JOIN corporation ON srvCharacter.corporationID = corporation.corporationID "
+        "    LEFT JOIN srvEntity ON srvCharacter.characterID = srvEntity.itemID "
+        "    LEFT JOIN srvCorporation ON srvCharacter.corporationID = srvCorporation.corporationID "
         "    LEFT JOIN mapSolarSystems ON srvCharacter.solarSystemID = mapSolarSystems.solarSystemID "
         "    LEFT JOIN mapConstellations ON srvCharacter.constellationID = mapConstellations.constellationID "
         "    LEFT JOIN mapRegions ON srvCharacter.regionID = mapRegions.regionID "

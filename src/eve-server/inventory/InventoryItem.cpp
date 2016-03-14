@@ -144,10 +144,10 @@ InventoryItem::InventoryItem(
 
 InventoryItem::~InventoryItem()
 {
-    // Save this item's entity_attributes info to the Database before it is destroyed
+    // Save this item's srvEntity_attributes info to the Database before it is destroyed
     //mAttributeMap.SaveAttributes();
 
-    // Save this item's entity table info to the Database before it is destroyed
+    // Save this item's srvEntity table info to the Database before it is destroyed
     //SaveItem();
 }
 
@@ -681,9 +681,9 @@ void InventoryItem::Delete()
 
     //take ourself out of the DB
     DBerror err;
-    if (!DBcore::RunQueryMulti(err, "DELETE FROM entity WHERE itemID=%u;"
-                          "DELETE FROM entity_default_attributes WHERE itemID=%u;"
-                          "DELETE FROM entity_attributes WHERE itemID=%u;",
+    if (!DBcore::RunQueryMulti(err, "DELETE FROM srvEntity WHERE itemID=%u;"
+                          "DELETE FROM srvEntity_default_attributes WHERE itemID=%u;"
+                          "DELETE FROM srvEntity_attributes WHERE itemID=%u;",
                           m_itemID, m_itemID, m_itemID))
     {
         codelog(DATABASE__ERROR, "Failed to delete item %u: %s", m_itemID, err.c_str());
@@ -836,7 +836,7 @@ void InventoryItem::Rename(const char *to)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET itemName = '%s' WHERE itemID = %u",
+                          "UPDATE srvEntity SET itemName = '%s' WHERE itemID = %u",
                           nameEsc.c_str(), m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -877,7 +877,7 @@ void InventoryItem::Move(uint32 new_location, EVEItemFlags new_flag, bool notify
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET locationID = %u, flag = %u WHERE itemID = %u",
+                          "UPDATE srvEntity SET locationID = %u, flag = %u WHERE itemID = %u",
                           m_locationID, uint32(m_flag), m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -934,7 +934,7 @@ bool InventoryItem::SetQuantity(uint32 qty_new, bool notify)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET quantity = %u WHERE itemID = %u",
+                          "UPDATE srvEntity SET quantity = %u WHERE itemID = %u",
                           m_quantity, m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -965,7 +965,7 @@ bool InventoryItem::SetFlag(EVEItemFlags new_flag, bool notify)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET flag = %u WHERE itemID = %u",
+                          "UPDATE srvEntity SET flag = %u WHERE itemID = %u",
                           uint32(m_flag), m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -1054,7 +1054,7 @@ bool InventoryItem::ChangeSingleton(bool new_singleton, bool notify)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET singleton = %u WHERE itemID = %u",
+                          "UPDATE srvEntity SET singleton = %u WHERE itemID = %u",
                           uint32(m_singleton), m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -1088,7 +1088,7 @@ void InventoryItem::ChangeOwner(uint32 new_owner, bool notify)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET ownerID = %u WHERE itemID = %u",
+                          "UPDATE srvEntity SET ownerID = %u WHERE itemID = %u",
                           m_ownerID, m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -1261,7 +1261,7 @@ void InventoryItem::SetCustomInfo(const char *ci)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET customInfo = '%s' WHERE itemID = %u",
+                          "UPDATE srvEntity SET customInfo = '%s' WHERE itemID = %u",
                           customInfoEsc.c_str(), m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());
@@ -1284,7 +1284,7 @@ void InventoryItem::Relocate(const GPoint &pos)
 
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "UPDATE entity SET x = %f, y = %f, z = %f WHERE itemID = %u",
+                          "UPDATE srvEntity SET x = %f, y = %f, z = %f WHERE itemID = %u",
                           m_position.x, m_position.y, m_position.z, m_itemID))
     {
         _log(DATABASE__ERROR, "Error in query: %s.", err.c_str());

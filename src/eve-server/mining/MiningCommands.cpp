@@ -64,15 +64,15 @@ PyResult Command_roid( Client* who, const Seperator& args )
  * SQL to remove all asteroids from space in ALL systems.
  * Important, run in this order or the attributes will not be deleted!
  * 
-DELETE FROM entity_default_attributes WHERE attributeID > 0 and itemID in
-(SELECT itemID from entity where ownerID=1 AND typeID in
+DELETE FROM srvEntity_default_attributes WHERE attributeID > 0 and itemID in
+(SELECT itemID from srvEntity where ownerID=1 AND typeID in
 (SELECT typeID from invTypes where groupID in
 (select groupID FROM invGroups where categoryID=25) or groupID=711));
-DELETE FROM entity_attributes WHERE attributeID > 0 and itemID in
-(SELECT itemID from entity where ownerID=1 AND typeID in
+DELETE FROM srvEntity_attributes WHERE attributeID > 0 and itemID in
+(SELECT itemID from srvEntity where ownerID=1 AND typeID in
 (SELECT typeID from invTypes where groupID in
 (select groupID FROM invGroups where categoryID=25) or groupID=711));
-DELETE FROM entity WHERE itemID>=140000000 AND ownerID=1 AND typeID in
+DELETE FROM srvEntity WHERE itemID>=140000000 AND ownerID=1 AND typeID in
 (SELECT typeID from invTypes where groupID in
 (select groupID FROM invGroups where categoryID=25) or groupID=711);
  * 
@@ -301,12 +301,12 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const G
     i->SetAttribute(AttrQuantity, qty);
     i->SetAttribute(AttrRadius, radius);
 
-    // Create astroid entity.
+    // Create astroid srvEntity.
     AsteroidEntity* new_roid = new AsteroidEntity(i, system, position);
     if (new_roid != nullptr)
     {
         SysLog::Debug("SpawnAsteroid()", "Spawned new asteroid of radius= %fm and volume= %f m3", radius, volume);
-        // Add entity to system.
+        // Add srvEntity to system.
         system->AddEntity(new_roid);
     }
 }

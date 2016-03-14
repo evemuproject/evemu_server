@@ -50,7 +50,7 @@ CREATE TABLE sysAsteroids
     CONSTRAINT FOREIGN KEY (locationID)
      REFERENCES `sysAsteroidBelts` (`beltID`),
     CONSTRAINT FOREIGN KEY (itemID)
-     REFERENCES `entity` (`itemID`),
+     REFERENCES `srvEntity` (`itemID`),
     PRIMARY KEY(asteroidID)
 );
 #endif

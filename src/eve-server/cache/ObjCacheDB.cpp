@@ -601,7 +601,7 @@ PyRep *ObjCacheDB::Generate_mapCelestialDescriptions()
 PyRep *ObjCacheDB::Generate_tickerNames()
 {
     DBQueryResult res;
-    const char *q = "SELECT corporationID,tickerName,shape1,shape2,shape3,color1,color2,color3 FROM corporation WHERE hasPlayerPersonnelManager=0";
+    const char *q = "SELECT corporationID,tickerName,shape1,shape2,shape3,color1,color2,color3 FROM srvCorporation WHERE hasPlayerPersonnelManager=0";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.tickernames': %s", res.error.c_str());

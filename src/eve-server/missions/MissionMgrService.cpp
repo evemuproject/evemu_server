@@ -81,7 +81,7 @@ PyBoundObject *MissionMgrService::_CreateBoundObject(Client *c, PyTuple *bind_ar
 
 PyResult MissionMgrService::Handle_GetMyCourierMissions( PyCallArgs& call )
 {
-    //SELECT * FROM courierMissions
+    //SELECT * FROM srvCourierMissions
     SysLog::Debug( "MissionMgrService", "Called GetMyCourierMissions stub." );
 
     return NULL;

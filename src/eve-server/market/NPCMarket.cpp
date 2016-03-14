@@ -32,7 +32,7 @@ void NPCMarket::CreateNPCMarketForRegion(uint32 regionID)
     DBerror err;
 
     // Delete the old orders.
-    if (!DBcore::RunQuery(err, "DELETE FROM market_orders WHERE duration > 90 AND regionID=%u", regionID))
+    if (!DBcore::RunQuery(err, "DELETE FROM srvMarket_orders WHERE duration > 90 AND regionID=%u", regionID))
     {
         _log(MARKET__ERROR, "Error in query: %s.", err.c_str());
         SysLog::Log("NPCMarket", "Failed to clear old NPC market for region %u", regionID);
@@ -41,7 +41,7 @@ void NPCMarket::CreateNPCMarketForRegion(uint32 regionID)
 
     // Create the new orders.
     if (!DBcore::RunQuery(err,
-                             "INSERT INTO market_orders ("
+                             "INSERT INTO srvMarket_orders ("
                              "    typeID, charID, regionID, stationID,"
                              "    `range`, bid, price, volEntered, volRemaining, issued,"
                              "    orderState, minVolume, contraband, accountID, duration,"
@@ -71,7 +71,7 @@ void NPCMarket::CreateNPCMarket()
     DBerror err;
 
     // Delete the old orders.
-    if (!DBcore::RunQuery(err, "DELETE FROM market_orders WHERE duration > 90"))
+    if (!DBcore::RunQuery(err, "DELETE FROM srvMarket_orders WHERE duration > 90"))
     {
         _log(MARKET__ERROR, "Error in query: %s.", err.c_str());
         SysLog::Log("NPCMarket", "Failed to clear old NPC market for ALL regions.");
@@ -80,7 +80,7 @@ void NPCMarket::CreateNPCMarket()
 
     // Create the new orders.
     if (!DBcore::RunQuery(err,
-                          "INSERT INTO market_orders ("
+                          "INSERT INTO srvMarket_orders ("
                           "    typeID, charID, regionID, stationID,"
                           "    `range`, bid, price, volEntered, volRemaining, issued,"
                           "    orderState, minVolume, contraband, accountID, duration,"

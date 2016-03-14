@@ -147,13 +147,13 @@ PyObject *ServiceDB::GetSolRow(uint32 systemID)
     if(!DBcore::RunQuery(res,
         //not sure if this is gunna be valid all the time...
         "SELECT "
-        "    itemID,entity.typeID,ownerID,locationID,flag,contraband,singleton,quantity,"
+        "    itemID,srvEntity.typeID,ownerID,locationID,flag,contraband,singleton,quantity,"
         "    invGroups.groupID, invGroups.categoryID,"
         "    customInfo"
-        " FROM entity "
-        "    LEFT JOIN invTypes ON entity.typeID=invTypes.typeID"
+        " FROM srvEntity "
+        "    LEFT JOIN invTypes ON srvEntity.typeID=invTypes.typeID"
         "    LEFT JOIN invGroups ON invTypes.groupID=invGroups.groupID"
-        " WHERE entity.itemID=%u",
+        " WHERE srvEntity.itemID=%u",
         systemID
     ))
     {
@@ -179,7 +179,7 @@ PyObject *ServiceDB::GetSolDroneState(uint32 systemID) {
         "SELECT "
         "    droneID, solarSystemID, ownerID, controllerID,"
         "    activityState, typeID, controllerOwnerID"
-        " FROM droneState "
+        " FROM srvDroneState "
         " WHERE solarSystemID=%u",
         systemID
     ))

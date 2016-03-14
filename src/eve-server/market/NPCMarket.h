@@ -34,8 +34,8 @@
  *     NPCMarket::CreateNPCMarketForRegion(regionID);
  *
  * Manually seeding the market.
- * DELETE FROM market_orders WHERE duration > 90;
- * INSERT INTO market_orders
+ * DELETE FROM srvMarket_orders WHERE duration > 90;
+ * INSERT INTO srvMarket_orders
  *  (typeID, charID, regionID, stationID, `range`, bid, price, volEntered, volRemaining, issued, orderState, minVolume, contraband, accountID, duration, isCorp, solarSystemID, escrow, jumps )
  *  SELECT market_npc.typeID, '0' AS charID,
  *  (SELECT staStations.regionID FROM staStations WHERE staStations.stationID=market_npc.stationID) AS regionID,

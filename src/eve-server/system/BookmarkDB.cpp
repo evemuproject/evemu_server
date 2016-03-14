@@ -82,14 +82,14 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
     DBResultRow row, row2;
 
     // Find the correct TypeID of the item specified by itemID, searching through
-    // several places: entity table, mapDenormalize table, and mapJumps table:
+    // several places: srvEntity table, mapDenormalize table, and mapJumps table:
 
     // The most common bookmark made is a location in space, so let's check this first and exit
     // quickly for this high use case:
     if (!DBcore::RunQuery(res,
         " SELECT "
         "    typeID "
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE itemID = %u ", itemID))
     {
         SysLog::Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res.error.c_str() );
@@ -98,7 +98,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
 
     if (res.GetRow(row))
     {
-        // itemID exists in 'entity' table, now let's check to see what type it is:
+        // itemID exists in 'srvEntity' table, now let's check to see what type it is:
         if (!DBcore::RunQuery(res2,
             " SELECT "
             "    groupID "
@@ -111,7 +111,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
 
         if (res2.GetRow(row2))
             if (row2.GetUInt(0) == 15)
-                return ( row.GetUInt(0) );  // Return typeID of "Station" from 'entity'
+                return ( row.GetUInt(0) );  // Return typeID of "Station" from 'srvEntity'
 
         return 5;   // Return typeID of "Solar System" from 'invTypes'
     }

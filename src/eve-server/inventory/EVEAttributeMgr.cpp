@@ -575,7 +575,7 @@ bool AttributeMap::Load()
 
 	if(mDefault)
     {
-        if (!DBcore::RunQuery(res, "SELECT * FROM entity_default_attributes WHERE itemID='%u'", mItem.itemID()))
+        if (!DBcore::RunQuery(res, "SELECT * FROM srvEntity_default_attributes WHERE itemID='%u'", mItem.itemID()))
         {
 			SysLog::Error("AttributeMap (DEFAULT)", "Error in db load query: %s", res.error.c_str());
 			return false;
@@ -583,7 +583,7 @@ bool AttributeMap::Load()
 	}
 	else
     {
-        if (!DBcore::RunQuery(res, "SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID()))
+        if (!DBcore::RunQuery(res, "SELECT * FROM srvEntity_attributes WHERE itemID='%u'", mItem.itemID()))
         {
 			SysLog::Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
 			return false;
@@ -611,7 +611,7 @@ bool AttributeMap::Load()
         /// EXISTING AttributeMap::Load() function
         DBQueryResult res;
 
-        if(!DBcore::RunQuery(res,"SELECT * FROM entity_attributes WHERE itemID='%u'", mItem.itemID())) {
+        if(!DBcore::RunQuery(res,"SELECT * FROM srvEntity_attributes WHERE itemID='%u'", mItem.itemID())) {
         Log::Error("AttributeMap", "Error in db load query: %s", res.error.c_str());
         return false;
     }
@@ -621,10 +621,10 @@ bool AttributeMap::Load()
     int amount = res.GetRowCount();
 
     // Right now, assume that we need to load all attributes with default values from dgmTypeAttributes table
-    // IF AND ONLY IF the number of attributes pulled from the entity_attributes table for this item is ZERO:
+    // IF AND ONLY IF the number of attributes pulled from the srvEntity_attributes table for this item is ZERO:
     if( amount > 0 )
     {
-        // This item was found in the 'entity_attributes' table, so load all attributes found there
+        // This item was found in the 'srvEntity_attributes' table, so load all attributes found there
         // into the Attribute Map for this item:
         for (int i = 0; i < amount; i++)
         {
@@ -644,7 +644,7 @@ bool AttributeMap::Load()
     }
     else
     {
-        // This item was NOT found in the 'entity_attributes' table, so let's assume that
+        // This item was NOT found in the 'srvEntity_attributes' table, so let's assume that
         // this item was just created.
         // 1) Get complete list of attributes with default values from dgmTypeAttributes table using the item's typeID:
         DgmTypeAttributeSet *attr_set = sDgmTypeAttrMgr.GetDgmTypeAttributeSet( mItem.typeID() );
@@ -660,7 +660,7 @@ bool AttributeMap::Load()
             //Add((*itr)->attributeID, (*itr)->number);
         }
 
-        // 2) Save these newly created and loaded attributes to the 'entity_attributes' table
+        // 2) Save these newly created and loaded attributes to the 'srvEntity_attributes' table
         SaveAttributes();
     }
 
@@ -676,7 +676,7 @@ bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
 	if(mDefault)
     {
         if (!DBcore::RunQuery(err,
-			"REPLACE INTO entity_default_attributes"
+			"REPLACE INTO srvEntity_default_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, %d, NULL)",
@@ -689,7 +689,7 @@ bool AttributeMap::SaveIntAttribute(uint32 attributeID, int64 value)
 	else
     {
         if (!DBcore::RunQuery(err,
-			"REPLACE INTO entity_attributes"
+			"REPLACE INTO srvEntity_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, %d, NULL)",
@@ -711,7 +711,7 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 	if(mDefault)
     {
         if (!DBcore::RunQuery(err,
-			"REPLACE INTO entity_default_attributes"
+			"REPLACE INTO srvEntity_default_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, NULL, %f)",
@@ -724,7 +724,7 @@ bool AttributeMap::SaveFloatAttribute(uint32 attributeID, double value)
 	else
     {
         if (!DBcore::RunQuery(err,
-			"REPLACE INTO entity_attributes"
+			"REPLACE INTO srvEntity_attributes"
 			"   (itemID, attributeID, valueInt, valueFloat)"
 			" VALUES"
 			"   (%u, %u, NULL, %f)",
@@ -776,13 +776,13 @@ bool AttributeMap::Save()
         if (mDefault)
         {
             success = DBcore::RunQuery(err,
-                                       "REPLACE INTO entity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES %s",
+                                       "REPLACE INTO srvEntity_default_attributes (itemID, attributeID, valueInt, valueFloat) VALUES %s",
                                        values.c_str());
         }
         else
         {
             success = DBcore::RunQuery(err,
-                                       "REPLACE INTO entity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES %s",
+                                       "REPLACE INTO srvEntity_attributes (itemID, attributeID, valueInt, valueFloat) VALUES %s",
                                        values.c_str());
         }
 
@@ -805,14 +805,14 @@ bool AttributeMap::SaveAttributes()
 
 bool AttributeMap::Delete()
 {
-    // Remove all attributes from the entity_default_attributes table or entity_attributes table for this item:
+    // Remove all attributes from the srvEntity_default_attributes table or srvEntity_attributes table for this item:
     DBerror err;
 
 	if(mDefault)
     {
         if (!DBcore::RunQuery(err,
 			"DELETE"
-			" FROM entity_default_attributes"
+			" FROM srvEntity_default_attributes"
 			" WHERE itemID=%u",
 			mItem.itemID()
 		))
@@ -825,7 +825,7 @@ bool AttributeMap::Delete()
     {
         if (!DBcore::RunQuery(err,
 			"DELETE"
-			" FROM entity_attributes"
+			" FROM srvEntity_attributes"
 			" WHERE itemID=%u",
 			mItem.itemID()
 		))

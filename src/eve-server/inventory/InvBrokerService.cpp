@@ -135,7 +135,7 @@ PyResult InvBrokerBound::Handle_GetContainerContents(PyCallArgs &call)
 		"  e.typeID, "
 		"  e.quantity as stacksize "
 		"FROM "
-		"  entity e "
+		"  srvEntity e "
 		"WHERE "
 		"  locationID=%d AND "
 		"  flag=5", itemID))

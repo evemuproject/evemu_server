@@ -221,7 +221,7 @@ public:
     /**
      * Spawns new blueprint.
      *
-     * @param[in] data Item data (for entity table).
+     * @param[in] data Item data (for srvEntity table).
      * @param[in] bpData Blueprint-specific data.
      * @return Pointer to new Blueprint object; NULL if failed.
      */

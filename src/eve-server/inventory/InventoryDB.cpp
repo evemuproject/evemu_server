@@ -485,12 +485,12 @@ bool InventoryDB::GetItem(uint32 itemID, ItemData &into) {
             return NULL;
         }
     } else {
-        //fallback to entity
+        //fallback to srvEntity
         if(!DBcore::RunQuery(res,
             "SELECT"
             " itemName, typeID, ownerID, locationID, flag, contraband,"
             " singleton, quantity, x, y, z, customInfo"
-            " FROM entity WHERE itemID=%u", itemID))
+            " FROM srvEntity WHERE itemID=%u", itemID))
         {
             codelog(SERVICE__ERROR, "Error in query for item %u: %s", itemID, res.error.c_str());
             return NULL;
@@ -531,7 +531,7 @@ uint32 InventoryDB::NewItem(const ItemData &data) {
     DBcore::DoEscapeString(customInfoEsc, data.customInfo);
 
     if(!DBcore::RunQueryLID(err, eid,
-        "INSERT INTO entity ("
+        "INSERT INTO srvEntity ("
         "   itemName, typeID, ownerID, locationID, flag,"
         "   contraband, singleton, quantity, x, y, z,"
         "   customInfo"
@@ -544,7 +544,7 @@ uint32 InventoryDB::NewItem(const ItemData &data) {
         customInfoEsc.c_str()
         )
     ) {
-        codelog(SERVICE__ERROR, "Failed to insert new entity: %s", err.c_str());
+        codelog(SERVICE__ERROR, "Failed to insert new srvEntity: %s", err.c_str());
         return(0);
     }
 
@@ -565,7 +565,7 @@ bool InventoryDB::SaveItem(uint32 itemID, const ItemData &data) {
     DBcore::DoEscapeString(customInfoEsc, data.customInfo);
 
     if(!DBcore::RunQuery(err,
-        "UPDATE entity"
+        "UPDATE srvEntity"
         " SET"
         " itemName = '%s',"
         " typeID = %u,"
@@ -610,7 +610,7 @@ bool InventoryDB::DeleteItem(uint32 itemID) {
 
     if(!DBcore::RunQuery(err,
         "DELETE"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE itemID=%u",
         itemID
     ))
@@ -633,7 +633,7 @@ bool InventoryDB::GetItemContents(uint32 itemID, std::vector<uint32> &into)
     if( !DBcore::RunQuery( res,
         "SELECT "
         " itemID"
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE locationID = %u",
         itemID ) )
     {
@@ -654,7 +654,7 @@ bool InventoryDB::GetItemContents(uint32 itemID, EVEItemFlags flag, std::vector<
     if( !DBcore::RunQuery( res,
         "SELECT "
         " itemID"
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE locationID=%u"
         "  AND flag=%d",
         itemID, (int)flag ) )
@@ -677,7 +677,7 @@ bool InventoryDB::GetItemContents(uint32 itemID, EVEItemFlags flag, uint32 owner
     if( !DBcore::RunQuery( res,
         "SELECT "
         " itemID"
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE locationID=%u"
         "  AND flag=%d"
         "  AND ownerID=%u",
@@ -759,7 +759,7 @@ bool InventoryDB::LoadItemAttributes(uint32 itemID, EVEAttributeMgr &into) {
         " attributeID,"
         " valueInt,"
         " valueFloat"
-        " FROM entity_attributes"
+        " FROM srvEntity_attributes"
         " WHERE itemID=%u",
         itemID))
     {
@@ -794,7 +794,7 @@ bool InventoryDB::LoadItemAttributes(uint32 itemID, EVEAttributeMgr &into) {
 bool InventoryDB::UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v) {
     DBerror err;
     if(!DBcore::RunQuery(err,
-        "REPLACE INTO entity_attributes"
+        "REPLACE INTO srvEntity_attributes"
         "   (itemID, attributeID, valueInt, valueFloat)"
         " VALUES"
         "   (%u, %u, %d, NULL)",
@@ -809,7 +809,7 @@ bool InventoryDB::UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v) 
 bool InventoryDB::UpdateAttribute_double(uint32 itemID, uint32 attributeID, double v) {
     DBerror err;
     if(!DBcore::RunQuery(err,
-        "REPLACE INTO entity_attributes"
+        "REPLACE INTO srvEntity_attributes"
         "   (itemID, attributeID, valueInt, valueFloat)"
         " VALUES"
         "   (%u, %u, NULL, %f)",
@@ -823,7 +823,7 @@ bool InventoryDB::UpdateAttribute_double(uint32 itemID, uint32 attributeID, doub
 bool InventoryDB::EraseAttribute(uint32 itemID, uint32 attributeID) {
     DBerror err;
     if(!DBcore::RunQuery(err,
-        "DELETE FROM entity_attributes"
+        "DELETE FROM srvEntity_attributes"
         " WHERE itemID=%u AND attributeID=%u",
         itemID, attributeID)
     ) {
@@ -837,7 +837,7 @@ bool InventoryDB::EraseAttributes(uint32 itemID) {
     DBerror err;
     if(!DBcore::RunQuery(err,
         "DELETE"
-        " FROM entity_attributes"
+        " FROM srvEntity_attributes"
         " WHERE itemID=%u",
         itemID))
     {
@@ -856,7 +856,7 @@ bool InventoryDB::GetBlueprint(uint32 blueprintID, BlueprintData &into) {
         " materialLevel,"
         " productivityLevel,"
         " licensedProductionRunsRemaining"
-        " FROM invBlueprints"
+        " FROM srvInvBlueprints"
         " WHERE blueprintID=%u",
         blueprintID))
     {
@@ -883,7 +883,7 @@ bool InventoryDB::NewBlueprint(uint32 blueprintID, const BlueprintData &data) {
 
     if(!DBcore::RunQuery(err,
         "INSERT"
-        " INTO invBlueprints"
+        " INTO srvInvBlueprints"
         " (blueprintID, copy, materialLevel, productivityLevel, licensedProductionRunsRemaining)"
         " VALUES"
         " (%u, %u, %u, %u, %d)",
@@ -900,7 +900,7 @@ bool InventoryDB::SaveBlueprint(uint32 blueprintID, const BlueprintData &data) {
     DBerror err;
 
     if(!DBcore::RunQuery(err,
-        "UPDATE invBlueprints"
+        "UPDATE srvInvBlueprints"
         " SET"
         " copy = %u,"
         " materialLevel = %u,"
@@ -924,7 +924,7 @@ bool InventoryDB::DeleteBlueprint(uint32 blueprintID) {
 
     if(!DBcore::RunQuery(err,
         "DELETE"
-        " FROM invBlueprints"
+        " FROM srvInvBlueprints"
         " WHERE blueprintID=%u",
         blueprintID))
     {
@@ -963,7 +963,7 @@ bool InventoryDB::GetCharacter(uint32 characterID, CharacterData &into) {
         "  chr.corporationDateTime,"
         "  chr.shipID"
         " FROM srvCharacter AS chr"
-        " LEFT JOIN corporation AS crp USING (corporationID)"
+        " LEFT JOIN srvCorporation AS crp USING (corporationID)"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1037,9 +1037,9 @@ bool InventoryDB::GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into) {
     // this is hack and belongs somewhere else
     if(!DBcore::RunQuery(res,
         "SELECT"
-        "  corporation.stationID"
+        "  srvCorporation.stationID"
         " FROM srvCharacter"
-        "  LEFT JOIN corporation USING (corporationID)"
+        "  LEFT JOIN srvCorporation USING (corporationID)"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1133,7 +1133,7 @@ bool InventoryDB::NewCharacter(uint32 characterID, const CharacterData &data, co
 
     // And one more member to the corporation
     if(!DBcore::RunQuery(err,
-        "UPDATE corporation"
+        "UPDATE srvCorporation"
         "  SET memberCount = memberCount + 1"
         " WHERE corporationID = %u",
         data.corporationID))
@@ -1245,12 +1245,12 @@ bool InventoryDB::SaveCorpMemberInfo(uint32 characterID, const CorpMemberInfo &d
 bool InventoryDB::DeleteCharacter(uint32 characterID) {
     DBerror err;
 
-    // eveMailDetails
+    // srvEveMailDetails
     if(!DBcore::RunQuery(err,
-        "DELETE FROM eveMailDetails"
-        "  USING eveMail, eveMailDetails"
+        "DELETE FROM srvEveMailDetails"
+        "  USING srvEveMail, srvEveMailDetails"
         " WHERE"
-        "   eveMail.messageID = eveMailDetails.messageID"
+        "   srvEveMail.messageID = srvEveMailDetails.messageID"
         "  AND"
         "   (senderID = %u OR channelID = %u)",
         characterID, characterID))
@@ -1260,9 +1260,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // eveMail
+    // srvEveMail
     if(!DBcore::RunQuery(err,
-        "DELETE FROM eveMail"
+        "DELETE FROM srvEveMail"
         " WHERE (senderID = %u OR channelID = %u)",
         characterID, characterID))
     {
@@ -1271,9 +1271,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // crpCharShares
+    // srvCrpCharShares
     if(!DBcore::RunQuery(err,
-        "DELETE FROM crpCharShares"
+        "DELETE FROM srvCrpCharShares"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1293,9 +1293,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // market_journal
+    // srvMarket_journal
     if(!DBcore::RunQuery(err,
-        "DELETE FROM market_journal"
+        "DELETE FROM srvMarket_journal"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1304,9 +1304,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // market_orders
+    // srvMarket_orders
     if(!DBcore::RunQuery(err,
-        "DELETE FROM market_orders"
+        "DELETE FROM srvMarket_orders"
         " WHERE charID =% lu",
         characterID))
     {
@@ -1315,9 +1315,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // market_transactions
+    // srvMarket_transactions
     if(!DBcore::RunQuery(err,
-        "DELETE FROM market_transactions"
+        "DELETE FROM srvMarket_transactions"
         " WHERE clientID = %u",
         characterID))
     {
@@ -1326,9 +1326,9 @@ bool InventoryDB::DeleteCharacter(uint32 characterID) {
         _log(DATABASE__MESSAGE, "Ignoring error.");
     }
 
-    // chrStandings
+    // srvChrStandings
     if(!DBcore::RunQuery(err,
-        "DELETE FROM chrStandings"
+        "DELETE FROM srvChrStandings"
         " WHERE characterID = %u",
         characterID))
     {
@@ -1418,15 +1418,15 @@ bool InventoryDB::GetCelestialObject(uint32 celestialID, CelestialObjectData &in
     }
     else
     {
-        // Quite possibly, this Celestial object is a dynamic one, so try to get its data from the 'entity' table,
+        // Quite possibly, this Celestial object is a dynamic one, so try to get its data from the 'srvEntity' table,
         // and if it's not there either, then flag an error.
         if(!DBcore::RunQuery(res,
             "SELECT"
-            " entity.itemID, "
+            " srvEntity.itemID, "
             " invTypes.radius "
-            " FROM entity "
-            "  LEFT JOIN invTypes ON entity.typeID = invTypes.typeID"
-            " WHERE entity.itemID = %u",
+            " FROM srvEntity "
+            "  LEFT JOIN invTypes ON srvEntity.typeID = invTypes.typeID"
+            " WHERE srvEntity.itemID = %u",
             celestialID))
         {
             _log(DATABASE__ERROR, "Failed to query celestial object %u: %s.", celestialID, res.error.c_str());
@@ -1533,7 +1533,7 @@ bool InventoryDB::LoadSkillQueue(uint32 characterID, SkillQueue &into) {
     if( !DBcore::RunQuery( res,
         "SELECT"
         " typeID, level"
-        " FROM chrSkillQueue"
+        " FROM srvChrSkillQueue"
         " WHERE characterID = %u"
         " ORDER BY orderIndex ASC",
         characterID ) )
@@ -1636,7 +1636,7 @@ bool InventoryDB::SaveSkillQueue(uint32 characterID, const SkillQueue &queue) {
 
     if( !DBcore::RunQuery( err,
         "DELETE"
-        " FROM chrSkillQueue"
+        " FROM srvChrSkillQueue"
         " WHERE characterID = %u",
         characterID ) )
     {
@@ -1665,7 +1665,7 @@ bool InventoryDB::SaveSkillQueue(uint32 characterID, const SkillQueue &queue) {
 
     if( !DBcore::RunQuery( err,
         "INSERT"
-        " INTO chrSkillQueue (characterID, orderIndex, typeID, level)"
+        " INTO srvChrSkillQueue (characterID, orderIndex, typeID, level)"
         " VALUES %s",
         query.c_str() ) )
     {
@@ -1683,7 +1683,7 @@ bool InventoryDB::GetTypeID(uint32 itemID, uint32 &typeID)
     if(!DBcore::RunQuery(res,
         " SELECT "
         " typeID "
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE itemID = %u ",itemID))
     {
         _log(DATABASE__ERROR, "Failed to query for itemID = %u", itemID);

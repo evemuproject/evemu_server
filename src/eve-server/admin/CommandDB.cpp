@@ -152,7 +152,7 @@ int CommandDB::GetAccountID(std::string name) {
         " SELECT "
         " AccountID "
         " FROM srvCharacter "
-        " WHERE characterID = ( SELECT itemID FROM entity WHERE itemName = '%s' )", name.c_str()))
+        " WHERE characterID = ( SELECT itemID FROM srvEntity WHERE itemName = '%s' )", name.c_str()))
     {
         SysLog::Error("CommandDB", "Failed to retrieve accountID for %s", name.c_str());
         return 0;

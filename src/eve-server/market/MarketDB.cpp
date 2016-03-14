@@ -33,7 +33,7 @@ PyRep *MarketDB::GetStationAsks(uint32 stationID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "    typeID, MAX(price) AS price, volRemaining, stationID "
-        " FROM market_orders "
+        " FROM srvMarket_orders "
         //" WHERE stationID=%u AND bid=%d"
         " WHERE stationID=%u"
         " GROUP BY typeID", stationID/*, TransactionTypeSell*/))
@@ -55,7 +55,7 @@ PyRep *MarketDB::GetSystemAsks(uint32 solarSystemID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "    typeID, MAX(price) AS price, volRemaining, stationID "
-        " FROM market_orders "
+        " FROM srvMarket_orders "
         //" WHERE solarSystemID=%u AND bid=0"
         " WHERE solarSystemID=%u"
         " GROUP BY typeID", solarSystemID))
@@ -77,7 +77,7 @@ PyRep *MarketDB::GetRegionBest(uint32 regionID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "    typeID, MIN(price) AS price, volRemaining, stationID "
-        " FROM market_orders "
+        " FROM srvMarket_orders "
         " WHERE regionID=%u AND bid=%d"
         //" WHERE regionID=%u"
         " GROUP BY typeID", regionID, TransactionTypeSell))
@@ -142,7 +142,7 @@ PyRep *MarketDB::GetOrders( uint32 regionID, uint32 typeID )
         "    price, volRemaining, typeID, `range`, orderID,"
         "   volEntered, minVolume, bid, issued as issueDate, duration,"
         "   stationID, regionID, solarSystemID, jumps"
-        " FROM market_orders "
+        " FROM srvMarket_orders "
         " WHERE regionID=%u AND typeID=%u AND bid=%d", regionID, typeID, TransactionTypeSell))
     {
         codelog( MARKET__ERROR, "Error in query: %s", res.error.c_str() );
@@ -161,7 +161,7 @@ PyRep *MarketDB::GetOrders( uint32 regionID, uint32 typeID )
         "    price, volRemaining, typeID, `range`, orderID,"
         "   volEntered, minVolume, bid, issued as issueDate, duration,"
         "   stationID, regionID, solarSystemID, jumps"
-        " FROM market_orders "
+        " FROM srvMarket_orders "
         " WHERE regionID=%u AND typeID=%u AND bid=%d", regionID, typeID, TransactionTypeBuy))
     {
         codelog( MARKET__ERROR, "Error in query: %s", res.error.c_str() );
@@ -187,7 +187,7 @@ PyRep *MarketDB::GetCharOrders(uint32 characterID) {
         "   issued as issueDate, orderState, minVolume, contraband,"
         "   accountID, duration, isCorp, solarSystemID,"
         "   escrow"
-        " FROM market_orders "
+        " FROM srvMarket_orders "
         " WHERE charID=%u", characterID))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
@@ -205,7 +205,7 @@ PyRep *MarketDB::GetOrderRow(uint32 orderID) {
         "    price, volRemaining, typeID, `range`, orderID,"
         "   volEntered, minVolume, bid, issued as issueDate, duration,"
         "   stationID, regionID, solarSystemID, jumps"
-        " FROM market_orders"
+        " FROM srvMarket_orders"
         " WHERE orderID=%u", orderID))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
@@ -245,7 +245,7 @@ PyRep *MarketDB::GetOldPriceHistory(uint32 regionID, uint32 typeID) {
         "SELECT"
         "    historyDate, lowPrice, highPrice, avgPrice,"
         "    volume, orders "
-        " FROM market_history_old "
+        " FROM srvMarket_history_old "
         " WHERE regionID=%u AND typeID=%u", regionID, typeID))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
@@ -287,7 +287,7 @@ PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
         "    AVG(price) AS avgPrice,"
         "    CAST(SUM(quantity) AS SIGNED INTEGER) AS volume,"
         "    CAST(COUNT(transactionID) AS SIGNED INTEGER) AS orders"
-        " FROM market_transactions "
+        " FROM srvMarket_transactions "
         " WHERE regionID=%u AND typeID=%u"
         "    AND transactionType=%d "    //both buy and sell transactions get recorded, only compound one set of data... choice was arbitrary.
         " GROUP BY historyDate",
@@ -310,7 +310,7 @@ bool MarketDB::BuildOldPriceHistory() {
     //build the history record from the recent market transactions.
     if(!DBcore::RunQuery(err,
         "INSERT INTO"
-        "    market_history_old"
+        "    srvMarket_history_old"
         "     (regionID, typeID, historyDate, lowPrice, highPrice, avgPrice, volume, orders)"
         " SELECT"
         "    regionID,"
@@ -321,7 +321,7 @@ bool MarketDB::BuildOldPriceHistory() {
         "    AVG(price) AS avgPrice,"
         "    SUM(quantity) AS volume,"
         "    COUNT(transactionID) AS orders"
-        " FROM market_transactions "
+        " FROM srvMarket_transactions "
         " WHERE"
         "    transactionType=%d AND "    //both buy and sell transactions get recorded, only compound one set of data... choice was arbitrary.
         "    ( transactionDateTime - ( transactionDateTime %% %" PRId64 " ) ) < %" PRId64
@@ -339,7 +339,7 @@ bool MarketDB::BuildOldPriceHistory() {
     //now remove the transactions which have been aged out?
     if(!DBcore::RunQuery(err,
         "DELETE FROM"
-        "    market_transactions"
+        "    srvMarket_transactions"
         " WHERE"
         "    transactionDateTime < %" PRId64,
         cutoff_time))
@@ -533,7 +533,7 @@ uint32 MarketDB::FindBuyOrder(
 
     if(!DBcore::RunQuery(res,
         "SELECT orderID"
-        "    FROM market_orders"
+        "    FROM srvMarket_orders"
         "    WHERE bid=1"
         "        AND typeID=%u"
         "        AND stationID=%u"
@@ -568,7 +568,7 @@ uint32 MarketDB::FindSellOrder(
 
     if(!DBcore::RunQuery(res,
         "SELECT orderID"
-        "    FROM market_orders"
+        "    FROM srvMarket_orders"
         "    WHERE bid=0"
         "        AND typeID=%u"
         "        AND stationID=%u"
@@ -604,7 +604,7 @@ bool MarketDB::GetOrderInfo(uint32 orderID, uint32 *orderOwnerID, uint32 *typeID
         " charID,"
         " bid,"
         " isCorp"
-        " FROM market_orders"
+        " FROM srvMarket_orders"
         " WHERE orderID=%u",
         orderID))
     {
@@ -642,7 +642,7 @@ bool MarketDB::AlterOrderQuantity(uint32 orderID, uint32 new_qty) {
 
     if(!DBcore::RunQuery(err,
         "UPDATE"
-        " market_orders"
+        " srvMarket_orders"
         " SET volRemaining = %u"
         " WHERE orderID = %u",
         new_qty, orderID))
@@ -659,7 +659,7 @@ bool MarketDB::AlterOrderPrice(uint32 orderID, double new_price) {
 
     if(!DBcore::RunQuery(err,
         "UPDATE"
-        " market_orders"
+        " srvMarket_orders"
         " SET price = %f"
         " WHERE orderID = %u",
         new_price, orderID))
@@ -676,7 +676,7 @@ bool MarketDB::DeleteOrder(uint32 orderID) {
 
     if(!DBcore::RunQuery(err,
         "DELETE"
-        " FROM market_orders"
+        " FROM srvMarket_orders"
         " WHERE orderID = %u",
         orderID))
     {
@@ -714,7 +714,7 @@ bool MarketDB::RecordTransaction(
 
     if(!DBcore::RunQuery(err,
         "INSERT INTO"
-        " market_transactions ("
+        " srvMarket_transactions ("
         "    transactionID, transactionDateTime, typeID, quantity,"
         "    price, transactionType, clientID, regionID, stationID,"
         "    corpTransaction"
@@ -759,7 +759,7 @@ uint32 MarketDB::_StoreOrder(
     //TODO: implement the isCorp flag properly.
     uint32 orderID;
     if(!DBcore::RunQueryLID(err, orderID,
-        "INSERT INTO market_orders ("
+        "INSERT INTO srvMarket_orders ("
         "    typeID, charID, regionID, stationID,"
         "    `range`, bid, price, volEntered, volRemaining, issued,"
         "    orderState, minVolume, contraband, accountID, duration,"
@@ -792,7 +792,7 @@ PyRep *MarketDB::GetTransactions(uint32 characterID, uint32 typeID, uint32 quant
         "SELECT"
         " transactionID,transactionDateTime,typeID,quantity,price,transactionType,"
         " 0 AS corpTransaction,clientID,stationID"
-        " FROM market_transactions "
+        " FROM srvMarket_transactions "
         " WHERE clientID=%u AND (typeID=%u OR 0=%u) AND"
         " quantity>=%u AND price>=%f AND (price<=%f OR 0=%f) AND"
         " transactionDateTime>=%" PRIu64 " AND (transactionType=%d OR -1=%d)",

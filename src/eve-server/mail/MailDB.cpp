@@ -111,7 +111,7 @@ void MailDB::SetMailUnread(int id, bool unread)
 PyRep* MailDB::GetLabels(int characterID)
 {
     DBQueryResult res;
-    if (!DBcore::RunQuery(res, "SELECT bit, name, color, ownerId FROM mailLabel WHERE ownerID = %u", characterID))
+    if (!DBcore::RunQuery(res, "SELECT bit, name, color, ownerId FROM srvMailLabel WHERE ownerID = %u", characterID))
         return NULL;
 
     PyDict* ret = new PyDict();
@@ -134,7 +134,7 @@ bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID)
 {
     // we need to get the next free bit index; can't avoid a SELECT
     DBQueryResult res;
-    DBcore::RunQuery(res, "SELECT bit FROM mailLabel WHERE ownerID = %u ORDER BY bit DESC LIMIT 1", characterID);
+    DBcore::RunQuery(res, "SELECT bit FROM srvMailLabel WHERE ownerID = %u ORDER BY bit DESC LIMIT 1", characterID);
 
     // 6 is a guessed default; there are some hardcoded labels that we don't have the details on yet
     int bit = 6;
@@ -148,7 +148,7 @@ bool MailDB::CreateLabel(int characterID, Call_CreateLabel& args, uint32& newID)
     }
 
     DBerror error;
-    if (!DBcore::RunQuery(error, "INSERT INTO mailLabel (bit, name, color, ownerID) VALUES (%u, '%s', %u, %u)", bit, args.name.c_str(), args.color, characterID))
+    if (!DBcore::RunQuery(error, "INSERT INTO srvMailLabel (bit, name, color, ownerID) VALUES (%u, '%s', %u, %u)", bit, args.name.c_str(), args.color, characterID))
     {
         codelog(SERVICE__ERROR, "Failed to insert new mail label into database");
         // since this is an out parameter, make sure we assign this even in case of an error
@@ -165,7 +165,7 @@ void MailDB::DeleteLabel(int characterID, int labelID)
 {
     int bit = BitFromLabelID(labelID);
     DBerror error;
-    DBcore::RunQuery(error, "DELETE FROM mailLabel WHERE ownerID = %u AND bit = %u", characterID, bit);
+    DBcore::RunQuery(error, "DELETE FROM srvMailLabel WHERE ownerID = %u AND bit = %u", characterID, bit);
 }
 
 void MailDB::EditLabel(int characterID, Call_EditLabel& args)
@@ -174,11 +174,11 @@ void MailDB::EditLabel(int characterID, Call_EditLabel& args)
 
     DBerror error;
     if (args.name.length() == 0)
-        DBcore::RunQuery(error, "UPDATE mailLabel SET color = %u WHERE bit = %u AND ownerID = %u", args.color, bit, characterID);
+        DBcore::RunQuery(error, "UPDATE srvMailLabel SET color = %u WHERE bit = %u AND ownerID = %u", args.color, bit, characterID);
     else if (args.color == -1)
-        DBcore::RunQuery(error, "UPDATE mailLabel SET name = '%s' WHERE bit = %u AND ownerID = %u", args.name.c_str(), bit, characterID);
+        DBcore::RunQuery(error, "UPDATE srvMailLabel SET name = '%s' WHERE bit = %u AND ownerID = %u", args.name.c_str(), bit, characterID);
     else
-        DBcore::RunQuery(error, "UPDATE mailLabel SET name = '%s', color = %u WHERE bit = %u AND ownerID = %u", args.name.c_str(), args.color, bit, characterID);
+        DBcore::RunQuery(error, "UPDATE srvMailLabel SET name = '%s', color = %u WHERE bit = %u AND ownerID = %u", args.name.c_str(), args.color, bit, characterID);
 }
 
 int MailDB::BitFromLabelID(int id)

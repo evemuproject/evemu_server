@@ -61,11 +61,11 @@ bool APIServiceDB::GetAccountIdFromUserID(std::string userID, uint32 * accountID
 {
     DBQueryResult res;
 
-    // Find accountID in 'accountapi' table using userID:
+    // Find accountID in 'srvAccountApi' table using userID:
     if( !DBcore::RunQuery(res,
         "SELECT"
         "    accountID "
-        " FROM accountApi "
+        " FROM srvAccountApi "
         " WHERE userID='%s'" , userID.c_str() ))
     {
         SysLog::Error( "APIServiceDB::GetAccountIdFromUserID()", "Cannot find accountID for userID %s", userID.c_str() );
@@ -79,7 +79,7 @@ bool APIServiceDB::GetAccountIdFromUserID(std::string userID, uint32 * accountID
         return false;
     }
 
-    *accountID = row.GetUInt(0);        // Grab accountID from the retrieved row from the 'accountapi' table
+    *accountID = row.GetUInt(0);        // Grab accountID from the retrieved row from the 'srvAccountApi' table
     return true;
 }
 
@@ -88,14 +88,14 @@ bool APIServiceDB::GetApiAccountInfoUsingAccountID(std::string accountID, uint32
 {
     DBQueryResult res;
 
-    // Find userID, fullKey, limitedKey, and apiRole from 'accountApi' table using accountID obtained from 'account' table:
+    // Find userID, fullKey, limitedKey, and apiRole from 'srvAccountApi' table using accountID obtained from 'account' table:
     if( !DBcore::RunQuery(res,
         "SELECT"
         "    userID, fullKey, limitedKey, apiRole "
-        " FROM accountApi "
+        " FROM srvAccountApi "
         " WHERE accountID='%s'" , accountID.c_str() ))
     {
-        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "Cannot find accountID '%s' in 'accountApi' table", accountID.c_str() );
+        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "Cannot find accountID '%s' in 'srvAccountApi' table", accountID.c_str() );
         return false;
     }
 
@@ -106,10 +106,10 @@ bool APIServiceDB::GetApiAccountInfoUsingAccountID(std::string accountID, uint32
         return false;
     }
 
-    *userID = row.GetUInt(0);            // Grab userID from retrieved row from the 'accountApi' table
-    *apiFullKey = row.GetText(1);        // Grab Full API Key from retrieved row from the 'accountApi' table
-    *apiLimitedKey = row.GetText(2);    // Grab Limited API Key from retrieved row from the 'accountApi' table
-    *apiRole = row.GetUInt(3);            // Grab API Role from retrieved row from the 'accountApi' table
+    *userID = row.GetUInt(0);            // Grab userID from retrieved row from the 'srvAccountApi' table
+    *apiFullKey = row.GetText(1);        // Grab Full API Key from retrieved row from the 'srvAccountApi' table
+    *apiLimitedKey = row.GetText(2);    // Grab Limited API Key from retrieved row from the 'srvAccountApi' table
+    *apiRole = row.GetUInt(3);            // Grab API Role from retrieved row from the 'srvAccountApi' table
     return true;
 }
 
@@ -117,14 +117,14 @@ bool APIServiceDB::GetApiAccountInfoUsingUserID(std::string userID, std::string 
 {
     DBQueryResult res;
 
-    // Find fullKey, limitedKey, and apiRole from 'accountApi' table using userID supplied from an API query string:
+    // Find fullKey, limitedKey, and apiRole from 'srvAccountApi' table using userID supplied from an API query string:
     if( !DBcore::RunQuery(res,
         "SELECT"
         "    fullKey, limitedKey, apiRole "
-        " FROM accountApi "
+        " FROM srvAccountApi "
         " WHERE userID='%s'" , userID.c_str() ))
     {
-        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "Cannot find userID '%s' in 'accountApi' table", userID.c_str() );
+        SysLog::Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "Cannot find userID '%s' in 'srvAccountApi' table", userID.c_str() );
         return false;
     }
 
@@ -135,9 +135,9 @@ bool APIServiceDB::GetApiAccountInfoUsingUserID(std::string userID, std::string 
         return false;
     }
 
-    *apiFullKey = row.GetText(0);        // Grab Full API Key from retrieved row from the 'accountApi' table
-    *apiLimitedKey = row.GetText(1);    // Grab Limited API Key from retrieved row from the 'accountApi' table
-    *apiRole = row.GetUInt(2);            // Grab API Role from retrieved row from the 'accountApi' table
+    *apiFullKey = row.GetText(0);        // Grab Full API Key from retrieved row from the 'srvAccountApi' table
+    *apiLimitedKey = row.GetText(1);    // Grab Limited API Key from retrieved row from the 'srvAccountApi' table
+    *apiRole = row.GetUInt(2);            // Grab API Role from retrieved row from the 'srvAccountApi' table
     return true;
 }
 
@@ -156,12 +156,12 @@ bool APIServiceDB::UpdateUserIdApiKeyDatabaseRow(uint32 userID, std::string apiF
         return false;
     }
 
-    // Update fullKey and limitedKey in the 'accountApi' table using userID:
+    // Update fullKey and limitedKey in the 'srvAccountApi' table using userID:
     DBerror err;
 
     if( !DBcore::RunQuery(err,
         "UPDATE"
-        " accountApi"
+        " srvAccountApi"
         " SET fullKey = '%s', limitedKey = '%s'"
         " WHERE userID = %u",
         apiFullKey.c_str(), apiLimitedKey.c_str(), userID ))
@@ -192,7 +192,7 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
 
     if( !DBcore::RunQuery(err,
         "INSERT INTO"
-        " accountApi ("
+        " srvAccountApi ("
         "    accountID, fullKey, limitedKey, apiRole"
         " ) VALUES ("
         "    %u, '%s', '%s', %u"
@@ -209,12 +209,12 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
 
 bool APIServiceDB::UpdateUserIdApiRole(uint32 userID, uint32 apiRole)
 {
-    // Update fullKey and limitedKey in the 'accountApi' table using userID:
+    // Update fullKey and limitedKey in the 'srvAccountApi' table using userID:
     DBerror err;
 
     if( !DBcore::RunQuery(err,
         "UPDATE"
-        " accountApi"
+        " srvAccountApi"
         " SET apiRole = %u"
         " WHERE userID = %u",
         apiRole, userID ))

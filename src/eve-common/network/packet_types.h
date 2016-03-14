@@ -1133,7 +1133,7 @@ typedef enum {
     fmtMapping_LOCID = 3,    //locations
     fmtMapping_itemTypeName = 4,    //TYPEID: takes the item ID
     fmtMapping_itemTypeDescription = 5,    //TYPEID2: takes the item ID
-    fmtMapping_blueprintTypeName = 6,    //from invBlueprints
+    fmtMapping_blueprintTypeName = 6,    //from srvInvBlueprints
     fmtMapping_itemGroupName = 7,    //GROUPID: takes the item group ID
     fmtMapping_itemGroupDescription = 8,    //GROUPID2: takes the item group ID
     fmtMapping_itemCategoryName = 9,    //CATID: takes the item category ID

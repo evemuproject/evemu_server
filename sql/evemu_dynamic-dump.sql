@@ -11,6 +11,9 @@ MySQL - 5.0.67-community-nt : Database - eve_evemu_dynamic
 
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
+-- No longer needed
+DROP TABLE IF EXISTS entityStatic;
+
 /*Table structure for table `svrAccount` */
 
 DROP TABLE IF EXISTS `svrAccount`;
@@ -325,11 +328,11 @@ CREATE TABLE `srvChrNPCStandings` (
 
 /*Data for the table `srvChrNPCStandings` */
 
-/*Table structure for table `chrOffers` */
+/*Table structure for table `srvChrOffers` */
 
-DROP TABLE IF EXISTS `chrOffers`;
+DROP TABLE IF EXISTS `srvChrOffers`;
 
-CREATE TABLE `chrOffers` (
+CREATE TABLE `srvChrOffers` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `offerID` int(10) unsigned NOT NULL default '0',
   `expirationTime` bigint(20) unsigned NOT NULL default '0',
@@ -337,13 +340,13 @@ CREATE TABLE `chrOffers` (
   KEY `offerID` (`offerID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrOffers` */
+/*Data for the table `srvChrOffers` */
 
-/*Table structure for table `chrOwnerNote` */
+/*Table structure for table `srvChrOwnerNote` */
 
-DROP TABLE IF EXISTS `chrOwnerNote`;
+DROP TABLE IF EXISTS `srvChrOwnerNote`;
 
-CREATE TABLE `chrOwnerNote` (
+CREATE TABLE `srvChrOwnerNote` (
   `noteID` int(10) unsigned NOT NULL auto_increment,
   `ownerID` int(10) unsigned NOT NULL,
   `label` text,
@@ -351,26 +354,26 @@ CREATE TABLE `chrOwnerNote` (
   UNIQUE KEY `noteID` (`noteID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrOwnerNote` */
+/*Data for the table `srvChrOwnerNote` */
 
-/*Table structure for table `chrStandings` */
+/*Table structure for table `srvChrStandings` */
 
-DROP TABLE IF EXISTS `chrStandings`;
+DROP TABLE IF EXISTS `srvChrStandings`;
 
-CREATE TABLE `chrStandings` (
+CREATE TABLE `srvChrStandings` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `toID` int(10) unsigned NOT NULL default '0',
   `standing` double NOT NULL default '0',
   PRIMARY KEY  (`characterID`,`toID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `chrStandings` */
+/*Data for the table `srvChrStandings` */
 
-/*Table structure for table `corporation` */
+/*Table structure for table `srvCorporation` */
 
-DROP TABLE IF EXISTS `corporation`;
+DROP TABLE IF EXISTS `srvCorporation`;
 
-CREATE TABLE `corporation` (
+CREATE TABLE `srvCorporation` (
   `corporationID` int(10) unsigned NOT NULL auto_increment,
   `corporationName` varchar(100) NOT NULL default '',
   `description` mediumtext NOT NULL,
@@ -419,13 +422,13 @@ CREATE TABLE `corporation` (
   PRIMARY KEY  (`corporationID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `corporation` */
+/*Data for the table `srvCorporation` */
 
-/*Table structure for table `courierMissions` */
+/*Table structure for table `srvCourierMissions` */
 
-DROP TABLE IF EXISTS `courierMissions`;
+DROP TABLE IF EXISTS `srvCourierMissions`;
 
-CREATE TABLE `courierMissions` (
+CREATE TABLE `srvCourierMissions` (
   `missionID` int(10) unsigned NOT NULL auto_increment,
   `kind` tinyint(3) unsigned NOT NULL default '0',
   `state` tinyint(3) unsigned NOT NULL default '0',
@@ -453,26 +456,26 @@ CREATE TABLE `courierMissions` (
   PRIMARY KEY  (`missionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `courierMissions` */
+/*Data for the table `srvCourierMissions` */
 
-/*Table structure for table `crpCharShares` */
+/*Table structure for table `srvCrpCharShares` */
 
-DROP TABLE IF EXISTS `crpCharShares`;
+DROP TABLE IF EXISTS `srvCrpCharShares`;
 
-CREATE TABLE `crpCharShares` (
+CREATE TABLE `srvCrpCharShares` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `corporationID` int(10) unsigned NOT NULL default '0',
   `shares` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`characterID`,`corporationID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `crpCharShares` */
+/*Data for the table `srvCrpCharShares` */
 
-/*Table structure for table `crpOffices` */
+/*Table structure for table `srvCrpOffices` */
 
-DROP TABLE IF EXISTS `crpOffices`;
+DROP TABLE IF EXISTS `srvCrpOffices`;
 
-CREATE TABLE `crpOffices` (
+CREATE TABLE `srvCrpOffices` (
   `corporationID` int(10) unsigned NOT NULL default '0',
   `stationID` int(10) unsigned NOT NULL default '0',
   `itemID` int(10) unsigned NOT NULL default '0',
@@ -482,13 +485,13 @@ CREATE TABLE `crpOffices` (
   KEY `itemID` (`itemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `crpOffices` */
+/*Data for the table `srvCrpOffices` */
 
-/*Table structure for table `droneState` */
+/*Table structure for table `srvDroneState` */
 
-DROP TABLE IF EXISTS `droneState`;
+DROP TABLE IF EXISTS `srvDroneState`;
 
-CREATE TABLE `droneState` (
+CREATE TABLE `srvDroneState` (
   `droneID` int(10) unsigned NOT NULL default '0',
   `solarSystemID` int(10) unsigned NOT NULL default '0',
   `ownerID` int(10) unsigned NOT NULL default '0',
@@ -499,13 +502,13 @@ CREATE TABLE `droneState` (
   PRIMARY KEY  (`droneID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `droneState` */
+/*Data for the table `srvDroneState` */
 
-/*Table structure for table `entity` */
+/*Table structure for table `srvEntity` */
 
-DROP TABLE IF EXISTS `entity`;
+DROP TABLE IF EXISTS `srvEntity`;
 
-CREATE TABLE `entity` (
+CREATE TABLE `srvEntity` (
   `itemID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `itemName` varchar(85) NOT NULL default '',
   `typeID` int(10) unsigned NOT NULL default '0',
@@ -523,13 +526,13 @@ CREATE TABLE `entity` (
   KEY `typeID` (`typeID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14000000 DEFAULT CHARSET=utf8;
 
-/*Data for the table `entity` */
+/*Data for the table `srvEntity` */
 
-/*Table structure for table `entity_attributes` */
+/*Table structure for table `srvEntity_attributes` */
 
-DROP TABLE IF EXISTS `entity_attributes`;
+DROP TABLE IF EXISTS `srvEntity_attributes`;
 
-CREATE TABLE `entity_attributes` (
+CREATE TABLE `srvEntity_attributes` (
   `itemID` int(10) unsigned NOT NULL default '0',
   `attributeID` int(10) unsigned NOT NULL default '0',
   `valueInt` int(10) default NULL,
@@ -538,13 +541,13 @@ CREATE TABLE `entity_attributes` (
   KEY `attributeID` (`attributeID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `entity_attributes` */
+/*Data for the table `srvEntity_attributes` */
 
-/*Table structure for table `entity_default_attributes` */
+/*Table structure for table `srvEntity_default_attributes` */
 
-DROP TABLE IF EXISTS `entity_default_attributes`;
+DROP TABLE IF EXISTS `srvEntity_default_attributes`;
 
-CREATE TABLE `entity_default_attributes` (
+CREATE TABLE `srvEntity_default_attributes` (
   `itemID` int(10) unsigned NOT NULL default '0',
   `attributeID` int(10) unsigned NOT NULL default '0',
   `valueInt` int(10) default NULL,
@@ -553,13 +556,13 @@ CREATE TABLE `entity_default_attributes` (
   KEY `attributeID` (`attributeID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `entity_default_attributes` */
+/*Data for the table `srvEntity_default_attributes` */
 
-/*Table structure for table `eveMail` */
+/*Table structure for table `srvEveMail` */
 
-DROP TABLE IF EXISTS `eveMail`;
+DROP TABLE IF EXISTS `srvEveMail`;
 
-CREATE TABLE `eveMail` (
+CREATE TABLE `srvEveMail` (
   `channelID` int(10) unsigned NOT NULL default '0',
   `messageID` int(10) unsigned NOT NULL auto_increment,
   `senderID` int(10) unsigned NOT NULL default '0',
@@ -569,13 +572,13 @@ CREATE TABLE `eveMail` (
   PRIMARY KEY  (`messageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `eveMail` */
+/*Data for the table `srvEveMail` */
 
-/*Table structure for table `eveMailDetails` */
+/*Table structure for table `srvEveMailDetails` */
 
-DROP TABLE IF EXISTS `eveMailDetails`;
+DROP TABLE IF EXISTS `srvEveMailDetails`;
 
-CREATE TABLE `eveMailDetails` (
+CREATE TABLE `srvEveMailDetails` (
   `attachmentID` int(10) unsigned NOT NULL auto_increment,
   `messageID` int(10) unsigned NOT NULL default '0',
   `mimeTypeID` int(10) unsigned NOT NULL default '0',
@@ -584,13 +587,13 @@ CREATE TABLE `eveMailDetails` (
   KEY `messageID` (`messageID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `eveMailDetails` */
+/*Data for the table `srvEveMailDetails` */
 
-/*Table structure for table `invBlueprints` */
+/*Table structure for table `srvInvBlueprints` */
 
-DROP TABLE IF EXISTS `invBlueprints`;
+DROP TABLE IF EXISTS `srvInvBlueprints`;
 
-CREATE TABLE `invBlueprints` (
+CREATE TABLE `srvInvBlueprints` (
   `blueprintID` int(10) unsigned NOT NULL,
   `copy` tinyint(1) unsigned NOT NULL default '0',
   `materialLevel` int(10) unsigned NOT NULL default '0',
@@ -599,13 +602,13 @@ CREATE TABLE `invBlueprints` (
   PRIMARY KEY  (`blueprintID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `invBlueprints` */
+/*Data for the table `srvInvBlueprints` */
 
-/*Table structure for table `market_history_old` */
+/*Table structure for table `srvMarket_history_old` */
 
-DROP TABLE IF EXISTS `market_history_old`;
+DROP TABLE IF EXISTS `srvMarket_history_old`;
 
-CREATE TABLE `market_history_old` (
+CREATE TABLE `srvMarket_history_old` (
   `regionID` int(10) unsigned NOT NULL,
   `typeID` int(10) unsigned NOT NULL,
   `historyDate` bigint(20) unsigned NOT NULL,
@@ -616,13 +619,13 @@ CREATE TABLE `market_history_old` (
   `orders` int(10) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `market_history_old` */
+/*Data for the table `srvMarket_history_old` */
 
-/*Table structure for table `market_journal` */
+/*Table structure for table `srvMarket_journal` */
 
-DROP TABLE IF EXISTS `market_journal`;
+DROP TABLE IF EXISTS `srvMarket_journal`;
 
-CREATE TABLE `market_journal` (
+CREATE TABLE `srvMarket_journal` (
   `characterID` int(10) unsigned NOT NULL default '0',
   `refID` int(10) unsigned NOT NULL auto_increment,
   `transDate` bigint(20) default NULL,
@@ -638,13 +641,13 @@ CREATE TABLE `market_journal` (
   PRIMARY KEY  (`refID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `market_journal` */
+/*Data for the table `srvMarket_journal` */
 
-/*Table structure for table `market_orders` */
+/*Table structure for table `srvMarket_orders` */
 
-DROP TABLE IF EXISTS `market_orders`;
+DROP TABLE IF EXISTS `srvMarket_orders`;
 
-CREATE TABLE `market_orders` (
+CREATE TABLE `srvMarket_orders` (
   `orderID` int(10) unsigned NOT NULL auto_increment,
   `typeID` int(10) unsigned NOT NULL default '0',
   `charID` int(10) unsigned NOT NULL default '0',
@@ -674,13 +677,13 @@ CREATE TABLE `market_orders` (
   KEY `typeID_2` (`typeID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `market_orders` */
+/*Data for the table `srvMarket_orders` */
 
-/*Table structure for table `market_transactions` */
+/*Table structure for table `srvMarket_transactions` */
 
-DROP TABLE IF EXISTS `market_transactions`;
+DROP TABLE IF EXISTS `srvMarket_transactions`;
 
-CREATE TABLE `market_transactions` (
+CREATE TABLE `srvMarket_transactions` (
   `transactionID` int(10) unsigned NOT NULL auto_increment,
   `transactionDateTime` bigint(20) unsigned NOT NULL default '0',
   `typeID` int(10) unsigned NOT NULL default '0',
@@ -695,13 +698,13 @@ CREATE TABLE `market_transactions` (
   KEY `regionID` (`regionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `market_transactions` */
+/*Data for the table `srvMarket_transactions` */
 
-/*Table structure for table `ramAssemblyLineStationCostLogs` */
+/*Table structure for table `srvRamAssemblyLineStationCostLogs` */
 
-DROP TABLE IF EXISTS `ramAssemblyLineStationCostLogs`;
+DROP TABLE IF EXISTS `srvRamAssemblyLineStationCostLogs`;
 
-CREATE TABLE `ramAssemblyLineStationCostLogs` (
+CREATE TABLE `srvRamAssemblyLineStationCostLogs` (
   `assemblyLineTypeID` int(11) NOT NULL default '0',
   `stationID` int(11) NOT NULL default '0',
   `logDateTime` char(20) NOT NULL default '',
@@ -711,13 +714,13 @@ CREATE TABLE `ramAssemblyLineStationCostLogs` (
   KEY `stationID` (`stationID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `ramAssemblyLineStationCostLogs` */
+/*Data for the table `srvRamAssemblyLineStationCostLogs` */
 
-/*Table structure for table `ramJobs` */
+/*Table structure for table `srvRamJobs` */
 
-DROP TABLE IF EXISTS `ramJobs`;
+DROP TABLE IF EXISTS `srvRamJobs`;
 
-CREATE TABLE `ramJobs` (
+CREATE TABLE `srvRamJobs` (
   `jobID` int(10) unsigned NOT NULL auto_increment,
   `ownerID` int(10) unsigned NOT NULL,
   `installerID` int(10) unsigned NOT NULL,
@@ -737,13 +740,13 @@ CREATE TABLE `ramJobs` (
   KEY `RAMJOBS_ASSEMBLYLINES` (`assemblyLineID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `ramJobs` */
+/*Data for the table `srvRamJobs` */
 
-/*Table structure for table `rentalInfo` */
+/*Table structure for table `srvRentalInfo` */
 
-DROP TABLE IF EXISTS `rentalInfo`;
+DROP TABLE IF EXISTS `srvRentalInfo`;
 
-CREATE TABLE `rentalInfo` (
+CREATE TABLE `srvRentalInfo` (
   `stationID` int(10) unsigned NOT NULL default '0',
   `slotNumber` int(10) unsigned NOT NULL default '0',
   `renterID` int(10) unsigned NOT NULL default '0',
@@ -757,7 +760,7 @@ CREATE TABLE `rentalInfo` (
   PRIMARY KEY  (`stationID`,`slotNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `rentalInfo` */
+/*Data for the table `srvRentalInfo` */
 
 /*Table structure for table `srvStatus` */
 
@@ -771,11 +774,11 @@ CREATE TABLE `srvStatus` (
 
 /*Data for the table `srvStatus` */
 
-/*Table structure for table `accountApi` */
+/*Table structure for table `srvAccountApi` */
 
-DROP TABLE IF EXISTS `accountApi`;
+DROP TABLE IF EXISTS `srvAccountApi`;
 
-CREATE TABLE `accountApi` (
+CREATE TABLE `srvAccountApi` (
   `userID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `accountID` int(10) unsigned NOT NULL default '0',
   `fullKey` varchar(64) NOT NULL default '',
@@ -784,23 +787,20 @@ CREATE TABLE `accountApi` (
   PRIMARY KEY  (`userID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000000 DEFAULT CHARSET=utf8;
 
-/*Table structure for table `crpStandings` */
+/*Table structure for table `srvCrpStandings` */
 
-DROP TABLE IF EXISTS `crpStandings`;
+DROP TABLE IF EXISTS `srvCrpStandings`;
 
-CREATE TABLE `crpStandings` (
+CREATE TABLE `srvCrpStandings` (
   `corporationID` int(10) unsigned NOT NULL default '0',
   `fromID` int(10) unsigned NOT NULL default '0',
   `standing` double NOT NULL default '0',
   PRIMARY KEY  (`corporationID`,`fromID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- No longer needed
-DROP TABLE IF EXISTS entityStatic;
+DROP TABLE IF EXISTS `srvChrSkillQueue`;
 
-DROP TABLE IF EXISTS `chrSkillQueue`;
-
-CREATE TABLE `chrSkillQueue` (
+CREATE TABLE `srvChrSkillQueue` (
 	`characterID` INT(10) UNSIGNED NOT NULL,
 	`orderIndex` INT(10) UNSIGNED NOT NULL,
 	`typeID` INT(10) UNSIGNED NOT NULL,
@@ -808,8 +808,8 @@ CREATE TABLE `chrSkillQueue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
 
 -- Mail subsystem
-DROP TABLE IF EXISTS `mailLabel`;
-CREATE TABLE `mailLabel` (
+DROP TABLE IF EXISTS `srvMailLabel`;
+CREATE TABLE `srvMailLabel` (
 	`id` INT(10) NOT NULL AUTO_INCREMENT,
 	`bit` INT(10) NOT NULL DEFAULT '0',
 	`name` VARCHAR(100) NULL DEFAULT '0',

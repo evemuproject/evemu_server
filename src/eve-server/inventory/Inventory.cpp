@@ -522,9 +522,9 @@ void Inventory::StackAll(EVEItemFlags locFlag, uint32 forOwner)
             item->AlterQuantity(stackAmount);
             // Remove all entries from database.
             DBerror err;
-            if (!DBcore::RunQueryMulti(err, "DELETE FROM entity WHERE %s;"
-                                  "DELETE FROM entity_default_attributes WHERE %s;"
-                                  "DELETE FROM entity_attributes WHERE %s;",
+            if (!DBcore::RunQueryMulti(err, "DELETE FROM srvEntity WHERE %s;"
+                                  "DELETE FROM srvEntity_default_attributes WHERE %s;"
+                                  "DELETE FROM srvEntity_attributes WHERE %s;",
                                   itemIDs.c_str(), itemIDs.c_str(), itemIDs.c_str()))
             {
                 codelog(DATABASE__ERROR, "Failed to delete stacked items %s: %s", itemIDs.c_str(), err.c_str());

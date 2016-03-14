@@ -116,7 +116,7 @@ PyRep* CharacterDB::DeleteCharacter(uint32 accountID, uint32 charID)
     if (affectedRows == 1)
     {
         // valid request; this means we may use charID safely here
-        DBcore::RunQuery(error, "DELETE FROM entity WHERE ownerID = %u", charID);
+        DBcore::RunQuery(error, "DELETE FROM srvEntity WHERE ownerID = %u", charID);
         // indicates 'no error' to the client
         return NULL;
     }
@@ -135,7 +135,7 @@ PyRep *CharacterDB::GetCharacterList(uint32 accountID) {
         " gender,"
         " typeID"
         " FROM srvCharacter "
-        "    LEFT JOIN entity ON characterID = itemID"
+        "    LEFT JOIN srvEntity ON characterID = itemID"
         " WHERE accountID=%u", accountID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -173,7 +173,7 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
     uint32 shipTypeID = 606;
 
     DBQueryResult res2;
-    if(!DBcore::RunQuery(res2, "SELECT itemName, typeID FROM entity WHERE itemID = (SELECT shipID FROM srvCharacter WHERE characterID = %u)", characterID))
+    if(!DBcore::RunQuery(res2, "SELECT itemName, typeID FROM srvEntity WHERE itemID = (SELECT shipID FROM srvCharacter WHERE characterID = %u)", characterID))
     {
         codelog(SERVICE__WARNING, "Unable to get current ship: %s", res.error.c_str());
     }
@@ -204,8 +204,8 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
         " 0 AS oldPaperdollState, skillPoints, skillQueueEndTime, %" PRIu64 " AS allianceMemberStartDate, %" PRIu64 " AS startDate,"
         " 0 AS locationSecurity"
         " FROM srvCharacter "
-        "    LEFT JOIN entity ON characterID = itemID"
-        "    LEFT JOIN corporation USING (corporationID)"
+        "    LEFT JOIN srvEntity ON characterID = itemID"
+        "    LEFT JOIN srvCorporation USING (corporationID)"
         "    LEFT JOIN bloodlineTypes USING (typeID)"
         " WHERE characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, allianceMemberStartDate, startDate, characterID))
     {
@@ -221,7 +221,7 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " entity.typeID,"
+        " srvEntity.typeID,"
         " srvCharacter.corporationID,"
         " chrBloodlines.raceID,"
         " bloodlineTypes.bloodlineID,"
@@ -229,7 +229,7 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
         " srvCharacter.careerID,"
         " srvCharacter.schoolID,"
         " srvCharacter.careerSpecialityID,"
-        " entity.itemName AS characterName,"
+        " srvEntity.itemName AS characterName,"
         " 0 as age,"    //hack
         " srvCharacter.createDateTime,"
         " srvCharacter.gender,"
@@ -237,7 +237,7 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
         " srvCharacter.description,"
         " srvCharacter.corporationDateTime"
         " FROM srvCharacter "
-        "    LEFT JOIN entity ON characterID = itemID"
+        "    LEFT JOIN srvEntity ON characterID = itemID"
         "    LEFT JOIN bloodlineTypes USING (typeID)"
         "    LEFT JOIN chrBloodlines USING (bloodlineID)"
         " WHERE characterID=%u", characterID))
@@ -268,7 +268,7 @@ void CharacterDB::GetCharacterData(uint32 characterID, std::map<std::string, uin
         "  srvCharacter.solarSystemID, "
         "  srvCharacter.constellationID, "
         "  srvCharacter.regionID, "
-        "  corporation.stationID, "
+        "  srvCorporation.stationID, "
         "  srvCharacter.corpRole, "
         "  srvCharacter.rolesAtAll, "
         "  srvCharacter.rolesAtBase, "
@@ -276,10 +276,10 @@ void CharacterDB::GetCharacterData(uint32 characterID, std::map<std::string, uin
         "  srvCharacter.rolesAtOther, "
         "  srvCharacter.shipID, "
 		"  srvCharacter.gender, "
-        "  entity.locationID "
+        "  srvEntity.locationID "
         " FROM srvCharacter "
-        "  LEFT JOIN corporation USING (corporationID) "
-        "  LEFT JOIN entity ON entity.itemID = srvCharacter.characterID "
+        "  LEFT JOIN srvCorporation USING (corporationID) "
+        "  LEFT JOIN srvEntity ON srvEntity.itemID = srvCharacter.characterID "
         " WHERE characterID = %u",
         characterID))
     {
@@ -339,7 +339,7 @@ bool CharacterDB::GetCharItems(uint32 characterID, std::vector<uint32> &into) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  itemID"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE ownerID = %u",
         characterID))
     {
@@ -361,7 +361,7 @@ bool CharacterDB::GetCharClones(uint32 characterID, std::vector<uint32> &into) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  itemID"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE ownerID = %u"
         " and flag='400'",
         characterID))
@@ -385,7 +385,7 @@ bool CharacterDB::GetActiveClone(uint32 characterID, uint32 &itemID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  itemID"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE ownerID = %u"
         " and flag='400'"
         " and customInfo='active'",
@@ -411,7 +411,7 @@ bool CharacterDB::GetActiveCloneType(uint32 characterID, uint32 &typeID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  typeID"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE ownerID = %u"
         " and flag='400'"
         " and customInfo='active'",
@@ -440,7 +440,7 @@ bool CharacterDB::GetCharHomeStation(uint32 characterID, uint32 &stationID) {
 	DBQueryResult res;
 	if( !DBcore::RunQuery(res,
 		"SELECT locationID "
-		"FROM entity "
+		"FROM srvEntity "
 		"WHERE itemID = %u",
 		activeCloneID ))
 	{
@@ -539,14 +539,14 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData &cdata) {
      "SELECT "
      "  chrSchools.corporationID, "
      "  chrSchools.schoolID, "
-     "  corporation.allianceID, "
-     "  corporation.stationID, "
+     "  srvCorporation.allianceID, "
+     "  srvCorporation.stationID, "
      "  staStations.solarSystemID, "
      "  staStations.constellationID, "
      "  staStations.regionID "
      " FROM staStations"
-     "  LEFT JOIN corporation ON corporation.stationID=staStations.stationID"
-     "  LEFT JOIN chrSchools ON corporation.corporationID=chrSchools.corporationID"
+     "  LEFT JOIN srvCorporation ON srvCorporation.stationID=staStations.stationID"
+     "  LEFT JOIN chrSchools ON srvCorporation.corporationID=chrSchools.corporationID"
      "  LEFT JOIN careers ON chrSchools.schoolID=careers.schoolID"
      " WHERE careers.careerID = %u", cdata.careerID))
     {
@@ -605,7 +605,7 @@ bool CharacterDB::GetLocationByStation(uint32 staID, CharacterData &cdata) {
 bool CharacterDB::GetCareerStationByCorporation(uint32 corporationID, uint32 &stationID)
 {
     DBQueryResult res;
-    if(!DBcore::RunQuery(res, "SELECT stationID FROM corporation WHERE corporationID = %u", corporationID))
+    if(!DBcore::RunQuery(res, "SELECT stationID FROM srvCorporation WHERE corporationID = %u", corporationID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return false;
@@ -628,7 +628,7 @@ bool CharacterDB::DoesCorporationExist(uint32 corpID) {
      "SELECT "
      "  corporationID, "
      "  corporationName "
-     " FROM corporation"
+     " FROM srvCorporation"
      " WHERE corporationID = %u", corpID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -845,7 +845,7 @@ uint32 CharacterDB::AddOwnerNote(uint32 charID, const std::string & label, const
     DBcore::DoEscapeString(contS, content);
 
     if (!DBcore::RunQueryLID(err, id,
-        "INSERT INTO chrOwnerNote (ownerID, label, note) VALUES (%u, '%s', '%s');",
+        "INSERT INTO srvChrOwnerNote (ownerID, label, note) VALUES (%u, '%s', '%s');",
         charID, lblS.c_str(), contS.c_str()))
     {
         codelog(SERVICE__ERROR, "Error on query: %s", err.c_str());
@@ -862,7 +862,7 @@ bool CharacterDB::EditOwnerNote(uint32 charID, uint32 noteID, const std::string 
     DBcore::DoEscapeString(contS, content);
 
     if (!DBcore::RunQuery(err,
-        "UPDATE chrOwnerNote SET note = '%s' WHERE ownerID = %u AND noteID = %u;",
+        "UPDATE srvChrOwnerNote SET note = '%s' WHERE ownerID = %u AND noteID = %u;",
         contS.c_str(), charID, noteID))
     {
         codelog(SERVICE__ERROR, "Error on query: %s", err.c_str());
@@ -875,7 +875,7 @@ bool CharacterDB::EditOwnerNote(uint32 charID, uint32 noteID, const std::string 
 PyObject *CharacterDB::GetOwnerNoteLabels(uint32 charID) {
     DBQueryResult res;
 
-    if (!DBcore::RunQuery(res, "SELECT noteID, label FROM chrOwnerNote WHERE ownerID = %u", charID))
+    if (!DBcore::RunQuery(res, "SELECT noteID, label FROM srvChrOwnerNote WHERE ownerID = %u", charID))
     {
         codelog(SERVICE__ERROR, "Error on query: %s", res.error.c_str());
         return (NULL);
@@ -887,7 +887,7 @@ PyObject *CharacterDB::GetOwnerNoteLabels(uint32 charID) {
 PyObject *CharacterDB::GetOwnerNote(uint32 charID, uint32 noteID) {
     DBQueryResult res;
 
-    if (!DBcore::RunQuery(res, "SELECT note FROM chrOwnerNote WHERE ownerID = %u AND noteID = %u", charID, noteID))
+    if (!DBcore::RunQuery(res, "SELECT note FROM srvChrOwnerNote WHERE ownerID = %u AND noteID = %u", charID, noteID))
     {
         codelog(SERVICE__ERROR, "Error on query: %s", res.error.c_str());
         return (NULL);
@@ -914,7 +914,7 @@ void CharacterDB::load_name_validation_set()
         "SELECT"
         " characterID, itemName AS characterName"
         " FROM srvCharacter"
-        "    JOIN entity ON characterID = itemID"
+        "    JOIN srvEntity ON characterID = itemID"
         ))
     {
         codelog(SERVICE__ERROR, "Error in query for %s", res.error.c_str());
@@ -989,7 +989,7 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
 
 PyObject *CharacterDB::GetTopBounties() {
     DBQueryResult res;
-    if(!DBcore::RunQuery(res, "SELECT `characterID`, `itemName` as `ownerName`, `bounty`, `online`  FROM srvCharacter  LEFT JOIN `entity` ON `characterID` = `itemID` WHERE `characterID` >= %u AND `bounty` > 0 ORDER BY `bounty` DESC LIMIT 0,100" , EVEMU_MINIMUM_ID)) {
+    if(!DBcore::RunQuery(res, "SELECT `characterID`, `itemName` as `ownerName`, `bounty`, `online`  FROM srvCharacter  LEFT JOIN `srvEntity` ON `characterID` = `itemID` WHERE `characterID` >= %u AND `bounty` > 0 ORDER BY `bounty` DESC LIMIT 0,100" , EVEMU_MINIMUM_ID)) {
         SysLog::Error("CharacterDB", "Error in GetTopBounties query: %s", res.error.c_str());
         return NULL;
     }

@@ -183,7 +183,7 @@ public:
     /**
      * Spawns new character, caches it and returns it.
      *
-     * @param[in] data Item data (for entity table).
+     * @param[in] data Item data (for srvEntity table).
      * @param[in] charData Character data.
      * @param[in] appData Character's appearance.
      * @param[in] corpData Character's corporation-membership data.

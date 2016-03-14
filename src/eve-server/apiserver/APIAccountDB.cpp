@@ -41,11 +41,11 @@ bool APIAccountDB::GetCharactersList(uint32 accountID, std::vector<std::string> 
         " SELECT "
         "   srvCharacter.characterID, "
         "   srvCharacter.corporationID, "
-        "   corporation.corporationName, "
-        "   entity.itemName AS name "
+        "   srvCorporation.corporationName, "
+        "   srvEntity.itemName AS name "
         " FROM `srvCharacter` "
-        "   LEFT JOIN corporation ON corporation.corporationID = srvCharacter.corporationID "
-        "   LEFT JOIN entity ON entity.itemID = srvCharacter.characterID "
+        "   LEFT JOIN srvCorporation ON srvCorporation.corporationID = srvCharacter.corporationID "
+        "   LEFT JOIN srvEntity ON srvEntity.itemID = srvCharacter.characterID "
         " WHERE `accountID` = %u ", accountID ))
     {
         SysLog::Error( "APIAccountDB::GetCharactersList()", "Cannot find accountID %u", accountID );

@@ -79,7 +79,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *SearchID) {
     DBcore::DoEscapeString(matchEsc, match.c_str());
 
     //Form the query and execute it
-    query = "SELECT itemID,itemName FROM entity"
+    query = "SELECT itemID,itemName FROM srvEntity"
             " WHERE itemName RLIKE '%s' %s"
             " AND typeID in (SELECT typeID FROM invTypes LEFT JOIN invGroups ON invTypes.groupid = invGroups.groupID"
             " WHERE invGroups.groupID IN (%s))"
@@ -141,7 +141,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             DBcore::RunQuery(res,
 	    "SELECT"
             " itemID AS agentID"
-            " FROM entity"
+            " FROM srvEntity"
             " WHERE itemName %s '%s' "
             " AND itemID BETWEEN 2999999 AND 4000000 "
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
@@ -150,7 +150,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             DBcore::RunQuery(res,
 	    "SELECT"
             " itemID"
-            " FROM entity"
+            " FROM srvEntity"
             " WHERE itemName %s '%s' "
             " AND itemId >= %u"
             " AND ownerID = 1",equal.c_str(), matchEsc.c_str(),EVEMU_MINIMUM_ID );
@@ -159,7 +159,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
             DBcore::RunQuery(res,
 	    "SELECT"
             " corporationID"
-            " FROM corporation"
+            " FROM srvCorporation"
             " WHERE corporationName %s '%s' "
             " LIMIT 0, 10", equal.c_str(), matchEsc.c_str() );
             break;
@@ -214,7 +214,7 @@ PyRep *SearchDB::Query(std::string match,  std::vector<int> *searchID) {
 	    DBcore::RunQuery(res,
 	    "SELECT"
             "   typeID"
-            " FROM entity"
+            " FROM srvEntity"
             " WHERE itemName %s '%s'", equal.c_str(), matchEsc.c_str() );
             break;
 	}

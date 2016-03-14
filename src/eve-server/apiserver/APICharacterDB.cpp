@@ -40,17 +40,17 @@ bool APICharacterDB::GetCharacterSkillsTrained(uint32 characterID, std::vector<s
     // Get list of characters and their corporation info from the accountID:
     if( !DBcore::RunQuery(res,
         " SELECT "
-        "   entity.itemID, "
-        "   entity.typeID, "
-        "   entity_attributes.attributeID, "
-        "   entity_attributes.valueInt, "
-        "   entity_attributes.valueFloat, "
+        "   srvEntity.itemID, "
+        "   srvEntity.typeID, "
+        "   srvEntity_attributes.attributeID, "
+        "   srvEntity_attributes.valueInt, "
+        "   srvEntity_attributes.valueFloat, "
         "   invTypes.groupID, "
         "   invTypes.published, "
         "   invGroups.categoryID "
-        " FROM `entity` "
-        "   LEFT JOIN entity_attributes ON entity_attributes.itemID = entity.itemID "
-        "   LEFT JOIN invTypes ON invTypes.typeID = entity.typeID "
+        " FROM `srvEntity` "
+        "   LEFT JOIN srvEntity_attributes ON srvEntity_attributes.itemID = srvEntity.itemID "
+        "   LEFT JOIN invTypes ON invTypes.typeID = srvEntity.typeID "
         "   LEFT JOIN invGroups ON invGroups.groupID = invTypes.groupID "
         " WHERE `ownerID` = %u AND invGroups.categoryID = 16 ", characterID ))
     {
@@ -85,10 +85,10 @@ bool APICharacterDB::GetCharacterSkillsTrained(uint32 characterID, std::vector<s
         {
             gotSkillPoints = true;
             if( row.GetText(3) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 skillPointsList.push_back( std::string((row.GetText(4) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(4))))) );
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 skillPointsList.push_back( std::string((row.GetText(3) == NULL ? "0" : row.GetText(3))) );
         }
 
@@ -96,10 +96,10 @@ bool APICharacterDB::GetCharacterSkillsTrained(uint32 characterID, std::vector<s
         {
             gotSkillLevel = true;
             if( row.GetText(3) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 skillLevelList.push_back( std::string((row.GetText(4) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(4))))) );
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 skillLevelList.push_back( std::string((row.GetText(3) == NULL ? "0" : row.GetText(3))) );
         }
     }
@@ -127,14 +127,14 @@ bool APICharacterDB::GetCharacterInfo(uint32 characterID, std::vector<std::strin
         "  chrAncestries.ancestryName, "
         "  chrBloodlines.bloodlineName, "
         "  chrRaces.raceName, "
-        "  entity.itemName, "
-        "  corporation.corporationName "
+        "  srvEntity.itemName, "
+        "  srvCorporation.corporationName "
         " FROM srvCharacter "
         "  LEFT JOIN chrAncestries ON srvCharacter.ancestryID = chrAncestries.ancestryID "
         "  LEFT JOIN chrBloodlines ON chrAncestries.bloodlineID = chrBloodlines.bloodlineID "
         "  LEFT JOIN chrRaces ON chrBloodlines.raceID = chrRaces.raceID "
-        "  LEFT JOIN entity ON entity.itemID = srvCharacter.characterID "
-        "  LEFT JOIN corporation ON corporation.corporationID = srvCharacter.corporationID "
+        "  LEFT JOIN srvEntity ON srvEntity.itemID = srvCharacter.characterID "
+        "  LEFT JOIN srvCorporation ON srvCorporation.corporationID = srvCharacter.corporationID "
         " WHERE srvCharacter.characterID = %u ", characterID ))
     {
         SysLog::Error( "APIAccountDB::GetCharacterSkillsTrained()", "Cannot find characterID %u", characterID );
@@ -178,7 +178,7 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
         "  attributeID, "
         "  valueInt, "
         "  valueFloat "
-        " FROM entity_attributes "
+        " FROM srvEntity_attributes "
         " WHERE itemID = %u ", characterID ))
     {
         SysLog::Error( "APIAccountDB::GetCharacterAttributes()", "Cannot find characterID %u", characterID );
@@ -195,10 +195,10 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
         {
             // Charisma
             if( row.GetText(2) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrCharisma)), std::string((row.GetText(3) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(3))))) ));
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrCharisma)), std::string((row.GetText(2) == NULL ? "0" : row.GetText(2))) ));
         }
 
@@ -206,10 +206,10 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
         {
             // Intelligence
             if( row.GetText(2) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrIntelligence)), std::string((row.GetText(3) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(3))))) ));
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrIntelligence)), std::string((row.GetText(2) == NULL ? "0" : row.GetText(2))) ));
         }
 
@@ -217,10 +217,10 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
         {
             // Memory
             if( row.GetText(2) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrMemory)), std::string((row.GetText(3) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(3))))) ));
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrMemory)), std::string((row.GetText(2) == NULL ? "0" : row.GetText(2))) ));
         }
 
@@ -228,10 +228,10 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
         {
             // Perception
             if( row.GetText(2) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrPerception)), std::string((row.GetText(3) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(3))))) ));
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrPerception)), std::string((row.GetText(2) == NULL ? "0" : row.GetText(2))) ));
         }
 
@@ -239,10 +239,10 @@ bool APICharacterDB::GetCharacterAttributes(uint32 characterID, std::map<std::st
         {
             // Will Power
             if( row.GetText(2) == NULL )
-                // Get value from 'entity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueFloat' column since 'valueInt' contains 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrWillpower)), std::string((row.GetText(3) == NULL ? "0.0" : itoa((uint32)(row.GetFloat(3))))) ));
             else
-                // Get value from 'entity_attributes' table 'valueInt' column since it does not contain 'NULL'
+                // Get value from 'srvEntity_attributes' table 'valueInt' column since it does not contain 'NULL'
                 attribList.insert( std::pair<std::string, std::string>(std::string(itoa(AttrWillpower)), std::string((row.GetText(2) == NULL ? "0" : row.GetText(2))) ));
         }
     }
@@ -265,19 +265,19 @@ bool APICharacterDB::GetCharacterSkillQueue(uint32 characterID, std::vector<std:
     // Get list of characters and their corporation info from the accountID:
     if( !DBcore::RunQuery(res,
         " SELECT "
-        "  chrSkillQueue.*, "
+        "  srvChrSkillQueue.*, "
         "  dgmTypeAttributes.attributeID, "
         "  dgmTypeAttributes.valueInt, "
         "  dgmTypeAttributes.valueFloat, "
-        "  entity.itemID, "
-        "  entity_attributes.valueInt, "
-        "  entity_attributes.valueFloat "
-        " FROM chrSkillQueue "
-        "  LEFT JOIN dgmTypeAttributes ON dgmTypeAttributes.typeID = chrSkillQueue.typeID "
-        "  LEFT JOIN entity ON entity.typeID = chrSkillQueue.typeID "
-        "  LEFT JOIN entity_attributes ON entity_attributes.itemID = entity.itemID "
-        " WHERE chrSkillQueue.characterID = %u AND dgmTypeAttributes.typeID = chrSkillQueue.typeID AND "
-        "  dgmTypeAttributes.attributeID IN (%u,%u,%u) AND entity.ownerID = %u AND entity_attributes.attributeID = %u ",
+        "  srvEntity.itemID, "
+        "  srvEntity_attributes.valueInt, "
+        "  srvEntity_attributes.valueFloat "
+        " FROM srvChrSkillQueue "
+        "  LEFT JOIN dgmTypeAttributes ON dgmTypeAttributes.typeID = srvChrSkillQueue.typeID "
+        "  LEFT JOIN srvEntity ON srvEntity.typeID = srvChrSkillQueue.typeID "
+        "  LEFT JOIN srvEntity_attributes ON srvEntity_attributes.itemID = srvEntity.itemID "
+        " WHERE srvChrSkillQueue.characterID = %u AND dgmTypeAttributes.typeID = srvChrSkillQueue.typeID AND "
+        "  dgmTypeAttributes.attributeID IN (%u,%u,%u) AND srvEntity.ownerID = %u AND srvEntity_attributes.attributeID = %u ",
         characterID, AttrPrimaryAttribute, AttrSecondaryAttribute, AttrSkillTimeConstant, characterID, AttrSkillPoints ))
     {
         SysLog::Error( "APIAccountDB::GetCharacterSkillQueue()", "Cannot find characterID %u", characterID );
@@ -394,14 +394,14 @@ bool APIServiceDB::GetApiAccountInfoUsingAccountID(std::string accountID, uint32
 {
     DBQueryResult res;
 
-    // Find userID, fullKey, limitedKey, and apiRole from 'accountApi' table using accountID obtained from 'account' table:
+    // Find userID, fullKey, limitedKey, and apiRole from 'srvAccountApi' table using accountID obtained from 'account' table:
     if( !DBcore::RunQuery(res,
         "SELECT"
         "    userID, fullKey, limitedKey, apiRole "
-        " FROM accountApi "
+        " FROM srvAccountApi "
         " WHERE accountID='%s'" , accountID.c_str() ))
     {
-        Log::Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "Cannot find accountID '%s' in 'accountApi' table", accountID.c_str() );
+        Log::Error( "APIServiceDB::GetApiAccountInfoUsingAccountID()", "Cannot find accountID '%s' in 'srvAccountApi' table", accountID.c_str() );
         return false;
     }
 
@@ -412,10 +412,10 @@ bool APIServiceDB::GetApiAccountInfoUsingAccountID(std::string accountID, uint32
         return false;
     }
 
-    *userID = row.GetUInt(0);            // Grab userID from retrieved row from the 'accountApi' table
-    *apiFullKey = row.GetText(1);        // Grab Full API Key from retrieved row from the 'accountApi' table
-    *apiLimitedKey = row.GetText(2);    // Grab Limited API Key from retrieved row from the 'accountApi' table
-    *apiRole = row.GetUInt(3);            // Grab API Role from retrieved row from the 'accountApi' table
+    *userID = row.GetUInt(0);            // Grab userID from retrieved row from the 'srvAccountApi' table
+    *apiFullKey = row.GetText(1);        // Grab Full API Key from retrieved row from the 'srvAccountApi' table
+    *apiLimitedKey = row.GetText(2);    // Grab Limited API Key from retrieved row from the 'srvAccountApi' table
+    *apiRole = row.GetUInt(3);            // Grab API Role from retrieved row from the 'srvAccountApi' table
     return true;
 }
 
@@ -423,14 +423,14 @@ bool APIServiceDB::GetApiAccountInfoUsingUserID(std::string userID, std::string 
 {
     DBQueryResult res;
 
-    // Find fullKey, limitedKey, and apiRole from 'accountApi' table using userID supplied from an API query string:
+    // Find fullKey, limitedKey, and apiRole from 'srvAccountApi' table using userID supplied from an API query string:
     if( !DBcore::RunQuery(res,
         "SELECT"
         "    fullKey, limitedKey, apiRole "
-        " FROM accountApi "
+        " FROM srvAccountApi "
         " WHERE userID='%s'" , userID.c_str() ))
     {
-        Log::Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "Cannot find userID '%s' in 'accountApi' table", userID.c_str() );
+        Log::Error( "APIServiceDB::GetApiAccountInfoUsingUserID()", "Cannot find userID '%s' in 'srvAccountApi' table", userID.c_str() );
         return false;
     }
 
@@ -441,9 +441,9 @@ bool APIServiceDB::GetApiAccountInfoUsingUserID(std::string userID, std::string 
         return false;
     }
 
-    *apiFullKey = row.GetText(0);        // Grab Full API Key from retrieved row from the 'accountApi' table
-    *apiLimitedKey = row.GetText(1);    // Grab Limited API Key from retrieved row from the 'accountApi' table
-    *apiRole = row.GetUInt(2);            // Grab API Role from retrieved row from the 'accountApi' table
+    *apiFullKey = row.GetText(0);        // Grab Full API Key from retrieved row from the 'srvAccountApi' table
+    *apiLimitedKey = row.GetText(1);    // Grab Limited API Key from retrieved row from the 'srvAccountApi' table
+    *apiRole = row.GetUInt(2);            // Grab API Role from retrieved row from the 'srvAccountApi' table
     return true;
 }
 
@@ -462,12 +462,12 @@ bool APIServiceDB::UpdateUserIdApiKeyDatabaseRow(uint32 userID, std::string apiF
         return false;
     }
 
-    // Update fullKey and limitedKey in the 'accountApi' table using userID:
+    // Update fullKey and limitedKey in the 'srvAccountApi' table using userID:
     DBerror err;
 
     if( !DBcore::RunQuery(err,
         "UPDATE"
-        " accountApi"
+        " srvAccountApi"
         " SET fullKey = '%s', limitedKey = '%s'"
         " WHERE userID = %u",
         apiFullKey.c_str(), apiLimitedKey.c_str(), userID ))
@@ -498,7 +498,7 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
 
     if( !DBcore::RunQuery(err,
         "INSERT INTO"
-        " accountApi ("
+        " srvAccountApi ("
         "    accountID, fullKey, limitedKey, apiRole"
         " ) VALUES ("
         "    %u, '%s', '%s', %u"
@@ -515,12 +515,12 @@ bool APIServiceDB::InsertNewUserIdApiKeyInfoToDatabase(uint32 accountID, std::st
 
 bool APIServiceDB::UpdateUserIdApiRole(uint32 userID, uint32 apiRole)
 {
-    // Update fullKey and limitedKey in the 'accountApi' table using userID:
+    // Update fullKey and limitedKey in the 'srvAccountApi' table using userID:
     DBerror err;
 
     if( !DBcore::RunQuery(err,
         "UPDATE"
-        " accountApi"
+        " srvAccountApi"
         " SET apiRole = %u"
         " WHERE userID = %u",
         apiRole, userID ))

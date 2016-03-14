@@ -52,7 +52,7 @@ PyObject *CorporationDB::ListStationOffices(uint32 station_id) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         "   corporationID, itemID, officeFolderID"
-        " FROM crpOffices"
+        " FROM srvCrpOffices"
         " WHERE officeFolderID=%u",
 //TODO: new a new DBSequence for this ID
             station_id + 6000000
@@ -78,7 +78,7 @@ PyObject *CorporationDB::ListStationCorps(uint32 station_id) {
         "   allowedMemberRaceIDs,url,taxRate,minimumJoinStanding,division1,"
         "   division2,division3,division4,division5,division6,division7,"
         "   allianceID,deleted,isRecruiting"
-        " FROM corporation"
+        " FROM srvCorporation"
 //no idea what the criteria should be here...
         " WHERE stationID=%u",
             station_id
@@ -97,7 +97,7 @@ PyObject *CorporationDB::ListStationOwners(uint32 station_id) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         "   itemID AS ownerID, itemName AS ownerName, typeID, NULL AS ownerNameID"
-        " FROM corporation"
+        " FROM srvCorporation"
 //no idea what the criteria should be here...
         "   LEFT JOIN eveNames ON (creatorID=itemID OR ceoID=itemID)"
         "WHERE stationID=%u",
@@ -124,10 +124,10 @@ PyDict *CorporationDB::ListAllCorpInfo() {
         "   friendID,enemyID,publicShares,initialPrice,"
         "   minSecurity,scattered,fringe,corridor,hub,border,"
         "   factionID,sizeFactor,stationCount,stationSystemCount,"
-        "   stationID,ceoID,entity.itemName AS ceoName"
+        "   stationID,ceoID,srvEntity.itemName AS ceoName"
         " FROM crpNPCCorporations"
-        " JOIN corporation USING (corporationID)"
-        "   LEFT JOIN entity ON ceoID=entity.itemID"
+        " JOIN srvCorporation USING (corporationID)"
+        "   LEFT JOIN srvEntity ON ceoID=srvEntity.itemID"
     ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -341,7 +341,7 @@ bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID
     //TODO: we should be able to get our race ID directly from our Client
     //object eventually, instead of pulling it from this join.
     if (!DBcore::RunQueryLID(err, corpID,
-        " INSERT INTO corporation ( "
+        " INSERT INTO srvCorporation ( "
         "   corporationName, description, tickerName, url, "
         "   taxRate, minimumJoinStanding, corporationType, hasPlayerPersonnelManager, sendCharTerminationMessage, "
         "   creatorID, ceoID, stationID, raceID, allianceID, shares, memberCount, memberLimit, "
@@ -354,10 +354,10 @@ bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID
         "       %u, %u, %u, chrBloodlines.raceID, 0, 1000, 0, 10, "
         "       chrBloodlines.raceID, 0, %s, %s, %s, %s, %s, %s, "
         "       NULL, %u "
-        "    FROM entity "
+        "    FROM srvEntity "
         "       LEFT JOIN bloodlineTypes USING (typeID) "
         "       LEFT JOIN chrBloodlines USING (bloodlineID) "
-        "    WHERE entity.itemID = %u ",
+        "    WHERE srvEntity.itemID = %u ",
         cName.c_str(), cDesc.c_str(), cTick.c_str(), cURL.c_str(),
         corpInfo.taxRate,
         charID, charID, stationID,
@@ -424,7 +424,7 @@ bool CorporationDB::CreateCorporationChangePacket(Notify_OnCorporaionChanged & c
         "   graphicID,shape1,shape2,shape3,color1,color2,color3,typeface,"
         "   division1,division2,division3,division4,division5,division6,"
         "   division7,deleted,isRecruiting"
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u ", newCorpID
         ))
     {
@@ -482,7 +482,7 @@ bool CorporationDB::CreateCorporationChangePacket(Notify_OnCorporaionChanged & c
         "   graphicID,shape1,shape2,shape3,color1,color2,color3,typeface,"
         "   division1,division2,division3,division4,division5,division6,"
         "   division7,deleted,isRecruiting"
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u ", oldCorpID
         ))
     {
@@ -541,9 +541,9 @@ bool CorporationDB::JoinCorporation(uint32 charID, uint32 corpID, uint32 oldCorp
     DBerror err;
     // Decrease previous corp's member count
     if (!DBcore::RunQuery(err,
-        "UPDATE corporation "
-        "   SET corporation.memberCount = corporation.memberCount-1"
-        "   WHERE corporation.corporationID = %u",
+        "UPDATE srvCorporation "
+        "   SET srvCorporation.memberCount = srvCorporation.memberCount-1"
+        "   WHERE srvCorporation.corporationID = %u",
             oldCorpID
         ))
     {
@@ -569,7 +569,7 @@ bool CorporationDB::JoinCorporation(uint32 charID, uint32 corpID, uint32 oldCorp
 
     // Increase new corp's member number...
     if (!DBcore::RunQuery(err,
-        "UPDATE corporation "
+        "UPDATE srvCorporation "
         "   SET memberCount = memberCount+1"
         "   WHERE corporationID = %u",
             corpID
@@ -605,7 +605,7 @@ bool CorporationDB::CreateCorporationCreatePacket(Notify_OnCorporaionChanged & c
         "   graphicID,shape1,shape2,shape3,color1,color2,color3,typeface,"
         "   division1,division2,division3,division4,division5,division6,"
         "   division7,deleted,isRecruiting"
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u ", newCorpID
         ))
     {
@@ -708,7 +708,7 @@ PyObject *CorporationDB::GetCorporation(uint32 corpID) {
         "   division7,deleted,isRecruiting,warFactionID,walletDivision1,"
 		"   walletDivision2,walletDivision3,walletDivision4,walletDivision5,"
 		"   walletDivision6,walletDivision7"
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u", corpID))
     {
         codelog(SERVICE__ERROR, "Error in retrieving corporation's data (%u)", corpID);
@@ -739,7 +739,7 @@ PyObject *CorporationDB::GetEveOwners() {
         " itemName AS ownerName,"
     " 0 AS ownerNameID,"
         " typeID"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE itemID < %u"
         " AND itemID NOT IN ( SELECT ownerID from eveStaticOwners ) )"
         " UNION ALL "
@@ -777,7 +777,7 @@ uint32 CorporationDB::GetOffices(uint32 corpID) {
     if (!DBcore::RunQuery(res,
         " SELECT "
         " COUNT(1) AS OfficeNumber "
-        " FROM crpOffices "
+        " FROM srvCrpOffices "
         " WHERE corporationID = %u ", corpID
         ))
     {
@@ -799,7 +799,7 @@ PyRep *CorporationDB::Fetch(uint32 corpID, uint32 from, uint32 count) {
 
     if (!DBcore::RunQuery(res,
         " SELECT stationID, typeID, itemID, officeFolderID "
-        " FROM crpOffices "
+        " FROM srvCrpOffices "
         " WHERE corporationID = %u "
         " LIMIT %u, %u ", corpID, from, count
         ))
@@ -854,10 +854,10 @@ uint32 CorporationDB::ReserveOffice(const OfficeInfo & oInfo) {
     // Instead, assume that there is, and add one for this corporation
     DBerror err;
 
-    // First add it into the entity table
+    // First add it into the srvEntity table
     uint32 officeID = 0;
     if (!DBcore::RunQueryLID(err, officeID,
-        " INSERT INTO entity ("
+        " INSERT INTO srvEntity ("
         " itemName, typeID, ownerID, locationID, flag, contraband, singleton, "
         " quantity, x, y, z, customInfo "
         " ) VALUES ("
@@ -874,7 +874,7 @@ uint32 CorporationDB::ReserveOffice(const OfficeInfo & oInfo) {
 
     // inserts with the id gotten previously
     if (!DBcore::RunQuery(err,
-        " INSERT INTO crpOffices "
+        " INSERT INTO srvCrpOffices "
         " (corporationID, stationID, itemID, typeID, officeFolderID) "
         " VALUES "
         " (%u, %u, %u, %u, %u) ",
@@ -967,10 +967,10 @@ PyRep *CorporationDB::GetApplications(uint32 corpID) {
 uint32 CorporationDB::GetStationCorporationCEO(uint32 stationID) {
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
-        " SELECT corporation.ceoID "
-        " FROM corporation "
+        " SELECT srvCorporation.ceoID "
+        " FROM srvCorporation "
         " LEFT JOIN staStations "
-        " ON staStations.corporationID = corporation.corporationID "
+        " ON staStations.corporationID = srvCorporation.corporationID "
         " WHERE staStations.stationID = %u ", stationID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -988,8 +988,8 @@ uint32 CorporationDB::GetCorporationCEO(uint32 corpID) {
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
         " SELECT ceoID "
-        " FROM corporation "
-        " WHERE corporation.corporationID = %u ", corpID))
+        " FROM srvCorporation "
+        " WHERE srvCorporation.corporationID = %u ", corpID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return 0;
@@ -1151,7 +1151,7 @@ bool CorporationDB::UpdateDivisionNames(uint32 corpID, const Call_UpdateDivision
     if (!DBcore::RunQuery(res,
         " SELECT "
         " division1, division2, division3, division4, division5, division6, division7 "
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u ", corpID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -1174,7 +1174,7 @@ bool CorporationDB::UpdateDivisionNames(uint32 corpID, const Call_UpdateDivision
     ProcessStringChange("division6", row.GetText(5), divs.div6, notif, dbQ);
     ProcessStringChange("division7", row.GetText(6), divs.div7, notif, dbQ);
 
-    std::string query = " UPDATE corporation SET ";
+    std::string query = " UPDATE srvCorporation SET ";
 
     int N = dbQ.size();
     for (int i = 0; i < N; i++) {
@@ -1197,7 +1197,7 @@ bool CorporationDB::UpdateCorporation(uint32 corpID, const Call_UpdateCorporatio
 
     if (!DBcore::RunQuery(res,
         " SELECT description, url, taxRate "
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u ", corpID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -1215,7 +1215,7 @@ bool CorporationDB::UpdateCorporation(uint32 corpID, const Call_UpdateCorporatio
     ProcessStringChange("url", row.GetText(1), upd.address, notif, dbQ);
     ProcessRealChange("taxRate", row.GetDouble(2), upd.tax, notif, dbQ);
 
-    std::string query = " UPDATE corporation SET ";
+    std::string query = " UPDATE srvCorporation SET ";
 
     int N = dbQ.size();
     for (int i = 0; i < N; i++) {
@@ -1240,7 +1240,7 @@ bool CorporationDB::UpdateLogo(uint32 corpID, const Call_UpdateLogo & upd, PyDic
 
     if (!DBcore::RunQuery(res,
         " SELECT shape1, shape2, shape3, color1, color2, color3, typeface "
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID = %u ", corpID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -1262,7 +1262,7 @@ bool CorporationDB::UpdateLogo(uint32 corpID, const Call_UpdateLogo & upd, PyDic
     ProcessIntChange("color2", NI(4), upd.color2, notif, dbQ);
     ProcessIntChange("color3", NI(5), upd.color3, notif, dbQ);
 
-    std::string query = " UPDATE corporation SET ";
+    std::string query = " UPDATE srvCorporation SET ";
 
     int N = dbQ.size();
     for (int i = 0; i < N; i++) {
@@ -1306,7 +1306,7 @@ bool CorporationDB::ChangeCloneType(uint32 characterID, uint32 typeID) {
 
     if(!DBcore::RunQuery(res.error,
         "UPDATE "
-        "entity "
+        "srvEntity "
         "SET typeID=%u, itemName='%s' "
         "WHERE ownerID=%u "
         "AND flag=400",

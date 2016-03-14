@@ -153,7 +153,7 @@ public:
 
     /*
      * Item stuff
-     * (entity)
+     * (srvEntity)
      */
     static bool GetItem(uint32 itemID, ItemData &into);
 
@@ -167,7 +167,7 @@ public:
 
     /*
      * Item attribute stuff
-     * (entity_attributes)
+     * (srvEntity_attributes)
      */
     /**
      * Loads item attributes into given attribute manager.
@@ -185,7 +185,7 @@ public:
 
     /*
      * Blueprint stuff
-     * (invBlueprints)
+     * (srvInvBlueprints)
      */
     static bool GetBlueprint(uint32 blueprintID, BlueprintData &into);
 
@@ -195,7 +195,7 @@ public:
 
     /*
      * Character stuff
-     * (srvCharacter, chrSkillQueue)
+     * (srvCharacter, srvChrSkillQueue)
      */
     static bool GetCharacter(uint32 characterID, CharacterData &into);
     static bool GetCorpMemberInfo(uint32 characterID, CorpMemberInfo &into);

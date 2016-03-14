@@ -41,15 +41,15 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
     DBQueryResult res;
     DBResultRow row;
 
-	//first we check to see if there is such ids in the entity tables
+	//first we check to see if there is such ids in the srvEntity tables
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " entity.itemID as ownerID,"
-        " entity.itemName as ownerName,"
-        " entity.typeID,"
+        " srvEntity.itemID as ownerID,"
+        " srvEntity.itemName as ownerName,"
+        " srvEntity.typeID,"
 		" 1 as gender,"
         " NULL as ownerNameID"
-        " FROM entity "
+        " FROM srvEntity "
         " WHERE itemID in (%s)", ids.c_str()))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -59,7 +59,7 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
     //this is pretty hackish... will NOT work if they mix things...
     //this was only put in to deal with "new" statics, like corporations.
 
-	//second: we check to see if the id points to a static entity (Agents, NPC Corps, etc.)
+	//second: we check to see if the id points to a static srvEntity (Agents, NPC Corps, etc.)
     if(!res.GetRow(row)) {
         if(!DBcore::RunQuery(res,
             "SELECT "
@@ -86,7 +86,7 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
 			" 1 as gender,"
             " NULL as ownerNameID"
             " FROM srvCharacter "
-            " LEFT JOIN entity ON characterID = itemID"
+            " LEFT JOIN srvEntity ON characterID = itemID"
             " WHERE characterID in (%s)", ids.c_str()))
         {
             codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -111,10 +111,10 @@ PyRep *ConfigDB::GetMultiAllianceShortNamesEx(const std::vector<int32> &entityID
 
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " entity.itemID as allianceID,"
-        " entity.itemName as shortName" //we likely need to use customInfo or something for this.
-        " FROM entity "
-        " WHERE entity.typeID = %d"
+        " srvEntity.itemID as allianceID,"
+        " srvEntity.itemName as shortName" //we likely need to use customInfo or something for this.
+        " FROM srvEntity "
+        " WHERE srvEntity.typeID = %d"
         "   AND itemID in (%s)",
             AllianceTypeID,
             ids.c_str()
@@ -164,13 +164,13 @@ PyRep *ConfigDB::GetMultiLocationsEx(const std::vector<int32> &entityIDs) {
     } else {
         if(!DBcore::RunQuery(res,
             "SELECT "
-            " entity.itemID AS locationID,"
-            " entity.itemName AS locationName,"
-            " entity.x AS x,"
-            " entity.y AS y,"
-            " entity.z AS z,"
+            " srvEntity.itemID AS locationID,"
+            " srvEntity.itemName AS locationName,"
+            " srvEntity.x AS x,"
+            " srvEntity.y AS y,"
+            " srvEntity.z AS z,"
             " NULL AS locationNameID"
-            " FROM entity "
+            " FROM srvEntity "
             " WHERE itemID in (%s)", ids.c_str()))
         {
             codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -195,7 +195,7 @@ PyRep *ConfigDB::GetMultiCorpTickerNamesEx(const std::vector<int32> &entityIDs) 
         "   corporationID, tickerName, "
         "   shape1, shape2, shape3,"
         "   color1, color2, color3 "
-        " FROM corporation "
+        " FROM srvCorporation "
         " WHERE corporationID in (%s)", ids.c_str()))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -465,7 +465,7 @@ PyRep *ConfigDB::GetDynamicCelestials(uint32 solarSystemID) {
 
     const std::string query = " SELECT "
                               "     `itemID`, "
-                              "     `entity`.`typeID`, "
+                              "     `srvEntity`.`typeID`, "
                               "     `invTypes`.`groupID`, "
                               "     `itemName`, "
                               "     0, " // This field refers to the orbitID of the dynamic celestial and needs to be implemented
@@ -473,7 +473,7 @@ PyRep *ConfigDB::GetDynamicCelestials(uint32 solarSystemID) {
                               "     `x`, "
                               "     `y`, "
                               "     `z` "
-                              " FROM `entity` JOIN `invTypes` ON `entity`.`typeID` = `invTypes`.`typeID`"
+                              " FROM `srvEntity` JOIN `invTypes` ON `srvEntity`.`typeID` = `invTypes`.`typeID`"
                               " WHERE "
                               "     `locationID` = %u AND " // In the future, the locationID field needs to be constrained to being a solarSystemID
                               "     `groupID` = -1"; // This is set to -1 because we do not know what the ID(s) of dynamic celestials is/are.

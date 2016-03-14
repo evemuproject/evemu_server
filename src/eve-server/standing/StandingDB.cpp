@@ -51,7 +51,7 @@ PyObjectEx *StandingDB::GetCharStandings(uint32 characterID) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         " toID AS fromID, standing"
-        " FROM chrStandings"
+        " FROM srvChrStandings"
         " WHERE characterID=%u", characterID
     ))
     {
@@ -68,7 +68,7 @@ PyObjectEx *StandingDB::GetCorpStandings(uint32 corporationID) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         " fromID, standing"
-        " FROM crpStandings"
+        " FROM srvCrpStandings"
         " WHERE corporationID=%u", corporationID
     ))
     {
@@ -90,7 +90,7 @@ PyObject *StandingDB::GetCharPrimeStandings(uint32 characterID) {
         " itemID AS ownerID,"
         " itemName AS ownerName,"
         " typeID"
-        " FROM entity"
+        " FROM srvEntity"
         " WHERE itemID < 0"
     ))
     {

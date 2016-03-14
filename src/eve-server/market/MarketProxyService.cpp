@@ -748,7 +748,7 @@ void MarketProxyService::_ExecuteBuyOrder(uint32 buy_order_id, uint32 stationID,
         _BroadcastOnOwnOrderChanged(seller->GetRegionID(), buy_order_id, "Modify", isCorp);
     }
 
-    //record this transaction in market_transactions
+    //record this transaction in srvMarket_transactions
     //NOTE: regionID may not be accurate here...
     if (!MarketDB::RecordTransaction(typeID, quantity, price, TransactionTypeSell, seller->GetCharacterID(), seller->GetRegionID(), stationID))
     {
@@ -841,7 +841,7 @@ void MarketProxyService::_ExecuteSellOrder(uint32 sell_order_id, uint32 stationI
         _BroadcastOnOwnOrderChanged(buyer->GetRegionID(), sell_order_id, "Modify", isCorp);
     }
 
-    //record this transaction in market_transactions
+    //record this transaction in srvMarket_transactions
     //NOTE: regionID may not be accurate here...
     if (!MarketDB::RecordTransaction(typeID, quantity, price, TransactionTypeSell, orderOwnerID, buyer->GetRegionID(), stationID))
     {

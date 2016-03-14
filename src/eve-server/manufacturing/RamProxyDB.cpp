@@ -56,10 +56,10 @@ PyRep *RamProxyDB::GetJobs2(const uint32 ownerID, const bool completed, const ui
         " job.completedStatusID AS completedStatus,"
         " station.stationTypeID AS containerTypeID,"
         " station.solarSystemID AS containerLocationID"
-        " FROM ramJobs AS job"
-        " LEFT JOIN entity AS installedItem ON job.installedItemID = installedItem.itemID"
+        " FROM srvRamJobs AS job"
+        " LEFT JOIN srvEntity AS installedItem ON job.installedItemID = installedItem.itemID"
         " LEFT JOIN ramAssemblyLines AS assemblyLine ON job.assemblyLineID = assemblyLine.assemblyLineID"
-        " LEFT JOIN invBlueprints AS blueprint ON installedItem.itemID = blueprint.blueprintID"
+        " LEFT JOIN srvInvBlueprints AS blueprint ON installedItem.itemID = blueprint.blueprintID"
         " LEFT JOIN invBlueprintTypes AS blueprintType ON installedItem.typeID = blueprintType.blueprintTypeID"
         " LEFT JOIN ramAssemblyLineStations AS station ON assemblyLine.containerID = station.stationID"
         " WHERE job.ownerID = %u"
@@ -157,7 +157,7 @@ PyRep *RamProxyDB::AssemblyLinesSelectAlliance(const uint32 allianceID) {
         " station.quantity,"
         " station.ownerID"
         " FROM ramAssemblyLineStations AS station"
-        " LEFT JOIN corporation AS crp ON station.ownerID = crp.corporationID"
+        " LEFT JOIN srvCorporation AS crp ON station.ownerID = crp.corporationID"
         " LEFT JOIN ramAssemblyLines AS line ON station.stationID = line.containerID AND station.assemblyLineTypeID = line.assemblyLineTypeID AND station.ownerID = line.ownerID"
         " WHERE crp.allianceID = %u"
         " AND (line.restrictionMask & 8) = 8", // (restrictionMask & ramRestrictByAlliance) = ramRestrictByAlliance
@@ -269,7 +269,7 @@ bool RamProxyDB::InstallJob(const uint32 ownerID, const  uint32 installerID, con
 
     // insert job
     if(!DBcore::RunQuery(err,
-        "INSERT INTO ramJobs"
+        "INSERT INTO srvRamJobs"
         " (ownerID, installerID, assemblyLineID, installedItemID, installTime, beginProductionTime, endProductionTime, description, runs, outputFlag,"
         " completedStatusID, installedInSolarSystemID, licensedProductionRuns)"
         " VALUES"
@@ -317,7 +317,7 @@ uint32 RamProxyDB::CountManufacturingJobs(const uint32 installerID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         " COUNT(job.jobID)"
-        " FROM ramJobs AS job"
+        " FROM srvRamJobs AS job"
         " LEFT JOIN ramAssemblyLines AS line ON job.assemblyLineID = line.assemblyLineID"
         " WHERE job.installerID = %u"
         " AND job.completedStatusID = 0"
@@ -342,7 +342,7 @@ uint32 RamProxyDB::CountResearchJobs(const uint32 installerID) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         " COUNT(job.jobID)"
-        " FROM ramJobs AS job"
+        " FROM srvRamJobs AS job"
         " LEFT JOIN ramAssemblyLines AS line ON job.assemblyLineID = line.assemblyLineID"
         " WHERE job.installerID = %u"
         " AND job.completedStatusID = 0"
@@ -396,7 +396,7 @@ bool RamProxyDB::GetJobProperties(const uint32 jobID, uint32 &installedItemID, u
 
     if(!DBcore::RunQuery(res,
         "SELECT job.installedItemID, job.ownerID, job.outputFlag, job.runs, job.licensedProductionRuns, assemblyLine.activityID"
-        " FROM ramJobs AS job"
+        " FROM srvRamJobs AS job"
         " LEFT JOIN ramAssemblyLines AS assemblyLine ON job.assemblyLineID = assemblyLine.assemblyLineID"
         " WHERE job.jobID = %u",
         jobID))
@@ -426,7 +426,7 @@ bool RamProxyDB::GetJobVerifyProperties(const uint32 jobID, uint32 &ownerID, uin
 
     if(!DBcore::RunQuery(res,
                 "SELECT job.ownerID, job.endProductionTime, job.completedStatusID, line.restrictionMask"
-                " FROM ramJobs AS job"
+                " FROM srvRamJobs AS job"
                 " LEFT JOIN ramAssemblyLines AS line ON line.assemblyLineID = job.assemblyLineID"
                 " WHERE job.jobID = %u",
                 jobID))
@@ -453,7 +453,7 @@ bool RamProxyDB::CompleteJob(const uint32 jobID, const EVERamCompletedStatus com
     DBerror err;
 
     if(!DBcore::RunQuery(err,
-        "UPDATE ramJobs"
+        "UPDATE srvRamJobs"
         " SET completedStatusID = %u"
         " WHERE jobID = %u",
         (uint32)completedStatus, jobID))

@@ -62,7 +62,7 @@ PyObject *AccountDB::GetJournal(uint32 charID, uint32 refTypeID, uint32 accountK
 
     if(!DBcore::RunQuery(res,
         "SELECT refID AS transactionID,transDate AS transactionDate,0 AS referenceID, refTypeID AS entryTypeID,ownerID1,ownerID2,argID1, accountKey,amount,balance,reason AS description "
-        "FROM market_journal "
+        "FROM srvMarket_journal "
         "WHERE (transDate >= %" PRIu64 " AND transDate <= %" PRIu64 ") "
         "AND accountKey = %u "
         "AND (0 = %u OR refTypeID = %u) "
@@ -92,7 +92,7 @@ bool ServiceDB::GiveCash( uint32 characterID, JournalRefType refTypeID, uint32 o
     DBcore::DoEscapeString(eArg1, argID1);
 
     if(!DBcore::RunQuery(err,
-        "INSERT INTO market_journal(characterID,refID,transDate,refTypeID,ownerID1,ownerID2,argID1,accountID,accountKey,amount,balance,reason) "
+        "INSERT INTO srvMarket_journal(characterID,refID,transDate,refTypeID,ownerID1,ownerID2,argID1,accountID,accountKey,amount,balance,reason) "
         "VALUES (%u,NULL,%" PRIu64 ",%u,%u,%u,\"%s\",%u,%u,%.2f,%.2f,\"%s\")",
         characterID, Win32TimeNow(), refTypeID, ownerFromID, ownerToID, eArg1.c_str(), accountID, accountKey, amount, balance, eReason.c_str()))
     {
@@ -106,7 +106,7 @@ bool ServiceDB::GiveCash( uint32 characterID, JournalRefType refTypeID, uint32 o
 bool AccountDB::CheckIfCorporation(uint32 corpID) {
     DBQueryResult res;
     DBResultRow row;
-    if (!DBcore::RunQuery(res, "SELECT corporationID FROM corporation WHERE corporationID = %u ", corpID))
+    if (!DBcore::RunQuery(res, "SELECT corporationID FROM srvCorporation WHERE corporationID = %u ", corpID))
     {
         SysLog::Error("Service DB", "Error in query: %s", res.error.c_str());
         return false;
@@ -122,7 +122,7 @@ bool AccountDB::CheckIfCorporation(uint32 corpID) {
 
 bool ServiceDB::AddBalanceToCorp(uint32 corpID, double amount) {
     DBerror err;
-    if (!DBcore::RunQuery(err, "UPDATE corporation SET balance = balance + (%lf) WHERE corporationID = %u ", amount, corpID))
+    if (!DBcore::RunQuery(err, "UPDATE srvCorporation SET balance = balance + (%lf) WHERE corporationID = %u ", amount, corpID))
     {
         SysLog::Error("Service DB", "Error in query: %s", err.c_str());
         return false;
@@ -133,7 +133,7 @@ bool ServiceDB::AddBalanceToCorp(uint32 corpID, double amount) {
 double ServiceDB::GetCorpBalance(uint32 corpID) {
     DBQueryResult res;
     DBResultRow row;
-    if (!DBcore::RunQuery(res, "SELECT balance FROM corporation WHERE corporationID = %u ", corpID))
+    if (!DBcore::RunQuery(res, "SELECT balance FROM srvCorporation WHERE corporationID = %u ", corpID))
     {
         SysLog::Error("Service DB", "Error in query: %s", res.error.c_str());
         return 0.0;

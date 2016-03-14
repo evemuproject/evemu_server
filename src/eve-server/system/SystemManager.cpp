@@ -206,7 +206,7 @@ public:
                 // Add the ItemRef to SystemManagers' Inventory:
                 system.AddItemToInventory( asteroid );
 
-                // TODO: this should really be loaded from the 'entity_attributes' table assuming it's been saved there for
+                // TODO: this should really be loaded from the 'srvEntity_attributes' table assuming it's been saved there for
                 // each asteroid, amongst other attributes for asteroids.  Attribute manager should have already done this.
                 //asteroid->SetAttribute(AttrRadius, EvilNumber(600));
 
@@ -223,7 +223,7 @@ public:
 
                     ItemData idata(
                         entity.typeID,
-                        1,  // owner is EVE System (itemID = 1 from 'entity' table)
+                        1,  // owner is EVE System (itemID = 1 from 'srvEntity' table)
                         entity.locationID,
                         flagAutoFit,
                         entity.itemName.c_str(),
@@ -262,7 +262,7 @@ public:
                     throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                 // Set radius of warp disruptor bubble
-                // TODO: GET THIS FROM DB 'entity_attributes' perhaps
+                // TODO: GET THIS FROM DB 'srvEntity_attributes' perhaps
                 //deployable->SetAttribute(AttrRadius, EvilNumber(deployable->type().radius()) );     // Can you set this somehow from the type class ?
 
                 // Add the ItemRef to SystemManagers' Inventory:
@@ -365,7 +365,7 @@ public:
 
                     ItemData idata(
                         entity.typeID,
-                        1,  // owner is EVE System (itemID = 1 from 'entity' table)
+                        1,  // owner is EVE System (itemID = 1 from 'srvEntity' table)
                         entity.locationID,
                         flagAutoFit,
                         entity.itemName.c_str(),
@@ -377,7 +377,7 @@ public:
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
 
                     // Set radius of celestial object
-                    // TODO: GET THIS FROM DB 'entity_attributes' perhaps
+                    // TODO: GET THIS FROM DB 'srvEntity_attributes' perhaps
                     //celestial->Set_radius( 5000 );
                     celestial->SetAttribute(AttrRadius, EvilNumber(celestial->type().radius()) );     // Can you set this somehow from the type class ?
 
@@ -406,7 +406,7 @@ public:
                         location
                     );
 
-                    //InventoryItemRef container = ItemFactory::GetItem( entity.itemID );
+                    //InventoryItemRef container = ItemFactory::GetItem( srvEntity.itemID );
                     CargoContainerRef container = ItemFactory::GetCargoContainer(entity.itemID);
                     if( !container )
                         throw PyException( MakeCustomError( "Unable to spawn item #%u:'%s' of type %u.", entity.itemID, entity.itemName.c_str(), entity.typeID ) );
@@ -478,7 +478,7 @@ public:
 
                     ItemData idata(
                         entity.typeID,
-                        1,  // owner is EVE System (itemID = 1 from 'entity' table)
+                        1,  // owner is EVE System (itemID = 1 from 'srvEntity' table)
                         entity.locationID,
                         flagAutoFit,
                         entity.itemName.c_str(),
@@ -504,7 +504,7 @@ public:
 
                     ItemData idata(
                         entity.typeID,
-                        1,  // owner is EVE System (itemID = 1 from 'entity' table)
+                        1,  // owner is EVE System (itemID = 1 from 'srvEntity' table)
                         entity.locationID,
                         flagAutoFit,
                         entity.itemName.c_str(),
@@ -530,7 +530,7 @@ public:
 
                 ItemData idata(
                     entity.typeID,
-                    1,  // owner is EVE System (itemID = 1 from 'entity' table)
+                    1,  // owner is EVE System (itemID = 1 from 'srvEntity' table)
                     entity.locationID,
                     flagAutoFit,
                     entity.itemName.c_str(),

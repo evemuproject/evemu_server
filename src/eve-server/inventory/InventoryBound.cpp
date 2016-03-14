@@ -439,7 +439,7 @@ PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
             res.GetRow(row);
             i->Rename(row.GetText(0));
             snprintf(ci, sizeof(ci), "%u", bookmarkID);
-            i->SetCustomInfo(ci);  //<- use this to set bookmarkID to DB.entity.customInfo
+            i->SetCustomInfo(ci);  //<- use this to set bookmarkID to DB.srvEntity.customInfo
         }
         SysLog::Log( "InventoryBound::Handle_CreateBookmarkVouchers()", "%u Vouchers created", list->size() );
         //  when bm is copied to another players places tab, copy data from db using bookmarkID stored in ItemData.customInfo

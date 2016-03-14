@@ -146,7 +146,7 @@ std::shared_ptr<std::string> APIAccountManager::_APIKeyRequest(const APICommandC
     // Write new API Key to database if key request 'action' is 'new':
     if( !status )
     {
-        // 4a: If userID does not exist for this accountID, then insert a new row into the 'accountApi' table regardless of 'get' or 'new':
+        // 4a: If userID does not exist for this accountID, then insert a new row into the 'srvAccountApi' table regardless of 'get' or 'new':
         apiLimitedKey = _GenerateAPIKey();
         apiFullKey = _GenerateAPIKey();
         status = m_db.InsertNewUserIdApiKeyInfoToDatabase( atol(accountID.c_str()), apiFullKey, apiLimitedKey, EVEAPI::Roles::Player );
@@ -225,7 +225,7 @@ std::shared_ptr<std::string> APIAccountManager::_Characters(const APICommandCall
     status = m_db.GetAccountIdFromUserID( userID, &accountID );
     if( !status )
     {
-        SysLog::Error( "APIAccountManager::_Characters()", "ERROR: userID='%s' cannot be found in 'accountApi' table.", userID.c_str() );
+        SysLog::Error( "APIAccountManager::_Characters()", "ERROR: userID='%s' cannot be found in 'srvAccountApi' table.", userID.c_str() );
         return BuildErrorXMLResponse( "203", "Authentication failure." );
     }
 
@@ -280,7 +280,7 @@ std::shared_ptr<std::string> APIAccountManager::_AccountStatus(const APICommandC
 
     if( !(m_db.GetAccountIdFromUserID( pAPICommandCall->find( "userid" )->second, &accountID )) )
     {
-        SysLog::Error( "APIAccountManager::_AccountStatus()", "ERROR: Could not find 'accountID' in 'accountApi' table - exiting with error" );
+        SysLog::Error( "APIAccountManager::_AccountStatus()", "ERROR: Could not find 'accountID' in 'srvAccountApi' table - exiting with error" );
         return BuildErrorXMLResponse( "106", "Must provide userID parameter for authentication." );
     }
 
