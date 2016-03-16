@@ -8,49 +8,49 @@
 /*
  * Truncate all the dynamic tables
  */
-TRUNCATE TABLE alliance_ShortNames;
-TRUNCATE TABLE billsPayable;
-TRUNCATE TABLE billsReceivable;
-TRUNCATE TABLE bookmarks;
-TRUNCATE TABLE cacheLocations;
-TRUNCATE TABLE cacheOwners;
-TRUNCATE TABLE channelChars;
-TRUNCATE TABLE channelMods;
-TRUNCATE TABLE character_;
-TRUNCATE TABLE chrApplications;
-TRUNCATE TABLE chrEmployment;
-TRUNCATE TABLE chrMissionState;
-TRUNCATE TABLE chrNotes;
-TRUNCATE TABLE chrNPCStandings;
-TRUNCATE TABLE chrOffers;
-TRUNCATE TABLE chrOwnerNote;
-TRUNCATE TABLE chrSkillQueue;
-TRUNCATE TABLE chrStandings;
-TRUNCATE TABLE corporation;
-TRUNCATE TABLE courierMissions;
-TRUNCATE TABLE crpCharShares;
-TRUNCATE TABLE crpOffices;
-TRUNCATE TABLE droneState;
-TRUNCATE TABLE entity;
-TRUNCATE TABLE entity_attributes;
-TRUNCATE TABLE eveMail;
-TRUNCATE TABLE eveMailDetails;
-TRUNCATE TABLE invBlueprints;
-TRUNCATE TABLE market_history_old;
-TRUNCATE TABLE market_journal;
-TRUNCATE TABLE market_orders;
-TRUNCATE TABLE market_transactions;
-TRUNCATE TABLE ramAssemblyLineStationCostLogs;
-TRUNCATE TABLE ramJobs;
-TRUNCATE TABLE rentalInfo;
+TRUNCATE TABLE srvAlliance_ShortNames;
+TRUNCATE TABLE srvBillsPayable;
+TRUNCATE TABLE srvBillsReceivable;
+TRUNCATE TABLE srvBookmarks;
+TRUNCATE TABLE srvCacheLocations;
+TRUNCATE TABLE srvCacheOwners;
+TRUNCATE TABLE srvChannelChars;
+TRUNCATE TABLE srvChannelMods;
+TRUNCATE TABLE srvCharacter;
+TRUNCATE TABLE srvChrApplications;
+TRUNCATE TABLE srvChrEmployment;
+TRUNCATE TABLE srvChrMissionState;
+TRUNCATE TABLE srvChrNotes;
+TRUNCATE TABLE srvChrNPCStandings;
+TRUNCATE TABLE srvChrOffers;
+TRUNCATE TABLE srvChrOwnerNote;
+TRUNCATE TABLE srvChrSkillQueue;
+TRUNCATE TABLE srvChrStandings;
+TRUNCATE TABLE srvCorporation;
+TRUNCATE TABLE srvCourierMissions;
+TRUNCATE TABLE srvCrpCharShares;
+TRUNCATE TABLE srvCrpOffices;
+TRUNCATE TABLE srvDroneState;
+TRUNCATE TABLE srvEntity;
+TRUNCATE TABLE srvEntity_attributes;
+TRUNCATE TABLE srvEveMail;
+TRUNCATE TABLE srvEveMailDetails;
+TRUNCATE TABLE srvInvBlueprints;
+TRUNCATE TABLE srvMarket_history_old;
+TRUNCATE TABLE srvMarket_journal;
+TRUNCATE TABLE srvMarket_orders;
+TRUNCATE TABLE srvMarket_transactions;
+TRUNCATE TABLE srvRamAssemblyLineStationCostLogs;
+TRUNCATE TABLE srvRamJobs;
+TRUNCATE TABLE srvRentalInfo;
 TRUNCATE TABLE srvStatus;
 
 /*
  * Insert static characters (agents)
- * TODO: Develop a query which will populate character_ using agtAgents and
+ * TODO: Develop a query which will populate srvCharacter using agtAgents and
  * random value generation)
  */
-INSERT INTO character_
+INSERT INTO srvCharacter
  SELECT
   characterID, 
   accountID, 
@@ -94,40 +94,40 @@ INSERT INTO character_
  * Copy over the static entities:
  * Static record of EVE System
  */
-INSERT INTO entity (itemID, itemName, singleton, quantity)
+INSERT INTO srvEntity (itemID, itemName, singleton, quantity)
  VALUES (1, 'EVE System', 1, 1);
 /*
  * Insert solar systems
  */
-INSERT INTO entity (itemID, itemName, typeID, ownerID, singleton, quantity, x, y, z)
+INSERT INTO srvEntity (itemID, itemName, typeID, ownerID, singleton, quantity, x, y, z)
  SELECT solarSystemID, solarSystemName, 5, 1, 1, 1, x, y, z
  FROM mapSolarSystems;
 /*
  * Insert stations
  */
-INSERT INTO entity (itemID, itemName, typeID, ownerID, locationID, singleton, quantity, x, y, z)
+INSERT INTO srvEntity (itemID, itemName, typeID, ownerID, locationID, singleton, quantity, x, y, z)
  SELECT stationID, stationName, stationTypeID, corporationID, solarSystemID, 1, 1, x, y, z
  FROM staStations;
 /*
  * Insert characters
  */
-INSERT INTO entity (itemID, itemName, typeID, ownerID, locationID, singleton, quantity)
+INSERT INTO srvEntity (itemID, itemName, typeID, ownerID, locationID, singleton, quantity)
  SELECT characterID, characterName, typeID, 1, stationID, 1, 1
   FROM characterStatic;
 /*
  * Set the auto-increment lower bound for critical tables
  */
-ALTER TABLE entity AUTO_INCREMENT=140000000;
+ALTER TABLE srvEntity AUTO_INCREMENT=140000000;
 
 /*
  * Copy over the static corporation info
  */
-INSERT INTO corporation
+INSERT INTO srvCorporation
  SELECT * FROM corporationStatic;
 /*
  * Set the auto-increment lower bound
  */
-ALTER TABLE corporation AUTO_INCREMENT=2000001;
+ALTER TABLE srvCorporation AUTO_INCREMENT=2000001;
 
 /*
  * Copy over the static owner info.
@@ -162,5 +162,5 @@ INSERT INTO eveStaticOwners (ownerID, ownerName, typeID)
 /*
  * Set the auto-increment lower bound for other critical tables
  */
-ALTER TABLE account AUTO_INCREMENT=1;
-ALTER TABLE accountApi AUTO_INCREMENT=1000000;
+ALTER TABLE srvAccount AUTO_INCREMENT=1;
+ALTER TABLE srvAccountApi AUTO_INCREMENT=1000000;

@@ -14,15 +14,15 @@ MySQL - 5.0.67-community-nt : Database - eve_evemu_dynamic
 -- No longer needed
 DROP TABLE IF EXISTS entityStatic;
 
-/*Table structure for table `svrAccount` */
+/*Table structure for table `srvAccount` */
 
-DROP TABLE IF EXISTS `svrAccount`;
+DROP TABLE IF EXISTS `srvAccount`;
 
 -- ----------------------------
--- Table structure for `svrAccount`
+-- Table structure for `srvAccount`
 -- ----------------------------
-DROP TABLE IF EXISTS `svrAccount`;
-CREATE TABLE `svrAccount` (
+DROP TABLE IF EXISTS `srvAccount`;
+CREATE TABLE `srvAccount` (
   `accountID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `accountName` varchar(43) NOT NULL DEFAULT '',
   `password` varchar(43) NOT NULL DEFAULT '',
@@ -37,7 +37,7 @@ CREATE TABLE `svrAccount` (
   UNIQUE KEY `accountName` (`accountName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-/*Data for the table `svrAccount` */
+/*Data for the table `srvAccount` */
 
 /*Table structure for table `srvAlliance_ShortNames` */
 
