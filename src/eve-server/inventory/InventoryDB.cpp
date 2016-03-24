@@ -138,7 +138,10 @@ bool InventoryDB::GetType(uint32 typeID, TypeData &into) {
 
     into.groupID = row.GetUInt(0);
     into.name = row.GetText(1);
-    into.description = row.GetText(2);
+    if (!row.IsNull(2))
+    {
+        into.description = row.GetText(2);
+    }
     into.radius = row.GetDouble(3);
     into.mass = row.GetDouble(4);
     into.volume = row.GetDouble(5);
