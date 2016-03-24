@@ -88,7 +88,7 @@ INSERT INTO srvCharacter
   0 AS nextRespecDateTime, 
   0 AS deletePrepareDateTime, 
   0 AS shipID
- FROM characterStatic;
+ FROM blkCharacterStatic;
 
 /*
  * Copy over the static entities:
@@ -113,7 +113,7 @@ INSERT INTO srvEntity (itemID, itemName, typeID, ownerID, locationID, singleton,
  */
 INSERT INTO srvEntity (itemID, itemName, typeID, ownerID, locationID, singleton, quantity)
  SELECT characterID, characterName, typeID, 1, stationID, 1, 1
-  FROM characterStatic;
+  FROM blkCharacterStatic;
 /*
  * Set the auto-increment lower bound for critical tables
  */
@@ -123,7 +123,7 @@ ALTER TABLE srvEntity AUTO_INCREMENT=140000000;
  * Copy over the static corporation info
  */
 INSERT INTO srvCorporation
- SELECT * FROM corporationStatic;
+ SELECT * FROM blkCorporationStatic;
 /*
  * Set the auto-increment lower bound
  */
@@ -134,30 +134,30 @@ ALTER TABLE srvCorporation AUTO_INCREMENT=2000001;
  * This is a bit hacky: we rebuild this table although it's static but it
  * allows us not to include its data in dump.
  */
-TRUNCATE TABLE eveStaticOwners;
+TRUNCATE TABLE blkEveStaticOwners;
 /*
  * Static record of EVE System
  */
-INSERT INTO eveStaticOwners (ownerID, ownerName, typeID)
+INSERT INTO blkEveStaticOwners (ownerID, ownerName, typeID)
  VALUES (1, 'EVE System', 0);
 /*
  * Insert agents
  */
-INSERT INTO eveStaticOwners (ownerID, ownerName, typeID)
+INSERT INTO blkEveStaticOwners (ownerID, ownerName, typeID)
  SELECT characterID, characterName, typeID
- FROM characterStatic;
+ FROM blkCharacterStatic;
 /*
  * Insert factions
  */
-INSERT INTO eveStaticOwners (ownerID, ownerName, typeID)
+INSERT INTO blkEveStaticOwners (ownerID, ownerName, typeID)
  SELECT factionID, factionName, 30 AS typeID
  FROM chrFactions;
 /*
  * Insert corporations
  */
-INSERT INTO eveStaticOwners (ownerID, ownerName, typeID)
+INSERT INTO blkEveStaticOwners (ownerID, ownerName, typeID)
  SELECT corporationID, corporationName, 2 AS typeID
- FROM corporationStatic;
+ FROM blkCorporationStatic;
 
 /*
  * Set the auto-increment lower bound for other critical tables

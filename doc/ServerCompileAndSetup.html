@@ -61,10 +61,10 @@ Open a mysql client and execute the following commands in this order.<br>
   source %devRoot%/evemu_server/sql/prime_db.sql;
   source %devRoot%/evemu_server/sql/liveupdates.sql;
   source %devRoot%/evemu_server/sql/market_npc.sql;
-  ALTER TABLE accountApi AUTO_INCREMENT=1000000;
-  ALTER TABLE account AUTO_INCREMENT=1;
-  INSERT INTO account (accountID, accountName, role, password, online, banned) VALUES(NULL, 'your_account_name', 5003499186008621056, 'your_password', 0, 0);
-  GRANT ALL ON evemuUser.* TO evemuUser@localhost IDENTIFIED BY 'evemuPass';
+  ALTER TABLE srvAccountApi AUTO_INCREMENT=1000000;
+  ALTER TABLE srvAccount AUTO_INCREMENT=1;
+  INSERT INTO srvAccount (accountID, accountName, role, password, online, banned) VALUES(NULL, 'your_account_name', 5003499186008621056, 'your_password', 0, 0);
+  GRANT ALL ON evemu.* TO evemuUser@localhost IDENTIFIED BY 'evemuPass';
 </pre>
 In the last two lines replace "your_account_name" with the account name you want to log into the game with.<br>
 And "your_password" with the password you will use.<br>

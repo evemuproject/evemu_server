@@ -7,8 +7,6 @@ CREATE TABLE extChrAncestries (
     descriptionID INT,
     dataID INT,
     PRIMARY KEY (ancestryID),
-    INDEX bloodlineID (bloodlineID),
-    INDEX iconID (iconID),
     INDEX ancestryNameID (ancestryNameID),
     INDEX descriptionID (descriptionID),
     INDEX dataID (dataID)
