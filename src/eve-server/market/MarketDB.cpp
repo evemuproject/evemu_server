@@ -440,10 +440,9 @@ PyRep *MarketDB::GetMarketGroups() {
     DBResultRow row;
 
     if (!DBcore::RunQuery(res,
-                          "SELECT parentGroupID, invMarketGroups.marketGroupID, marketGroupName, "
+                          "SELECT parentGroupID, marketGroupID, marketGroupName, "
                           "description, graphicID, hasTypes, iconID, dataID, marketGroupNameID, descriptionID "
-                          " FROM invMarketGroups LEFT JOIN extInvMarketGroups ON "
-                          "invMarketGroups.marketGroupID = extInvMarketGroups.marketGroupID"))
+                          " FROM invMarketGroups LEFT JOIN extInvMarketGroups USING(marketGroupID)"))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
