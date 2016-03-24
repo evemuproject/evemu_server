@@ -51,7 +51,7 @@ PyRep *CertificateMgrDB::GetCertificateCategories() {
                          " dataID,"
                          " categoryNameID "
                          " FROM crtCategories"
-                         " LEFT JOIN extCrtCategories ON extCrtCategories.categoryID= crtCategories.categoryID"))
+                         " LEFT JOIN extCrtCategories USING(categoryID)"))
     {
         _log(DATABASE__ERROR, "Failed to query certificate categories: %s.", res.error.c_str());
         return(NULL);
@@ -89,7 +89,7 @@ PyRep *CertificateMgrDB::GetCertificateClasses() {
                          " description,"
                          " 0 AS dataID"
                          " FROM crtClasses"
-                         "LEFT JOIN extCrtClasses on extCrtClasses.classID = crtClasses.classID"))
+                         "LEFT JOIN extCrtClasses USING(classID)"))
     {
         _log(DATABASE__ERROR, "Failed to query certificate classes: %s.", res.error.c_str());
         return(NULL);

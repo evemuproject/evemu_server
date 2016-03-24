@@ -81,7 +81,7 @@ PyRep *SearchDB::QuickQuery(std::string match, std::vector<int> *SearchID) {
     //Form the query and execute it
     query = "SELECT itemID,itemName FROM srvEntity"
             " WHERE itemName RLIKE '%s' %s"
-            " AND typeID in (SELECT typeID FROM invTypes LEFT JOIN invGroups ON invTypes.groupid = invGroups.groupID"
+            " AND typeID in (SELECT typeID FROM invTypes LEFT JOIN invGroups USING(groupID)"
             " WHERE invGroups.groupID IN (%s))"
             " ORDER BY itemName";
 

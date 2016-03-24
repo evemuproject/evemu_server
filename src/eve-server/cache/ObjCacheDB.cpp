@@ -700,7 +700,7 @@ PyRep *ObjCacheDB::Generate_eveGraphics()
     const char *q = "SELECT eveGraphics.graphicID, graphicFile, graphicName, description, obsolete, "
             "graphicType, collisionFile, paperdollFile, animationTemplate, collidable, explosionID, "
             "directoryID, graphicMinX, graphicMinY, graphicMinZ, graphicMaxX, graphicMaxY, graphicMaxZ "
-            "FROM eveGraphics LEFT JOIN extEveGraphics ON extEveGraphics.graphicID=eveGraphics.graphicID";
+            "FROM eveGraphics LEFT JOIN extEveGraphics USING(graphicID)";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.graphics': %s", res.error.c_str());
@@ -712,12 +712,10 @@ PyRep *ObjCacheDB::Generate_eveGraphics()
 PyRep *ObjCacheDB::Generate_invTypes()
 {
     DBQueryResult res;
-    const char *q = "SELECT invTypes.typeID, groupID, typeName, description, graphicID, radius, mass, volume,"
+    const char *q = "SELECT typeID, groupID, typeName, description, graphicID, radius, mass, volume,"
             " capacity, portionSize, raceID, basePrice, published, marketGroupID,"
-            " chanceOfDuplicating, extInvTypes.soundID, iconID, extInvTypes.dataID,"
-            " extInvTypes.typeNameID, extInvTypes.descriptionID"
-            " FROM invTypes"
-            " LEFT JOIN extInvTypes on extInvTypes.typeID = invTypes.typeID;";
+            " chanceOfDuplicating, extInvTypes.soundID, iconID, dataID, typeNameID, descriptionID"
+            " FROM invTypes LEFT JOIN extInvTypes USING(typeID)";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.types': %s", res.error.c_str());
@@ -888,7 +886,7 @@ PyRep *ObjCacheDB::Generate_c_chrAncestries()
     const char *q = "SELECT chrAncestries.ancestryID, ancestryName, bloodlineID, description,"
             " perception, willpower, charisma, memory, intelligence, iconID, iconID AS graphicID,"
             " shortDescription, ancestryNameID, descriptionID, dataID"
-            " FROM chrAncestries LEFT JOIN extChrAncestries ON extChrAncestries.ancestryID = chrAncestries.ancestryID";
+            " FROM chrAncestries LEFT JOIN extChrAncestries USING(ancestryID)";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'charCreationInfo.ancestries': %s", res.error.c_str());

@@ -1428,7 +1428,7 @@ bool InventoryDB::GetCelestialObject(uint32 celestialID, CelestialObjectData &in
             " srvEntity.itemID, "
             " invTypes.radius "
             " FROM srvEntity "
-            "  LEFT JOIN invTypes ON srvEntity.typeID = invTypes.typeID"
+                             "  LEFT JOIN invTypes ON USING(typeID)"
             " WHERE srvEntity.itemID = %u",
             celestialID))
         {

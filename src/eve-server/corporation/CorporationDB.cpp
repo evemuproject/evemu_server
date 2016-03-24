@@ -1285,12 +1285,7 @@ bool CorporationDB::ChangeCloneType(uint32 characterID, uint32 typeID) {
     DBQueryResult res;
 
     if(!DBcore::RunQuery(res,
-        "SELECT "
-        " typeID, typeName "
-        "FROM "
-        " invTypes "
-        "WHERE typeID = %u",
-        typeID))
+                         "SELECT typeID, typeName FROM invTypes WHERE typeID = %u", typeID))
     {
         _log(DATABASE__ERROR, "Failed to change clone type of char %u: %s.", characterID, res.error.c_str());
         return false;

@@ -148,11 +148,10 @@ PyObject *ServiceDB::GetSolRow(uint32 systemID)
         //not sure if this is gunna be valid all the time...
         "SELECT "
         "    itemID,srvEntity.typeID,ownerID,locationID,flag,contraband,singleton,quantity,"
-        "    invGroups.groupID, invGroups.categoryID,"
-        "    customInfo"
+                         "    invGroups.groupID, invGroups.categoryID, customInfo"
         " FROM srvEntity "
-        "    LEFT JOIN invTypes ON srvEntity.typeID=invTypes.typeID"
-        "    LEFT JOIN invGroups ON invTypes.groupID=invGroups.groupID"
+                         "    LEFT JOIN invTypes USING(typeID)"
+                         "    LEFT JOIN invGroups USING(groupID)"
         " WHERE srvEntity.itemID=%u",
         systemID
     ))

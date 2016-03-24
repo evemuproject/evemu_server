@@ -536,19 +536,19 @@ bool CharacterDB::GetCorporationBySchool(uint32 schoolID, uint32 &corporationID)
 bool CharacterDB::GetLocationCorporationByCareer(CharacterData &cdata) {
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
-     "SELECT "
-     "  blkChrSchools.corporationID, "
-     "  blkChrSchools.schoolID, "
-     "  srvCorporation.allianceID, "
-     "  srvCorporation.stationID, "
-     "  staStations.solarSystemID, "
-     "  staStations.constellationID, "
-     "  staStations.regionID "
-     " FROM staStations"
-     "  LEFT JOIN srvCorporation ON srvCorporation.stationID=staStations.stationID"
-     "  LEFT JOIN blkChrSchools ON srvCorporation.corporationID=blkChrSchools.corporationID"
-     "  LEFT JOIN blkChrCareers ON blkChrSchools.schoolID=blkChrCareers.schoolID"
-     " WHERE blkChrCareers.careerID = %u", cdata.careerID))
+                          "SELECT "
+                          "  blkChrSchools.corporationID, "
+                          "  blkChrSchools.schoolID, "
+                          "  allianceID, "
+                          "  stationID, "
+                          "  solarSystemID, "
+                          "  constellationID, "
+                          "  regionID "
+                          " FROM staStations"
+                          "  LEFT JOIN srvCorporation USING(stationID)"
+                          "  LEFT JOIN blkChrSchools ON srvCorporation.corporationID=blkChrSchools.corporationID"
+                          "  LEFT JOIN blkChrCareers ON blkChrSchools.schoolID=blkChrCareers.schoolID"
+                          " WHERE blkChrCareers.careerID = %u", cdata.careerID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return (false);

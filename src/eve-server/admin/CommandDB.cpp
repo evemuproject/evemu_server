@@ -71,8 +71,7 @@ bool CommandDB::ItemSearch(uint32 typeID, uint32 &actualTypeID,
         " invTypes.radius,"
         " invGroups.categoryID"
         " FROM invTypes"
-        "  LEFT JOIN invGroups"
-        "   ON invGroups.groupID = invTypes.groupID"
+                          " LEFT JOIN invGroups USING(groupID)"
         " WHERE typeID = %u",
         typeID
         ))

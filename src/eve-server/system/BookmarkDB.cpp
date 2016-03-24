@@ -100,10 +100,7 @@ uint32 BookmarkDB::FindBookmarkTypeID(uint32 itemID)
     {
         // itemID exists in 'srvEntity' table, now let's check to see what type it is:
         if (!DBcore::RunQuery(res2,
-            " SELECT "
-            "    groupID "
-            " FROM invTypes "
-            " WHERE typeID = %u ", row.GetUInt(0)))
+                              " SELECT groupID FROM invTypes WHERE typeID = %u ", row.GetUInt(0)))
         {
             SysLog::Error( "BookmarkDB::FindBookmarkTypeID()", "Error in query: %s", res2.error.c_str() );
             return 0;
