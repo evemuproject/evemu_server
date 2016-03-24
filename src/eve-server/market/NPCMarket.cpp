@@ -46,15 +46,15 @@ void NPCMarket::CreateNPCMarketForRegion(uint32 regionID)
                              "    `range`, bid, price, volEntered, volRemaining, issued,"
                              "    orderState, minVolume, contraband, accountID, duration,"
                              "    isCorp, solarSystemID, escrow, jumps ) "
-                          "SELECT market_npc.typeID, '0' AS charID, '%u' AS regionID,"
-                             "     market_npc.stationID,"
-                             "     '0' AS `range`, market_npc.bid,"
-                             "     market_npc.price, market_npc.volEntered, market_npc.volEntered,"
+                          "SELECT blkMarketNPC.typeID, '0' AS charID, '%u' AS regionID,"
+                             "     blkMarketNPC.stationID,"
+                             "     '0' AS `range`, blkMarketNPC.bid,"
+                             "     blkMarketNPC.price, blkMarketNPC.volEntered, blkMarketNPC.volEntered,"
                              "     %" PRIu64 " AS issued, '1' AS orderState, '1' AS minVolume, '0' AS contraband,"
                              "     '0' AS accountID, '365' AS duration, '0' AS isCorp,"
                              "     (SELECT staStations.solarSystemID FROM staStations "
-                             "     WHERE staStations.stationID=market_npc.stationID) AS solarSystemID,"
-                             " '0' AS escrow, '-1' AS jumps FROM market_npc WHERE market_npc.stationID IN "
+                             "     WHERE staStations.stationID=blkMarketNPC.stationID) AS solarSystemID,"
+                             " '0' AS escrow, '-1' AS jumps FROM blkMarketNPC WHERE blkMarketNPC.stationID IN "
                           "(SELECT staStations.stationID FROM staStations WHERE regionID=%u);",
                              regionID,
                              Win32TimeNow(),
@@ -85,17 +85,17 @@ void NPCMarket::CreateNPCMarket()
                           "    `range`, bid, price, volEntered, volRemaining, issued,"
                           "    orderState, minVolume, contraband, accountID, duration,"
                           "    isCorp, solarSystemID, escrow, jumps ) "
-                          "SELECT market_npc.typeID, '0' AS charID, "
+                          "SELECT blkMarketNPC.typeID, '0' AS charID, "
                           "    (SELECT staStations.regionID FROM staStations "
-                          "    WHERE staStations.stationID=market_npc.stationID) AS regionID, "
-                          "    market_npc.stationID,"
-                          "    '0' AS `range`, market_npc.bid,"
-                          "    market_npc.price, market_npc.volEntered, market_npc.volEntered,"
+                          "    WHERE staStations.stationID=blkMarketNPC.stationID) AS regionID, "
+                          "    blkMarketNPC.stationID,"
+                          "    '0' AS `range`, blkMarketNPC.bid,"
+                          "    blkMarketNPC.price, blkMarketNPC.volEntered, blkMarketNPC.volEntered,"
                           "    %" PRIu64 " AS issued, '1' AS orderState, '1' AS minVolume, '0' AS contraband,"
                           "    '0' AS accountID, '365' AS duration, '0' AS isCorp,"
                           "    (SELECT staStations.solarSystemID FROM staStations "
-                          "    WHERE staStations.stationID=market_npc.stationID) AS solarSystemID,"
-                          " '0' AS escrow, '-1' AS jumps FROM market_npc",
+                          "    WHERE staStations.stationID=blkMarketNPC.stationID) AS solarSystemID,"
+                          " '0' AS escrow, '-1' AS jumps FROM blkMarketNPC",
                           Win32TimeNow()
                           ))
     {

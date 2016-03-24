@@ -102,7 +102,7 @@ bool CommandDB::GetRoidDist(const char * sec, std::map<double, uint32> &roids) {
     DBResultRow row;
 
     if (!DBcore::RunQuery(res,
-        " SELECT roidID, percent FROM roidDistribution WHERE systemSec = '%s' ", sec))
+        " SELECT roidID, percent FROM blkAsteroidDistribution WHERE systemSec = '%s' ", sec))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return false;

@@ -33,7 +33,7 @@ PyObject *StandingDB::GetNPCStandings() {
     if(!DBcore::RunQuery(res,
         "SELECT "
         " fromID,toID,standing"
-        " FROM npcStandings"
+        " FROM blkNpcStandings"
     ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());

@@ -126,7 +126,7 @@ bool SystemDB::GetWrecksToTypes(DBQueryResult &res)
     if(!DBcore::RunQuery(res,
         "SELECT "
         " *"
-        " FROM invTypesToWrecks "))
+        " FROM blkInvTypesToWrecks "))
     {
 		SysLog::Error("SystemDB::GetWrecksToTypes()", "Error in query: %s", res.error.c_str());
         return false;

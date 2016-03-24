@@ -30,7 +30,7 @@
 PyRep* MailDB::GetMailStatus(int charId)
 {
     DBQueryResult res;
-    if (!DBcore::RunQuery(res, "SELECT messageID, statusMask, labelMask FROM mailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
+    if (!DBcore::RunQuery(res, "SELECT messageID, statusMask, labelMask FROM srvMailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
         return NULL;
     return DBResultToCRowset(res);
 }
@@ -38,7 +38,7 @@ PyRep* MailDB::GetMailStatus(int charId)
 PyRep* MailDB::GetNewMail(int charId)
 {
     DBQueryResult res;
-    if (!DBcore::RunQuery(res, "SELECT messageID, senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, sentDate FROM mailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
+    if (!DBcore::RunQuery(res, "SELECT messageID, senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, sentDate FROM srvMailMessage WHERE toCharacterIDs LIKE '%%%u%%'", charId))
         return NULL;
     return DBResultToCRowset(res);
 }
@@ -79,7 +79,7 @@ int MailDB::SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID,
     DBerror err;
     uint32 messageID;
     bool status = DBcore::RunQueryLID(err, messageID,
-        "INSERT INTO mailMessage (senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, body, sentDate, statusMask, labelMask, unread) "
+        "INSERT INTO srvMailMessage (senderID, toCharacterIDs, toListID, toCorpOrAllianceID, title, body, sentDate, statusMask, labelMask, unread) "
         " VALUES (%u, '%s', %d, %d, '%s', '%s', %" PRIu64 ", 0, %u, 1)", sender, toStr.c_str(), toListID, toCorpOrAllianceID, title.c_str(), bodyEscaped.c_str(), Win32TimeNow(), defaultLabel);
 
     if (!status)
@@ -90,7 +90,7 @@ int MailDB::SendMail(int sender, std::vector<int>& toCharacterIDs, int toListID,
 PyString* MailDB::GetMailBody(int id)
 {
     DBQueryResult res;
-    if (!DBcore::RunQuery(res, "SELECT body FROM mailMessage WHERE messageID = %u", id))
+    if (!DBcore::RunQuery(res, "SELECT body FROM srvMailMessage WHERE messageID = %u", id))
         return NULL;
     if (res.GetRowCount() <= 0)
         return NULL;
@@ -105,7 +105,7 @@ PyString* MailDB::GetMailBody(int id)
 void MailDB::SetMailUnread(int id, bool unread)
 {
     DBerror unused;
-    DBcore::RunQuery(unused, "UPDATE mailMessage SET unread = %u WHERE messageID = %u", (unread ? 1 : 0), id);
+    DBcore::RunQuery(unused, "UPDATE srvMailMessage SET unread = %u WHERE messageID = %u", (unread ? 1 : 0), id);
 }
 
 PyRep* MailDB::GetLabels(int characterID)

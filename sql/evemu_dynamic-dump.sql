@@ -818,4 +818,120 @@ CREATE TABLE `srvMailLabel` (
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS srvMailMessage;
+
+CREATE TABLE srvMailMessage
+(
+  messageID INT NOT NULL AUTO_INCREMENT,
+  senderID BIGINT,
+  toCharacterIDs TEXT,
+  toListID INT,
+  toCorpOrAllianceID INT,
+  title TEXT,
+  body BLOB,
+  sentDate BIGINT,
+  statusMask TINYINT,
+  labelMask INT,
+  unread TINYINT,
+  PRIMARY KEY (messageID)
+);
+
+--
+-- Table structure for table `srvAvatarColors`
+--
+DROP TABLE IF EXISTS `avatar_colors`;
+DROP TABLE IF EXISTS `srvAvatarColors`;
+CREATE TABLE IF NOT EXISTS `srvAvatarColors` (
+	`charID` int(11) NOT NULL,
+	`colorID` int(5) NOT NULL,
+	`colorNameA` int(5) NOT NULL,
+	`colorNameBC` int(5) NOT NULL,
+	`weight` float(10) NOT NULL,
+	`gloss` float(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `srvAvatarModifiers`
+--
+DROP TABLE IF EXISTS `avatar_modifiers`;
+DROP TABLE IF EXISTS `srvAvatarModifiers`;
+CREATE TABLE IF NOT EXISTS `srvAvatarModifiers` (
+	`charID` int(11) NOT NULL,
+	`modifierLocationID` int(5) NOT NULL,
+	`paperdollResourceID` int(5) NOT NULL,
+	`paperdollResourceVariation` int(5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `srvAvatarSculpts`
+--
+DROP TABLE IF EXISTS `avatar_sculpts`;
+DROP TABLE IF EXISTS `srvAvatarSculpts`;
+CREATE TABLE IF NOT EXISTS `srvAvatarSculpts` (
+	`charID` int(11) NOT NULL,
+	`sculptLocationID` int(5) NOT NULL,
+	`weightUpDown` float(5),
+	`weightLeftRight` float(5),
+	`weightForwardBack` float(5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `srvAvatars`
+--
+
+DROP TABLE IF EXISTS `avatars`;
+DROP TABLE IF EXISTS `srvAvatars`;
+CREATE TABLE IF NOT EXISTS `srvAvatars` (
+	`charID` int(11) NOT NULL,
+	`hairDarkness` float(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `srvChrSkillHistory`
+--
+
+DROP TABLE IF EXISTS `chrSkillHistory`;
+DROP TABLE IF EXISTS `srvChrSkillHistory`;
+
+CREATE TABLE `srvChrSkillHistory` (
+  `characterID` INT(10) UNSIGNED NOT NULL,
+  `typeID` INT(10) UNSIGNED NOT NULL,
+  `level` INT(10) UNSIGNED NOT NULL,
+  `points` DOUBLE UNSIGNED NOT NULL,
+  `spPerMin` DOUBLE UNSIGNED NOT NULL DEFAULT '0',
+  `eventID` INT(10) UNSIGNED NOT NULL,
+  `eventTime` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`characterID`, `typeID`, `level`, `eventTime`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+
+/*Table structure for table `srvChannels` */
+
+DROP TABLE IF EXISTS `srvChannels`;
+
+CREATE TABLE `srvChannels` (
+  `channelID` int(10) unsigned NOT NULL auto_increment,
+  `ownerID` int(10) unsigned NOT NULL default '0',
+  `displayName` varchar(85) default NULL,
+  `motd` text,
+  `comparisonKey` varchar(11) default NULL,
+  `memberless` tinyint(4) NOT NULL default '0',
+  `password` varchar(100) default NULL,
+  `mailingList` tinyint(4) NOT NULL default '0',
+  `cspa` tinyint(4) NOT NULL default '0',
+  `temporary` tinyint(4) NOT NULL default '0',
+  `mode` tinyint(4) NOT NULL default '0',
+  `subscribed` tinyint(4) NOT NULL default '0',
+  `estimatedMemberCount` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`channelID`)
+) ENGINE=InnoDB AUTO_INCREMENT=30001408 DEFAULT CHARSET=utf8;
+
+/*Data for the table `srvChannels` */
+
+insert  into `srvChannels`(`channelID`,`ownerID`,`displayName`,`motd`,`comparisonKey`,`memberless`,`password`,`mailingList`,`cspa`,`temporary`,`mode`,`subscribed`,`estimatedMemberCount`) VALUES
+(1,1,'Help\\Rookie Help','rookie MOTD','rookiehelp',1,NULL,0,100,0,3,0,7777),
+(2,1,'Help\\Help','help MOTD','help',1,NULL,0,100,0,3,0,6666),
+(1000044,1000044,NULL,NULL,NULL,1,NULL,1,127,0,1,1,1252),
+(1000115,1000115,NULL,NULL,NULL,1,NULL,1,127,0,1,1,1252),
+(30001407,30001407,NULL,NULL,NULL,1,NULL,1,127,0,1,1,1252);
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

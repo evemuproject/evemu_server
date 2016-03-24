@@ -256,7 +256,7 @@ bool CorporationDB::ListAllFactionRaces(std::map<int32, PyRep *> &into) {
     if(!DBcore::RunQuery(res,
         "SELECT "
         "   factionID,raceID "
-        " FROM factionRaces"
+        " FROM blkFactionRaces"
         " WHERE factionID IS NOT NULL"
     ))
     {
@@ -272,9 +272,9 @@ PyObject *CorporationDB::ListNPCDivisions() {
     DBQueryResult res;
 
     if(!DBcore::RunQuery(res,
-        "SELECT "
-        "   divisionID, divisionName, divisionNameID, description, leaderType, leaderTypeID"
-        " FROM crpNPCDivisions"
+                         "SELECT "
+                         "divisionID, crpNPCDivisions.divisionName, divisionNameID, description, leaderType, leaderTypeID "
+                         "FROM crpNPCDivisions LEFT JOIN extCrpNPCDivisions ON crpNPCDivisions.divisionID = extCrpNPCDivisions.divisionID"
     ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -355,7 +355,7 @@ bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID
         "       chrBloodlines.raceID, 0, %s, %s, %s, %s, %s, %s, "
         "       NULL, %u "
         "    FROM srvEntity "
-        "       LEFT JOIN bloodlineTypes USING (typeID) "
+        "       LEFT JOIN blkBloodlineTypes USING (typeID) "
         "       LEFT JOIN chrBloodlines USING (bloodlineID) "
         "    WHERE srvEntity.itemID = %u ",
         cName.c_str(), cDesc.c_str(), cTick.c_str(), cURL.c_str(),
@@ -379,7 +379,7 @@ bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID
     // that works clientside...)
     // This is a temp hack to make my life easier
     if (!DBcore::RunQuery(err,
-        " REPLACE INTO eveStaticOwners (ownerID,ownerName,typeID) "
+        " REPLACE INTO blkEveStaticOwners (ownerID,ownerName,typeID) "
         "   VALUES (%u, '%s', 2)",
         corpID, cName.c_str()))
     {
@@ -389,7 +389,7 @@ bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID
 
     // And create a channel too
     if (!DBcore::RunQuery(err,
-        " INSERT INTO channels ("
+                          " INSERT INTO srvChannels ("
         "   channelID, ownerID, displayName, motd, comparisonKey, "
         "   memberless, password, mailingList, cspa, temporary, "
         "   mode, subscribed, estimatedMemberCount"
@@ -728,7 +728,7 @@ PyObject *CorporationDB::GetEveOwners() {
     DBQueryResult res;
 
     /*if (!DBcore::RunQuery(res,
-        " SELECT * FROM eveStaticOwners "))
+        " SELECT * FROM blkEveStaticOwners "))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -741,11 +741,11 @@ PyObject *CorporationDB::GetEveOwners() {
         " typeID"
         " FROM srvEntity"
         " WHERE itemID < %u"
-        " AND itemID NOT IN ( SELECT ownerID from eveStaticOwners ) )"
+        " AND itemID NOT IN ( SELECT ownerID from blkEveStaticOwners ) )"
         " UNION ALL "
         "(SELECT"
         " ownerID, ownerName, 0 AS ownerNameID, typeID"
-        " FROM eveStaticOwners)"
+        " FROM blkEveStaticOwners)"
         " ORDER BY ownerID", EVEMU_MINIMUM_ID ) )
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());

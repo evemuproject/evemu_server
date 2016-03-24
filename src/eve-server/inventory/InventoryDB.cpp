@@ -287,7 +287,7 @@ bool InventoryDB::GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &charac
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  typeID"
-        " FROM bloodlineTypes"
+        " FROM blkBloodlineTypes"
         " WHERE bloodlineID = %u",
         bloodlineID))
     {
@@ -312,7 +312,7 @@ bool InventoryDB::GetBloodlineByCharacterType(uint32 characterTypeID, uint32 &bl
     if(!DBcore::RunQuery(res,
         "SELECT"
         "  bloodlineID"
-        " FROM bloodlineTypes"
+        " FROM blkBloodlineTypes"
         " WHERE typeID = %u",
         characterTypeID))
     {
@@ -349,7 +349,7 @@ bool InventoryDB::GetShipType(uint32 shipTypeID, ShipTypeData &into) {
     if(!DBcore::RunQuery(res,
         "SELECT"
         " weaponTypeID, miningTypeID, skillTypeID"
-        " FROM shipTypes"
+                         " FROM blkShipTypes"
         " WHERE shipTypeID = %u",
         shipTypeID))
     {

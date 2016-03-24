@@ -1,14 +1,14 @@
 -- ----------------------------
--- Table structure for `dungeonType`
+-- Table structure for `blkDungeonType`
 -- ----------------------------
-DROP TABLE IF EXISTS `dungeonType`;
-CREATE TABLE `dungeonType` (
+DROP TABLE IF EXISTS `blkDungeonType`;
+CREATE TABLE `blkDungeonType` (
   `dungeonTypeID` INT(11) NOT NULL,
   `dungeonType` TEXT CHARACTER SET latin1,
   PRIMARY KEY (`dungeonTypeID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO `dungeonType` (`dungeonTypeID`, `dungeonType`) VALUES
+INSERT INTO `blkDungeonType` (`dungeonTypeID`, `dungeonType`) VALUES
 -- Test salvage for devs
 ('1', 'Mission'),  -- created when a player accepts a mission will include tutorial missions or anything to do with agents (reserves 1-2000)
 ('2', 'Gravimetric Site'), -- asteroid mining (2001-2100)
@@ -22,10 +22,10 @@ INSERT INTO `dungeonType` (`dungeonTypeID`, `dungeonType`) VALUES
 ('20', 'DED Complex'); -- For DED complexes
 
 -- ----------------------------
--- Table structure for `dungeons`
+-- Table structure for `blkDungeons`
 -- ----------------------------
-DROP TABLE IF EXISTS `dungeons`;
-CREATE TABLE `dungeons` (
+DROP TABLE IF EXISTS `blkDungeons`;
+CREATE TABLE `blkDungeons` (
   `dungeonID` INT(11) NOT NULL,
   `dungeonName` TEXT CHARACTER SET latin1,
   `dungeonTypeID` INT(11) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE `dungeons` (
   PRIMARY KEY (`dungeonID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 -- include tutorial missions or anything to do with agents reserves values (1-2000)
 -- missions 1-350 are reserved for tutorials (if ever implemented)
 -- dungeons 351-400 are for mining missions
@@ -73,7 +73,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 ('377','Not Gneiss at All','1','0','0','0','0','0','0','0','0');
 
 -- dungeons 500+ are for security missions
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('501', 'After The SevenSerpentis & MercenariesLevel 1Part 1', '1', '0', '0', '0', '0', '0', '0', '0', '0 '),
 ('502', 'After The SevenSerpentis & MercenariesLevel 1Part 2', '1', '0', '0', '0', '0', '0', '0', '0', '0 '),
 ('503', 'After The SevenSerpentis & MercenariesLevel 1Part 3', '1', '0', '0', '0', '0', '0', '0', '0', '0 '),
@@ -859,7 +859,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 
 -- Missions have many 0 values because they aren't created at random times but rather by player request. And generally around where the player accepts the mission (not at any point in the galaxy)
 -- asteroid mining anomalies values(2001-2100)
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('2001','AverageFrontierDeposit','2','0.3','3600','-1.0','1.0','100','20','8','2'),
 ('2002','AverageHedbergite,HemorphiteandJaspetDeposit','2','0.3','3600','-1.0','1.0','100','20','8','2'),
 ('2003','AverageHemorphite,JaspetandKerniteDeposit','2','0.3','3600','-1.0','1.0','100','20','8','2'),
@@ -892,7 +892,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 ('2030','UnusualCoreDeposit','2','0.3','3600','-1.0','1.0','100','20','8','2');
 
 -- Magnetometric analyse or salvage (2101-2400)
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('2101','Crumbling Angel Antiquated Outpost','4','0.3','3600','0.5','1','100','20','8','2'),
 ('2102','Crumbling Angel Excavation','4','0.3','3600','0.5','1','100','20','8','2'),
 ('2103','Looted Angel Collision Site','4','0.3','3600','0.5','1','100','20','8','2'),
@@ -1115,7 +1115,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 ('2320','Ruined Serpentis Crystal Quarry','4','0.3','3600','-1','-0.01','100','20','8','2');
 
 -- data: hacking (2401-2700)
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('2401','LocalAngelMainframe','4','0.3','3600','0.5','1','100','20','8','2'),
 ('2402','LocalAngelVirusTestSite','4','0.3','3600','0.5','1','100','20','8','2'),
 ('2403','LocalAngelDataProcessingCenter','4','0.3','3600','0.5','1','100','20','8','2'),
@@ -1217,7 +1217,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 ('2499','CentralSerpentisCommandCenter','4','0.3','3600','-1','-0.01','100','20','8','2'),
 ('2500','CentralSerpentisDataMiningSite','4','0.3','3600','-1','-0.01','100','20','8','2');
 -- gas mining/ladar (2701-2800)
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('2701','AngelChemicalLab','5','0.3','3600','-1.0','1.0','100','20','8','2'),
 ('2702','BlackeyeNebula','5','0.3','3600','-1.0','1.0','100','20','8','2'),
 ('2703','BloodRaiderChemicalLab','5','0.3','3600','-1.0','1.0','100','20','8','2'),
@@ -1267,7 +1267,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 
 
 -- only should spawn a wormhole (2801-2900) groupid 988
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('2801', 'Test wormhole', '6', '1.00', '3600', '-1.00', '1.00', '2', '1', '1', '1'), 
 ('2802', 'Wormhole Z971', '6', '1.00', '3600', '-1.00', '1.00', '2', '1', '1', '1'), 
 ('2803', 'Wormhole R943', '6', '1.00', '3600', '-1.00', '1.00', '2', '1', '1', '1'), 
@@ -1340,7 +1340,7 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 ('2870', 'Wormhole K162', '6', '1.00', '3600', '-1.00', '1.00', '2', '1', '1', '1'); 
 -- easier to find mostly combat sites 3001-3200
 
-INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
+INSERT INTO `blkDungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `baseduration`, `minsec`, `maxsec`, `galaxylimit`, `regionallimit`, `constellationlimit`, `systemlimit`) VALUES
 ('3001','AngelHideaway','7','0.3','3600','-1.0','1.0','100','20','8','2'),
 ('3002','AngelHiddenHideaway','7','0.3','3600','-1.0','1.0','100','20','8','2'),
 ('3003','AngelForsakenHideaway','7','0.3','3600','-1.0','1.0','100','20','8','2'),
@@ -1478,10 +1478,10 @@ INSERT INTO `dungeons` (`dungeonID`, `dungeonName`, `dungeonTypeID`, `chance`, `
 -- attribute 1088 is used to determine timers (baseduration) base duration can be completed early by completing the mission or maxing out the wormhole/completing the complex
 
 -- ----------------------------
--- Table structure for `dungeonsspawned`
+-- Table structure for `srvDungeonsSpawned`
 -- ----------------------------
-DROP TABLE IF EXISTS `dungeonsspawned`;
-CREATE TABLE `dungeonsspawned` (
+DROP TABLE IF EXISTS `srvDungeonsSpawned`;
+CREATE TABLE `srvDungeonsSpawned` (
   `dungeonspawnedID` INT(11) NOT NULL AUTO_INCREMENT,
   `dungeonID` INT(11) NOT NULL, 
   `dungeonName` TEXT CHARACTER SET latin1,
@@ -1494,7 +1494,7 @@ CREATE TABLE `dungeonsspawned` (
   PRIMARY KEY (`dungeonspawnedID`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO `dungeonsspawned` (`dungeonspawnedID`, `dungeonID`, `dungeonName`, `systemID`, `x`, `y`, `z`, `script`) VALUES
+INSERT INTO `srvDungeonsSpawned` (`dungeonspawnedID`, `dungeonID`, `dungeonName`, `systemID`, `x`, `y`, `z`, `script`) VALUES
 ('2', '1801', 'Test wormhole', '30001409', '10000000', '0', '10000000', '0'); 
 
 -- xyz values refer to point in the system.
@@ -1502,10 +1502,10 @@ INSERT INTO `dungeonsspawned` (`dungeonspawnedID`, `dungeonID`, `dungeonName`, `
 -- Possibly needs another entry for WHICH players the dungeon is available to (if applicable)
 
 -- ----------------------------
--- Table structure for `dungeonsspawnsetup`
+-- Table structure for `srvDungeonsSpawnSetup`
 -- ----------------------------
-DROP TABLE IF EXISTS `dungeonsspawnsetup`;
-CREATE TABLE `dungeonsspawnsetup` (
+DROP TABLE IF EXISTS `srvDungeonsSpawnSetup`;
+CREATE TABLE `srvDungeonsSpawnSetup` (
   `spawn` INT(11) NOT NULL, 
   `dungeonID` INT(11) NOT NULL, 
   `dungeonName` TEXT CHARACTER SET latin1,
@@ -1519,7 +1519,7 @@ CREATE TABLE `dungeonsspawnsetup` (
   PRIMARY KEY (`spawn`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
-INSERT INTO `dungeonsspawnsetup` (`spawn`, `dungeonID`, `dungeonName`, `typeID`, `typeIDName`, `x`, `y`, `z`, `script`) VALUES
+INSERT INTO `srvDungeonsSpawnSetup` (`spawn`, `dungeonID`, `dungeonName`, `typeID`, `typeIDName`, `x`, `y`, `z`, `script`) VALUES
 ('1', '1801', 'Test wormhole', '30463', 'Test wormhole', '100', '50', '0', '0'); 
 
 -- CODERS: upon entering the location of the dungeon for the first time (the one being entered) the DB should be called to spawn the following in this table. Just at the location being entered. not for all and only for the first time (but would reset after server restart/shutdown). 

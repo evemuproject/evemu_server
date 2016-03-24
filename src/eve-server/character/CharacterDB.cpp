@@ -206,7 +206,7 @@ PyRep *CharacterDB::GetCharSelectInfo(uint32 characterID) {
         " FROM srvCharacter "
         "    LEFT JOIN srvEntity ON characterID = itemID"
         "    LEFT JOIN srvCorporation USING (corporationID)"
-        "    LEFT JOIN bloodlineTypes USING (typeID)"
+        "    LEFT JOIN blkBloodlineTypes USING (typeID)"
         " WHERE characterID=%u", worldSpaceID, shipName.c_str(), shipTypeID, unreadMailCount, upcomingEventCount, unprocessedNotifications, daysLeft, userType, allianceMemberStartDate, startDate, characterID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -224,7 +224,7 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
         " srvEntity.typeID,"
         " srvCharacter.corporationID,"
         " chrBloodlines.raceID,"
-        " bloodlineTypes.bloodlineID,"
+        " blkBloodlineTypes.bloodlineID,"
         " srvCharacter.ancestryID,"
         " srvCharacter.careerID,"
         " srvCharacter.schoolID,"
@@ -238,7 +238,7 @@ PyObject *CharacterDB::GetCharPublicInfo(uint32 characterID) {
         " srvCharacter.corporationDateTime"
         " FROM srvCharacter "
         "    LEFT JOIN srvEntity ON characterID = itemID"
-        "    LEFT JOIN bloodlineTypes USING (typeID)"
+        "    LEFT JOIN blkBloodlineTypes USING (typeID)"
         "    LEFT JOIN chrBloodlines USING (bloodlineID)"
         " WHERE characterID=%u", characterID))
     {
@@ -489,7 +489,7 @@ bool CharacterDB::GetCareerBySchool(uint32 schoolID, uint32 &careerID) {
      " careerID, "
      " schoolID, "
      " raceID "
-     " FROM careers"
+     " FROM blkChrCareers"
      " WHERE schoolID = %u", schoolID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -512,7 +512,7 @@ bool CharacterDB::GetCorporationBySchool(uint32 schoolID, uint32 &corporationID)
 {
     DBQueryResult res;
 
-    if(!DBcore::RunQuery(res, "SELECT corporationID FROM chrSchools WHERE schoolID = %u", schoolID))
+    if(!DBcore::RunQuery(res, "SELECT corporationID FROM blkChrSchools WHERE schoolID = %u", schoolID))
     {
         codelog(SERVICE__ERROR, "Error in query: %S", res.error.c_str());
         return false;
@@ -537,8 +537,8 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData &cdata) {
     DBQueryResult res;
     if (!DBcore::RunQuery(res,
      "SELECT "
-     "  chrSchools.corporationID, "
-     "  chrSchools.schoolID, "
+     "  blkChrSchools.corporationID, "
+     "  blkChrSchools.schoolID, "
      "  srvCorporation.allianceID, "
      "  srvCorporation.stationID, "
      "  staStations.solarSystemID, "
@@ -546,9 +546,9 @@ bool CharacterDB::GetLocationCorporationByCareer(CharacterData &cdata) {
      "  staStations.regionID "
      " FROM staStations"
      "  LEFT JOIN srvCorporation ON srvCorporation.stationID=staStations.stationID"
-     "  LEFT JOIN chrSchools ON srvCorporation.corporationID=chrSchools.corporationID"
-     "  LEFT JOIN careers ON chrSchools.schoolID=careers.schoolID"
-     " WHERE careers.careerID = %u", cdata.careerID))
+     "  LEFT JOIN blkChrSchools ON srvCorporation.corporationID=blkChrSchools.corporationID"
+     "  LEFT JOIN blkChrCareers ON blkChrSchools.schoolID=blkChrCareers.schoolID"
+     " WHERE blkChrCareers.careerID = %u", cdata.careerID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return (false);
@@ -647,7 +647,7 @@ void CharacterDB::SetAvatar(uint32 charID, PyRep* hairDarkness) {
 	//populate the DB wiht avatar information
 	DBerror err;
 	if(!DBcore::RunQuery(err,
-		"INSERT INTO avatars ("
+		"INSERT INTO srvAvatars ("
 		"charID, hairDarkness)"
 		"VALUES (%u, %f)",
 		charID, hairDarkness->AsFloat()->value()))
@@ -660,7 +660,7 @@ void CharacterDB::SetAvatarColors(uint32 charID, uint32 colorID, uint32 colorNam
 	//add avatar colors to the DB
 	DBerror err;
 	if(!DBcore::RunQuery(err,
-		"INSERT INTO avatar_colors ("
+		"INSERT INTO srvAvatarColors ("
 		"charID, colorID, colorNameA, colorNameBC, weight, gloss)"
 		"VALUES (%u, %u, %u, %u, %f, %f)",
 		charID, colorID, colorNameA, colorNameBC, weight, gloss))
@@ -673,7 +673,7 @@ void CharacterDB::SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  
 	//add avatar modifiers to the DB
 	DBerror err;
 	if(!DBcore::RunQuery(err,
-		"INSERT INTO avatar_modifiers ("
+		"INSERT INTO srvAvatarModifiers ("
 		"charID, modifierLocationID, paperdollResourceID, paperdollResourceVariation)"
 		"VALUES (%u, %u, %u, %u)",
 		charID,
@@ -689,7 +689,7 @@ void CharacterDB::SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep
 	//add avatar sculpts to the DB
 	DBerror err;
 	if(!DBcore::RunQuery(err,
-		"INSERT INTO avatar_sculpts ("
+		"INSERT INTO srvAvatarSculpts ("
 		"charID, sculptLocationID, weightUpDown, weightLeftRight, weightForwardBack)"
 		"VALUES (%u, %u, %f, %f, %f)",
 		charID,
@@ -708,7 +708,7 @@ bool CharacterDB::GetSkillsByRace(uint32 raceID, std::map<uint32, uint32> &into)
     if (!DBcore::RunQuery(res,
         "SELECT "
         "        skillTypeID, levels"
-        " FROM raceSkills "
+        " FROM blkChrRaceSkills "
         " WHERE raceID = %u ", raceID))
     {
         _log(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -735,7 +735,7 @@ bool CharacterDB::GetSkillsByCareer(uint32 careerID, std::map<uint32, uint32> &i
     if (!DBcore::RunQuery(res,
         "SELECT "
         "        skillTypeID, levels"
-        " FROM careerSkills"
+        " FROM blkChrCareerSkills"
         " WHERE careerID = %u", careerID))
     {
         _log(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -762,7 +762,7 @@ bool CharacterDB::GetSkillsByCareerSpeciality(uint32 careerSpecialityID, std::ma
     if (!DBcore::RunQuery(res,
         "SELECT "
         "        skillTypeID, levels"
-        " FROM specialitySkills"
+        " FROM blkChrSpecialitySkills"
         " WHERE specialityID = %u", careerSpecialityID))
     {
         _log(SERVICE__ERROR, "Error in query: %s", res.error.c_str());

@@ -42,8 +42,8 @@ PyObjectEx *MissionDB::GetAgents() {
         "    bl.bloodlineID,"
         "    chr.gender"
         " FROM agtAgents AS agt"
-        " LEFT JOIN characterStatic AS chr ON chr.characterID = agt.agentID"
-        " LEFT JOIN bloodlineTypes AS bl ON bl.bloodlineID = agt.agentTypeID"
+                         " LEFT JOIN blkCharacterStatic AS chr ON chr.characterID = agt.agentID"
+        " LEFT JOIN blkBloodlineTypes AS bl ON bl.bloodlineID = agt.agentTypeID"
     ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -61,10 +61,10 @@ AgentLevel *MissionDB::LoadAgentLevel(uint8 level) {
 
     if(!DBcore::RunQuery(res,
         "SELECT missionID,missionName,missionLevel,"
-        "    agtMissions.missionTypeID,missionTypeName,"
+        "    blkAgtMissions.missionTypeID,missionTypeName,"
         "    importantMission"
-        " FROM agtMissions"
-        "    NATURAL JOIN agtMissionTypes"
+        " FROM blkAgtMissions"
+        "    NATURAL JOIN blkAgtMissionTypes"
         " WHERE missionLevel=%d",
         level
     ))

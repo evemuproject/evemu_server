@@ -66,7 +66,7 @@ PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
             " ownerID,ownerName,typeID,"
 			" 1 as gender,"
             " NULL as ownerNameID"
-            " FROM evestaticowners "
+            " FROM blkEveStaticOwners "
             " WHERE ownerID in (%s)", ids.c_str()))
         {
             codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -322,7 +322,7 @@ PyObject *ConfigDB::ListLanguages() {
     if(!DBcore::RunQuery(res,
         "SELECT "
         "   languageID,languageName,translatedLanguageName"
-        " FROM languages"
+        " FROM blkLanguages"
     ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -492,7 +492,7 @@ PyRep *ConfigDB::GetDynamicCelestials(uint32 solarSystemID) {
 
 PyRep *ConfigDB::GetTextsForGroup(const std::string & langID, uint32 textgroup) {
     DBQueryResult res;
-    if (!DBcore::RunQuery(res, "SELECT textLabel, `text` FROM intro WHERE langID = '%s' AND textgroup = %u", langID.c_str(), textgroup))
+    if (!DBcore::RunQuery(res, "SELECT textLabel, `text` FROM blkIntro WHERE langID = '%s' AND textgroup = %u", langID.c_str(), textgroup))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;

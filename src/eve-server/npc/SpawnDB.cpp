@@ -36,13 +36,13 @@ bool SpawnDB::LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup 
 
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " spawnGroups.spawnGroupID,"
-        " spawnGroups.spawnGroupName,"
-        " spawnGroups.formation"
-        " FROM spawns "
-        "   LEFT JOIN spawnGroups ON spawnGroups.spawnGroupID=spawns.spawnGroupID"
-        " WHERE spawns.solarSystemID=%u"
-        " GROUP BY spawnGroups.spawnGroupID",
+        " blkSpawnGroups.spawnGroupID,"
+        " blkSpawnGroups.spawnGroupName,"
+        " blkSpawnGroups.formation"
+        " FROM blkSpawns "
+        "   LEFT JOIN blkSpawnGroups ON blkSpawnGroups.spawnGroupID=blkSpawns.spawnGroupID"
+        " WHERE blkSpawns.solarSystemID=%u"
+        " GROUP BY blkSpawnGroups.spawnGroupID",
             solarSystemID))
     {
         codelog(SPAWN__ERROR, "Error in query: %s", res.error.c_str());
@@ -80,7 +80,7 @@ bool SpawnDB::LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup 
         " probability,"
         " ownerID,"
         " corporationID"
-        " FROM spawnGroupEntries "
+        " FROM blkSpawnGroupEntries "
         " WHERE spawnGroupID IN (%s)",
             INstr.c_str()))
     {
@@ -121,7 +121,7 @@ bool SpawnDB::LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup 
 bool SpawnDB::LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, SpawnGroup *> &groups, std::map<uint32, SpawnEntry *> &into) {
     DBQueryResult res;
 
-    //we could avoid this join by doing the `spawns` select first and collecting the
+    //we could avoid this join by doing the `blkSpawns` select first and collecting the
     //spawn group IDs needed... but this is fine for now.
 
     if(!DBcore::RunQuery(res,
@@ -132,7 +132,7 @@ bool SpawnDB::LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, Spaw
         " spawnTimer,"
         " respawnTimeMin,"
         " respawnTimeMax"
-        " FROM spawns "
+        " FROM blkSpawns "
         " WHERE solarSystemID=%u",
             solarSystemID))
     {
@@ -206,7 +206,7 @@ bool SpawnDB::LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, Spaw
         " spawnID,"
         " pointIndex,"
         " x, y, z"
-        " FROM spawnBounds "
+        " FROM blkSpawnBounds "
         " WHERE spawnID IN (%s)",
             INstr.c_str()))
     {

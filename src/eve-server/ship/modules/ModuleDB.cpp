@@ -54,7 +54,7 @@ void ModuleDB::GetAllDgmEffectsInfo(DBQueryResult &res)
     if (!DBcore::RunQuery(res,
                           " SELECT "
                           " DISTINCT(effectID) "
-                          " FROM dgmEffectsInfo "))
+                          " FROM blkDgmEffectsInfo "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -76,7 +76,7 @@ void ModuleDB::GetAllDgmSkillBonusModifiers(DBQueryResult &res)
     if (!DBcore::RunQuery(res,
                           " SELECT "
                           " DISTINCT(skillID) "
-                          " FROM dgmSkillBonusModifiers "))
+                          " FROM blkDgmSkillBonusModifiers "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -87,7 +87,7 @@ void ModuleDB::GetAllDgmShipBonusModifiers(DBQueryResult &res)
     if (!DBcore::RunQuery(res,
                           " SELECT "
                           " DISTINCT(shipID) "
-                          " FROM dgmShipBonusModifiers "))
+                          " FROM blkDgmShipBonusModifiers "))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
     }
@@ -124,7 +124,8 @@ void ModuleDB::GetDgmEffects(uint32 effectID, DBQueryResult &res)
                           " npcActivationChanceAttributeID, "
                           " fittingUsageChanceAttributeID "
                           " FROM dgmEffects "
-                          " WHERE effectID = '%u' ",
+                          " LEFT JOIN extDgmEffects ON extDgmEffects.effectID = dgmEffects.effectID "
+                          " WHERE dgmEffects.effectID = '%u' ",
                           effectID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
@@ -146,7 +147,7 @@ void ModuleDB::GetDgmEffectsInfo(uint32 effectID, DBQueryResult &res)
                           " affectingID, "
                           " affectingType, "
                           " affectedType "
-                          " FROM dgmEffectsInfo "
+                          " FROM blkDgmEffectsInfo "
                           " WHERE effectID = '%u' ",
                           effectID))
     {
@@ -182,7 +183,7 @@ void ModuleDB::GetDgmSkillBonusModifiers(uint32 skillID, DBQueryResult &res)
                           " appliedPerLevel, "
                           " affectingType, "
                           " affectedType "
-                          " FROM dgmSkillBonusModifiers "
+                          " FROM blkDgmSkillBonusModifiers "
                           " WHERE skillID = '%u' ",
                           skillID))
     {
@@ -205,7 +206,7 @@ void ModuleDB::GetDgmShipBonusModifiers(uint32 shipID, DBQueryResult &res)
                           " appliedPerLevel, "
                           " affectingType, "
                           " affectedType "
-                          " FROM dgmShipBonusModifiers "
+                          " FROM blkDgmShipBonusModifiers "
                           " WHERE shipID = '%u' ",
                           shipID))
     {

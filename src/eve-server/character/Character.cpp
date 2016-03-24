@@ -811,7 +811,7 @@ void Character::StopTraining()
     uint32 method = 38; // 38 - SkillTrainingCanceled
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "INSERT INTO chrSkillHistory "
+                          "INSERT INTO srvChrSkillHistory "
                           "(characterID, typeID, level, points, spPerMin, eventID, eventTime)"
                           " VALUES (%u, %u, %u, %f, %f, %u, %" PRId64 ")",
                           itemID(), stopTraining->typeID(), skillLevel,
@@ -952,7 +952,7 @@ SkillRef Character::StartTraining(uint32 skillID, uint64 nextStartTime)
     uint32 method = 36; // 36 - SkillTrainingStarted
     DBerror err;
     if (!DBcore::RunQuery(err,
-                          "INSERT INTO chrSkillHistory "
+                          "INSERT INTO srvChrSkillHistory "
                           "(characterID, typeID, level, points, spPerMin, eventID, eventTime)"
                           " VALUES (%u, %u, %u, %f, %f, %u, %" PRId64 ")",
                           itemID(), startTraining->typeID(), skillLevel,
@@ -1050,7 +1050,7 @@ void Character::UpdateSkillQueue()
         uint32 method = 37; // 37 - SkillTrainingComplete
         DBerror err;
         if (!DBcore::RunQuery(err,
-                              "INSERT INTO chrSkillHistory "
+                              "INSERT INTO srvChrSkillHistory "
                               "(characterID, typeID, level, points, eventID, eventTime)"
                               " VALUES (%u, %u, %u, %f, %u, %" PRId64 ")",
                               itemID(), currentTraining->typeID(), skillLevel, skillPoints, method, nextStartTime))

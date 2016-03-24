@@ -384,7 +384,7 @@ PyObject *MarketDB::GetRefTypes() {
         " billTypeID,"
         " billTypeName,"
         " description"
-        " FROM billTypes"
+        " FROM blkBillTypes"
     )) {
         _log(DATABASE__ERROR, "Failed to query bill types: %s.", res.error.c_str());
         return NULL;
@@ -439,9 +439,11 @@ PyRep *MarketDB::GetMarketGroups() {
     DBQueryResult res;
     DBResultRow row;
 
-    if(!DBcore::RunQuery(res,
-        "SELECT * "
-        " FROM invMarketGroups"))
+    if (!DBcore::RunQuery(res,
+                          "SELECT parentGroupID, invMarketGroups.marketGroupID, marketGroupName, "
+                          "description, graphicID, hasTypes, iconID, dataID, marketGroupNameID, descriptionID "
+                          " FROM invMarketGroups LEFT JOIN extInvMarketGroups ON "
+                          "invMarketGroups.marketGroupID = extInvMarketGroups.marketGroupID"))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;

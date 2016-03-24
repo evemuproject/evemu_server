@@ -293,13 +293,13 @@ PyRep *LSCDB::GetMailDetails(uint32 messageID, uint32 readerID) {
     if (!DBcore::RunQuery(result,
         " SELECT srvEveMail.messageID, srvEveMail.senderID, srvEveMail.subject, " // need messageID as char*
         " srvEveMailDetails.attachment, srvEveMailDetails.mimeTypeID, "
-        " eveMailMimeType.mimeType, eveMailMimeType.`binary`, "
+        " blkEveMailMimeType.mimeType, blkEveMailMimeType.`binary`, "
         " srvEveMail.created, srvEveMail.channelID "
         " FROM srvEveMail "
         " LEFT JOIN srvEveMailDetails"
         "    ON srvEveMailDetails.messageID = srvEveMail.messageID "
-        " LEFT JOIN eveMailMimeType"
-        "    ON eveMailMimeType.mimeTypeID = srvEveMailDetails.mimeTypeID "
+        " LEFT JOIN blkEveMailMimeType"
+        "    ON blkEveMailMimeType.mimeTypeID = srvEveMailDetails.mimeTypeID "
         " WHERE srvEveMail.messageID=%u"
         "    AND channelID=%u",
             messageID, readerID
@@ -410,20 +410,20 @@ void LSCDB::GetChannelNames(uint32 charID, std::vector<std::string> & names) {
 }
 
 
-// Function: Query 'channels' table for a list of all channelIDs and traverse that list from the beginning to find
+// Function: Query 'srvChannels' table for a list of all channelIDs and traverse that list from the beginning to find
 // the first gap in consecutive channelIDs and return the value for the first number in that gap.
 uint32 LSCDB::GetNextAvailableChannelID()
 {
     DBQueryResult res;
 
-    // Query the 'channels' table to get a list of all channel IDs.
+    // Query the 'srvChannels' table to get a list of all channel IDs.
     // NOTE: For large servers, this is inefficient and as everything in this file should be using
     // the cached object system rather than touching the database, this query could cause large server slow-down
     // if there is a very large number of existing channels in the database.
     if( !DBcore::RunQuery( res,
         " SELECT "
         "    channelID "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE channelID >= %u ", LSCService::BASE_CHANNEL_ID ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -460,11 +460,11 @@ bool LSCDB::IsChannelNameAvailable(std::string name)
 {
     DBQueryResult res;
 
-    // MySQL query channels table for any channel whose displayName matches "name":
+    // MySQL query srvChannels table for any channel whose displayName matches "name":
     if (!DBcore::RunQuery(res,
         " SELECT "
         "    displayName "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE displayName = upper('%s')", name.c_str()))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -490,7 +490,7 @@ bool LSCDB::IsChannelIDAvailable(uint32 channelID)
     if (!DBcore::RunQuery(res,
         " SELECT "
         "    channelID "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE channelID = %u", channelID ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -534,7 +534,7 @@ bool LSCDB::IsChannelSubscribedByThisChar(uint32 charID, uint32 channelID)
 }
 
 
-// Function: Query 'channels' table for the channel whose 'displayName' matches the name specified,
+// Function: Query 'srvChannels' table for the channel whose 'displayName' matches the name specified,
 // then return all parameters for that channel.
 void LSCDB::GetChannelInformation(std::string & name, uint32 & id,
         std::string & motd, uint32 & ownerid, std::string & compkey,
@@ -556,7 +556,7 @@ void LSCDB::GetChannelInformation(std::string & name, uint32 & id,
         "   cspa, "
         "   temporary, "
         "   mode "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE displayName = upper('%s')", name.c_str()))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -572,12 +572,12 @@ void LSCDB::GetChannelInformation(std::string & name, uint32 & id,
     }
 
     id = row.GetUInt(0);
-    name = (row.GetText(1) == NULL ? "" : row.GetText(1));    // empty displayName field in channels table row returns NULL, so fill this string with "" in that case
-    motd = (row.GetText(2) == NULL ? "" : row.GetText(2));    // empty motd field in channels table row returns NULL, so fill this string with "" in that case
+    name = (row.GetText(1) == NULL ? "" : row.GetText(1)); // empty displayName field in srvChannels table row returns NULL, so fill this string with "" in that case
+    motd = (row.GetText(2) == NULL ? "" : row.GetText(2)); // empty motd field in srvChannels table row returns NULL, so fill this string with "" in that case
     ownerid = row.GetUInt(3);
-    compkey = (row.GetText(4) == NULL ? "" : row.GetText(4));    // empty comparisonKey field in channels table row returns NULL, so fill this string with "" in that case
+    compkey = (row.GetText(4) == NULL ? "" : row.GetText(4)); // empty comparisonKey field in srvChannels table row returns NULL, so fill this string with "" in that case
     memberless = row.GetUInt(5) ? true : false;
-    password = (row.GetText(6) == NULL ? "" : row.GetText(6));    // empty password field in channels table row returns NULL, so fill this string with "" in that case
+    password = (row.GetText(6) == NULL ? "" : row.GetText(6)); // empty password field in srvChannels table row returns NULL, so fill this string with "" in that case
     maillist = row.GetUInt(7) ? true : false;
     cspa = row.GetUInt(8);
     temp = row.GetUInt(9);
@@ -585,7 +585,7 @@ void LSCDB::GetChannelInformation(std::string & name, uint32 & id,
 }
 
 
-// Function: Query 'channels' table for the channel whose 'channelID' matches the ID specified,
+// Function: Query 'srvChannels' table for the channel whose 'channelID' matches the ID specified,
 // then return all parameters for that channel.
 void LSCDB::GetChannelInformation(uint32 channelID, std::string & name,
         std::string & motd, uint32 & ownerid, std::string & compkey,
@@ -607,7 +607,7 @@ void LSCDB::GetChannelInformation(uint32 channelID, std::string & name,
         "   cspa, "
         "   temporary, "
         "   mode "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE channelID = %u", channelID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -622,19 +622,17 @@ void LSCDB::GetChannelInformation(uint32 channelID, std::string & name,
             return;
     }
 
-    name = (row.GetText(1) == NULL ? "" : row.GetText(1));    // empty displayName field in channels table row returns NULL, so fill this string with "" in that case
-    motd = (row.GetText(2) == NULL ? "" : row.GetText(2));    // empty motd field in channels table row returns NULL, so fill this string with "" in that case
+    name = (row.GetText(1) == NULL ? "" : row.GetText(1)); // empty displayName field in srvChannels table row returns NULL, so fill this string with "" in that case
+    motd = (row.GetText(2) == NULL ? "" : row.GetText(2)); // empty motd field in srvChannels table row returns NULL, so fill this string with "" in that case
     ownerid = row.GetUInt(3);
-    compkey = (row.GetText(4) == NULL ? "" : row.GetText(4));    // empty comparisonKey field in channels table row returns NULL, so fill this string with "" in that case
+    compkey = (row.GetText(4) == NULL ? "" : row.GetText(4)); // empty comparisonKey field in srvChannels table row returns NULL, so fill this string with "" in that case
     memberless = row.GetUInt(5) ? true : false;
-    password = (row.GetText(6) == NULL ? "" : row.GetText(6));    // empty password field in channels table row returns NULL, so fill this string with "" in that case
+    password = (row.GetText(6) == NULL ? "" : row.GetText(6)); // empty password field in srvChannels table row returns NULL, so fill this string with "" in that case
     maillist = row.GetUInt(7) ? true : false;
     cspa = row.GetUInt(8);
     temp = row.GetUInt(9);
     mode = row.GetUInt(10);
 }
-
-
 
 // Function: Query the 'srvChannelChars' table for all channels subscribed to by the character specified by charID and
 // return lists of parameters for all of those channels as well as a total channel count.
@@ -645,7 +643,7 @@ void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & 
 {
     DBQueryResult res;
 
-    // Cross-reference "srvChannelChars" table with "channels" table using the charID
+    // Cross-reference "srvChannelChars" table with "srvChannels" table using the charID
     // The result is a two column multi-row structure where each row is a channel
     // that the character (charID) is subscribed to where the channel ID is presented
     // in the first column and the display name of that channel in the second column
@@ -662,7 +660,7 @@ void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & 
         "   cspa, "
         "   temporary, "
         "   mode "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE channelID = ANY ("
         "   SELECT channelID FROM srvChannelChars WHERE charID = %u )", charID))
     {
@@ -680,12 +678,12 @@ void LSCDB::GetChannelSubscriptions(uint32 charID, std::vector<unsigned long> & 
         ++rowCount;
 
         ids.push_back(row.GetUInt(0));
-        names.push_back((row.GetText(1) == NULL ? "" : row.GetText(1)));    // empty displayName field in channels table row returns NULL, so fill this string with "" in that case
-        MOTDs.push_back((row.GetText(2) == NULL ? "" : row.GetText(2)));    // empty motd field in channels table row returns NULL, so fill this string with "" in that case
+        names.push_back((row.GetText(1) == NULL ? "" : row.GetText(1))); // empty displayName field in srvChannels table row returns NULL, so fill this string with "" in that case
+        MOTDs.push_back((row.GetText(2) == NULL ? "" : row.GetText(2))); // empty motd field in srvChannels table row returns NULL, so fill this string with "" in that case
         ownerids.push_back(row.GetUInt(3));
-        compkeys.push_back((row.GetText(4) == NULL ? "" : row.GetText(4)));    // empty comparisonKey field in channels table row returns NULL, so fill this string with "" in that case
+        compkeys.push_back((row.GetText(4) == NULL ? "" : row.GetText(4))); // empty comparisonKey field in srvChannels table row returns NULL, so fill this string with "" in that case
         memberless.push_back(row.GetUInt(5));
-        passwords.push_back((row.GetText(6) == NULL ? "" : row.GetText(6)));    // empty password field in channels table row returns NULL, so fill this string with "" in that case
+        passwords.push_back((row.GetText(6) == NULL ? "" : row.GetText(6))); // empty password field in srvChannels table row returns NULL, so fill this string with "" in that case
         maillists.push_back(row.GetUInt(7));
         cspas.push_back(row.GetUInt(8));
         temps.push_back(row.GetUInt(9));
@@ -709,7 +707,7 @@ std::string LSCDB::GetChannelInfo(uint32 channelID, std::string & name, std::str
         " SELECT "
         "    displayName, "
         "   motd "
-        " FROM channels "
+                          " FROM srvChannels "
         " WHERE channelID = %u ", channelID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
@@ -720,8 +718,9 @@ std::string LSCDB::GetChannelInfo(uint32 channelID, std::string & name, std::str
 
     DBResultRow row;
 
-    if (!res.GetRow(row)) {
-        _log(SERVICE__ERROR, "Couldn't find %u in table channels", channelID);
+    if (!res.GetRow(row))
+    {
+        _log(SERVICE__ERROR, "Couldn't find %u in table srvChannels", channelID);
         char err[20];
         snprintf(err, 20, "Unknown %u", channelID);
         return(err);
@@ -741,7 +740,7 @@ uint32 LSCDB::GetChannelIDFromComparisonKey(std::string compkey)
     if(!DBcore::RunQuery(res,
         "SELECT "
         "    channelID "
-        " FROM channels"
+                         " FROM srvChannels"
         " WHERE comparisonKey RLIKE '%s'",
         compkey.c_str()
     ))
@@ -752,8 +751,9 @@ uint32 LSCDB::GetChannelIDFromComparisonKey(std::string compkey)
 
     DBResultRow row;
 
-    if (!res.GetRow(row)) {
-        _log(SERVICE__ERROR, "Couldn't find %s in table channels", compkey.c_str());
+    if (!res.GetRow(row))
+    {
+        _log(SERVICE__ERROR, "Couldn't find %s in table srvChannels", compkey.c_str());
         return 0;
     }
 
@@ -811,7 +811,7 @@ int LSCDB::WriteNewChannelSubscriptionToDatabase(uint32 characterID, uint32 chan
 
 
 // Function: Take channelID, channel name, the characterID of the character creating the channel, and a flag
-// indicating whether this channel is a private convo (temporary), then create a new entry in the 'channels'
+// indicating whether this channel is a private convo (temporary), then create a new entry in the 'srvChannels'
 // table.
 int LSCDB::WriteNewChannelToDatabase(uint32 channelID, std::string name, uint32 ownerID, uint32 temporary, uint32 mode)
 {
@@ -820,7 +820,7 @@ int LSCDB::WriteNewChannelToDatabase(uint32 channelID, std::string name, uint32 
     DBResultRow row;
 
     if (!DBcore::RunQuery(err,
-        " INSERT INTO channels "
+                          " INSERT INTO srvChannels "
         "      (channelID, ownerID, displayName, motd, comparisonKey, memberless, password, mailingList,"
         "       cspa, temporary, mode, subscribed, estimatedMemberCount) "
         " VALUES (%u, %u, '%s', '%s', '%s', 0, NULL, 0, 0, %u, %u, 1, 1) ",
@@ -836,8 +836,8 @@ int LSCDB::WriteNewChannelToDatabase(uint32 channelID, std::string name, uint32 
 
 
 // Function: Accept pointer to a LSCChannel object for the channel being updated in its
-// existing entry in the 'channels' table.  Take all channel parameters and write them to the
-// selected 'channels' table entry based on channelID
+// existing entry in the 'srvChannels' table.  Take all channel parameters and write them to the
+// selected 'srvChannels' table entry based on channelID
 int LSCDB::UpdateChannelConfigureInfo(LSCChannel * channel)
 {
     DBerror err;
@@ -851,7 +851,7 @@ int LSCDB::UpdateChannelConfigureInfo(LSCChannel * channel)
         new_password = "'" + channel->GetPassword() + "'";
 
     if (!DBcore::RunQuery(err,
-        " UPDATE channels "
+                          " UPDATE srvChannels "
         " SET "
         " displayName = '%s', "
         " motd = '%s', "
@@ -907,14 +907,14 @@ int LSCDB::RemoveChannelSubscriptionFromDatabase(uint32 channelID, uint32 charID
 }
 
 
-// Function: Remove the chat channel from the 'channels' table using specified channelID
+// Function: Remove the chat channel from the 'srvChannels' table using specified channelID
 int LSCDB::RemoveChannelFromDatabase(uint32 channelID)
 {
     DBerror err;
     bool ret = true;
 
     if (!DBcore::RunQuery(err,
-        " DELETE FROM channels "
+                          " DELETE FROM srvChannels "
         " WHERE channelID=%u", channelID
         ))
     {

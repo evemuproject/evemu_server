@@ -30,7 +30,7 @@
 PyObject *AccountDB::GetEntryTypes() {
     DBQueryResult res;
 
-    if(!DBcore::RunQuery(res, "SELECT refTypeID AS entryTypeID,refTypeText AS entryTypeName,description FROM market_refTypes"))
+    if(!DBcore::RunQuery(res, "SELECT refTypeID AS entryTypeID,refTypeText AS entryTypeName,description FROM blkMarketRefTypes"))
     {
         SysLog::Error("Account DB", "Error in query: %s", res.error.c_str());
         return NULL;
@@ -42,7 +42,7 @@ PyObject *AccountDB::GetEntryTypes() {
 PyObject *AccountDB::GetKeyMap() {
     DBQueryResult res;
 
-    if(!DBcore::RunQuery(res, "SELECT accountKey AS keyID,accountType AS keyType,accountName AS keyName,description FROM market_keyMap"))
+    if (!DBcore::RunQuery(res, "SELECT accountKey AS keyID,accountType AS keyType,accountName AS keyName,description FROM blkMarketKeyMap"))
     {
         SysLog::Error("Account DB", "Error in query: %s", res.error.c_str());
         return NULL;

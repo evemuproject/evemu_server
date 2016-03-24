@@ -32,8 +32,8 @@ PyRep *TutorialDB::GetPageCriterias(uint32 tutorialID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT pageID, criteriaID"
-        " FROM tutorial_pages"
-        " JOIN tutorial_page_criteria USING (pageID)"
+        " FROM blkTutorialPages"
+        " JOIN blkTutorialPageCriteria USING (pageID)"
         " WHERE tutorialID=%u", tutorialID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
@@ -48,7 +48,7 @@ PyRep *TutorialDB::GetPages(uint32 tutorialID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT pageID, pageNumber, pageName, text, imagePath, audioPath, 0 AS dataID"
-        " FROM tutorial_pages"
+        " FROM blkTutorialPages"
         " WHERE tutorialID=%u"
         " ORDER BY pageNumber", tutorialID))
     {
@@ -64,7 +64,7 @@ PyRep *TutorialDB::GetTutorial(uint32 tutorialID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT tutorialID, tutorialName, nextTutorialID, 0 AS dataID"
-        " FROM tutorials"
+        " FROM blkTutorials"
         " WHERE tutorialID=%u", tutorialID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
@@ -79,7 +79,7 @@ PyRep *TutorialDB::GetTutorialCriterias(uint32 tutorialID) {
 
     if(!DBcore::RunQuery(res,
         "SELECT criteriaID"
-        " FROM tutorials_criterias"
+        " FROM blkTutorialsCriterias"
         " WHERE tutorialID=%u", tutorialID))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
@@ -94,7 +94,7 @@ PyRep *TutorialDB::GetAllTutorials() {
 
     if(!DBcore::RunQuery(res,
         "SELECT tutorialID, tutorialName, nextTutorialID, categoryID, 0 AS dataID"
-        " FROM tutorials"))
+        " FROM blkTutorials"))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -108,7 +108,7 @@ PyRep *TutorialDB::GetAllCriterias() {
 
     if(!DBcore::RunQuery(res,
         "SELECT criteriaID, criteriaName, messageText, audioPath, 0 AS dataID"
-        " FROM tutorial_criteria"))
+        " FROM blkTutorialCriteria"))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -123,7 +123,7 @@ PyRep *TutorialDB::GetCategories() {
     if(!DBcore::RunQuery(res,
         "SELECT"
         " categoryID, categoryName, description, 0 AS dataID"
-        " FROM tutorial_categories"))
+        " FROM blkTutoriaCategories"))
     {
         _log(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;

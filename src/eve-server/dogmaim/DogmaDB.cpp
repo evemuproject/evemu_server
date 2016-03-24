@@ -40,7 +40,7 @@ PyRep *DogmaDB::GetOperand() {
         " arg2categoryID,"
         " resultCategoryID,"
         " pythonFormat"
-        " FROM operand"
+        " FROM blkOperand"
         ))
     {
         _log(DATABASE__ERROR, "Failed to query war factions: %s.", res.error.c_str());
