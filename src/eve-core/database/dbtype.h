@@ -26,6 +26,8 @@
 #ifndef __DBTYPE_H__INCL__
 #define __DBTYPE_H__INCL__
 
+#include "eve-compat.h"
+
 /*
 0x10 = "DBTYPE_I1"
 0x11 = "DBTYPE_UI1"

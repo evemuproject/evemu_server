@@ -240,6 +240,7 @@ ENDIF( EVEMU_TARGETS_IMPORT )
 ADD_SUBDIRECTORY( "src/eve-core" )
 ADD_SUBDIRECTORY( "src/eve-xmlpktgen" )
 ADD_SUBDIRECTORY( "src/eve-common" )
+ADD_SUBDIRECTORY( "src/eve-static" )
 ADD_SUBDIRECTORY( "src/eve-server" )
 
 ###############

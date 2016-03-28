@@ -21,9 +21,10 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:     Zhur, mmcs
-*/
+ */
 
 #include "eve-server.h"
+#include "eveStatic.h"
 
 #include "EVEServerConfig.h"
 #include "NetService.h"
@@ -242,11 +243,12 @@ int main( int argc, char* argv[] )
     }
 
     //make the item factory
-  SysLog::Log("Server Init", "starting item factory");
+    SysLog::Log("Server Init", "Loading static data.");
+    EVEStatic::loadStaticData();
 
     //now, the service manager...
     PyServiceMgr::Init(888444);
-  SysLog::Log("Server Init", "starting service manager");
+    SysLog::Log("Server Init", "starting service manager");
 
     //setup the command dispatcher
     CommandDispatcher command_dispatcher;

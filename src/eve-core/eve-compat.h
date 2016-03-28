@@ -26,6 +26,14 @@
 #ifndef __EVE_COMPAT_H__INCL__
 #define __EVE_COMPAT_H__INCL__
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif /* HAVE_INTTYPES_H */
+#include <string>
+
 /*************************************************************************/
 /* crtdbg.h                                                              */
 /*************************************************************************/
