@@ -124,7 +124,7 @@ void ModuleDB::GetDgmEffects(uint32 effectID, DBQueryResult &res)
                           " npcActivationChanceAttributeID, "
                           " fittingUsageChanceAttributeID "
                           " FROM dgmEffects "
-                          " LEFT JOIN extDgmEffects ON extDgmEffects.effectID = dgmEffects.effectID "
+                          " LEFT JOIN extDgmEffects Using(effectID)"
                           " WHERE dgmEffects.effectID = '%u' ",
                           effectID))
     {
