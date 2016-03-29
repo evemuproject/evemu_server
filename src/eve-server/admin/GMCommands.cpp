@@ -42,6 +42,7 @@
 #include "PyServiceMgr.h"
 #include "market/NPCMarket.h"
 #include "network/packet_types.h"
+#include "inv/InvType.h"
 
 #include <vector>
 #include <algorithm>
@@ -474,11 +475,6 @@ PyResult Command_goto( Client* who, const Seperator& args)
 PyResult Command_spawnn( Client* who, const Seperator& args )
 {
     uint32 typeID = 0;
-    uint32 actualTypeID = 0;
-    std::string actualTypeName = "";
-    uint32 actualGroupID = 0;
-    uint32 actualCategoryID = 0;
-    double actualRadius = 0.0;
     InventoryItemRef item;
     ShipRef ship;
 
@@ -503,24 +499,25 @@ PyResult Command_spawnn( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "You must be in space to spawn things." ) );
 
     // Search for item type using typeID:
-    if (!(CommandDB::ItemSearch(typeID, actualTypeID, actualTypeName, actualGroupID, actualCategoryID, actualRadius)))
+    InvTypeRef type;
+    if (!InvType::getType(typeID, type))
     {
-        return new PyString( "Unknown typeID or typeName returned no matches." );
+        return new PyString("Unknown typeID or typeName returned no matches.");
     }
 
     GPoint loc( who->GetPosition() );
     // Calculate a random coordinate on the sphere centered on the player's position with
     // a radius equal to the radius of the ship/celestial being spawned times 10 for really good measure of separation:
-    double radius = (actualRadius * 5.0) * (double)(MakeRandomInt( 1, 3));     // Scale the distance from player that the object will spawn to between 10x and 15x the object's radius
+    double radius = (type->radius * 5.0) * (double) (MakeRandomInt(1, 3)); // Scale the distance from player that the object will spawn to between 10x and 15x the object's radius
     loc.MakeRandomPointOnSphere( radius );
 
     // Spawn the item:
     ItemData idata(
-        actualTypeID,
+                   type->typeID,
         1, // owner is EVE System
         who->GetLocationID(),
         flagAutoFit,
-        actualTypeName.c_str(),
+                   type->typeName.c_str(),
         loc
     );
 
@@ -531,15 +528,15 @@ PyResult Command_spawnn( Client* who, const Seperator& args )
     DBSystemDynamicEntity entity;
 
     entity.allianceID = 0;
-    entity.categoryID = actualCategoryID;
+    entity.categoryID = type->getCategoryID();
     entity.corporationID = 0;
     entity.flag = 0;
-    entity.groupID = actualGroupID;
+    entity.groupID = type->groupID;
     entity.itemID = item->itemID();
-    entity.itemName = actualTypeName;
+    entity.itemName = type->typeName;
     entity.locationID = who->GetLocationID();
     entity.ownerID = 1;
-    entity.typeID = actualTypeID;
+    entity.typeID = type->typeID;
     entity.x = loc.x;
     entity.y = loc.y;
     entity.z = loc.z;
@@ -559,11 +556,6 @@ PyResult Command_spawn( Client* who, const Seperator& args )
 	uint32 spawnCount = 1;
 	uint32 spawnIndex = 0;
 	uint32 maximumSpawnCountAllowed = 100;
-    uint32 actualTypeID = 0;
-    std::string actualTypeName = "";
-    uint32 actualGroupID = 0;
-    uint32 actualCategoryID = 0;
-    double actualRadius = 0.0;
     InventoryItemRef item;
     ShipRef ship;
     double radius;
@@ -583,19 +575,24 @@ PyResult Command_spawn( Client* who, const Seperator& args )
     typeID = atoi( args.arg( 1 ).c_str() );
 
     // Search for item type using typeID:
-    if (!(CommandDB::ItemSearch(typeID, actualTypeID, actualTypeName, actualGroupID, actualCategoryID, actualRadius)))
+    InvTypeRef type;
+    if (!InvType::getType(typeID, type))
     {
-        return new PyString( "Unknown typeID or typeName returned no matches." );
+        return new PyString("Unknown typeID or typeName returned no matches.");
     }
 
 	if( args.argCount() > 2 )
     {
-		if( !(args.isNumber(2)) )
-            throw PyException( MakeCustomError( "Argument 3 should be the number of spawns of this type you want to create" ) );
+        if (!(args.isNumber(2)))
+        {
+            throw PyException(MakeCustomError("Argument 3 should be the number of spawns of this type you want to create"));
+        }
 
 		spawnCount = atoi( args.arg(2).c_str() );
-		if( spawnCount > maximumSpawnCountAllowed)
-            throw PyException( MakeCustomError( "Argument 3, spawn count, is allowed to be no more than 100" ) );
+        if (spawnCount > maximumSpawnCountAllowed)
+        {
+            throw PyException(MakeCustomError("Argument 3, spawn count, is allowed to be no more than 100"));
+        }
 	}
 
     // Check to see if the X Y Z optional coordinates were supplied with the command:
@@ -645,17 +642,17 @@ PyResult Command_spawn( Client* who, const Seperator& args )
 		{
 			// Calculate a random coordinate on the sphere centered on the player's position with
 			// a radius equal to the radius of the ship/celestial being spawned times 10 for really good measure of separation:
-			radius = (actualRadius * 5.0) * (double)(MakeRandomInt( 1, 3));     // Scale the distance from player that the object will spawn to between 10x and 15x the object's radius
+            radius = (type->radius * 5.0) * (double) (MakeRandomInt(1, 3)); // Scale the distance from player that the object will spawn to between 10x and 15x the object's radius
 			loc.MakeRandomPointOnSphere( radius );
 		}
 
 		// Spawn the item:
 		ItemData idata(
-			actualTypeID,
+                    type->typeID,
 			1, // owner is EVE System
 			who->GetLocationID(),
 			flagAutoFit,
-			actualTypeName.c_str(),
+                    type->typeName.c_str(),
 			loc
 		);
 
@@ -666,15 +663,15 @@ PyResult Command_spawn( Client* who, const Seperator& args )
 		DBSystemDynamicEntity entity;
 
 		entity.allianceID = 0;
-		entity.categoryID = actualCategoryID;
+        entity.categoryID = type->getCategoryID();
 		entity.corporationID = 0;
 		entity.flag = 0;
-		entity.groupID = actualGroupID;
+        entity.groupID = type->groupID;
 		entity.itemID = item->itemID();
-		entity.itemName = actualTypeName;
+        entity.itemName = type->typeName;
 		entity.locationID = who->GetLocationID();
 		entity.ownerID = 1;
-		entity.typeID = actualTypeID;
+        entity.typeID = type->typeID;
 		entity.x = loc.x;
 		entity.y = loc.y;
 		entity.z = loc.z;

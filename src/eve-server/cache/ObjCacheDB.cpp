@@ -27,6 +27,8 @@
 
 #include "cache/ObjCacheDB.h"
 
+#include "eveStatic.h"
+
 //register all the generators
 std::map<std::string, ObjCacheDB::genFunc> ObjCacheDB::m_generators = {
     { "charNewExtraCreationInfo.raceskills", &ObjCacheDB::Generate_CharNewExtraRaceSkills},
@@ -432,14 +434,7 @@ PyRep *ObjCacheDB::Generate_AllianceShortnames()
 
 PyRep *ObjCacheDB::Generate_invCategories()
 {
-    DBQueryResult res;
-    const char *q = "SELECT categoryID, categoryName, description, 0 as graphicID, iconID, published, 0 as dataID FROM invCategories";
-    if(DBcore::RunQuery(res, q)==false)
-    {
-        _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.categories': %s",res.error.c_str());
-        return NULL;
-    }
-    return DBResultToCRowset(res);
+    return EVEStatic::getInvCategoriesCache();
 }
 
 PyRep *ObjCacheDB::Generate_invTypeReactions()
@@ -612,14 +607,7 @@ PyRep *ObjCacheDB::Generate_tickerNames()
 
 PyRep *ObjCacheDB::Generate_invGroups()
 {
-    DBQueryResult res;
-    const char *q = "SELECT groupID, categoryID, groupName, description, iconID, 0 as graphicID, useBasePrice, allowManufacture, allowRecycler, anchored, anchorable, fittableNonSingleton, 1 AS published, 0 AS dataID FROM invGroups";
-    if(DBcore::RunQuery(res, q)==false)
-    {
-        _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.groups': %s", res.error.c_str());
-        return NULL;
-    }
-    return DBResultToCRowset(res);
+    return EVEStatic::getInvGroupsCache();
 }
 
 PyRep *ObjCacheDB::Generate_certificates()
@@ -711,17 +699,7 @@ PyRep *ObjCacheDB::Generate_eveGraphics()
 
 PyRep *ObjCacheDB::Generate_invTypes()
 {
-    DBQueryResult res;
-    const char *q = "SELECT typeID, groupID, typeName, description, graphicID, radius, mass, volume,"
-            " capacity, portionSize, raceID, basePrice, published, marketGroupID,"
-            " chanceOfDuplicating, extInvTypes.soundID, iconID, dataID, typeNameID, descriptionID"
-            " FROM invTypes LEFT JOIN extInvTypes USING(typeID)";
-    if(DBcore::RunQuery(res, q)==false)
-    {
-        _log(SERVICE__ERROR, "Error in query for cached object 'config.BulkData.types': %s", res.error.c_str());
-        return NULL;
-    }
-    return DBResultToCRowset(res);
+    return EVEStatic::getInvTypesCache();
 }
 
 PyRep *ObjCacheDB::Generate_invMetaTypes()
