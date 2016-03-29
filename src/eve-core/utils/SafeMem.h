@@ -26,6 +26,8 @@
 #ifndef __UTILS__SAFE_MEM_H__INCL__
 #define __UTILS__SAFE_MEM_H__INCL__
 
+#include <cstring>
+
 /**
  * @brief Allocates and zero-initializes memory.
  *

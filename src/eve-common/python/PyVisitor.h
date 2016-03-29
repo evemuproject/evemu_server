@@ -26,6 +26,8 @@
 #ifndef __PY_VISITOR_H__INCL__
 #define __PY_VISITOR_H__INCL__
 
+#include <stack>
+
 class PyRep;
 class PyInt;
 class PyLong;

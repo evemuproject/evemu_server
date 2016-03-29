@@ -26,6 +26,9 @@
 #ifndef __UTILS__REF_PTR_H__INCL__
 #define __UTILS__REF_PTR_H__INCL__
 
+#include "eve-compat.h"
+#include <assert.h>
+
 /**
  * ENABLE_REF_TRACE
  *

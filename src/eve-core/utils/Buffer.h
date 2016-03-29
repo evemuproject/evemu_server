@@ -27,6 +27,7 @@
 #define __UTILS__BUFFER_H__INCL__
 
 #include "utils/misc.h"
+#include "utils/SafeMem.h"
 
 /**
  * @brief Generic class for buffers.

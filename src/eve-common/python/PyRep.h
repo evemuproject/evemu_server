@@ -26,6 +26,13 @@
 #ifndef EVE_PY_REP_H
 #define EVE_PY_REP_H
 
+#include "utils/RefPtr.h"
+#include "log/logsys.h"
+#include "utils/Buffer.h"
+
+#include <vector>
+#include <unordered_map>
+
 /* note: this will decrease memory use with 50% but increase load time with 50%
  * enabling this would have to wait until references work properly. Or when
  * you operate the server using the cache store system this can also be enabled.
