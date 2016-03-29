@@ -31,6 +31,8 @@
 #include <memory>
 #include <map>
 
+#include "InvGroup.h"
+
 class InvType;
 typedef std::shared_ptr<InvType> InvTypeRef;
 
@@ -38,22 +40,22 @@ class InvType
 {
 public:
     InvType(uint32 _typeID,
-             uint32 _groupID,
+            uint32 _groupID,
             std::string &_typeName,
             std::string &_description,
-             uint32 _graphicID,
-             double _radius,
-             double _mass,
-             double _volume,
-             double _capacity,
-             uint32 _portionSize,
-             uint32 _raceID,
-             double _basePrice,
-             bool _published,
-             uint32 _marketGroupID,
-             double _chanceOfDuplicating,
-             uint32 _iconID
-             );
+            uint32 _graphicID,
+            double _radius,
+            double _mass,
+            double _volume,
+            double _capacity,
+            uint32 _portionSize,
+            uint32 _raceID,
+            double _basePrice,
+            bool _published,
+            uint32 _marketGroupID,
+            double _chanceOfDuplicating,
+            uint32 _iconID
+            );
 
     // From invTypes.
     const uint32 typeID;
@@ -106,6 +108,24 @@ public:
         }
         type = itr->second;
         return true;
+    }
+
+    /**
+     * Get the types group.
+     * @return The InvGroup.
+     */
+    InvGroupRef getGroup()
+    {
+        return InvGroup::getGroup(groupID);
+    }
+
+    /**
+     * Get the types category.
+     * @return The InvCategory.
+     */
+    InvCategoryRef getCategory()
+    {
+        return InvCategory::getCategory(getCategoryID());
     }
 
 private:

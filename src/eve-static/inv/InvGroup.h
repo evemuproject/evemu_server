@@ -32,6 +32,8 @@
 #include <map>
 #include <vector>
 
+#include "InvCategory.h"
+
 class InvGroup;
 typedef std::shared_ptr<InvGroup> InvGroupRef;
 
@@ -97,6 +99,15 @@ public:
         }
         type = itr->second;
         return true;
+    }
+
+    /**
+     * Get the groups category.
+     * @return The InvCategory.
+     */
+    InvCategoryRef getCategory()
+    {
+        return InvCategory::getCategory(categoryID);
     }
 
     /**
