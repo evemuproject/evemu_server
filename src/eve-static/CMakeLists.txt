@@ -22,10 +22,14 @@ SET( SOURCE
  )
 
 SET( inv_INCLUDE
-     "${TARGET_INCLUDE_DIR}/inv/invTypes.h"
+     "${TARGET_INCLUDE_DIR}/inv/InvType.h"
+     "${TARGET_INCLUDE_DIR}/inv/InvGroup.h"
+     "${TARGET_INCLUDE_DIR}/inv/InvCategory.h"
 )
 SET( inv_SOURCE
-     "${TARGET_SOURCE_DIR}/inv/invTypes.cpp"
+     "${TARGET_SOURCE_DIR}/inv/InvType.cpp"
+     "${TARGET_SOURCE_DIR}/inv/InvGroup.cpp"
+     "${TARGET_SOURCE_DIR}/inv/InvCategory.cpp"
 )
 
 

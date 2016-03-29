@@ -23,39 +23,62 @@
     Author:        eve-moo
  */
 
-#ifndef EVESTATIC_H
-#define	EVESTATIC_H
+#include <map>
 
-#include "python/PyRep.h"
+#include "InvType.h"
+#include "log/SystemLog.h"
+#include "InvGroup.h"
 
-class EVEStatic
+std::map<uint32, InvTypeRef> InvType::s_AllTypes;
+
+InvType::InvType(uint32 _typeID,
+                 uint32 _groupID,
+                 std::string &_typeName,
+                 std::string &_description,
+                 uint32 _graphicID,
+                 double _radius,
+                 double _mass,
+                 double _volume,
+                 double _capacity,
+                 uint32 _portionSize,
+                 uint32 _raceID,
+                 double _basePrice,
+                 bool _published,
+                 uint32 _marketGroupID,
+                 double _chanceOfDuplicating,
+                 uint32 _iconID
+                 ) :
+typeID(_typeID),
+groupID(_groupID),
+typeName(_typeName),
+description(_description),
+graphicID(_graphicID),
+radius(_radius),
+mass(_mass),
+volume(_volume),
+capacity(_capacity),
+portionSize(_portionSize),
+raceID(_raceID),
+basePrice(_basePrice),
+published(_published),
+marketGroupID(_marketGroupID),
+chanceOfDuplicating(_chanceOfDuplicating),
+iconID(_iconID)
 {
-public:
-    static bool loadStaticData();
-
-    static PyRep *getInvTypesCache()
+    s_AllTypes[typeID] = InvTypeRef(this, [](InvType * type)
     {
+        delete type;
+    });
+}
 
-        return m_InvTypesCache;
-    }
+InvType::~InvType() { }
 
-    static PyRep *getInvGroupsCache()
+uint32 InvType::getCategoryID()
+{
+    InvGroupRef group;
+    if (InvGroup::getGroup(groupID, group))
     {
-
-        return m_InvGroupsCache;
+        return group->categoryID;
     }
-
-    static PyRep *getInvCategoriesCache()
-    {
-
-        return m_InvCategoriesCache;
-    }
-private:
-    static bool staticLoaded;
-    static PyRep *m_InvTypesCache;
-    static PyRep *m_InvGroupsCache;
-    static PyRep *m_InvCategoriesCache;
-};
-
-#endif	/* EVESTATIC_H */
-
+    return 0;
+}
