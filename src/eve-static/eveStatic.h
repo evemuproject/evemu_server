@@ -50,11 +50,18 @@ public:
 
         return m_InvCategoriesCache;
     }
+
+    static PyRep *getInvBlueprintTypesCache()
+    {
+
+        return m_InvBlueprintTypesCache;
+    }
 private:
     static bool staticLoaded;
     static PyRep *m_InvTypesCache;
     static PyRep *m_InvGroupsCache;
     static PyRep *m_InvCategoriesCache;
+    static PyRep *m_InvBlueprintTypesCache;
 };
 
 #endif	/* EVESTATIC_H */

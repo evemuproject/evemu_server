@@ -25,11 +25,13 @@ SET( inv_INCLUDE
      "${TARGET_INCLUDE_DIR}/inv/InvType.h"
      "${TARGET_INCLUDE_DIR}/inv/InvGroup.h"
      "${TARGET_INCLUDE_DIR}/inv/InvCategory.h"
+     "${TARGET_INCLUDE_DIR}/inv/InvBlueprintType.h"
 )
 SET( inv_SOURCE
      "${TARGET_SOURCE_DIR}/inv/InvType.cpp"
      "${TARGET_SOURCE_DIR}/inv/InvGroup.cpp"
      "${TARGET_SOURCE_DIR}/inv/InvCategory.cpp"
+     "${TARGET_SOURCE_DIR}/inv/InvBlueprintType.cpp"
 )
 
 

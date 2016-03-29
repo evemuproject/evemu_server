@@ -27,6 +27,7 @@
 #include "inv/InvType.h"
 #include "inv/InvGroup.h"
 #include "inv/InvCategory.h"
+#include "inv/InvBlueprintType.h"
 
 #include "python/classes/PyDatabase.h"
 #include "python/PyVisitor.h"
@@ -39,6 +40,7 @@ bool EVEStatic::staticLoaded = false;
 PyRep *EVEStatic::m_InvTypesCache = nullptr;
 PyRep *EVEStatic::m_InvGroupsCache = nullptr;
 PyRep *EVEStatic::m_InvCategoriesCache = nullptr;
+PyRep *EVEStatic::m_InvBlueprintTypesCache = nullptr;
 
 /**
  * Get a database row string value with null check.
@@ -129,7 +131,6 @@ bool EVEStatic::loadStaticData()
     // Load the invGroups table
     //-------------------------------
 
-    // switch order of iconID and soundID because that's the way it was in objCacheDB.
     columns = "groupID, categoryID, groupName, description, iconID,"
             " 0 as graphicID, useBasePrice, allowManufacture, allowRecycler,"
             " anchored, anchorable, fittableNonSingleton, published, 0 AS dataID";
@@ -176,7 +177,6 @@ bool EVEStatic::loadStaticData()
     // Load the invCategories table
     //-------------------------------
 
-    // switch order of iconID and soundID because that's the way it was in objCacheDB.
     columns = "categoryID, categoryName, description, 0 as graphicID, iconID, published, 0 as dataID";
     qry = "SELECT " + columns + " FROM invCategories";
     if (!DBcore::RunQuery(result, qry.c_str()))
@@ -205,6 +205,62 @@ bool EVEStatic::loadStaticData()
                                                 description, iconID, published, categoryGroups);
     }
     m_InvCategoriesCache = rowset;
+
+    //-------------------------------
+    // Load the invBlueprintTypes table
+    //-------------------------------
+
+    columns = "blueprintTypeID, parentBlueprintTypeID, productTypeID, productionTime, techLevel,"
+            " researchProductivityTime, researchMaterialTime, researchCopyTime, researchTechTime,"
+            " productivityModifier, materialModifier, wasteFactor, chanceOfReverseEngineering, maxProductionLimit";
+    qry = "SELECT " + columns + " FROM invBlueprintTypes LEFT JOIN extInvBlueprintTypes Using(blueprintTypeID)";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    header = new DBRowDescriptor(result);
+    rowset = new CRowSet(&header);
+    while (result.GetRow(row))
+    {
+        PyPackedRow* into = rowset->NewRow();
+        FillPackedRow(row, into);
+        uint32 blueprintTypeID = row.GetInt(0);
+        uint32 parentBlueprintTypeID = getIntNC(row, 1);
+        uint32 productTypeID = row.GetInt(2);
+        uint32 productionTime = row.GetInt(3);
+        uint32 techLevel = row.GetInt(4);
+        uint32 researchProductivityTime = row.GetInt(5);
+        uint32 researchMaterialTime = row.GetInt(6);
+        uint32 researchCopyTime = row.GetInt(7);
+        uint32 researchTechTime = row.GetInt(8);
+        uint32 productivityModifier = row.GetInt(9);
+        uint32 materialModifier = row.GetInt(10);
+        uint32 wasteFactor = row.GetInt(11);
+        uint32 maxProductionLimit = row.GetInt(13);
+        // from extInvBlueprintTypes
+        double chanceOfReverseEngineering = 0;
+        if (!row.IsNull(12))
+        {
+            chanceOfReverseEngineering = row.GetDouble(12);
+        }
+        InvBlueprintType *bpType = new InvBlueprintType(
+                                                   blueprintTypeID,
+                                                   parentBlueprintTypeID,
+                                                   productTypeID,
+                                                   productionTime,
+                                                   techLevel,
+                                                   researchProductivityTime,
+                                                   researchMaterialTime,
+                                                   researchCopyTime,
+                                                   researchTechTime,
+                                                   productivityModifier,
+                                                   materialModifier,
+                                                   wasteFactor,
+                                                   maxProductionLimit,
+                                                   chanceOfReverseEngineering);
+    }
+    m_InvBlueprintTypesCache = rowset;
 
     staticLoaded = true;
     return true;
