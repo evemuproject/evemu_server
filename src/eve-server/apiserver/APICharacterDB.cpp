@@ -48,11 +48,11 @@ bool APICharacterDB::GetCharacterSkillsTrained(uint32 characterID, std::vector<s
         "   invTypes.groupID, "
         "   invTypes.published, "
         "   invGroups.categoryID "
-        " FROM `srvEntity` "
-        "   LEFT JOIN srvEntity_attributes ON srvEntity_attributes.itemID = srvEntity.itemID "
-        "   LEFT JOIN invTypes ON invTypes.typeID = srvEntity.typeID "
-        "   LEFT JOIN invGroups ON invGroups.groupID = invTypes.groupID "
-        " WHERE `ownerID` = %u AND invGroups.categoryID = 16 ", characterID ))
+        " FROM srvEntity "
+                          "   LEFT JOIN srvEntity_attributes Using(itemID) "
+                          "   LEFT JOIN invTypes Using(typeID) "
+                          "   LEFT JOIN invGroups Using(groupID) "
+        " WHERE ownerID = %u AND invGroups.categoryID = 16 ", characterID ))
     {
         SysLog::Error( "APIAccountDB::GetCharacterSkillsTrained()", "Cannot find characterID %u", characterID );
         return false;
