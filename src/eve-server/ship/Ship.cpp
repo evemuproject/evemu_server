@@ -42,7 +42,7 @@ ShipTypeData::ShipTypeData( uint32 weaponTypeID, uint32 miningTypeID, uint32 ski
  ShipType::ShipType(
     uint32 _id,
     // ItemType stuff:
-    const ItemGroup &_group,
+    const InvGroupRef _group,
     const TypeData &_data,
     // ShipType stuff:
     const ItemType *_weaponType,
@@ -71,7 +71,7 @@ ShipType *ShipType::Load(uint32 shipTypeID)
 template<class _Ty>
 _Ty *ShipType::_LoadShipType(uint32 shipTypeID,
     // ItemType stuff:
-    const ItemGroup &group, const TypeData &data,
+    const InvGroupRef group, const TypeData &data,
     // ShipType stuff:
     const ItemType *weaponType, const ItemType *miningType, const ItemType *skillType, const ShipTypeData &stData)
 {

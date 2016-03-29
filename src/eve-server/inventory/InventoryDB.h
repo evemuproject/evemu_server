@@ -31,10 +31,6 @@
 
 class EVEAttributeMgr;
 
-class CategoryData;
-
-class GroupData;
-
 class TypeData;
 class BlueprintTypeData;
 class CharacterTypeData;
@@ -54,12 +50,6 @@ class InventoryDB
 : public ServiceDB
 {
 public:
-    /*
-     * Group stuff
-     * (invGroups)
-     */
-    static bool GetGroup(uint32 groupID, GroupData &into);
-
     /*
      * Type stuff
      * (invTypes, invBlueprintTypes, bloodlineTypes, chrBloodlines, invShipTypes, staStationTypes)

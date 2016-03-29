@@ -32,49 +32,6 @@
 #include "station/Station.h"
 #include "system/SolarSystem.h"
 
-bool InventoryDB::GetGroup(uint32 groupID, GroupData &into) {
-    DBQueryResult res;
-
-    if(!DBcore::RunQuery(res,
-        "SELECT"
-        " categoryID,"
-        " groupName,"
-        " description,"
-        " useBasePrice,"
-        " allowManufacture,"
-        " allowRecycler,"
-        " anchored,"
-        " anchorable,"
-        " fittableNonSingleton,"
-        " published"
-        " FROM invGroups"
-        " WHERE groupID=%u",
-        groupID))
-    {
-        _log(DATABASE__ERROR, "Failed to query group %u: %s.", groupID, res.error.c_str());
-        return false;
-    }
-
-    DBResultRow row;
-    if(!res.GetRow(row)) {
-        _log(DATABASE__ERROR, "Group %u not found.", groupID);
-        return false;
-    }
-
-    into.category = EVEItemCategories(row.GetUInt(0));
-    into.name = row.GetText(1);
-    into.description = row.GetText(2);
-    into.useBasePrice = row.GetInt(3) ? true : false;
-    into.allowManufacture = row.GetInt(4) ? true : false;
-    into.allowRecycler = row.GetInt(5) ? true : false;
-    into.anchored = row.GetInt(6) ? true : false;
-    into.anchorable = row.GetInt(7) ? true : false;
-    into.fittableNonSingleton = row.GetInt(8) ? true : false;
-    into.published = row.GetInt(9) ? true : false;
-
-    return true;
-}
-
 bool InventoryDB::GetType(uint32 typeID, TypeData &into) {
     DBQueryResult res;
 

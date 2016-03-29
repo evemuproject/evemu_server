@@ -49,11 +49,6 @@ public:
     static void Shutdown();
 
     /*
-     * Group stuff
-     */
-    static const ItemGroup *GetGroup(uint32 groupID);
-
-    /*
      * Type stuff
      */
     static const ItemType *GetType(uint32 typeID);

@@ -31,97 +31,6 @@
 #include "station/Station.h"
 
 /*
- * GroupData
- */
-GroupData::GroupData(
-                     uint32 _category,
-    const char *_name,
-    const char *_desc,
-    bool _useBasePrice,
-    bool _allowManufacture,
-    bool _allowRecycler,
-    bool _anchored,
-    bool _anchorable,
-    bool _fittableNonSingleton,
-    bool _published)
-: category(_category),
-  name(_name),
-  description(_desc),
-  useBasePrice(_useBasePrice),
-  allowManufacture(_allowManufacture),
-  allowRecycler(_allowRecycler),
-  anchored(_anchored),
-  anchorable(_anchorable),
-  fittableNonSingleton(_fittableNonSingleton),
-  published(_published)
-{
-}
-
-/*
- * ItemGroup
- */
-ItemGroup::ItemGroup(
-    uint32 _id,
-    // ItemGroup stuff:
-                     const InvCategoryRef _category,
-    const GroupData &_data)
-: m_id(_id),
-  m_category(_category),
-  m_name(_data.name),
-  m_description(_data.description),
-  m_useBasePrice(_data.useBasePrice),
-  m_allowManufacture(_data.allowManufacture),
-  m_allowRecycler(_data.allowRecycler),
-  m_anchored(_data.anchored),
-  m_anchorable(_data.anchorable),
-  m_fittableNonSingleton(_data.fittableNonSingleton),
-  m_published(_data.published)
-{
-    // assert for data consistency
-    assert(_data.category == _category->categoryID);
-
-    _log(ITEM__TRACE, "Created object %p for group %s (%u).", this, name().c_str(), id());
-}
-
-ItemGroup *ItemGroup::Load(uint32 groupID) {
-    // create group
-    ItemGroup *g = ItemGroup::_Load(groupID);
-    if(g == NULL)
-        return NULL;
-
-    // ItemGroup has no virtual _Load()
-
-    return(g);
-}
-
-ItemGroup *ItemGroup::_Load(uint32 groupID
-) {
-    // pull data
-    GroupData data;
-    if(!InventoryDB::GetGroup(groupID, data))
-        return NULL;
-
-    // retrieve category
-    InvCategoryRef c;
-    if (!InvCategory::getCategory(data.category, c))
-    {
-        return NULL;
-    }
-
-    return(ItemGroup::_Load(groupID, c, data));
-}
-
-ItemGroup *ItemGroup::_Load(uint32 groupID,
-    // ItemGroup stuff:
-                        const InvCategoryRef category, const GroupData &data
-) {
-    // enough data for construction
-    return(new ItemGroup(
-        groupID, category, data
-    ));
-}
-
-/*
  * TypeData
  */
 TypeData::TypeData(
@@ -159,11 +68,11 @@ TypeData::TypeData(
  */
 ItemType::ItemType(
     uint32 _id,
-    const ItemGroup &_group,
+                   const InvGroupRef _group,
     const TypeData &_data)
 : attributes(*this),
   m_id(_id),
-  m_group(&_group),
+  m_group(_group),
   m_name(_data.name),
   m_description(_data.description),
   m_portionSize(_data.portionSize),
@@ -173,7 +82,7 @@ ItemType::ItemType(
   m_chanceOfDuplicating(_data.chanceOfDuplicating)
 {
     // assert for data consistency
-    assert(_data.groupID == _group.id());
+    assert(_data.groupID == _group->groupID);
 
     // set some attributes
     attributes.Set_radius(_data.radius);
@@ -193,10 +102,11 @@ ItemType *ItemType::Load(uint32 typeID)
 template<class _Ty>
 _Ty *ItemType::_LoadType(uint32 typeID,
     // ItemType stuff:
-    const ItemGroup &group, const TypeData &data)
+                         const InvGroupRef group, const TypeData &data)
 {
     // See what to do next:
-    switch( group.categoryID() ) {
+    switch (group->categoryID)
+    {
         //! TODO not handled.
         case EVEDB::invCategories::Owner:
         case EVEDB::invCategories::Celestial:
@@ -234,7 +144,7 @@ _Ty *ItemType::_LoadType(uint32 typeID,
     }
 
     // ItemCategory didn't do it, try ItemGroup:
-    switch( group.id() ) {
+    switch( group->groupID ) {
         ///////////////////////////////////////
         // Character:
         ///////////////////////////////////////

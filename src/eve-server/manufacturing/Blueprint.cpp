@@ -65,7 +65,7 @@ BlueprintTypeData::BlueprintTypeData(
  */
 BlueprintType::BlueprintType(
     uint32 _id,
-    const ItemGroup &_group,
+    const InvGroupRef _group,
     const TypeData &_data,
     const BlueprintType *_parentBlueprintType,
     const ItemType &_productType,
@@ -98,7 +98,7 @@ BlueprintType *BlueprintType::Load(uint32 typeID)
 template<class _Ty>
 _Ty *BlueprintType::_LoadBlueprintType(uint32 typeID,
     // ItemType stuff:
-    const ItemGroup &group, const TypeData &data,
+    const InvGroupRef group, const TypeData &data,
     // BlueprintType stuff:
     const BlueprintType *parentBlueprintType, const ItemType &productType, const BlueprintTypeData &bpData)
 {

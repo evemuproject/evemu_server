@@ -121,7 +121,7 @@ protected:
         uint32 _id,
         uint8 _bloodlineID,
         // ItemType stuff:
-        const ItemGroup &_group,
+                  const InvGroupRef _group,
         const TypeData &_data,
         // CharacterType stuff:
         const ItemType &_shipType,
@@ -137,12 +137,12 @@ protected:
     template<class _Ty>
     static _Ty *_LoadType(uint32 typeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data)
+                          const InvGroupRef group, const TypeData &data)
     {
         // check we are really loading a character type
-        if( group.id() != EVEDB::invGroups::Character )
+        if (group->groupID != EVEDB::invGroups::Character)
         {
-            SysLog::Error("Character", "Load of character type %u requested, but it's %s.", typeID, group.name().c_str());
+            SysLog::Error("Character", "Load of character type %u requested, but it's %s.", typeID, group->groupName.c_str());
             return NULL;
         }
 
@@ -164,7 +164,7 @@ protected:
     template<class _Ty>
     static _Ty *_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data,
+                                   const InvGroupRef group, const TypeData &data,
         // CharacterType stuff:
         const ItemType &shipType, const CharacterTypeData &charData
     );
@@ -623,7 +623,7 @@ protected:
         // check it's a character
         if( type.groupID() != EVEDB::invGroups::Character )
         {
-            SysLog::Error("Character", "Trying to load %s as Character.", type.group().name().c_str());
+            SysLog::Error("Character", "Trying to load %s as Character.", type.group()->groupName.c_str());
             return RefPtr<_Ty>();
         }
         // cast the type

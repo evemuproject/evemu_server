@@ -93,7 +93,7 @@ protected:
     StationType(
         uint32 _id,
         // ItemType stuff:
-        const ItemGroup &_group,
+        const InvGroupRef _group,
         const TypeData &_data,
         // StationType stuff:
         const StationTypeData &_stData
@@ -108,11 +108,12 @@ protected:
     template<class _Ty>
     static _Ty *_LoadType(uint32 stationTypeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data)
+        const InvGroupRef group, const TypeData &data)
     {
         // verify it's a station type
-        if( group.id() != EVEDB::invGroups::Station ) {
-            _log( ITEM__ERROR, "Trying to load %s as Station.", group.name().c_str() );
+        if( group->groupID != EVEDB::invGroups::Station )
+        {
+            _log(ITEM__ERROR, "Trying to load %s as Station.", group->groupName.c_str());
             return NULL;
         }
 
@@ -128,7 +129,7 @@ protected:
     template<class _Ty>
     static _Ty *_LoadStationType(uint32 stationTypeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data,
+        const InvGroupRef group, const TypeData &data,
         // StationType stuff:
         const StationTypeData &stData
     );
@@ -237,7 +238,7 @@ protected:
         // check it's a station
         if( type.groupID() != EVEDB::invGroups::Station )
         {
-            _log( ITEM__ERROR, "Trying to load %s as Station.", type.group().name().c_str() );
+            _log(ITEM__ERROR, "Trying to load %s as Station.", type.group()->groupName.c_str());
             return RefPtr<_Ty>();
         }
         // cast the type

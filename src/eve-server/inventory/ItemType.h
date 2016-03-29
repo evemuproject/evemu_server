@@ -27,6 +27,7 @@
 #define __ITEM_TYPE__H__INCL__
 
 #include "inv/InvCategory.h"
+#include "inv/InvGroup.h"
 
 #include "inventory/EVEAttributeMgr.h"
 #include "inventory/ItemFactory.h"
@@ -47,113 +48,6 @@
  *  virtual _Load() (optional):
  *    Performs any post-construction loading.
  */
-
-/*
- * Simple container for raw group data.
- */
-class GroupData {
-public:
-    GroupData(
-              uint32 _category = 0,
-        const char *_name = "",
-        const char *_desc = "",
-        bool _useBasePrice = false,
-        bool _allowManufacture = false,
-        bool _allowRecycler = false,
-        bool _anchored = false,
-        bool _anchorable = false,
-        bool _fittableNonSingleton = false,
-        bool _published = false
-    );
-
-    // Content:
-    uint32 category;
-    std::string name;
-    std::string description;
-    // using a bitfield here saves
-    // considerable amount of memory ...
-    bool useBasePrice : 1;
-    bool allowManufacture : 1;
-    bool allowRecycler : 1;
-    bool anchored : 1;
-    bool anchorable : 1;
-    bool fittableNonSingleton : 1;
-    bool published : 1;
-};
-
-/*
- * Class which maintains group data.
- */
-class ItemGroup {
-public:
-    /*
-     * Factory method:
-     */
-    static ItemGroup *Load(uint32 groupID);
-
-    /*
-     * Access methods:
-     */
-    uint32 id() const { return(m_id);
-    }
-
-    const InvCategoryRef category() const
-    {
-        return (m_category);
-    }
-
-    uint32 categoryID() const
-    {
-        return (category()->categoryID);
-    }
-
-    const std::string &name() const { return(m_name); }
-    const std::string &description() const { return(m_description); }
-    bool useBasePrice() const { return(m_useBasePrice); }
-    bool allowManufacture() const { return(m_allowManufacture); }
-    bool allowRecycler() const { return(m_allowRecycler); }
-    bool anchored() const { return(m_anchored); }
-    bool anchorable() const { return(m_anchorable); }
-    bool fittableNonSingleton() const { return(m_fittableNonSingleton); }
-    bool published() const { return(m_published); }
-
-protected:
-    ItemGroup(
-        uint32 _id,
-        // ItemGroup stuff:
-              const InvCategoryRef _category,
-        const GroupData &_data
-    );
-
-    /*
-     * Member functions
-     */
-    static ItemGroup *_Load(uint32 groupID
-    );
-    static ItemGroup *_Load(uint32 groupID,
-        // ItemGroup stuff:
-                            const InvCategoryRef category, const GroupData &data
-    );
-
-    /*
-     * Data members
-     */
-    const uint32 m_id;
-
-    const InvCategoryRef m_category;
-
-    std::string m_name;
-    std::string m_description;
-    // using a bitfield here saves
-    // considerable amount of memory ...
-    bool m_useBasePrice : 1;
-    bool m_allowManufacture : 1;
-    bool m_allowRecycler : 1;
-    bool m_anchored : 1;
-    bool m_anchorable : 1;
-    bool m_fittableNonSingleton : 1;
-    bool m_published : 1;
-};
 
 /*
  * Simple container for raw type data.
@@ -213,10 +107,17 @@ public:
     /*
      * Helper methods
      */
-    uint32 id() const { return(m_id); }
+    uint32 id() const { return(m_id);
+    }
 
-    const ItemGroup &group() const { return(*m_group); }
-    uint32 groupID() const { return(group().id());
+    const InvGroupRef group() const
+    {
+        return (m_group);
+    }
+
+    uint32 groupID() const
+    {
+        return m_group->groupID;
     }
 
     const InvCategoryRef category() const
@@ -226,7 +127,7 @@ public:
 
     uint32 categoryID() const
     {
-        return (group().categoryID());
+        return (m_group->categoryID);
     }
 
     const std::string &name() const { return(m_name); }
@@ -253,7 +154,7 @@ public:
 protected:
     ItemType(
         uint32 _id,
-        const ItemGroup &_group,
+             const InvGroupRef _group,
         const TypeData &_data
     );
 
@@ -292,18 +193,20 @@ protected:
             return NULL;
 
         // obtain group
-        const ItemGroup *g = ItemFactory::GetGroup(data.groupID);
-        if( g == NULL )
+        InvGroupRef g;
+        if (!InvGroup::getGroup(data.groupID, g))
+        {
             return NULL;
+        }
 
-        return _Ty::template _LoadType<_Ty>( typeID, *g, data );
+        return _Ty::template _LoadType<_Ty>( typeID, g, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
     static _Ty *_LoadType(uint32 typeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data
+                          const InvGroupRef group, const TypeData &data
     );
 
     virtual bool _Load();
@@ -313,7 +216,7 @@ protected:
      */
     const uint32 m_id;
 
-    const ItemGroup *m_group;
+    const InvGroupRef m_group;
 
     std::string m_name;
     std::string m_description;

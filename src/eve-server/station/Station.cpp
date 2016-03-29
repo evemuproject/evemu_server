@@ -58,7 +58,7 @@ StationTypeData::StationTypeData(
 StationType::StationType(
     uint32 _id,
     // ItemType stuff:
-    const ItemGroup &_group,
+    const InvGroupRef _group,
     const TypeData &_data,
     // StationType stuff:
     const StationTypeData &_stData)
@@ -84,7 +84,7 @@ StationType *StationType::Load(uint32 stationTypeID)
 template<class _Ty>
 _Ty *StationType::_LoadStationType(uint32 stationTypeID,
     // ItemType stuff:
-    const ItemGroup &group, const TypeData &data,
+    const InvGroupRef group, const TypeData &data,
     // StationType stuff:
     const StationTypeData &stData)
 {

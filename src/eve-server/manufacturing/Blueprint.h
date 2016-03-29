@@ -107,7 +107,7 @@ protected:
     BlueprintType(
         uint32 _id,
         // ItemType stuff:
-        const ItemGroup &_group,
+        const InvGroupRef _group,
         const TypeData &_data,
         // BlueprintType stuff:
         const BlueprintType *_parentBlueprintType,
@@ -124,12 +124,12 @@ protected:
     template<class _Ty>
     static _Ty *_LoadType(uint32 typeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data)
+        const InvGroupRef group, const TypeData &data)
     {
         // check if we are really loading a blueprint
-        if( group.categoryID() != EVEDB::invCategories::Blueprint )
+        if (group->categoryID != EVEDB::invCategories::Blueprint)
         {
-            SysLog::Error("Blueprint", "Load of blueprint type %u requested, but it's %s.", typeID, group.category()->categoryName.c_str());
+            SysLog::Error("Blueprint", "Load of blueprint type %u requested, but it's %s.", typeID, group->getCategory()->categoryName.c_str());
             return NULL;
         }
 
@@ -161,7 +161,7 @@ protected:
     template<class _Ty>
     static _Ty *_LoadBlueprintType(uint32 typeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data,
+        const InvGroupRef group, const TypeData &data,
         // BlueprintType stuff:
         const BlueprintType *parentBlueprintType, const ItemType &productType, const BlueprintTypeData &bpData
     );

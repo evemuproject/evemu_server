@@ -75,7 +75,7 @@ CharacterType::CharacterType(
     uint32 _id,
     uint8 _bloodlineID,
     // ItemType stuff:
-    const ItemGroup &_group,
+    const InvGroupRef _group,
     const TypeData &_data,
     // CharacterType stuff:
     const ItemType &_shipType,
@@ -110,7 +110,7 @@ CharacterType *CharacterType::Load(uint32 characterTypeID)
 template<class _Ty>
 _Ty *CharacterType::_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
     // ItemType stuff:
-    const ItemGroup &group, const TypeData &data,
+    const InvGroupRef group, const TypeData &data,
     // CharacterType stuff:
     const ItemType &shipType, const CharacterTypeData &charData)
 {

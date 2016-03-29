@@ -81,7 +81,7 @@ protected:
     ShipType(
         uint32 _id,
         // ItemType stuff:
-        const ItemGroup &_group,
+        const InvGroupRef _group,
         const TypeData &_data,
         // ShipType stuff:
         const ItemType *_weaponType,
@@ -99,12 +99,12 @@ protected:
     template<class _Ty>
     static _Ty *_LoadType(uint32 shipTypeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data)
+        const InvGroupRef group, const TypeData &data)
     {
         // verify it's a ship
-        if( group.categoryID() != EVEDB::invCategories::Ship )
+        if( group->categoryID != EVEDB::invCategories::Ship )
         {
-            _log(ITEM__ERROR, "Tried to load %u (%s) as a Ship.", shipTypeID, group.category()->categoryName.c_str());
+            _log(ITEM__ERROR, "Tried to load %u (%s) as a Ship.", shipTypeID, group->getCategory()->categoryName.c_str());
             return NULL;
         }
 
@@ -148,7 +148,7 @@ protected:
     template<class _Ty>
     static _Ty *_LoadShipType(uint32 shipTypeID,
         // ItemType stuff:
-        const ItemGroup &group, const TypeData &data,
+        const InvGroupRef group, const TypeData &data,
         // ShipType stuff:
         const ItemType *weaponType, const ItemType *miningType, const ItemType *skillType, const ShipTypeData &stData
     );

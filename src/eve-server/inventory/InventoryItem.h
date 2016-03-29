@@ -159,8 +159,13 @@ public:
 
 
     // helper type methods
-    uint32                  typeID() const      { return type().id(); }
-    const ItemGroup &       group() const       { return type().group(); }
+    uint32                  typeID() const      { return type().id();
+    }
+
+    const InvGroupRef group() const
+    {
+        return type().group();
+    }
     uint32                  groupID() const     { return type().groupID();
     }
 

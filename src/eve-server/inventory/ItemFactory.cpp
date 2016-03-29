@@ -36,14 +36,6 @@
 #include <mutex>
 
 Client *ItemFactory::m_pClient; // pointer to client currently using the ItemFactory, we do not own this
-// The groups list and mute.
-std::map<uint32, ItemGroup *> ItemFactory::m_groups;
-
-std::unique_lock<std::mutex> getGroupLock()
-{
-    static std::mutex m_groupsMutex;
-    return std::unique_lock<std::mutex>(m_groupsMutex);
-}
 // The types list and mutex.
 std::map<uint32, ItemType *> ItemFactory::m_types;
 
@@ -96,36 +88,9 @@ void ItemFactory::Shutdown()
         for(; cur != end; cur++)
             delete cur->second;
     }
-    // groups
-    {
-        auto lock = getGroupLock();
-        std::map<uint32, ItemGroup *>::const_iterator cur, end;
-        cur = m_groups.begin();
-        end = m_groups.end();
-        for(; cur != end; cur++)
-            delete cur->second;
-    }
 
     // Set Client pointer to NULL
     m_pClient = NULL;
-}
-
-const ItemGroup *ItemFactory::GetGroup(uint32 groupID)
-{
-    auto lock = getGroupLock();
-    std::map<uint32, ItemGroup *>::iterator res = m_groups.find(groupID);
-    if (res == m_groups.end())
-    {
-        lock.unlock();
-        ItemGroup *group = ItemGroup::Load(groupID);
-        if(group == NULL)
-            return NULL;
-
-        lock.lock();
-        // insert it into cache
-        res = m_groups.insert(std::make_pair(groupID, group)).first;
-    }
-    return(res->second);
 }
 
 template<class _Ty>
