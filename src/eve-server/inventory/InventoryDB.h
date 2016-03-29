@@ -55,12 +55,6 @@ class InventoryDB
 {
 public:
     /*
-     * Category stuff
-     * (invCategories)
-     */
-    static bool GetCategory(EVEItemCategories category, CategoryData &into);
-
-    /*
      * Group stuff
      * (invGroups)
      */

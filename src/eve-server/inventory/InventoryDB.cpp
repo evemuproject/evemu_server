@@ -32,35 +32,6 @@
 #include "station/Station.h"
 #include "system/SolarSystem.h"
 
-bool InventoryDB::GetCategory(EVEItemCategories category, CategoryData &into) {
-    DBQueryResult res;
-
-    if(!DBcore::RunQuery(res,
-        "SELECT"
-        " categoryName,"
-        " description,"
-        " published"
-        " FROM invCategories"
-        " WHERE categoryID=%u",
-        uint32(category)))
-    {
-        _log(DATABASE__ERROR, "Error in query: %s.", res.error.c_str());
-        return false;
-    }
-
-    DBResultRow row;
-    if(!res.GetRow(row)) {
-        _log(DATABASE__ERROR, "Category %u not found.", uint32(category));
-        return false;
-    }
-
-    into.name = row.GetText(0);
-    into.description = row.GetText(1);
-    into.published = row.GetInt(2) ? true : false;
-
-    return true;
-}
-
 bool InventoryDB::GetGroup(uint32 groupID, GroupData &into) {
     DBQueryResult res;
 

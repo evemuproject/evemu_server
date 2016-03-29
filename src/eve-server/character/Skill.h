@@ -112,7 +112,7 @@ protected:
         // check it's a skill
         if( type.categoryID() != EVEDB::invCategories::Skill )
         {
-            SysLog::Error("Skill", "Trying to load %s as Skill.", type.category().name().c_str() );
+            SysLog::Error("Skill", "Trying to load %s as Skill.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 

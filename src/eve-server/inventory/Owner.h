@@ -72,7 +72,7 @@ protected:
         // check it's an owner
         if( type.categoryID() != EVEDB::invCategories::Owner )
         {
-            SysLog::Error("Owner", "Trying to load %s as Owner.", type.category().name().c_str() );
+            SysLog::Error("Owner", "Trying to load %s as Owner.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 

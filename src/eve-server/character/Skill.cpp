@@ -79,7 +79,7 @@ uint32 Skill::_Spawn(ItemData &data)
 
     if( type->categoryID() != EVEDB::invCategories::Skill )
     {
-        _log( ITEM__ERROR, "Trying to spawn %s as Skill.", type->category().name().c_str() );
+        _log(ITEM__ERROR, "Trying to spawn %s as Skill.", type->category()->categoryName.c_str());
         return 0;
     }
 

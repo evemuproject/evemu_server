@@ -26,6 +26,8 @@
 #ifndef __ITEM_TYPE__H__INCL__
 #define __ITEM_TYPE__H__INCL__
 
+#include "inv/InvCategory.h"
+
 #include "inventory/EVEAttributeMgr.h"
 #include "inventory/ItemFactory.h"
 
@@ -47,75 +49,12 @@
  */
 
 /*
- * Simple container for raw category data.
- */
-class CategoryData {
-public:
-    CategoryData(
-        const char *_name = "",
-        const char *_desc = "",
-        bool _published = false
-    );
-
-    // Content:
-    std::string name;
-    std::string description;
-    bool published;
-};
-
-/*
- * Class which maintains category data.
- */
-class ItemCategory {
-public:
-    /*
-     * Factory method:
-     */
-    static ItemCategory *Load(EVEItemCategories category);
-
-    /*
-     * Access methods
-     */
-    EVEItemCategories id() const { return(m_id); }
-
-    const std::string &name() const { return(m_name); }
-    const std::string &description() const { return(m_description); }
-    bool published() const { return(m_published); }
-
-protected:
-    ItemCategory(
-        EVEItemCategories _id,
-        // ItemCategory stuff:
-        const CategoryData &_data
-    );
-
-    /*
-     * Member functions
-     */
-    static ItemCategory *_Load(EVEItemCategories category
-    );
-    static ItemCategory *_Load(EVEItemCategories category,
-        // ItemCategory stuff:
-        const CategoryData &data
-    );
-
-    /*
-     * Data members
-     */
-    const EVEItemCategories m_id;
-
-    std::string m_name;
-    std::string m_description;
-    bool m_published;
-};
-
-/*
  * Simple container for raw group data.
  */
 class GroupData {
 public:
     GroupData(
-        EVEItemCategories _category = (EVEItemCategories)0,
+              uint32 _category = 0,
         const char *_name = "",
         const char *_desc = "",
         bool _useBasePrice = false,
@@ -128,7 +67,7 @@ public:
     );
 
     // Content:
-    EVEItemCategories category;
+    uint32 category;
     std::string name;
     std::string description;
     // using a bitfield here saves
@@ -155,10 +94,18 @@ public:
     /*
      * Access methods:
      */
-    uint32 id() const { return(m_id); }
+    uint32 id() const { return(m_id);
+    }
 
-    const ItemCategory &category() const { return(*m_category); }
-    EVEItemCategories categoryID() const { return(category().id()); }
+    const InvCategoryRef category() const
+    {
+        return (m_category);
+    }
+
+    uint32 categoryID() const
+    {
+        return (category()->categoryID);
+    }
 
     const std::string &name() const { return(m_name); }
     const std::string &description() const { return(m_description); }
@@ -174,7 +121,7 @@ protected:
     ItemGroup(
         uint32 _id,
         // ItemGroup stuff:
-        const ItemCategory &_category,
+              const InvCategoryRef _category,
         const GroupData &_data
     );
 
@@ -185,7 +132,7 @@ protected:
     );
     static ItemGroup *_Load(uint32 groupID,
         // ItemGroup stuff:
-        const ItemCategory &category, const GroupData &data
+                            const InvCategoryRef category, const GroupData &data
     );
 
     /*
@@ -193,7 +140,7 @@ protected:
      */
     const uint32 m_id;
 
-    const ItemCategory *m_category;
+    const InvCategoryRef m_category;
 
     std::string m_name;
     std::string m_description;
@@ -269,10 +216,18 @@ public:
     uint32 id() const { return(m_id); }
 
     const ItemGroup &group() const { return(*m_group); }
-    uint32 groupID() const { return(group().id()); }
+    uint32 groupID() const { return(group().id());
+    }
 
-    const ItemCategory &category() const { return(group().category()); }
-    EVEItemCategories categoryID() const { return(group().categoryID()); }
+    const InvCategoryRef category() const
+    {
+        return InvCategory::getCategory(categoryID());
+    }
+
+    uint32 categoryID() const
+    {
+        return (group().categoryID());
+    }
 
     const std::string &name() const { return(m_name); }
     const std::string &description() const  { return(m_description); }

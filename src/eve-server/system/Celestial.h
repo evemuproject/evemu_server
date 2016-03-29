@@ -115,7 +115,7 @@ protected:
             && type.categoryID() != EVEDB::invCategories::Entity
             && type.groupID() != EVEDB::invGroups::Station )
         {
-            _log( ITEM__ERROR, "Trying to load %s as Celestial.", type.category().name().c_str() );
+            _log(ITEM__ERROR, "Trying to load %s as Celestial.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 

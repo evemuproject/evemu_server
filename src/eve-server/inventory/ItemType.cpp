@@ -31,71 +31,10 @@
 #include "station/Station.h"
 
 /*
- * CategoryData
- */
-CategoryData::CategoryData(
-    const char *_name,
-    const char *_desc,
-    bool _published)
-: name(_name),
-  description(_desc),
-  published(_published)
-{
-}
-
-/*
- * ItemCategory
- */
-ItemCategory::ItemCategory(
-    EVEItemCategories _id,
-    // ItemCategory stuff:
-    const CategoryData &_data)
-: m_id(_id),
-  m_name(_data.name),
-  m_description(_data.description),
-  m_published(_data.published)
-{
-    _log(ITEM__TRACE, "Created object %p for category %s (%u).", this, name().c_str(), (uint32)id());
-}
-
-ItemCategory *ItemCategory::Load(EVEItemCategories category) {
-    // create category
-    ItemCategory *c = ItemCategory::_Load(category);
-    if(c == NULL)
-        return NULL;
-
-    // ItemCategory has no virtual _Load()
-
-    return(c);
-}
-
-ItemCategory *ItemCategory::_Load(EVEItemCategories category
-) {
-    // pull data
-    CategoryData data;
-    if(!InventoryDB::GetCategory(category, data))
-        return NULL;
-
-    return(
-        ItemCategory::_Load(category, data)
-    );
-}
-
-ItemCategory *ItemCategory::_Load(EVEItemCategories category,
-    // ItemCategory stuff:
-    const CategoryData &data
-) {
-    // enough data for construction
-    return(new ItemCategory(
-        category, data
-    ));
-}
-
-/*
  * GroupData
  */
 GroupData::GroupData(
-    EVEItemCategories _category,
+                     uint32 _category,
     const char *_name,
     const char *_desc,
     bool _useBasePrice,
@@ -124,10 +63,10 @@ GroupData::GroupData(
 ItemGroup::ItemGroup(
     uint32 _id,
     // ItemGroup stuff:
-    const ItemCategory &_category,
+                     const InvCategoryRef _category,
     const GroupData &_data)
 : m_id(_id),
-  m_category(&_category),
+  m_category(_category),
   m_name(_data.name),
   m_description(_data.description),
   m_useBasePrice(_data.useBasePrice),
@@ -139,7 +78,7 @@ ItemGroup::ItemGroup(
   m_published(_data.published)
 {
     // assert for data consistency
-    assert(_data.category == _category.id());
+    assert(_data.category == _category->categoryID);
 
     _log(ITEM__TRACE, "Created object %p for group %s (%u).", this, name().c_str(), id());
 }
@@ -163,18 +102,18 @@ ItemGroup *ItemGroup::_Load(uint32 groupID
         return NULL;
 
     // retrieve category
-    const ItemCategory *c = ItemFactory::GetCategory(data.category);
-    if(c == NULL)
+    InvCategoryRef c;
+    if (!InvCategory::getCategory(data.category, c))
+    {
         return NULL;
+    }
 
-    return(
-        ItemGroup::_Load(groupID, *c, data)
-    );
+    return(ItemGroup::_Load(groupID, c, data));
 }
 
 ItemGroup *ItemGroup::_Load(uint32 groupID,
     // ItemGroup stuff:
-    const ItemCategory &category, const GroupData &data
+                        const InvCategoryRef category, const GroupData &data
 ) {
     // enough data for construction
     return(new ItemGroup(

@@ -127,8 +127,9 @@ protected:
         const ItemGroup &group, const TypeData &data)
     {
         // check if we are really loading a blueprint
-        if( group.categoryID() != EVEDB::invCategories::Blueprint ) {
-            SysLog::Error("Blueprint", "Load of blueprint type %u requested, but it's %s.", typeID, group.category().name().c_str() );
+        if( group.categoryID() != EVEDB::invCategories::Blueprint )
+        {
+            SysLog::Error("Blueprint", "Load of blueprint type %u requested, but it's %s.", typeID, group.category()->categoryName.c_str());
             return NULL;
         }
 
@@ -307,7 +308,7 @@ protected:
         // check it's blueprint type
         if( type.categoryID() != EVEDB::invCategories::Blueprint )
         {
-            SysLog::Error("Blueprint", "Trying to load %s as Blueprint.", type.category().name().c_str() );
+            SysLog::Error("Blueprint", "Trying to load %s as Blueprint.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
         // cast the type

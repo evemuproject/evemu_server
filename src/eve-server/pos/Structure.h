@@ -100,7 +100,7 @@ protected:
         // check if it's a structure
         if( type.categoryID() != EVEDB::invCategories::Structure )
         {
-            _log( ITEM__ERROR, "Trying to load %s as Structure.", type.category().name().c_str() );
+            _log(ITEM__ERROR, "Trying to load %s as Structure.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
         //// cast the type

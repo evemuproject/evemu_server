@@ -102,8 +102,9 @@ protected:
         const ItemGroup &group, const TypeData &data)
     {
         // verify it's a ship
-        if( group.categoryID() != EVEDB::invCategories::Ship ) {
-            _log( ITEM__ERROR, "Tried to load %u (%s) as a Ship.", shipTypeID, group.category().name().c_str() );
+        if( group.categoryID() != EVEDB::invCategories::Ship )
+        {
+            _log(ITEM__ERROR, "Tried to load %u (%s) as a Ship.", shipTypeID, group.category()->categoryName.c_str());
             return NULL;
         }
 
@@ -289,7 +290,7 @@ protected:
         // check it's a ship
         if( type.categoryID() != EVEDB::invCategories::Ship )
         {
-            _log( ITEM__ERROR, "Trying to load %s as Ship.", type.category().name().c_str() );
+            _log(ITEM__ERROR, "Trying to load %s as Ship.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
         // cast the type

@@ -106,7 +106,7 @@ protected:
             && (type.groupID() != EVEDB::invGroups::Spawn_Container)
             && (type.groupID() != EVEDB::invGroups::Wreck) )
         {
-            _log( ITEM__ERROR, "Trying to load category=%s, group=%s as CargoContainer.", type.category().name().c_str(), type.group().name().c_str() );
+            _log(ITEM__ERROR, "Trying to load category=%s, group=%s as CargoContainer.", type.category()->categoryName.c_str(), type.group().name().c_str());
             return RefPtr<_Ty>();
         }
         //// cast the type

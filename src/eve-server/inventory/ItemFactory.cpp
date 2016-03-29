@@ -36,14 +36,6 @@
 #include <mutex>
 
 Client *ItemFactory::m_pClient; // pointer to client currently using the ItemFactory, we do not own this
-// The categories list and mutex.
-std::map<EVEItemCategories, ItemCategory *> ItemFactory::m_categories;
-
-std::unique_lock<std::mutex> getCategoryLock()
-{
-    static std::mutex m_categoriesMutex;
-    return std::unique_lock<std::mutex>(m_categoriesMutex);
-}
 // The groups list and mute.
 std::map<uint32, ItemGroup *> ItemFactory::m_groups;
 
@@ -113,36 +105,9 @@ void ItemFactory::Shutdown()
         for(; cur != end; cur++)
             delete cur->second;
     }
-    // categories
-    {
-        auto lock = getCategoryLock();
-        std::map<EVEItemCategories, ItemCategory *>::const_iterator cur, end;
-        cur = m_categories.begin();
-        end = m_categories.end();
-        for(; cur != end; cur++)
-            delete cur->second;
-    }
 
     // Set Client pointer to NULL
     m_pClient = NULL;
-}
-
-const ItemCategory *ItemFactory::GetCategory(EVEItemCategories category)
-{
-    auto lock = getCategoryLock();
-    std::map<EVEItemCategories, ItemCategory *>::iterator res = m_categories.find(category);
-    if (res == m_categories.end())
-    {
-        lock.unlock();
-        ItemCategory *cat = ItemCategory::Load(category);
-        if(cat == NULL)
-            return NULL;
-
-        lock.lock();
-        // insert it into our cache
-        res = m_categories.insert(std::make_pair(category, cat)).first;
-    }
-    return(res->second);
 }
 
 const ItemGroup *ItemFactory::GetGroup(uint32 groupID)

@@ -28,8 +28,6 @@
 #include "inventory/InventoryDB.h"
 #include "inventory/ItemRef.h"
 
-class ItemCategory;
-
 class ItemGroup;
 
 class ItemType;
@@ -49,11 +47,6 @@ private:
 
 public:
     static void Shutdown();
-
-    /*
-     * Category stuff
-     */
-    static const ItemCategory *GetCategory(EVEItemCategories category);
 
     /*
      * Group stuff
@@ -248,9 +241,6 @@ protected:
     /*
      * Member functions and variables:
      */
-    // Categories:
-    static std::map<EVEItemCategories, ItemCategory *> m_categories;
-
     // Groups:
     static std::map<uint32, ItemGroup *> m_groups;
 

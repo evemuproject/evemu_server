@@ -1233,7 +1233,7 @@ void Character::AddItem(InventoryItemRef item)
         // Skill has been added ...
         if (item->categoryID() != EVEDB::invCategories::Implant)
         {
-            _log(ITEM__WARNING, "%s (%u): %s has been added with flag %d.", itemName().c_str(), itemID(), item->category().name().c_str(), (int) item->flag());
+            _log(ITEM__WARNING, "%s (%u): %s has been added with flag %d.", itemName().c_str(), itemID(), item->category()->categoryName.c_str(), (int) item->flag());
         }
         else
         {
@@ -1275,7 +1275,7 @@ void Character::AddItem(InventoryItemRef item)
         // Skill has been added ...
         if (item->categoryID() != EVEDB::invCategories::Skill)
         {
-            _log( ITEM__WARNING, "%s (%u): %s has been added with flag %d.", itemName().c_str(), itemID(), item->category().name().c_str(), (int)item->flag() );
+            _log(ITEM__WARNING, "%s (%u): %s has been added with flag %d.", itemName().c_str(), itemID(), item->category()->categoryName.c_str(), (int) item->flag());
         }
         else
         {
