@@ -66,10 +66,13 @@ public:
     // from extInvBlueprintTypes
     const double chanceOfReverseEngineering;
 
+    // Extra.
+    const InvTypeRef productType;
+
     /**
-     * Get the InvType for the specified typeID
+     * Get the InvBlueprintType for the specified typeID
      * @param typeID The typeID to find.
-     * @return The InvType or nullptr if not found.
+     * @return The InvBlueprintType or nullptr if not found.
      */
     static InvBlueprintTypeRef getBlueprintType(uint32 typeID)
     {
@@ -79,6 +82,40 @@ public:
             return std::shared_ptr<InvBlueprintType>();
         }
         return itr->second;
+    }
+
+    /**
+     * Get the InvBlueprintType for the specified typeID
+     * @param typeID The typeID to find.
+     * @param type The location to store the found type.
+     * @return True if type was found.
+     */
+    static bool getBlueprintType(uint32 typeID, InvBlueprintTypeRef &type)
+    {
+        auto itr = s_AllBlueprintTypes.find(typeID);
+        if (itr == s_AllBlueprintTypes.end())
+        {
+            type.reset();
+            return false;
+        }
+        type = itr->second;
+        return true;
+    }
+
+    /**
+     * Find the blueprintType for the product.
+     * @param productID The typeID of the product.
+     * @return The blueprint.
+     */
+    static InvBlueprintTypeRef getProductBlueprint(uint32 productID)
+    {
+        for (auto bp : s_AllBlueprintTypes)
+        {
+            if (bp.second->productTypeID == productID)
+            {
+                return bp.second;
+            }
+        }
     }
 
     /**

@@ -55,7 +55,8 @@ productivityModifier(_productivityModifier),
 materialModifier(_materialModifier),
 wasteFactor(_wasteFactor),
 maxProductionLimit(_maxProductionLimit),
-chanceOfReverseEngineering(_chanceOfReverseEngineering)
+chanceOfReverseEngineering(_chanceOfReverseEngineering),
+productType(InvType::getType(_productTypeID))
 {
     s_AllBlueprintTypes[blueprintTypeID] = InvBlueprintTypeRef(this, [](InvBlueprintType * type)
     {
