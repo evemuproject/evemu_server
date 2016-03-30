@@ -92,6 +92,14 @@ bool EVEStatic::loadStaticData()
         return false;
     }
 
+    //-------------------------------
+    // Load the chrBloodlines table
+    //-------------------------------
+    if (!loadChrBloodlines())
+    {
+        return false;
+    }
+
     staticLoaded = true;
     return true;
 }

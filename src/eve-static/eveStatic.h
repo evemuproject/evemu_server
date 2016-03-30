@@ -66,6 +66,7 @@ protected:
     static bool loadInvBlueprintTypes();
     static bool loadStaStationTypes();
     static bool loadBlkShipTypes();
+    static bool loadChrBloodlines();
 
 private:
     static bool staticLoaded;

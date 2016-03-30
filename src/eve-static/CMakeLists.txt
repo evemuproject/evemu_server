@@ -21,6 +21,13 @@ SET( SOURCE
      "${TARGET_SOURCE_DIR}/eveStatic.cpp"
  )
 
+SET( chr_INCLUDE
+     "${TARGET_INCLUDE_DIR}/chr/ChrBloodline.h"
+)
+SET( chr_SOURCE
+     "${TARGET_SOURCE_DIR}/chr/ChrBloodline.cpp"
+)
+
 SET( inv_INCLUDE
      "${TARGET_INCLUDE_DIR}/inv/InvType.h"
      "${TARGET_INCLUDE_DIR}/inv/InvGroup.h"
@@ -57,12 +64,14 @@ SOURCE_GROUP( "src"                FILES ${SOURCE} )
 SOURCE_GROUP( "src\\inv"           FILES ${inv_SOURCE} )
 SOURCE_GROUP( "src\\sta"           FILES ${sta_SOURCE} )
 SOURCE_GROUP( "src\\blk"           FILES ${blk_SOURCE} )
+SOURCE_GROUP( "src\\chr"           FILES ${chr_SOURCE} )
 
 ADD_LIBRARY( "${TARGET_NAME}"
 ${SOURCE}
 ${inv_SOURCE}
 ${sta_SOURCE}
 ${blk_SOURCE}
+${chr_SOURCE}
 )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"
