@@ -744,3 +744,18 @@ void DBResultRow::SetData( DBQueryResult* res, MYSQL_ROW& row, const unsigned lo
     mLengths = lengths;
 }
 
+std::string DBResultRow::getStringNC(int index)
+{
+    return (IsNull(index) ? "" : GetText(index));
+}
+
+int32 DBResultRow::getIntNC(int index)
+{
+    return IsNull(index) ? 0 : GetInt(index);
+}
+
+double DBResultRow::getDoubleNC(int index)
+{
+    return IsNull(index) ? 0.0 : GetDouble(index);
+}
+

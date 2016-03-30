@@ -118,6 +118,26 @@ public:
     bool IsUnsigned( uint32 index ) const { return mResult->IsUnsigned( index ); }
     bool IsBinary( uint32 index ) const { return mResult->IsBinary( index ); }
 
+
+    /**
+     * Get a database row string value with null check.
+     * @param index The column.
+     * @return The string or an empty string on null.
+     */
+    std::string getStringNC(int index);
+    /**
+     * Get a database row int value with null check.
+     * @param index The column.
+     * @return The int or an zero on null.
+     */
+    int32 getIntNC(int index);
+    /**
+     * Get a database row double value with null check.
+     * @param index The column.
+     * @return The double or an zero on null.
+     */
+    double getDoubleNC(int index);
+
 protected:
     //for DBQueryResult
     friend class DBQueryResult;
