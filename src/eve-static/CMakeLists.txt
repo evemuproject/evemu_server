@@ -34,16 +34,25 @@ SET( inv_SOURCE
      "${TARGET_SOURCE_DIR}/inv/InvBlueprintType.cpp"
 )
 
+SET( sta_INCLUDE
+     "${TARGET_INCLUDE_DIR}/sta/StaStationType.h"
+)
+SET( sta_SOURCE
+     "${TARGET_SOURCE_DIR}/sta/StaStationType.cpp"
+)
+
 
 ########################
 # Setup the executable #
 ########################
 SOURCE_GROUP( "src"                FILES ${SOURCE} )
 SOURCE_GROUP( "src\\inv"           FILES ${inv_SOURCE} )
+SOURCE_GROUP( "src\\sta"           FILES ${inv_SOURCE} )
 
 ADD_LIBRARY( "${TARGET_NAME}"
 ${SOURCE}
 ${inv_SOURCE}
+${sta_SOURCE}
 )
 
 TARGET_BUILD_PCH( "${TARGET_NAME}"

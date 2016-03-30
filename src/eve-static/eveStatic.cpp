@@ -28,6 +28,7 @@
 #include "inv/InvGroup.h"
 #include "inv/InvCategory.h"
 #include "inv/InvBlueprintType.h"
+#include "sta/StaStationType.h"
 
 #include "python/classes/PyDatabase.h"
 #include "python/PyVisitor.h"
@@ -62,6 +63,17 @@ std::string getStringNC(DBResultRow &row, int index)
 int32 getIntNC(DBResultRow &row, int index)
 {
     return row.IsNull(index) ? 0 : row.GetInt(index);
+}
+
+/**
+ * Get a database row double value with null check.
+ * @param row The row.
+ * @param index The column.
+ * @return The double or an zero on null.
+ */
+double getDoubleNC(DBResultRow &row, int index)
+{
+    return row.IsNull(index) ? 0.0 : row.GetDouble(index);
 }
 
 bool EVEStatic::loadStaticData()
@@ -201,8 +213,8 @@ bool EVEStatic::loadStaticData()
         {
             categoryGroups = itr->second;
         }
-        InvCategory *Category = new InvCategory(categoryID, CategoryName,
-                                                description, iconID, published, categoryGroups);
+        new InvCategory(categoryID, CategoryName,
+                        description, iconID, published, categoryGroups);
     }
     m_InvCategoriesCache = rowset;
 
@@ -239,28 +251,70 @@ bool EVEStatic::loadStaticData()
         uint32 wasteFactor = row.GetInt(11);
         uint32 maxProductionLimit = row.GetInt(13);
         // from extInvBlueprintTypes
-        double chanceOfReverseEngineering = 0;
-        if (!row.IsNull(12))
-        {
-            chanceOfReverseEngineering = row.GetDouble(12);
-        }
-        InvBlueprintType *bpType = new InvBlueprintType(
-                                                   blueprintTypeID,
-                                                   parentBlueprintTypeID,
-                                                   productTypeID,
-                                                   productionTime,
-                                                   techLevel,
-                                                   researchProductivityTime,
-                                                   researchMaterialTime,
-                                                   researchCopyTime,
-                                                   researchTechTime,
-                                                   productivityModifier,
-                                                   materialModifier,
-                                                   wasteFactor,
-                                                   maxProductionLimit,
-                                                   chanceOfReverseEngineering);
+        double chanceOfReverseEngineering = getDoubleNC(row, 12);
+        new InvBlueprintType(
+                             blueprintTypeID,
+                             parentBlueprintTypeID,
+                             productTypeID,
+                             productionTime,
+                             techLevel,
+                             researchProductivityTime,
+                             researchMaterialTime,
+                             researchCopyTime,
+                             researchTechTime,
+                             productivityModifier,
+                             materialModifier,
+                             wasteFactor,
+                             maxProductionLimit,
+                             chanceOfReverseEngineering);
     }
     m_InvBlueprintTypesCache = rowset;
+    //-------------------------------
+    // Load the staStationTypes table
+    //-------------------------------
+
+    columns = "stationTypeID, dockEntryX, dockEntryY, dockEntryZ,"
+            " dockOrientationX, dockOrientationY, dockOrientationZ,"
+            " operationID, officeSlots, reprocessingEfficiency, conquerable,"
+            " dockingBayGraphicID, hangarGraphicID";
+    qry = "SELECT " + columns + " FROM staStationTypes LEFT JOIN extStaStationTypes Using(stationTypeID)";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    while (result.GetRow(row))
+    {
+        uint32 stationTypeID = row.GetInt(0);
+        double dockEntryX = row.GetDouble(1);
+        double dockEntryY = row.GetDouble(2);
+        double dockEntryZ = row.GetDouble(3);
+        double dockOrientationX = row.GetDouble(4);
+        double dockOrientationY = row.GetDouble(5);
+        double dockOrientationZ = row.GetDouble(6);
+        uint32 operationID = getIntNC(row, 7);
+        uint32 officeSlots = getIntNC(row, 8);
+        double reprocessingEfficiency = getDoubleNC(row, 9);
+        bool conquerable = row.GetBool(10);
+        // From extStaStationTypes
+        uint32 dockingBayGraphicID = getIntNC(row, 11);
+        uint32 hangarGraphicID = getIntNC(row, 12);
+        new StaStationType(
+                           stationTypeID,
+                           dockEntryX,
+                           dockEntryY,
+                           dockEntryZ,
+                           dockOrientationX,
+                           dockOrientationY,
+                           dockOrientationZ,
+                           operationID,
+                           officeSlots,
+                           reprocessingEfficiency,
+                           conquerable,
+                           dockingBayGraphicID,
+                           hangarGraphicID
+                           );
+    }
 
     staticLoaded = true;
     return true;
