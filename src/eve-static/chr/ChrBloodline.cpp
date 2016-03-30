@@ -81,7 +81,7 @@ bool EVEStatic::loadChrBloodlines()
     DBQueryResult result;
     DBResultRow row;
     std::string columns = "shipTypeID, weaponTypeID, miningTypeID, skillTypeID";
-    std::string qry = "SELECT " + columns + " FROM blkShipTypes";
+    std::string qry = "SELECT " + columns + " FROM chrBloodlines";
     if (!DBcore::RunQuery(result, qry.c_str()))
     {
         SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
@@ -102,7 +102,7 @@ bool EVEStatic::loadChrBloodlines()
         uint8 charisma = row.GetInt(10);
         uint8 memory = row.GetInt(11);
         uint8 intelligence = row.GetInt(12);
-        uint32 iconID = row.GetInt(13);
+        uint32 iconID = row.getIntNC(13);
         std::string shortDescription = row.GetText(14);
         std::string shortMaleDescription = row.GetText(15);
         std::string shortFemaleDescription = row.GetText(16);

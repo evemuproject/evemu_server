@@ -124,7 +124,7 @@ public:
      * @param index The column.
      * @return The string or an empty string on null.
      */
-    std::string getStringNC(int index);
+    std::string getTextNC(int index);
     /**
      * Get a database row int value with null check.
      * @param index The column.

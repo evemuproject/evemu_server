@@ -115,7 +115,7 @@ bool EVEStatic::loadInvTypes(std::map<uint32, std::vector<uint32> >& groupTypeLi
         uint32 typeID = row.GetInt(0);
         uint32 groupID = row.GetInt(1);
         std::string typeName = row.GetText(2);
-        std::string description = row.getStringNC(3);
+        std::string description = row.getTextNC(3);
         uint32 graphicID = row.getIntNC(4);
         double radius = row.GetDouble(5);
         double mass = row.GetDouble(6);
