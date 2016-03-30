@@ -30,69 +30,6 @@
 #include "station/Station.h"
 
 /*
- * StationTypeData
- */
-StationTypeData::StationTypeData(
-    uint32 _dockingBayGraphicID,
-    uint32 _hangarGraphicID,
-    const GPoint &_dockEntry,
-    const GVector &_dockOrientation,
-    uint32 _operationID,
-    uint32 _officeSlots,
-    double _reprocessingEfficiency,
-    bool _conquerable)
-: dockingBayGraphicID(_dockingBayGraphicID),
-  hangarGraphicID(_hangarGraphicID),
-  dockEntry(_dockEntry),
-  dockOrientation(_dockOrientation),
-  operationID(_operationID),
-  officeSlots(_officeSlots),
-  reprocessingEfficiency(_reprocessingEfficiency),
-  conquerable(_conquerable)
-{
-}
-
-/*
- * StationType
- */
-StationType::StationType(
-    uint32 _id,
-    // ItemType stuff:
-    const InvGroupRef _group,
-    const TypeData &_data,
-    // StationType stuff:
-    const StationTypeData &_stData)
-: ItemType(_id, _group, _data),
-  m_dockingBayGraphicID(_stData.dockingBayGraphicID),
-  m_hangarGraphicID(_stData.hangarGraphicID),
-  m_dockEntry(_stData.dockEntry),
-  m_dockOrientation(_stData.dockOrientation),
-  m_operationID(_stData.operationID),
-  m_officeSlots(_stData.officeSlots),
-  m_reprocessingEfficiency(_stData.reprocessingEfficiency),
-  m_conquerable(_stData.conquerable)
-{
-    // consistency check
-    assert(_data.groupID == EVEDB::invGroups::Station);
-}
-
-StationType *StationType::Load(uint32 stationTypeID)
-{
-    return ItemType::Load<StationType>( stationTypeID );
-}
-
-template<class _Ty>
-_Ty *StationType::_LoadStationType(uint32 stationTypeID,
-    // ItemType stuff:
-    const InvGroupRef group, const TypeData &data,
-    // StationType stuff:
-    const StationTypeData &stData)
-{
-    // ready to create
-    return new StationType( stationTypeID, group, data, stData );
-}
-
-/*
  * StationData
  */
 StationData::StationData(
@@ -121,14 +58,14 @@ StationData::StationData(
 Station::Station(
     uint32 _stationID,
     // InventoryItem stuff:
-    const StationType &_type,
+                 const ItemType &_type,
     const ItemData &_data,
     // CelestialObject stuff:
     const CelestialObjectData &_cData,
     // Station stuff:
     const StationData &_stData)
 : CelestialObject(_stationID, _type, _data, _cData),
-  m_stationType(_type),
+m_stationType(StaStationType::getType(_type.id())),
   m_security(_stData.security),
   m_dockingCostPerVolume(_stData.dockingCostPerVolume),
   m_maxShipVolumeDockable(_stData.maxShipVolumeDockable),
@@ -148,7 +85,7 @@ StationRef Station::Load(uint32 stationID)
 template<class _Ty>
 RefPtr<_Ty> Station::_LoadStation(uint32 stationID,
     // InventoryItem stuff:
-    const StationType &type, const ItemData &data,
+                                  const ItemType &type, const ItemData &data,
     // CelestialObject stuff:
     const CelestialObjectData &cData,
     // Station stuff:

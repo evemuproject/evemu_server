@@ -75,14 +75,6 @@ public:
      */
     static const ShipType *GetShipType(uint32 shipTypeID);
 
-    /**
-     * Loads station type, caches it and returns it.
-     *
-     * @param[in] stationTypeID ID of station type to load.
-     * @return Pointer to StationType object; NULL if fails.
-     */
-    static const StationType *GetStationType(uint32 stationTypeID);
-
     /*
      * Item stuff
      */

@@ -26,128 +26,10 @@
 #ifndef __STATION__H__INCL__
 #define __STATION__H__INCL__
 
+#include "sta/StaStationType.h"
 #include "inventory/Inventory.h"
 #include "inventory/ItemType.h"
 #include "system/Celestial.h"
-
-/**
- * Station type data container.
- */
-class StationTypeData {
-public:
-    StationTypeData(
-        uint32 _dockingBayGraphicID = 0,
-        uint32 _hangarGraphicID = 0,
-        const GPoint &_dockEntry = GPoint(0, 0, 0),
-        const GVector &_dockOrientation = GVector(0, 0, 0),
-        uint32 _operationID = 0,
-        uint32 _officeSlots = 0,
-        double _reprocessingEfficiency = 0.0,
-        bool _conquerable = false
-    );
-
-    // Data members:
-    uint32 dockingBayGraphicID;
-    uint32 hangarGraphicID;
-
-    GPoint dockEntry;
-    GVector dockOrientation;
-
-    uint32 operationID;
-    uint32 officeSlots;
-    double reprocessingEfficiency;
-    bool conquerable;
-};
-
-/**
- * Type of station.
- */
-class StationType
-: public ItemType
-{
-    friend class ItemType; // to let it construct us
-public:
-    /**
-     * Loads station type.
-     *
-     * @param[in] stationTypeID ID of station type to load.
-     * @return Pointer to new StationType object; NULL if failed.
-     */
-    static StationType *Load(uint32 stationTypeID);
-
-    /*
-     * Access methods:
-     */
-    uint32      dockingBayGraphicID() const { return m_dockingBayGraphicID; }
-    uint32      hangarGraphicID() const { return m_hangarGraphicID; }
-
-    GPoint      dockEntry() const { return m_dockEntry; }
-    GVector     dockOrientation() const { return m_dockOrientation; }
-
-    uint32      operationID() const { return m_operationID; }
-    uint32      officeSlots() const { return m_officeSlots; }
-    double      reprocessingEfficiency() const { return m_reprocessingEfficiency; }
-    bool        conquerable() const { return m_conquerable; }
-
-protected:
-    StationType(
-        uint32 _id,
-        // ItemType stuff:
-        const InvGroupRef _group,
-        const TypeData &_data,
-        // StationType stuff:
-        const StationTypeData &_stData
-    );
-
-    /*
-     * Member functions:
-     */
-    using ItemType::_Load;
-
-    // Template loader:
-    template<class _Ty>
-    static _Ty *_LoadType(uint32 stationTypeID,
-        // ItemType stuff:
-        const InvGroupRef group, const TypeData &data)
-    {
-        // verify it's a station type
-        if( group->groupID != EVEDB::invGroups::Station )
-        {
-            _log(ITEM__ERROR, "Trying to load %s as Station.", group->groupName.c_str());
-            return NULL;
-        }
-
-        // get station type data
-        StationTypeData stData;
-        if (!InventoryDB::GetStationType(stationTypeID, stData))
-            return NULL;
-
-        return _Ty::template _LoadStationType<_Ty>( stationTypeID, group, data, stData );
-    }
-
-    // Actual loading stuff:
-    template<class _Ty>
-    static _Ty *_LoadStationType(uint32 stationTypeID,
-        // ItemType stuff:
-        const InvGroupRef group, const TypeData &data,
-        // StationType stuff:
-        const StationTypeData &stData
-    );
-
-    /*
-     * Data members:
-     */
-    uint32 m_dockingBayGraphicID;
-    uint32 m_hangarGraphicID;
-
-    GPoint m_dockEntry;
-    GVector m_dockOrientation;
-
-    uint32 m_operationID;
-    uint32 m_officeSlots;
-    double m_reprocessingEfficiency;
-    bool m_conquerable;
-};
 
 /**
  * Data container for station.
@@ -206,15 +88,19 @@ public:
 
     double          reprocessingEfficiency() const { return m_reprocessingEfficiency; }
     double          reprocessingStationsTake() const { return m_reprocessingStationsTake; }
-    EVEItemFlags    reprocessingHangarFlag() const { return m_reprocessingHangarFlag; }
+    EVEItemFlags    reprocessingHangarFlag() const { return m_reprocessingHangarFlag;
+    }
 
-    StationType *   GetStationType() { return &m_stationType; }
+    StaStationTypeRef GetStationType()
+    {
+        return m_stationType;
+    }
 
 protected:
     Station(
         uint32 _stationID,
         // InventoryItem stuff:
-        const StationType &_type,
+            const ItemType &_type,
         const ItemData &_data,
         // CelestialObject stuff:
         const CelestialObjectData &_cData,
@@ -231,18 +117,16 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCelestialObject(uint32 stationID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data,
+                                            const ItemType &stType, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData)
     {
         // check it's a station
-        if( type.groupID() != EVEDB::invGroups::Station )
+        if (stType.groupID() != EVEDB::invGroups::Station)
         {
-            _log(ITEM__ERROR, "Trying to load %s as Station.", type.group()->groupName.c_str());
+            _log(ITEM__ERROR, "Trying to load %s as Station.", stType.group()->groupName.c_str());
             return RefPtr<_Ty>();
         }
-        // cast the type
-        const StationType &stType = static_cast<const StationType &>( type );
 
         // load station data
         StationData stData;
@@ -256,7 +140,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadStation(uint32 stationID,
         // InventoryItem stuff:
-        const StationType &type, const ItemData &data,
+                                    const ItemType &type, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData,
         // Station stuff:
@@ -272,7 +156,7 @@ protected:
     /*
      * Data members:
      */
-    StationType m_stationType;
+    StaStationTypeRef m_stationType;
     uint32 m_security;
     double m_dockingCostPerVolume;
     double m_maxShipVolumeDockable;

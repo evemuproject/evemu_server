@@ -134,10 +134,6 @@ const ShipType *ItemFactory::GetShipType(uint32 shipTypeID) {
     return _GetType<ShipType>(shipTypeID);
 }
 
-const StationType *ItemFactory::GetStationType(uint32 stationTypeID) {
-    return _GetType<StationType>(stationTypeID);
-}
-
 template<class _Ty>
 RefPtr<_Ty> ItemFactory::_GetItem(uint32 itemID)
 {

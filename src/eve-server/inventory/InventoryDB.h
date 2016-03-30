@@ -34,7 +34,6 @@ class EVEAttributeMgr;
 class TypeData;
 class CharacterTypeData;
 class ShipTypeData;
-class StationTypeData;
 
 class ItemData;
 class BlueprintData;
@@ -109,15 +108,6 @@ public:
      * @return True on success, false on failure.
      */
     static bool GetShipType(uint32 shipTypeID, ShipTypeData &into);
-
-    /**
-     * Loads station type data into given container.
-     *
-     * @param[in] stationTypeID ID of station type to load.
-     * @param[in] into Container to load data into.
-     * @return True if load succeeded, false if not.
-     */
-    static bool GetStationType(uint32 stationTypeID, StationTypeData &into);
 
     /*
      * Type attribute stuff

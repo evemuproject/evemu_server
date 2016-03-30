@@ -1292,8 +1292,8 @@ PyResult DestinyManager::AttemptDockOperation()
     }
 
     GPoint stationOrigin = static_cast< StationEntity* >( station )->GetPosition();
-    GPoint stationDockPoint = static_cast< StationEntity* >( station )->GetStationObject()->GetStationType()->dockEntry();     //station->GetPosition();
-    GVector stationDockOrientation = static_cast< StationEntity*>( station )->GetStationObject()->GetStationType()->dockOrientation();
+    GPoint stationDockPoint = static_cast< StationEntity* >( station )->GetStationObject()->GetStationType()->dockEntry;     //station->GetPosition();
+    GVector stationDockOrientation = static_cast< StationEntity*>( station )->GetStationObject()->GetStationType()->dockOrientation;
     const GPoint &position = who->GetPosition();
 
     // Leave stationOrigin alone, so that docking perimeter is a sphere centered on the station's center coordinate, not the undock point

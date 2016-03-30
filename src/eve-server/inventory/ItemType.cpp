@@ -156,8 +156,9 @@ _Ty *ItemType::_LoadType(uint32 typeID,
         ///////////////////////////////////////
         // Station:
         ///////////////////////////////////////
-        case EVEDB::invGroups::Station: {
-            return StationType::_LoadType<StationType>( typeID, group, data );
+        case EVEDB::invGroups::Station:
+        {
+            break;
         }
     }
 
