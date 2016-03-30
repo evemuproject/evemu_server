@@ -51,7 +51,10 @@ InvType::InvType(uint32 _typeID,
                  bool _published,
                  uint32 _marketGroupID,
                  double _chanceOfDuplicating,
-                 uint32 _iconID
+                 uint32 _iconID,
+                 std::map<uint32, EvilNumber> &_attributes,
+                 std::vector<uint32> _effects,
+                 uint32 _defaultEffect
                  ) :
 typeID(_typeID),
 groupID(_groupID),
@@ -68,7 +71,10 @@ basePrice(_basePrice),
 published(_published),
 marketGroupID(_marketGroupID),
 chanceOfDuplicating(_chanceOfDuplicating),
-iconID(_iconID)
+iconID(_iconID),
+m_attributes(_attributes),
+m_effects(_effects),
+m_defaultEffect(_defaultEffect)
 {
     s_AllTypes[typeID] = InvTypeRef(this, [](InvType * type)
     {
@@ -91,15 +97,61 @@ uint32 InvType::getCategoryID()
 bool EVEStatic::loadInvTypes(std::map<uint32, std::vector<uint32> >& groupTypeList)
 {
     DBQueryResult result;
+    DBResultRow row;
+    // Get type attributes.
+    std::map<uint32, std::map<uint32, EvilNumber>> typeAttributes;
+    std::string columns = "typeID, attributeID, valueInt, valueFloat";
+    std::string qry = "SELECT " + columns + " FROM dgmTypeAttributes";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    while (result.GetRow(row))
+    {
+        uint32 typeID = row.GetInt(0);
+        uint32 attributeID = row.GetInt(1);
+        EvilNumber num;
+        if (!row.IsNull(2))
+        {
+            num = row.GetUInt64(2);
+        }
+        if (!row.IsNull(3))
+        {
+            num = row.GetDouble(3);
+        }
+        typeAttributes[typeID][attributeID] = num;
+    }
+    // now get the effects
+    std::map<uint32, std::vector < uint32>> typeEffects;
+    std::map<uint32, uint32> defaultEffects;
+    columns = "typeID, effectID, isDefault";
+    qry = "SELECT " + columns + " FROM dgmTypeEffects";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    while (result.GetRow(row))
+    {
+        uint32 typeID = row.GetInt(0);
+        uint32 effectID = row.GetInt(1);
+        bool isDefault = row.GetBool(2);
+        typeEffects[typeID].push_back(effectID);
+        if (isDefault)
+        {
+            defaultEffects[typeID] = effectID;
+        }
+    }
+    // Now we can load the types.
     DBRowDescriptor *header;
     CRowSet *rowset;
-    DBResultRow row;
     // switch order of iconID and soundID because that's the way it was in objCacheDB.
-    std::string columns = "typeID, groupID, typeName, description,"
+    columns = "typeID, groupID, typeName, description,"
             " graphicID, radius, mass, volume, capacity, portionSize,"
             " raceID, basePrice, published, marketGroupID, chanceOfDuplicating,"
             " soundID, iconID, dataID, typeNameID, descriptionID";
-    std::string qry = "SELECT " + columns + " FROM invTypes LEFT JOIN extInvTypes USING(typeID)";
+    qry = "SELECT " + columns + " FROM invTypes LEFT JOIN extInvTypes USING(typeID)";
     if (!DBcore::RunQuery(result, qry.c_str()))
     {
         SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
@@ -128,12 +180,19 @@ bool EVEStatic::loadInvTypes(std::map<uint32, std::vector<uint32> >& groupTypeLi
         uint32 marketGroupID = row.getIntNC(13);
         double chanceOfDuplicating = row.GetDouble(14);
         uint32 iconID = row.getIntNC(16);
+        uint32 defaultEffect = 0;
+        auto itr = defaultEffects.find(typeID);
+        if (itr != defaultEffects.end())
+        {
+            defaultEffect = itr->second;
+        }
         // Create the type object.
         InvType *type = new InvType(
                                     typeID, groupID, typeName, description, graphicID,
                                     radius, mass, volume, capacity, portionSize,
                                     raceID, basePrice, published, marketGroupID,
-                                    chanceOfDuplicating, iconID);
+                                    chanceOfDuplicating, iconID,
+                                    typeAttributes[typeID], typeEffects[typeID], defaultEffect);
         groupTypeList[type->groupID].push_back(type->typeID);
     }
     m_InvTypesCache = rowset;

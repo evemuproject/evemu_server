@@ -32,7 +32,6 @@
 // this file should have all stuff regarding damage type attribute caching..
 enum EVIL_NUMBER_TYPE
 {
-    evil_number_nan,
     evil_number_int,
     evil_number_float,
 };
@@ -358,8 +357,6 @@ public:
             snprintf(buff, 32, "%" PRId64, mValue.iVal);
         else if (mType == evil_number_float)
             snprintf(buff, 32, "%f", mValue.fVal);
-        else
-            assert(false); // bleh crash..
         return std::string(buff);
     }
 

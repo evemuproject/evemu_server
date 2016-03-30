@@ -30,8 +30,10 @@
 #include <string>
 #include <memory>
 #include <map>
+#include <algorithm>
 
 #include "InvGroup.h"
+#include "utils/EvilNumber.h"
 
 class InvType;
 typedef std::shared_ptr<InvType> InvTypeRef;
@@ -54,7 +56,10 @@ public:
             bool _published,
             uint32 _marketGroupID,
             double _chanceOfDuplicating,
-            uint32 _iconID
+            uint32 _iconID,
+            std::map<uint32, EvilNumber> &_attributes,
+            std::vector<uint32> _effects,
+            uint32 _defaultEffect
             );
 
     // From invTypes.
@@ -74,6 +79,10 @@ public:
     const uint32 marketGroupID;
     const double chanceOfDuplicating;
     const uint32 iconID;
+
+    const std::map<uint32, EvilNumber> m_attributes;
+    const std::vector<uint32> m_effects;
+    const uint32 m_defaultEffect;
 
     uint32 getCategoryID();
 
@@ -126,6 +135,49 @@ public:
     InvCategoryRef getCategory()
     {
         return InvCategory::getCategory(getCategoryID());
+    }
+
+    bool hasEffect(uint32 effectID)
+    {
+        if (m_effects.empty())
+        {
+            return false;
+        }
+        return std::find(m_effects.begin(), m_effects.end(), effectID) != m_effects.end();
+    }
+    bool hasAttr(uint32 attrID)
+    {
+        auto itr = m_attributes.find(attrID);
+        return itr != m_attributes.end();
+    }
+    EvilNumber getAttr(uint32 attrID)
+    {
+        auto itr = m_attributes.find(attrID);
+        if (itr != m_attributes.end())
+        {
+            itr->second;
+        }
+        return 0;
+    }
+
+    int64 getIntAttr(uint32 attrID)
+    {
+        auto itr = m_attributes.find(attrID);
+        if (itr != m_attributes.end())
+        {
+            itr->second.get_int();
+        }
+        return 0;
+    }
+
+    double getDoubleAttr(uint32 attrID)
+    {
+        auto itr = m_attributes.find(attrID);
+        if (itr != m_attributes.end())
+        {
+            itr->second.get_float();
+        }
+        return 0;
     }
 
 private:
