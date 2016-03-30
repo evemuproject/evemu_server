@@ -70,12 +70,12 @@ SolarSystemData::SolarSystemData(
 SolarSystem::SolarSystem(
                          uint32 _solarSystemID,
     // InventoryItem stuff:
-    const ItemType &_type,
+    const InvTypeRef _type,
     const ItemData &_data,
     // CelestialObject stuff:
     const CelestialObjectData &_cData,
     // SolarSystem stuff:
-    const ItemType &_sunType,
+    const InvTypeRef _sunType,
     const SolarSystemData &_ssData)
 : CelestialObject(_solarSystemID, _type, _data, _cData),
   m_minPosition(_ssData.minPosition),
@@ -95,7 +95,7 @@ SolarSystem::SolarSystem(
   m_securityClass(_ssData.securityClass)
 {
     // consistency check
-    assert(_sunType.id() == _ssData.sunTypeID);
+    assert(_sunType->typeID == _ssData.sunTypeID);
 }
 
 SolarSystem::~SolarSystem() {
@@ -109,11 +109,11 @@ SolarSystemRef SolarSystem::Load(uint32 solarSystemID)
 template<class _Ty>
 RefPtr<_Ty> SolarSystem::_LoadSolarSystem(uint32 solarSystemID,
     // InventoryItem stuff:
-    const ItemType &type, const ItemData &data,
+    const InvTypeRef type, const ItemData &data,
     // CelestialObject stuff:
     const CelestialObjectData &cData,
     // SolarSystem stuff:
-    const ItemType &sunType, const SolarSystemData &ssData)
+    const InvTypeRef sunType, const SolarSystemData &ssData)
 {
     // we have it all
     return SolarSystemRef( new SolarSystem( solarSystemID, type, data, cData, sunType, ssData ) );

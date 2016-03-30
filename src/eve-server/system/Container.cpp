@@ -36,7 +36,7 @@
 CargoContainer::CargoContainer(
     uint32 _containerID,
     // InventoryItem stuff:
-    const ItemType &_containerType,
+                               const InvTypeRef _containerType,
     const ItemData &_data)
 : InventoryItem(_containerID, _containerType, _data) {}
 
@@ -48,7 +48,7 @@ CargoContainerRef CargoContainer::Load(uint32 containerID)
 template<class _Ty>
 RefPtr<_Ty> CargoContainer::_LoadCargoContainer(uint32 containerID,
     // InventoryItem stuff:
-    const ItemType &itemType, const ItemData &data)
+                                                const InvTypeRef itemType, const ItemData &data)
 {
     // we don't need any additional stuff
     return CargoContainerRef( new CargoContainer( containerID, itemType, data ) );
@@ -64,7 +64,7 @@ CargoContainerRef CargoContainer::Spawn(
     CargoContainerRef containerRef = CargoContainer::Load( containerID );
 
     // Create default dynamic attributes in the AttributeMap:
-    containerRef->SetAttribute(AttrRadius,          containerRef->type().attributes.radius(), true);			// Radius
+    containerRef->SetAttribute(AttrRadius, containerRef->type()->getDoubleAttr(AttrRadius), true); // Radius
 
     // Check for existence of some attributes that may or may not have already been loaded and set them
     // to default values:
@@ -80,9 +80,11 @@ uint32 CargoContainer::_Spawn(
     ItemData &data
 ) {
     // make sure it's a cargo container
-    const ItemType *st = ItemFactory::GetType(data.typeID);
-    if(st == NULL)
+    const InvTypeRef st = InvType::getType(data.typeID);
+    if (st.get() == nullptr)
+    {
         return 0;
+    }
 
     // store item data
     uint32 containerID = InventoryItem::_Spawn(data);

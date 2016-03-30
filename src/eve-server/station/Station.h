@@ -28,7 +28,6 @@
 
 #include "sta/StaStationType.h"
 #include "inventory/Inventory.h"
-#include "inventory/ItemType.h"
 #include "system/Celestial.h"
 
 /**
@@ -100,7 +99,7 @@ protected:
     Station(
         uint32 _stationID,
         // InventoryItem stuff:
-            const ItemType &_type,
+            const InvTypeRef _type,
         const ItemData &_data,
         // CelestialObject stuff:
         const CelestialObjectData &_cData,
@@ -117,14 +116,14 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCelestialObject(uint32 stationID,
         // InventoryItem stuff:
-                                            const ItemType &stType, const ItemData &data,
+                                            const InvTypeRef stType, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData)
     {
         // check it's a station
-        if (stType.groupID() != EVEDB::invGroups::Station)
+        if (stType->groupID != EVEDB::invGroups::Station)
         {
-            _log(ITEM__ERROR, "Trying to load %s as Station.", stType.group()->groupName.c_str());
+            _log(ITEM__ERROR, "Trying to load %s as Station.", stType->getGroup()->groupName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -140,7 +139,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadStation(uint32 stationID,
         // InventoryItem stuff:
-                                    const ItemType &type, const ItemData &data,
+                                    const InvTypeRef type, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData,
         // Station stuff:

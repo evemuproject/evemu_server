@@ -50,7 +50,7 @@ CelestialObjectData::CelestialObjectData(
  */
 CelestialObject::CelestialObject(
     uint32 _celestialID,
-    const ItemType &_type,
+                                 const InvTypeRef _type,
     const ItemData &_data)
 : InventoryItem(_celestialID, _type, _data),
   m_radius( 0.0 ),
@@ -63,7 +63,7 @@ CelestialObject::CelestialObject(
 CelestialObject::CelestialObject(
     uint32 _celestialID,
     // InventoryItem stuff:
-    const ItemType &_type,
+                                 const InvTypeRef _type,
     const ItemData &_data,
     // CelestialObject stuff:
     const CelestialObjectData &_cData)
@@ -83,12 +83,13 @@ CelestialObjectRef CelestialObject::Load(uint32 celestialID)
 template<class _Ty>
 RefPtr<_Ty> CelestialObject::_LoadCelestialObject(uint32 celestialID,
     // InventoryItem stuff:
-    const ItemType &type, const ItemData &data,
+                                                  const InvTypeRef type, const ItemData &data,
     // CelestialObject stuff:
     const CelestialObjectData &cData)
 {
     // Our category is celestial; what to do next:
-    switch( type.groupID() ) {
+    switch (type->groupID)
+    {
         ///////////////////////////////////////
         // Solar system:
         ///////////////////////////////////////
@@ -123,14 +124,18 @@ uint32 CelestialObject::_Spawn(
     ItemData &data
 ) {
     // make sure it's a ship
-    const ItemType *item = ItemFactory::GetType(data.typeID);
-    if( !(item->categoryID() == EVEDB::invCategories::Celestial) )
+    const InvTypeRef item = InvType::getType(data.typeID);
+    if (!(item->getCategoryID() == EVEDB::invCategories::Celestial))
+    {
         return 0;
+    }
 
     // store item data
     uint32 celestialID = InventoryItem::_Spawn(data);
-    if( celestialID == 0 )
+    if (celestialID == 0)
+    {
         return 0;
+    }
 
     // nothing additional
 

@@ -112,7 +112,7 @@ ItemData::ItemData(
  */
 InventoryItem::InventoryItem(
     uint32 _itemID,
-    const ItemType &_type,
+                             const InvTypeRef _type,
     const ItemData &_data)
 : RefObject( 0 ),
   //attributes( *this, true, true),
@@ -133,7 +133,7 @@ InventoryItem::InventoryItem(
 
 {
     // assert for data consistency
-    assert(_data.typeID == _type.id());
+    assert(_data.typeID == _type->typeID);
 
     //m_saveTimerExpiryTime = ITEM_DB_SAVE_TIMER_EXPIRY * 60 * 1000;      // 10 minutes in milliseconds
     //m_saveTimer.SetTimer(m_saveTimerExpiryTime);                        // set timer in milliseconds
@@ -158,9 +158,9 @@ InventoryItemRef InventoryItem::Load(uint32 itemID)
 
 InventoryItemRef InventoryItem::LoadEntity(uint32 itemID, const ItemData &data)
 {
-    const ItemType *type = ItemFactory::GetType(data.typeID);
+    const InvTypeRef type = InvType::getType(data.typeID);
 
-	InventoryItemRef itemRef = InventoryItemRef( new InventoryItem(itemID, *type, data) );
+	InventoryItemRef itemRef = InventoryItemRef( new InventoryItem(itemID, type, data) );
 
 	itemRef->_Load();
 
@@ -170,10 +170,12 @@ InventoryItemRef InventoryItem::LoadEntity(uint32 itemID, const ItemData &data)
 template<class _Ty>
 RefPtr<_Ty> InventoryItem::_LoadItem(uint32 itemID,
     // InventoryItem stuff:
-    const ItemType &type, const ItemData &data)
+                                     const InvTypeRef type, const ItemData &data)
 {
+    uint32 groupID = type->groupID;
     // See what to do next:
-    switch( type.categoryID() ) {
+    switch (type->getCategoryID())
+    {
         //! TODO not handled.
         case EVEDB::invCategories::_System:
         case EVEDB::invCategories::Station:
@@ -201,20 +203,21 @@ RefPtr<_Ty> InventoryItem::_LoadItem(uint32 itemID,
         ///////////////////////////////////////
         // Entity:
         ///////////////////////////////////////
-        case EVEDB::invCategories::Entity: {
-            if( (type.groupID() == EVEDB::invGroups::Spawn_Container) )
+        case EVEDB::invCategories::Entity:
+        {
+            if ((groupID == EVEDB::invGroups::Spawn_Container))
                 return CargoContainerRef( new CargoContainer( itemID, type, data ) );
             else
-				if( (type.groupID() >= EVEDB::invGroups::Asteroid_Angel_Cartel_Frigate
-							&& type.groupID() <= EVEDB::invGroups::Deadspace_Serpentis_Frigate)
-							|| (type.groupID() >= 755 /* Asteroid Rogue Drone BattleCruiser */
-							&& type.groupID() <= 761 /* Asteroid Rogue Drone Swarm */)
-							|| (type.groupID() >= 789 /* Asteroid Angel Cartel Commander Frigate */
-							&& type.groupID() <= 814 /* Asteroid Serpentis Commander Frigate */)
-							|| (type.groupID() >= 843 /* Asteroid Rogue Drone Commander BattleCruiser */
-							&& type.groupID() <= 852 /* Asteroid Serpentis Commander Battleship */)
-							|| (type.groupID() >= 959 /* Deadspace Sleeper Sleepless Sentinel */
-							&& type.groupID() <= 987 /* Deadspace Sleeper Emergent Patroller */) )
+                if ((groupID >= EVEDB::invGroups::Asteroid_Angel_Cartel_Frigate
+                    && groupID <= EVEDB::invGroups::Deadspace_Serpentis_Frigate)
+                    || (groupID >= 755 /* Asteroid Rogue Drone BattleCruiser */
+                    && groupID <= 761 /* Asteroid Rogue Drone Swarm */)
+                    || (groupID >= 789 /* Asteroid Angel Cartel Commander Frigate */
+                    && groupID <= 814 /* Asteroid Serpentis Commander Frigate */)
+                    || (groupID >= 843 /* Asteroid Rogue Drone Commander BattleCruiser */
+                    && groupID <= 852 /* Asteroid Serpentis Commander Battleship */)
+                    || (groupID >= 959 /* Deadspace Sleeper Sleepless Sentinel */
+                    && groupID <= 987 /* Deadspace Sleeper Emergent Patroller */))
 					return InventoryItemRef( new InventoryItem(itemID, type, data) );
 				else
 					return CelestialObjectRef( new CelestialObject( itemID, type, data ) );
@@ -223,12 +226,13 @@ RefPtr<_Ty> InventoryItem::_LoadItem(uint32 itemID,
         ///////////////////////////////////////
         // Celestial:
         ///////////////////////////////////////
-        case EVEDB::invCategories::Celestial: {
-            if( (type.groupID() == EVEDB::invGroups::Secure_Cargo_Container)
-                || (type.groupID() == EVEDB::invGroups::Audit_Log_Secure_Container)
-                || (type.groupID() == EVEDB::invGroups::Freight_Container)
-                || (type.groupID() == EVEDB::invGroups::Cargo_Container)
-                || (type.groupID() == EVEDB::invGroups::Wreck) )
+        case EVEDB::invCategories::Celestial:
+        {
+            if ((groupID == EVEDB::invGroups::Secure_Cargo_Container)
+                || (groupID == EVEDB::invGroups::Audit_Log_Secure_Container)
+                || (groupID == EVEDB::invGroups::Freight_Container)
+                || (groupID == EVEDB::invGroups::Cargo_Container)
+                || (groupID == EVEDB::invGroups::Wreck) )
                 return CargoContainerRef( new CargoContainer( itemID, type, data ) );
             else
                 return CelestialObjectRef( new CelestialObject( itemID, type, data ) );
@@ -257,7 +261,7 @@ RefPtr<_Ty> InventoryItem::_LoadItem(uint32 itemID,
     }
 
     // ItemCategory didn't do it, try ItemGroup:
-    switch( type.groupID() ) {
+    switch( groupID ) {
         ///////////////////////////////////////
         // Station:
         ///////////////////////////////////////
@@ -290,12 +294,15 @@ bool InventoryItem::_Load()
 InventoryItemRef InventoryItem::Spawn(ItemData &data)
 {
     // obtain type of new item
-    const ItemType *t = ItemFactory::GetType(data.typeID);
-    if( t == NULL )
+    const InvTypeRef t = InvType::getType(data.typeID);
+    if (t.get() == nullptr)
+    {
         return InventoryItemRef();
+    }
 
     // See what to do next:
-    switch( t->categoryID() ) {
+    switch (t->getCategoryID())
+    {
         //! TODO not handled.
         case EVEDB::invCategories::_System:
         case EVEDB::invCategories::Station:
@@ -343,12 +350,12 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
         //  and other celestial static objects such as NPC stations, stars, moons, planets, and stargates)
         ///////////////////////////////////////
         case EVEDB::invCategories::Celestial: {
-            if ( (t->groupID() == EVEDB::invGroups::Secure_Cargo_Container)
-                || (t->groupID() == EVEDB::invGroups::Cargo_Container)
-                || (t->groupID() == EVEDB::invGroups::Freight_Container)
-                || (t->groupID() == EVEDB::invGroups::Audit_Log_Secure_Container)
-                || (t->groupID() == EVEDB::invGroups::Spawn_Container)
-                || (t->groupID() == EVEDB::invGroups::Wreck) )
+            if ( (t->groupID == EVEDB::invGroups::Secure_Cargo_Container)
+                || (t->groupID == EVEDB::invGroups::Cargo_Container)
+                || (t->groupID == EVEDB::invGroups::Freight_Container)
+                || (t->groupID == EVEDB::invGroups::Audit_Log_Secure_Container)
+                || (t->groupID == EVEDB::invGroups::Spawn_Container)
+                || (t->groupID == EVEDB::invGroups::Wreck) )
             {
                 // Spawn new Cargo Container
                 uint32 itemID = CargoContainer::_Spawn( data );
@@ -363,10 +370,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
                 cargoRef.get()->SetAttribute(AttrDamage,        0.0);                                               // Structure Damage
                 //cargoRef.get()->SetAttribute(AttrShieldCharge,  cargoRef.get()->GetAttribute(AttrShieldCapacity));  // Shield Charge
                 //cargoRef.get()->SetAttribute(AttrArmorDamage,   0.0);                                               // Armor Damage
-                cargoRef.get()->SetAttribute(AttrMass,          cargoRef.get()->type().attributes.mass());          // Mass
-                cargoRef.get()->SetAttribute(AttrRadius,        cargoRef.get()->type().attributes.radius());        // Radius
-                cargoRef.get()->SetAttribute(AttrVolume,        cargoRef.get()->type().attributes.volume());        // Volume
-                cargoRef.get()->SetAttribute(AttrCapacity,      cargoRef.get()->type().attributes.capacity());      // Capacity
+                cargoRef.get()->SetAttribute(AttrMass, cargoRef.get()->type()->getAttr(AttrMass)); // Mass
+                cargoRef.get()->SetAttribute(AttrRadius, cargoRef.get()->type()->getAttr(AttrRadius)); // Radius
+                cargoRef.get()->SetAttribute(AttrVolume, cargoRef.get()->type()->getAttr(AttrVolume)); // Volume
+                cargoRef.get()->SetAttribute(AttrCapacity, cargoRef.get()->type()->getAttr(AttrCapacity)); // Capacity
                 cargoRef.get()->SaveAttributes();
 
                 return cargoRef;
@@ -429,10 +436,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->SetAttribute(AttrIsOnline,   1);                                             // Is Online
             itemRef.get()->SetAttribute(AttrDamage,     0.0);                                             // Structure Damage
-            itemRef.get()->SetAttribute(AttrMass,       itemRef.get()->type().attributes.mass());           // Mass
-            itemRef.get()->SetAttribute(AttrRadius,     itemRef.get()->type().attributes.radius());       // Radius
-            itemRef.get()->SetAttribute(AttrVolume,     itemRef.get()->type().attributes.volume());       // Volume
-            itemRef.get()->SetAttribute(AttrCapacity,   itemRef.get()->type().attributes.capacity());   // Capacity
+            itemRef.get()->SetAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
+            itemRef.get()->SetAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+            itemRef.get()->SetAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -454,10 +461,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->SetAttribute(AttrIsOnline,   1);                                             // Is Online
             itemRef.get()->SetAttribute(AttrDamage,     0.0);                                             // Structure Damage
-            itemRef.get()->SetAttribute(AttrMass,       itemRef.get()->type().attributes.mass());           // Mass
-            itemRef.get()->SetAttribute(AttrRadius,     itemRef.get()->type().attributes.radius());       // Radius
-            itemRef.get()->SetAttribute(AttrVolume,     itemRef.get()->type().attributes.volume());       // Volume
-            itemRef.get()->SetAttribute(AttrCapacity,   itemRef.get()->type().attributes.capacity());   // Capacity
+            itemRef.get()->SetAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
+            itemRef.get()->SetAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+            itemRef.get()->SetAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -481,10 +488,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             itemRef.get()->SetAttribute(AttrDamage,         0.0);                                             // Structure Damage
             itemRef.get()->SetAttribute(AttrShieldCharge,   itemRef.get()->GetAttribute(AttrShieldCapacity));       // Shield Charge
             itemRef.get()->SetAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
-            itemRef.get()->SetAttribute(AttrMass,           itemRef.get()->type().attributes.mass());           // Mass
-            itemRef.get()->SetAttribute(AttrRadius,         itemRef.get()->type().attributes.radius());       // Radius
-            itemRef.get()->SetAttribute(AttrVolume,         itemRef.get()->type().attributes.volume());       // Volume
-            itemRef.get()->SetAttribute(AttrCapacity,       itemRef.get()->type().attributes.capacity());   // Capacity
+            itemRef.get()->SetAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
+            itemRef.get()->SetAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+            itemRef.get()->SetAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -508,10 +515,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             itemRef.get()->SetAttribute(AttrDamage,         0.0);                                             // Structure Damage
             //itemRef.get()->SetAttribute(AttrShieldCharge,   itemRef.get()->GetAttribute(AttrShieldCapacity));       // Shield Charge
             //itemRef.get()->SetAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
-            itemRef.get()->SetAttribute(AttrMass,           itemRef.get()->type().attributes.mass());           // Mass
-            itemRef.get()->SetAttribute(AttrRadius,         itemRef.get()->type().attributes.radius());       // Radius
-            itemRef.get()->SetAttribute(AttrVolume,         itemRef.get()->type().attributes.volume());       // Volume
-            itemRef.get()->SetAttribute(AttrCapacity,       itemRef.get()->type().attributes.capacity());   // Capacity
+            itemRef.get()->SetAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
+            itemRef.get()->SetAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+            itemRef.get()->SetAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -538,7 +545,7 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->SetAttribute(AttrRadius, 500.0);       // Radius
             itemRef.get()->SetAttribute(AttrMass,   1000000.0);    // Mass
-			itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type().attributes.volume());       // Volume
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
             itemRef.get()->SetAttribute(AttrQuantity, 5000.0);      // Quantity
             itemRef.get()->SaveAttributes();
 
@@ -563,17 +570,17 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             itemRef.get()->SetAttribute(AttrDamage,         0.0);                                             // Structure Damage
             itemRef.get()->SetAttribute(AttrShieldCharge,   itemRef.get()->GetAttribute(AttrShieldCapacity));       // Shield Charge
             itemRef.get()->SetAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
-            itemRef.get()->SetAttribute(AttrMass,           itemRef.get()->type().attributes.mass());           // Mass
-            itemRef.get()->SetAttribute(AttrRadius,         itemRef.get()->type().attributes.radius());       // Radius
-            itemRef.get()->SetAttribute(AttrVolume,         itemRef.get()->type().attributes.volume());       // Volume
-            itemRef.get()->SetAttribute(AttrCapacity,       itemRef.get()->type().attributes.capacity());   // Capacity
+            itemRef.get()->SetAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
+            itemRef.get()->SetAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
+            itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+            itemRef.get()->SetAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
         }
     }
 
-    switch( t->groupID() ) {
+    switch( t->groupID ) {
         ///////////////////////////////////////
         // Station:
         ///////////////////////////////////////
@@ -593,10 +600,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             stationRef.get()->SetAttribute(AttrDamage,      0.0);                                              // Structure Damage
             stationRef.get()->SetAttribute(AttrShieldCharge,stationRef.get()->GetAttribute(AttrShieldCapacity));     // Shield Charge
             stationRef.get()->SetAttribute(AttrArmorDamage, 0.0);                                         // Armor Damage
-            stationRef.get()->SetAttribute(AttrMass,        stationRef.get()->type().attributes.mass());         // Mass
-            stationRef.get()->SetAttribute(AttrRadius,      stationRef.get()->type().attributes.radius());     // Radius
-            stationRef.get()->SetAttribute(AttrVolume,      stationRef.get()->type().attributes.volume());     // Volume
-            stationRef.get()->SetAttribute(AttrCapacity,    stationRef.get()->type().attributes.capacity()); // Capacity
+            stationRef.get()->SetAttribute(AttrMass, stationRef.get()->type()->getAttr(AttrMass)); // Mass
+            stationRef.get()->SetAttribute(AttrRadius, stationRef.get()->type()->getAttr(AttrRadius)); // Radius
+            stationRef.get()->SetAttribute(AttrVolume, stationRef.get()->type()->getAttr(AttrVolume)); // Volume
+            stationRef.get()->SetAttribute(AttrCapacity, stationRef.get()->type()->getAttr(AttrCapacity)); // Capacity
             stationRef.get()->SaveAttributes();
 
             return stationRef;
@@ -612,10 +619,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 	// Create some basic attributes that are NOT found in dgmTypeAttributes for most items, yet most items DO need:
     itemRef.get()->SetAttribute(AttrIsOnline,    1);                                              // Is Online
     itemRef.get()->SetAttribute(AttrDamage,      0.0);                                              // Structure Damage
-    itemRef.get()->SetAttribute(AttrMass,        itemRef.get()->type().attributes.mass());         // Mass
-    itemRef.get()->SetAttribute(AttrRadius,      itemRef.get()->type().attributes.radius());     // Radius
-    itemRef.get()->SetAttribute(AttrVolume,      itemRef.get()->type().attributes.volume());     // Volume
-    itemRef.get()->SetAttribute(AttrCapacity,    itemRef.get()->type().attributes.capacity()); // Capacity
+    itemRef.get()->SetAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
+    itemRef.get()->SetAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
+    itemRef.get()->SetAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+    itemRef.get()->SetAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
 
 	itemRef.get()->SaveAttributes();
     return itemRef;
@@ -627,13 +634,15 @@ uint32 InventoryItem::_Spawn(
 ) {
     // obtain type of new item
     // this also checks that the type is valid
-    const ItemType *t = ItemFactory::GetType(data.typeID);
-    if(t == NULL)
+    const InvTypeRef t = InvType::getType(data.typeID);
+    if (t.get() == nullptr)
+    {
         return 0;
+    }
 
     // fix the name (if empty)
     if(data.name.empty())
-        data.name = t->name();
+        data.name = t->typeName;
 
     // insert new entry into DB
     return InventoryDB::NewItem(data);
@@ -648,13 +657,15 @@ uint32 InventoryItem::_SpawnEntity(
 ) {
     // obtain type of new item
     // this also checks that the type is valid
-    const ItemType *t = ItemFactory::GetType(data.typeID);
-    if(t == NULL)
+    const InvTypeRef t = InvType::getType(data.typeID);
+    if (t.get() == nullptr)
+    {
         return 0;
+    }
 
     // fix the name (if empty)
     if(data.name.empty())
-        data.name = t->name();
+        data.name = t->typeName;
 
     // Get a new Entity ID from ItemFactory's ID Authority:
     return ItemFactory::GetNextEntityID();

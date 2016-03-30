@@ -30,6 +30,7 @@
 #include "manufacturing/RamProxyService.h"
 #include "manufacturing/RamProxyDB.h"
 #include "PyServiceMgr.h"
+#include "inv/InvType.h"
 
 PyCallable_Make_InnerDispatcher(RamProxyService)
 
@@ -403,7 +404,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
     // ACTIVITY CHECK
     // ***************
 
-    const ItemType *productType;
+    InvTypeRef productType;
     switch(args.activityID) {
         /*
          * Manufacturing
@@ -433,7 +434,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
             if(bp->copy())
                 throw(PyException(MakeUserError("RamCannotResearchABlueprintCopy")));
 
-            productType = &bp->type();
+            productType = bp->type();
             break;
         }
         /*
@@ -448,7 +449,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
             if(bp->copy())
                 throw(PyException(MakeUserError("RamCannotCopyABlueprintCopy")));
 
-            productType = &bp->type();
+            productType = bp->type();
             break;
         }
         /*
@@ -480,7 +481,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
         }
     }
 
-    if (!RamProxyDB::IsProducableBy(args.installationAssemblyLineID, productType->groupID()))
+    if (!RamProxyDB::IsProducableBy(args.installationAssemblyLineID, productType->groupID))
         throw(PyException(MakeUserError("RamBadEndProductForActivity")));
 
     // JOBS CHECK
@@ -740,7 +741,7 @@ void RamProxyService::_VerifyInstallJob_Install(const Rsp_InstallJob &rsp, const
             if(qtyNeeded > 0) {
                 std::map<std::string, PyRep *> args;
                 args["item"] = new PyString(
-                                            ItemFactory::GetType(cur->typeID)->name().c_str()
+                                            InvType::getType(cur->typeID)->typeName.c_str()
                 );
 
                 throw(PyException(MakeUserError("RamNeedMoreForJob", args)));
@@ -781,7 +782,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
     if (!RamProxyDB::GetAssemblyLineProperties(args.installationAssemblyLineID, into.materialMultiplier, into.timeMultiplier, into.installCost, into.usageCost))
         return false;
 
-    const ItemType *productType;
+    InvTypeRef productType;
     // perform some activity-specific actions
     switch(args.activityID) {
         /*
@@ -800,7 +801,8 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             into.charMaterialMultiplier = c->GetChar()->GetAttribute(AttrManufactureCostMultiplier).get_float();
             into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrManufactureTimeMultiplier).get_float();
 
-            switch(productType->race()) {
+            switch (productType->raceID)
+            {
                 case raceCaldari:       into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrCaldariTechTimePercent).get_int()) / 100.0; break;
                 case raceMinmatar:      into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrMinmatarTechTimePercent).get_int()) / 100.0; break;
                 case raceAmarr:         into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrAmarrTechTimePercent).get_int()) / 100.0; break;
@@ -816,7 +818,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
         case ramActivityResearchingTimeProductivity: {
             BlueprintRef bp = BlueprintRef::StaticCast( installedItem );
 
-            productType = &installedItem->type();
+            productType = installedItem->type();
 
             into.productionTime = bp->blueprintType()->researchProductivityTime;
             into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
@@ -829,7 +831,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
         case ramActivityResearchingMaterialProductivity: {
             BlueprintRef bp = BlueprintRef::StaticCast( installedItem );
 
-            productType = &installedItem->type();
+            productType = installedItem->type();
 
             into.productionTime = bp->blueprintType()->researchMaterialTime;
             into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
@@ -844,7 +846,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             BlueprintRef bp = BlueprintRef::StaticCast(installedItem);
             InvBlueprintTypeRef bpType = bp->blueprintType();
 
-            productType = &installedItem->type();
+            productType = installedItem->type();
 
             // no ceil() here on purpose
             into.productionTime = (bpType->researchCopyTime / bpType->maxProductionLimit) * args.licensedProductionRuns;
@@ -854,7 +856,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             break;
         }
         default: {
-            productType = &installedItem->type();
+            productType = installedItem->type();
 
             into.charMaterialMultiplier = 1.0;
             into.charTimeMultiplier = 1.0;
@@ -862,7 +864,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
         }
     }
 
-    if (!RamProxyDB::MultiplyMultipliers(args.installationAssemblyLineID, productType->groupID(), into.materialMultiplier, into.timeMultiplier))
+    if (!RamProxyDB::MultiplyMultipliers(args.installationAssemblyLineID, productType->groupID, into.materialMultiplier, into.timeMultiplier))
         return false;
 
     // calculate the remaining things

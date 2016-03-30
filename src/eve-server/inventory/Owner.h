@@ -55,7 +55,7 @@ protected:
     Owner(
         uint32 _ownerID,
         // InventoryItem stuff:
-        const ItemType &_type,
+          const InvTypeRef _type,
         const ItemData &_data);
 
     /*
@@ -67,12 +67,12 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 ownerID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+                                 const InvTypeRef type, const ItemData &data)
     {
         // check it's an owner
-        if( type.categoryID() != EVEDB::invCategories::Owner )
+        if (type->getCategoryID() != EVEDB::invCategories::Owner)
         {
-            SysLog::Error("Owner", "Trying to load %s as Owner.", type.category()->categoryName.c_str());
+            SysLog::Error("Owner", "Trying to load %s as Owner.", type->getCategory()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -87,7 +87,7 @@ protected:
 
         uint32 ownerID,
         // InventoryItem stuff:
-        const ItemType &type,
+                                  const InvTypeRef type,
         const ItemData &data
     );
 

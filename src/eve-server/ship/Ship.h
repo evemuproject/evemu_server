@@ -26,7 +26,6 @@
 #ifndef __SHIP__H__INCL__
 #define __SHIP__H__INCL__
 
-#include "inventory/ItemType.h"
 #include "inventory/Inventory.h"
 #include "inventory/InventoryItem.h"
 #include "system/SystemEntity.h"
@@ -146,7 +145,7 @@ protected:
     Ship(
         uint32 _shipID,
         // InventoryItem stuff:
-         const ItemType &_shipType,
+         const InvTypeRef _shipType,
         const ItemData &_data
     );
 
@@ -159,12 +158,12 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 shipID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+                                 const InvTypeRef type, const ItemData &data)
     {
         // check it's a ship
-        if( type.categoryID() != EVEDB::invCategories::Ship )
+        if (type->getCategoryID() != EVEDB::invCategories::Ship)
         {
-            _log(ITEM__ERROR, "Trying to load %s as Ship.", type.category()->categoryName.c_str());
+            _log(ITEM__ERROR, "Trying to load %s as Ship.", type->getCategory()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -177,7 +176,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadShip(uint32 shipID,
         // InventoryItem stuff:
-                                 const ItemType &shipType, const ItemData &data
+                                 const InvTypeRef shipType, const ItemData &data
     );
 
     bool _Load();

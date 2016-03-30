@@ -41,31 +41,6 @@ PyRep *EVEAttributeMgr::PyGet(Attr attr) const {
     return _PyGet(GetReal(attr));
 }
 
-void EVEAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) const {
-    // integers first
-    {
-        std::map<Attr, int_t>::const_iterator cur, end;
-        cur = m_ints.begin();
-        end = m_ints.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = _PyGet(cur->second);
-        }
-    }
-    // then reals
-    {
-        std::map<Attr, real_t>::const_iterator cur, end;
-        cur = m_reals.begin();
-        end = m_reals.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = _PyGet(cur->second);
-        }
-    }
-}
-
 PyRep *EVEAttributeMgr::_PyGet(const real_t &v)
 {
     if(_IsInt(v) == true)
@@ -91,42 +66,6 @@ void EVEAttributeMgr::_LoadPersistent() {
 }
 
 /*
- * EVEAdvancedAttributeMgr
- */
-void EVEAdvancedAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) const {
-    // integers first
-    {
-        std::map<Attr, int_t>::const_iterator cur, end;
-        cur = m_ints.begin();
-        end = m_ints.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = PyGet(cur->first);
-        }
-    }
-    // then reals
-    {
-        std::map<Attr, real_t>::const_iterator cur, end;
-        cur = m_reals.begin();
-        end = m_reals.end();
-        for(; cur != end; cur++) {
-            if(into.find(cur->first) != into.end())
-                PyDecRef( into[cur->first] );
-            into[cur->first] = PyGet(cur->first);
-        }
-    }
-}
-
-/*
- * TypeAttributeMgr
- */
-bool TypeAttributeMgr::Load() {
-    // load new contents from DB
-    return InventoryDB::LoadTypeAttributes(type().id(), *this);
-}
-
-/*
  * ItemAttributeMgr
  */
 ItemAttributeMgr::ItemAttributeMgr( const InventoryItem &item, bool save, bool notify) :
@@ -134,9 +73,17 @@ ItemAttributeMgr::ItemAttributeMgr( const InventoryItem &item, bool save, bool n
 
 ItemAttributeMgr::real_t ItemAttributeMgr::GetReal(Attr attr) const {
     real_t v;
-    if(!_Get(attr, v))
-        if(!m_item.type().attributes._Get(attr, v)) // try the type attributes
+    if (!_Get(attr, v))
+    {
+        if (!m_item.type()->hasAttr(attr)) // try the type attributes
+        {
             v = GetDefault(attr);
+        }
+        else
+        {
+            v = m_item.type()->getDoubleAttr(attr);
+        }
+    }
 
     _CalcTauCap(attr, v);
 
@@ -312,13 +259,6 @@ void ItemAttributeMgr::Save() const {
                 InventoryDB::UpdateAttribute_double(m_item.itemID(), cur->first, v);
         }
     }
-}
-
-void ItemAttributeMgr::EncodeAttributes(std::map<int32, PyRep *> &into) const {
-    // first insert type attributes
-    m_item.type().attributes.EncodeAttributes(into);
-    // now insert (or overwrite) with our values
-    EVEAdvancedAttributeMgr::EncodeAttributes(into);
 }
 
 void ItemAttributeMgr::_SendAttributeChange(Attr attr, PyRep *oldValue, PyRep *newValue) {

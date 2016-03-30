@@ -50,7 +50,7 @@ SystemManager::SystemManager(uint32 systemID)//, ItemData idata)
   m_systemName(""),
   m_spawnManager(new SpawnManager(*this)),
   m_entityChanged(false)//,
-//  InventoryItem( systemID, *(ItemFactory::GetType( 5 )), idata )
+//  InventoryItem( systemID, *(InvType::getType( 5 )), idata )
 {
     SystemDB::GetSystemInfo(GetID(), NULL, NULL, &m_systemName, &m_systemSecurity);
 
@@ -129,11 +129,11 @@ bool SystemManager::_LoadSystemCelestials() {
                 stationRef->SetAttribute(AttrDamage,        0.0);                                        // Structure Damage
                 stationRef->SetAttribute(AttrShieldCapacity,20000000.0);                         // Shield Capacity
                 stationRef->SetAttribute(AttrShieldCharge,  stationRef->GetAttribute(AttrShieldCapacity));     // Shield Charge
-                stationRef->SetAttribute(AttrArmorHP,       stationRef->type().attributes.armorHP());   // Armor HP
+                stationRef->SetAttribute(AttrArmorHP, stationRef->type()->getAttr(AttrArmorHP)); // Armor HP
                 stationRef->SetAttribute(AttrArmorDamage,   0.0);                                   // Armor Damage
-                stationRef->SetAttribute(AttrMass,          stationRef->type().attributes.mass());         // Mass
-                stationRef->SetAttribute(AttrRadius,        stationRef->type().attributes.radius());     // Radius
-                stationRef->SetAttribute(AttrVolume,        stationRef->type().attributes.volume());     // Volume
+                stationRef->SetAttribute(AttrMass, stationRef->type()->getAttr(AttrMass)); // Mass
+                stationRef->SetAttribute(AttrRadius, stationRef->type()->getAttr(AttrRadius)); // Radius
+                stationRef->SetAttribute(AttrVolume, stationRef->type()->getAttr(AttrVolume)); // Volume
 
                 m_entities[stationEntity->GetStationObject()->itemID()] = stationEntity;
                 bubbles.Add(stationEntity, true);
@@ -379,7 +379,7 @@ public:
                     // Set radius of celestial object
                     // TODO: GET THIS FROM DB 'srvEntity_attributes' perhaps
                     //celestial->Set_radius( 5000 );
-                    celestial->SetAttribute(AttrRadius, EvilNumber(celestial->type().radius()) );     // Can you set this somehow from the type class ?
+                    celestial->SetAttribute(AttrRadius, EvilNumber(celestial->type()->getAttr(AttrRadius))); // Can you set this somehow from the type class ?
 
                     // Add the ItemRef to SystemManagers' Inventory:
                     system.AddItemToInventory( celestial );

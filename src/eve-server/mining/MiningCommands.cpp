@@ -216,8 +216,8 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
             alpha = beltangle * MakeRandomFloat(-M_PI / 4, M_PI / 4);
 			roidradius = MakeRandomFloat( 100.0, 1000.0 );
             height = MakeRandomFloat(-1, 1);
-            const ItemType *type = ItemFactory::GetType(typeID);
-            if (type->groupID() == EVEDB::invGroups::Veldspar)
+            const InvTypeRef type = InvType::getType(typeID);
+            if (type->groupID == EVEDB::invGroups::Veldspar)
             {
                 roidradius *= 2;
             }

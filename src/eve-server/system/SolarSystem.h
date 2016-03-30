@@ -109,7 +109,7 @@ public:
     double              security() const { return m_security; }
     uint32              factionID() const { return m_factionID; }
     double              radius() const { return m_radius; }
-    const ItemType &    sunType() const { return m_sunType; }
+    const InvTypeRef     sunType() const { return m_sunType; }
     const std::string & securityClass() const { return m_securityClass; }
 
     void AddItemToInventory(InventoryItemRef item);
@@ -119,12 +119,12 @@ protected:
     SolarSystem(
         uint32 _solarSystemID,
         // InventoryItem stuff:
-        const ItemType &_type,
+        const InvTypeRef _type,
         const ItemData &_data,
         // CelestialObject stuff:
         const CelestialObjectData &_cData,
         // SolarSystem stuff:
-        const ItemType &_sunType,
+        const InvTypeRef _sunType,
         const SolarSystemData &_ssData
     );
     ~SolarSystem();
@@ -144,14 +144,14 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCelestialObject(uint32 solarSystemID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data,
+        const InvTypeRef type, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData)
     {
         // check it's a solar system
-        if( type.groupID() != EVEDB::invGroups::Solar_System )
+        if (type->groupID != EVEDB::invGroups::Solar_System)
         {
-            _log( ITEM__ERROR, "Trying to load %s %u as Solar system.", type.name().c_str(), solarSystemID );
+            _log(ITEM__ERROR, "Trying to load %s %u as Solar system.", type->typeName.c_str(), solarSystemID);
             return RefPtr<_Ty>();
         }
 
@@ -161,22 +161,24 @@ protected:
             return RefPtr<_Ty>();
 
         // get sun type
-        const ItemType *sunType = ItemFactory::GetType(ssData.sunTypeID);
-        if( sunType == NULL )
+        const InvTypeRef sunType = InvType::getType(ssData.sunTypeID);
+        if (sunType.get() == nullptr)
+        {
             return RefPtr<_Ty>();
+        }
 
-        return _Ty::template _LoadSolarSystem<_Ty>( solarSystemID, type, data, cData, *sunType, ssData );
+        return _Ty::template _LoadSolarSystem<_Ty>( solarSystemID, type, data, cData, sunType, ssData );
     }
 
     // Actual loading stuff:
     template<class _Ty>
     static RefPtr<_Ty> _LoadSolarSystem(uint32 solarSystemID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data,
+        const InvTypeRef type, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData,
         // SolarSystem stuff:
-        const ItemType &sunType, const SolarSystemData &ssData
+        const InvTypeRef sunType, const SolarSystemData &ssData
     );
 
     bool _Load();
@@ -200,7 +202,7 @@ protected:
     double m_security;
     uint32 m_factionID;
     double m_radius;
-    const ItemType &m_sunType;
+    const InvTypeRef m_sunType;
     std::string m_securityClass;
 };
 

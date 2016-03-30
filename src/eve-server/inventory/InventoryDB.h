@@ -48,13 +48,6 @@ class InventoryDB
 : public ServiceDB
 {
 public:
-    /*
-     * Type stuff
-     * (invTypes, invBlueprintTypes, bloodlineTypes, chrBloodlines, invShipTypes, staStationTypes)
-     */
-    static bool GetType(uint32 typeID, TypeData &into);
-
-    static bool GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into);
 
     /**
      * Obtains ID of character type based on bloodline.

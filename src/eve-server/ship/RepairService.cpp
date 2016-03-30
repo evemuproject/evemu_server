@@ -76,9 +76,9 @@ PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {
                             if (item.get() != nullptr)
                             {
                                 // Add type exceptions here.
-                                if (item->type().categoryID() == EVEItemCategories::Blueprint ||
-                                        item->type().categoryID() == EVEItemCategories::Skill ||
-                                        item->type().categoryID() == EVEItemCategories::Material)
+                                if (item->type()->getCategoryID() == EVEItemCategories::Blueprint ||
+                                    item->type()->getCategoryID() == EVEItemCategories::Skill ||
+                                    item->type()->getCategoryID() == EVEItemCategories::Material)
                                 {
                                     // Item cannot be repackaged once used!
                                     continue;

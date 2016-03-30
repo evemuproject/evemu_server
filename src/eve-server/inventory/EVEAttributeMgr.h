@@ -32,9 +32,9 @@
 
 #include "inventory/AttributeMgr.h"
 #include "ship/dgmtypeattributeinfo.h"
+#include "inv/InvType.h"
 
 class PyRep;
-class ItemType;
 class InventoryItem;
 
 class ItemAttributeMgr;
@@ -52,13 +52,6 @@ public:
      * @return Pointer to new PyRep object; NULL if fails.
      */
     PyRep *PyGet(Attr attr) const;
-
-    /**
-     * Builds Int dictionary from attributes.
-     *
-     * @param[in] into Int dictionary into which values are saved.
-     */
-    virtual void EncodeAttributes(std::map<int32, PyRep *> &into) const;
 
     /**
      * Checks whether the attribute is persistent.
@@ -90,9 +83,6 @@ protected:
 class EVEAdvancedAttributeMgr : public AdvancedAttributeMgr<int, double>, public EVEAttributeMgr
 {
 public:
-    // Uses PyGet instead of _PyGet to include income of attribute value.
-    void EncodeAttributes(std::map<int32, PyRep *> &into) const;
-
     /*
      * These kill warnings about inheritance's dominance
      */
@@ -102,32 +92,6 @@ public:
     void SetInt(Attr attr, const int_t &v) { AdvancedAttributeMgr<int_t, real_t>::SetInt(attr, v); }
 
     void Clear(Attr attr) { AdvancedAttributeMgr<int_t, real_t>::Clear(attr); }
-};
-
-/**
- * Attribute manager for type attributes.
- */
-class TypeAttributeMgr : public EVEAttributeMgr
-{
-    friend class ItemAttributeMgr;  // for access to _Get
-public:
-    TypeAttributeMgr(const ItemType &type) : m_type(type) {}
-
-    /**
-     * @return ItemType which this manager is bound to.
-     */
-    const ItemType &type() const { return(m_type); }
-
-    /**
-     * Loads attributes from DB.
-     *
-     * @param[in] db Database to use.
-     * @return True if load was successful, false if not.
-     */
-    bool Load();
-
-protected:
-    const ItemType &m_type;
 };
 
 /**
@@ -216,9 +180,6 @@ public:
      * @param[in] notify New status of order.
      */
     void SetNotify(bool notify) { m_notify = notify; }
-
-    // Includes type attributes.
-    void EncodeAttributes(std::map<int32, PyRep *> &into) const;
 
     // Additional by-name access
     #define ATTRI(ID, name, default_value, persistent) \

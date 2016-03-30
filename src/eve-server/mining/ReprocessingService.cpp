@@ -239,10 +239,11 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         //}
 
         // this should never happen, but for sure ...
-        if(item->type().portionSize() > item->quantity()) {
+        if (item->type()->portionSize > item->quantity())
+        {
             std::map<std::string, PyRep *> args;
             args["typename"] = new PyString(item->itemName().c_str());
-            args["portion"] = new PyInt(item->type().portionSize());
+            args["portion"] = new PyInt(item->type()->portionSize);
 
             throw(PyException(MakeUserError("QuantityLessThanMinimumPortion", args)));
         }
@@ -256,8 +257,9 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
         std::vector<Recoverable>::iterator cur_rec, end_rec;
         cur_rec = recoverables.begin();
         end_rec = recoverables.end();
-        for(; cur_rec != end_rec; cur_rec++) {
-            uint32 quantity = static_cast<uint32>(cur_rec->amountPerBatch * efficiency * (1.0 - m_tax) * item->quantity() / item->type().portionSize());
+        for(; cur_rec != end_rec; cur_rec++)
+        {
+            uint32 quantity = static_cast<uint32> (cur_rec->amountPerBatch * efficiency * (1.0 - m_tax) * item->quantity() / item->type()->portionSize);
             if(quantity == 0)
                 continue;
 
@@ -276,7 +278,7 @@ PyResult ReprocessingServiceBound::Handle_Reprocess(PyCallArgs &call) {
             i->Move(call.client->GetStationID(), flagHangar);
         }
 
-        uint32 qtyLeft = item->quantity() % item->type().portionSize();
+        uint32 qtyLeft = item->quantity() % item->type()->portionSize;
         if(qtyLeft == 0)
             item->Delete();
         else
@@ -328,21 +330,23 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
         return NULL;
     }
 
-    if(item->quantity() < item->type().portionSize()) {
+    if (item->quantity() < item->type()->portionSize)
+    {
         std::map<std::string, PyRep *> args;
         args["typename"] = new PyString(item->itemName().c_str());
-        args["portion"] = new PyInt(item->type().portionSize());
+        args["portion"] = new PyInt(item->type()->portionSize);
 
         throw(PyException(MakeUserError("QuantityLessThanMinimumPortion", args)));
     }
 
     Rsp_GetQuote res;
     res.lines = new PyList;
-    res.leftOvers = item->quantity() % item->type().portionSize();
+    res.leftOvers = item->quantity() % item->type()->portionSize;
     res.quantityToProcess = item->quantity() - res.leftOvers;
     res.playerStanding = 0.0;   // hack
 
-    if(item->quantity() >= item->type().portionSize()) {
+    if (item->quantity() >= item->type()->portionSize)
+    {
         std::vector<Recoverable> recoverables;
         if (!ReprocessingDB::GetRecoverables(item->typeID(), recoverables))
             return NULL;
@@ -354,7 +358,7 @@ PyRep *ReprocessingServiceBound::_GetQuote(uint32 itemID, const Client *c) const
         end = recoverables.end();
         for(; cur != end; cur++)
         {
-            uint32 ratio = cur->amountPerBatch * res.quantityToProcess / item->type().portionSize();
+            uint32 ratio = cur->amountPerBatch * res.quantityToProcess / item->type()->portionSize;
 
             Rsp_GetQuote_Recoverables_Line line;
 

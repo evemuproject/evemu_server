@@ -249,7 +249,6 @@ SET( inventory_INCLUDE
      "${TARGET_INCLUDE_DIR}/inventory/ItemDB.h"
      "${TARGET_INCLUDE_DIR}/inventory/ItemFactory.h"
      "${TARGET_INCLUDE_DIR}/inventory/ItemRef.h"
-     "${TARGET_INCLUDE_DIR}/inventory/ItemType.h"
      "${TARGET_INCLUDE_DIR}/inventory/Owner.h" )
 SET( inventory_SOURCE
      "${TARGET_SOURCE_DIR}/inventory/AttributeModifier.cpp"
@@ -261,7 +260,6 @@ SET( inventory_SOURCE
      "${TARGET_SOURCE_DIR}/inventory/InventoryItem.cpp"
      "${TARGET_SOURCE_DIR}/inventory/ItemDB.cpp"
      "${TARGET_SOURCE_DIR}/inventory/ItemFactory.cpp"
-     "${TARGET_SOURCE_DIR}/inventory/ItemType.cpp"
      "${TARGET_SOURCE_DIR}/inventory/Owner.cpp" )
 
 SET( mail_INCLUDE

@@ -27,8 +27,8 @@
 
 #include "inventory/EVEAttributeMgr.h"
 #include "inventory/ItemFactory.h"
-#include "inventory/ItemType.h"
 #include "inventory/AttributeModifier.h"
+#include "inv/InvType.h"
 
 class PyRep;
 class PyDict;
@@ -146,8 +146,13 @@ public:
      * Public Fields:
      */
     uint32                  itemID() const      { return m_itemID; }
-    const std::string &     itemName() const    { return m_itemName; }
-    const ItemType &        type() const        { return m_type; }
+    const std::string &     itemName() const    { return m_itemName;
+    }
+
+    const InvTypeRef type() const
+    {
+        return m_type;
+    }
     uint32                  ownerID() const     { return m_ownerID; }
     uint32                  locationID() const  { return m_locationID; }
     EVEItemFlags            flag() const        { return m_flag; }
@@ -159,24 +164,30 @@ public:
 
 
     // helper type methods
-    uint32                  typeID() const      { return type().id();
+
+    uint32 typeID() const
+    {
+        return m_type->typeID;
     }
 
     const InvGroupRef group() const
     {
-        return type().group();
+        return m_type->getGroup();
     }
-    uint32                  groupID() const     { return type().groupID();
+
+    uint32 groupID() const
+    {
+        return m_type->groupID;
     }
 
     const InvCategoryRef category() const
     {
-        return type().category();
+        return m_type->getCategory();
     }
 
     uint32 categoryID() const
     {
-        return type().categoryID();
+        return m_type->getCategoryID();
     }
 
 
@@ -251,7 +262,7 @@ protected:
     InventoryItem(
         uint32 _itemID,
         // InventoryItem stuff:
-        const ItemType &_type,
+                  const InvTypeRef _type,
         const ItemData &_data);
     virtual ~InventoryItem();
 
@@ -284,18 +295,20 @@ protected:
             return RefPtr<_Ty>();
 
         // obtain type
-        const ItemType *type = ItemFactory::GetType(data.typeID);
-        if( type == NULL )
+        const InvTypeRef type = InvType::getType(data.typeID);
+        if (type == NULL)
+        {
             return RefPtr<_Ty>();
+        }
 
-        return _Ty::template _LoadItem<_Ty>( itemID, *type, data );
+        return _Ty::template _LoadItem<_Ty>( itemID, type, data );
     }
 
     // Actual loading stuff:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 itemID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data
+                                 const InvTypeRef type, const ItemData &data
     );
 
     virtual bool _Load();
@@ -325,7 +338,7 @@ protected:
     // our item data:
     const uint32        m_itemID;
     std::string         m_itemName;
-    const ItemType &    m_type;
+    const InvTypeRef m_type;
     uint32              m_ownerID;
     uint32              m_locationID; //where is this item located
     EVEItemFlags        m_flag;

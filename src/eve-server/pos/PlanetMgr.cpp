@@ -321,7 +321,7 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             case 1: //COMMAND_CREATEPIN
             {
                 uint32 typeID = uunc.command_data->GetItem(1)->AsInt()->value();
-                uint32 groupID = ItemFactory::GetType(typeID)->groupID();
+                uint32 groupID = InvType::getType(typeID)->groupID;
                 if(groupID == 1027) {
                     /* Command Pin
                      */

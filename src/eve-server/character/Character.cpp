@@ -237,7 +237,7 @@ fleetJob(_fleetJob)
 Character::Character(
     uint32 _characterID,
     // InventoryItem stuff:
-                     const ItemType &_charType,
+                     const InvTypeRef _charType,
     const ItemData &_data,
     // Character stuff:
     const CharacterData &_charData,
@@ -293,7 +293,7 @@ CharacterRef Character::Load(uint32 characterID)
 template<class _Ty>
 RefPtr<_Ty> Character::_LoadCharacter(uint32 characterID,
     // InventoryItem stuff:
-                                      const ItemType &charType, const ItemData &data,
+                                      const InvTypeRef charType, const ItemData &data,
     // Character stuff:
     const CharacterData &charData, const CorpMemberInfo &corpData)
 {

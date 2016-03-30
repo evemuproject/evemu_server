@@ -26,7 +26,6 @@
 #ifndef __CHARACTER__H__INCL__
 #define __CHARACTER__H__INCL__
 
-#include "inventory/ItemType.h"
 #include "inventory/Owner.h"
 #include "inventory/Inventory.h"
 #include "inventory/InventoryDB.h"
@@ -451,7 +450,7 @@ protected:
     Character(
         uint32 _characterID,
         // InventoryItem stuff:
-              const ItemType &_charType,
+              const InvTypeRef _charType,
         const ItemData &_data,
         // Character stuff:
         const CharacterData &_charData,
@@ -467,12 +466,12 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadOwner(uint32 characterID,
         // InventoryItem stuff:
-                                  const ItemType &charType, const ItemData &data)
+                                  const InvTypeRef charType, const ItemData &data)
     {
         // check it's a character
-        if (charType.groupID() != EVEDB::invGroups::Character)
+        if (charType->groupID != EVEDB::invGroups::Character)
         {
-            SysLog::Error("Character", "Trying to load %s as Character.", charType.group()->groupName.c_str());
+            SysLog::Error("Character", "Trying to load %s as Character.", charType->getGroup()->groupName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -491,7 +490,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCharacter(uint32 characterID,
         // InventoryItem stuff:
-                                      const ItemType &charType, const ItemData &data,
+                                      const InvTypeRef charType, const ItemData &data,
         // Character stuff:
         const CharacterData &charData, const CorpMemberInfo &corpData
     );

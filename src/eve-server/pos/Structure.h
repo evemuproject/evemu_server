@@ -70,7 +70,7 @@ public:
     /*
      * Public fields:
      */
-    const ItemType &    type() const { return static_cast<const ItemType &>(InventoryItem::type()); }
+    const InvTypeRef     type() const { return static_cast<const InvTypeRef >(InventoryItem::type()); }
 
     /*
      * Primary public packet builders:
@@ -82,7 +82,7 @@ protected:
     Structure(
         uint32 _structureID,
         // InventoryItem stuff:
-        const ItemType &_itemType,
+        const InvTypeRef _itemType,
         const ItemData &_data
     );
 
@@ -95,16 +95,16 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 structureID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+        const InvTypeRef type, const ItemData &data)
     {
         // check if it's a structure
-        if( type.categoryID() != EVEDB::invCategories::Structure )
+        if (type->getCategoryID() != EVEDB::invCategories::Structure)
         {
-            _log(ITEM__ERROR, "Trying to load %s as Structure.", type.category()->categoryName.c_str());
+            _log(ITEM__ERROR, "Trying to load %s as Structure.", type->getCategory()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
         //// cast the type
-        //const ItemType &itemType = static_cast<const ItemType &>( type );
+        //const InvTypeRef itemType = static_cast<const InvTypeRef >( type );
 
         // no additional stuff
 
@@ -115,7 +115,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadStructure(uint32 structureID,
         // InventoryItem stuff:
-        const ItemType &itemType, const ItemData &data
+        const InvTypeRef itemType, const ItemData &data
     );
 
     bool _Load();

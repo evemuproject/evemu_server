@@ -37,7 +37,7 @@
 Ship::Ship(
    uint32 _shipID,
     // InventoryItem stuff:
-           const ItemType &_shipType,
+           const InvTypeRef _shipType,
     const ItemData &_data)
 : InventoryItem(_shipID, _shipType, _data),
   m_processTimerTick(SHIP_PROCESS_TICK_MS),
@@ -61,7 +61,7 @@ ShipRef Ship::Load(uint32 shipID)
 template<class _Ty>
 RefPtr<_Ty> Ship::_LoadShip(uint32 shipID,
     // InventoryItem stuff:
-                            const ItemType &shipType, const ItemData &data)
+                            const InvTypeRef shipType, const ItemData &data)
 {
     // we don't need any additional stuff
     return ShipRef( new Ship(shipID, shipType, data ) );
@@ -78,10 +78,10 @@ ShipRef Ship::Spawn(ItemData &data) {
     sShipRef->SetAttribute(AttrIsOnline,            1, true);												// Is Online
     sShipRef->SetAttribute(AttrShieldCharge,        sShipRef->GetAttribute(AttrShieldCapacity), true);		// Shield Charge
     sShipRef->SetAttribute(AttrArmorDamage,         0.0, true);												// Armor Damage
-    sShipRef->SetAttribute(AttrMass,                sShipRef->type().attributes.mass(), true);				// Mass
-    sShipRef->SetAttribute(AttrRadius,              sShipRef->type().attributes.radius(), true);			// Radius
-    sShipRef->SetAttribute(AttrVolume,              sShipRef->type().attributes.volume(), true);			// Volume
-    sShipRef->SetAttribute(AttrCapacity,            sShipRef->type().attributes.capacity(), true);			// Capacity
+    sShipRef->SetAttribute(AttrMass, sShipRef->type()->getAttr(AttrMass), true); // Mass
+    sShipRef->SetAttribute(AttrRadius, sShipRef->type()->getAttr(AttrRadius), true); // Radius
+    sShipRef->SetAttribute(AttrVolume, sShipRef->type()->getAttr(AttrVolume), true); // Volume
+    sShipRef->SetAttribute(AttrCapacity, sShipRef->type()->getAttr(AttrCapacity), true); // Capacity
     sShipRef->SetAttribute(AttrInertia,             1, true);												// Inertia
     sShipRef->SetAttribute(AttrCharge,              sShipRef->GetAttribute(AttrCapacitorCapacity), true);	// Set Capacitor Charge to the Capacitor Capacity
 
@@ -166,14 +166,18 @@ ShipRef Ship::Spawn(ItemData &data) {
 
 uint32 Ship::_Spawn(ItemData &data) {
     // make sure it's a ship
-    const ItemType *st = ItemFactory::GetType(data.typeID);
-    if(st == NULL)
+    const InvTypeRef st = InvType::getType(data.typeID);
+    if (st.get() == nullptr)
+    {
         return 0;
+    }
 
     // store item data
     uint32 shipID = InventoryItem::_Spawn(data);
-    if(shipID == 0)
+    if (shipID == 0)
+    {
         return 0;
+    }
 
     // nothing additional
 
@@ -728,23 +732,23 @@ uint32 Ship::FindAvailableModuleSlot( InventoryItemRef item )
     //    for that bank
     // 3) return that slot flag number
 
-	if( item->type().HasEffect(Effect_loPower) )
+    if (item->type()->hasEffect(Effect_loPower))
 	{
 		slotFound = m_ModuleManager->GetAvailableSlotInBank(Effect_loPower);
-	}
-	else if( item->type().HasEffect(Effect_medPower) )
+    }
+    else if (item->type()->hasEffect(Effect_medPower))
 	{
 		slotFound = m_ModuleManager->GetAvailableSlotInBank(Effect_medPower);
-	}
-	else if( item->type().HasEffect(Effect_hiPower) )
+    }
+    else if (item->type()->hasEffect(Effect_hiPower))
 	{
 		slotFound = m_ModuleManager->GetAvailableSlotInBank(Effect_hiPower);
-	}
-	else if( item->type().HasEffect(Effect_subSystem) )
+    }
+    else if (item->type()->hasEffect(Effect_subSystem))
 	{
 		slotFound = m_ModuleManager->GetAvailableSlotInBank(Effect_subSystem);
-	}
-	else if( item->type().HasEffect(Effect_rigSlot) )
+    }
+    else if (item->type()->hasEffect(Effect_rigSlot))
 	{
 		slotFound = m_ModuleManager->GetAvailableSlotInBank(Effect_rigSlot);
 	}

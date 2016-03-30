@@ -95,7 +95,7 @@ protected:
     Skill(
         uint32 _skillID,
         // InventoryItem stuff:
-        const ItemType &_type,
+          const InvTypeRef _type,
         const ItemData &_data );
 
     /*
@@ -107,12 +107,12 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 skillID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+                                 const InvTypeRef type, const ItemData &data)
     {
         // check it's a skill
-        if( type.categoryID() != EVEDB::invCategories::Skill )
+        if (type->getCategoryID() != EVEDB::invCategories::Skill)
         {
-            SysLog::Error("Skill", "Trying to load %s as Skill.", type.category()->categoryName.c_str());
+            SysLog::Error("Skill", "Trying to load %s as Skill.", type->getCategory()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -125,7 +125,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadSkill(uint32 skillID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data
+                                  const InvTypeRef type, const ItemData &data
     );
 
     static uint32 _Spawn(

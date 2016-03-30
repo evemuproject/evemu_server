@@ -30,9 +30,6 @@
 
 class ItemGroup;
 
-class ItemType;
-class CharacterType;
-
 class Inventory;
 
 class ItemFactory
@@ -44,11 +41,6 @@ private:
 
 public:
     static void Shutdown();
-
-    /*
-     * Type stuff
-     */
-    static const ItemType *GetType(uint32 typeID);
 
     /*
      * Item stuff
@@ -204,11 +196,6 @@ protected:
     static std::map<uint32, ItemGroup *> m_groups;
 
     // Types:
-    template<class _Ty>
-    static const _Ty *_GetType(uint32 typeID);
-
-    static std::map<uint32, ItemType *> m_types;
-
     // Items:
     template<class _Ty>
     static RefPtr<_Ty> _GetItem(uint32 itemID);

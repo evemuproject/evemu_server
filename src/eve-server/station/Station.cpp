@@ -58,14 +58,14 @@ StationData::StationData(
 Station::Station(
     uint32 _stationID,
     // InventoryItem stuff:
-                 const ItemType &_type,
+                 const InvTypeRef _type,
     const ItemData &_data,
     // CelestialObject stuff:
     const CelestialObjectData &_cData,
     // Station stuff:
     const StationData &_stData)
 : CelestialObject(_stationID, _type, _data, _cData),
-m_stationType(StaStationType::getType(_type.id())),
+m_stationType(StaStationType::getType(_type->typeID)),
   m_security(_stData.security),
   m_dockingCostPerVolume(_stData.dockingCostPerVolume),
   m_maxShipVolumeDockable(_stData.maxShipVolumeDockable),
@@ -85,7 +85,7 @@ StationRef Station::Load(uint32 stationID)
 template<class _Ty>
 RefPtr<_Ty> Station::_LoadStation(uint32 stationID,
     // InventoryItem stuff:
-                                  const ItemType &type, const ItemData &data,
+                                  const InvTypeRef type, const ItemData &data,
     // CelestialObject stuff:
     const CelestialObjectData &cData,
     // Station stuff:
@@ -109,9 +109,11 @@ uint32 Station::_Spawn(
     ItemData &data
 ) {
     // make sure it's a Station
-    const ItemType *item = ItemFactory::GetType(data.typeID);
-    if( !(item->categoryID() == EVEDB::invCategories::Station) )
+    const InvTypeRef item = InvType::getType(data.typeID);
+    if (!(item->getCategoryID() == EVEDB::invCategories::Station))
+    {
         return 0;
+    }
 
     // store item data
     uint32 stationID = InventoryItem::_Spawn(data);

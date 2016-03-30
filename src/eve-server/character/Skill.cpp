@@ -37,7 +37,7 @@
 Skill::Skill(
     uint32 _skillID,
     // InventoryItem stuff:
-    const ItemType &_type,
+             const InvTypeRef _type,
     const ItemData &_data )
 : InventoryItem(_skillID, _type, _data)
 {
@@ -51,7 +51,7 @@ SkillRef Skill::Load(uint32 skillID)
 template<class _Ty>
 RefPtr<_Ty> Skill::_LoadSkill(uint32 skillID,
     // InventoryItem stuff:
-    const ItemType &type, const ItemData &data)
+                              const InvTypeRef type, const ItemData &data)
 {
     return SkillRef( new Skill( skillID, type, data ) );
 }
@@ -73,13 +73,15 @@ SkillRef Skill::Spawn(ItemData &data)
 uint32 Skill::_Spawn(ItemData &data)
 {
     // check it's a skill
-    const ItemType *type = ItemFactory::GetType(data.typeID);
-    if( type == NULL )
-        return 0;
-
-    if( type->categoryID() != EVEDB::invCategories::Skill )
+    const InvTypeRef type = InvType::getType(data.typeID);
+    if (type.get() == nullptr)
     {
-        _log(ITEM__ERROR, "Trying to spawn %s as Skill.", type->category()->categoryName.c_str());
+        return 0;
+    }
+
+    if (type->getCategoryID() != EVEDB::invCategories::Skill)
+    {
+        _log(ITEM__ERROR, "Trying to spawn %s as Skill.", type->getCategory()->categoryName.c_str());
         return 0;
     }
 

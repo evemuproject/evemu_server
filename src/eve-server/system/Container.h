@@ -71,7 +71,6 @@ public:
     /*
      * Public fields:
      */
-    const ItemType &    type() const { return static_cast<const ItemType &>(InventoryItem::type()); }
 
     /*
      * Primary public packet builders:
@@ -83,7 +82,7 @@ protected:
     CargoContainer(
         uint32 _containerID,
         // InventoryItem stuff:
-        const ItemType &_containerType,
+        const InvTypeRef _containerType,
         const ItemData &_data
     );
 
@@ -96,21 +95,21 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 containerID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+        const InvTypeRef type, const ItemData &data)
     {
         // check if it's a cargo container
-        if( (type.groupID() != EVEDB::invGroups::Cargo_Container)
-            && (type.groupID() != EVEDB::invGroups::Audit_Log_Secure_Container)
-            && (type.groupID() != EVEDB::invGroups::Freight_Container)
-            && (type.groupID() != EVEDB::invGroups::Secure_Cargo_Container)
-            && (type.groupID() != EVEDB::invGroups::Spawn_Container)
-            && (type.groupID() != EVEDB::invGroups::Wreck) )
+        if ((type->groupID != EVEDB::invGroups::Cargo_Container)
+            && (type->groupID != EVEDB::invGroups::Audit_Log_Secure_Container)
+            && (type->groupID != EVEDB::invGroups::Freight_Container)
+            && (type->groupID != EVEDB::invGroups::Secure_Cargo_Container)
+            && (type->groupID != EVEDB::invGroups::Spawn_Container)
+            && (type->groupID != EVEDB::invGroups::Wreck))
         {
-            _log(ITEM__ERROR, "Trying to load category=%s, group=%s as CargoContainer.", type.category()->categoryName.c_str(), type.group()->groupName.c_str());
+            _log(ITEM__ERROR, "Trying to load category=%s, group=%s as CargoContainer.", type->getCategory()->categoryName.c_str(), type->getGroup()->groupName.c_str());
             return RefPtr<_Ty>();
         }
         //// cast the type
-        //const ItemType &itemType = static_cast<const ItemType &>( type );
+        //const InvTypeRef itemType = static_cast<const InvTypeRef >( type );
 
         // no additional stuff
 
@@ -121,7 +120,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCargoContainer(uint32 containerID,
         // InventoryItem stuff:
-        const ItemType &itemType, const ItemData &data
+        const InvTypeRef itemType, const ItemData &data
     );
 
     bool _Load();

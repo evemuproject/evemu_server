@@ -36,7 +36,7 @@
 Structure::Structure(
     uint32 _structureID,
     // InventoryItem stuff:
-    const ItemType &_itemType,
+    const InvTypeRef _itemType,
     const ItemData &_data)
 : InventoryItem(_structureID, _itemType, _data) {}
 
@@ -48,7 +48,7 @@ StructureRef Structure::Load(uint32 structureID)
 template<class _Ty>
 RefPtr<_Ty> Structure::_LoadStructure(uint32 structureID,
     // InventoryItem stuff:
-    const ItemType &itemType, const ItemData &data)
+    const InvTypeRef itemType, const ItemData &data)
 {
     // we don't need any additional stuff
     return StructureRef( new Structure( structureID, itemType, data ) );
@@ -69,9 +69,11 @@ uint32 Structure::_Spawn(
     ItemData &data
 ) {
     // make sure it's a Structure
-    const ItemType *st = ItemFactory::GetType(data.typeID);
-    if(st == NULL)
+    const InvTypeRef st = InvType::getType(data.typeID);
+    if (st.get() == nullptr)
+    {
         return 0;
+    }
 
     // store item data
     uint32 structureID = InventoryItem::_Spawn(data);

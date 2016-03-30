@@ -27,7 +27,6 @@
 #define __BLUEPRINT_ITEM__H__INCL__
 
 #include "inv/InvBlueprintType.h"
-#include "inventory/ItemType.h"
 #include "inventory/InventoryItem.h"
 
 /*
@@ -151,9 +150,9 @@ public:
         return ((1.0 - (1.0 / (1 + productivityLevel()))) * m_blueprintType->productivityModifier);
     }
 
-    ItemType *productType()
+    InvTypeRef productType()
     {
-        ItemFactory::GetType(m_blueprintType->productTypeID);
+        InvType::getType(m_blueprintType->productTypeID);
     }
     /*
      * Primary public packet builders:
@@ -164,7 +163,7 @@ protected:
     Blueprint(
         uint32 _blueprintID,
         // InventoryItem stuff:
-              const ItemType &_bpType,
+              const InvTypeRef _bpType,
         const ItemData &_data,
         // Blueprint stuff:
         const BlueprintData &_bpData
@@ -179,12 +178,12 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 blueprintID,
         // InventoryItem stuff:
-                                 const ItemType &bpType, const ItemData &data)
+                                 const InvTypeRef bpType, const ItemData &data)
     {
         // check it's blueprint type
-        if (bpType.categoryID() != EVEDB::invCategories::Blueprint)
+        if (bpType->getCategoryID() != EVEDB::invCategories::Blueprint)
         {
-            SysLog::Error("Blueprint", "Trying to load %s as Blueprint.", bpType.category()->categoryName.c_str());
+            SysLog::Error("Blueprint", "Trying to load %s as Blueprint.", bpType->getCategory()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -200,7 +199,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadBlueprint(uint32 blueprintID,
         // InventoryItem stuff:
-                                      const ItemType &bpType, const ItemData &data,
+                                      const InvTypeRef bpType, const ItemData &data,
         // Blueprint stuff:
         const BlueprintData &bpData
     );

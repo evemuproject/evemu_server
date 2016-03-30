@@ -36,14 +36,6 @@
 #include <mutex>
 
 Client *ItemFactory::m_pClient; // pointer to client currently using the ItemFactory, we do not own this
-// The types list and mutex.
-std::map<uint32, ItemType *> ItemFactory::m_types;
-
-std::unique_lock<std::mutex> getTypeLock()
-{
-    static std::mutex m_typesMutex;
-    return std::unique_lock<std::mutex>(m_typesMutex);
-}
 // The items list and mutex.
 std::map<uint32, InventoryItemRef> ItemFactory::m_items;
 std::unique_lock<std::mutex> getItemLock()
@@ -67,8 +59,10 @@ void ItemFactory::Shutdown()
         end = m_items.end();
         for(; cur != end; cur++) {
             // save attributes of item
-			if( IsNonStaticItem(cur->second->itemID()) )
-				cur->second->SaveItem();
+            if (IsNonStaticItem(cur->second->itemID()))
+            {
+                cur->second->SaveItem();
+            }
 
 			items_saved++;
 			if( ((float)items_saved / (float)total_item_count) > (current_percent_items_saved + 0.05) )
@@ -79,41 +73,9 @@ void ItemFactory::Shutdown()
         }
 		SysLog::Log( "Saving Items", " COMPLETE!" );
     }
-    // types
-    {
-        auto lock = getTypeLock();
-        std::map<uint32, ItemType *>::const_iterator cur, end;
-        cur = m_types.begin();
-        end = m_types.end();
-        for(; cur != end; cur++)
-            delete cur->second;
-    }
 
     // Set Client pointer to NULL
     m_pClient = NULL;
-}
-
-template<class _Ty>
-const _Ty *ItemFactory::_GetType(uint32 typeID)
-{
-    auto lock = getTypeLock();
-    std::map<uint32, ItemType *>::iterator res = m_types.find(typeID);
-    if (res == m_types.end())
-    {
-        lock.unlock();
-        _Ty *type = _Ty::Load(typeID);
-        if(type == NULL)
-            return NULL;
-
-        lock.lock();
-        // insert into cache
-        res = m_types.insert(std::make_pair(typeID, type)).first;
-    }
-    return static_cast<const _Ty *>(res->second);
-}
-
-const ItemType *ItemFactory::GetType(uint32 typeID) {
-    return _GetType<ItemType>(typeID);
 }
 
 template<class _Ty>

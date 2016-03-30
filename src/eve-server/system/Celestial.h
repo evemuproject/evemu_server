@@ -58,13 +58,13 @@ class CelestialObject
 public:
     CelestialObject(
         uint32 _celestialID,
-        const ItemType &_type,
+                    const InvTypeRef _type,
         const ItemData &_data);
 
     CelestialObject(
         uint32 _celestialID,
         // InventoryItem stuff:
-        const ItemType &_type,
+                    const InvTypeRef _type,
         const ItemData &_data,
         // CelestialObject stuff:
         const CelestialObjectData &_cData
@@ -108,14 +108,14 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadItem(uint32 celestialID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+                                 const InvTypeRef type, const ItemData &data)
     {
         // make sure it's celestial object, entity object or station
-        if( type.categoryID() != EVEDB::invCategories::Celestial
-            && type.categoryID() != EVEDB::invCategories::Entity
-            && type.groupID() != EVEDB::invGroups::Station )
+        if (type->getCategoryID() != EVEDB::invCategories::Celestial
+            && type->getCategoryID() != EVEDB::invCategories::Entity
+            && type->groupID != EVEDB::invGroups::Station)
         {
-            _log(ITEM__ERROR, "Trying to load %s as Celestial.", type.category()->categoryName.c_str());
+            _log(ITEM__ERROR, "Trying to load %s as Celestial.", type->getCategory()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
 
@@ -131,7 +131,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCelestialObject(uint32 celestialID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data,
+                                            const InvTypeRef type, const ItemData &data,
         // CelestialObject stuff:
         const CelestialObjectData &cData
     );

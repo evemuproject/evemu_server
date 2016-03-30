@@ -31,7 +31,7 @@
 Owner::Owner(
     uint32 _ownerID,
     // InventoryItem stuff:
-    const ItemType &_type,
+             const InvTypeRef _type,
     const ItemData &_data)
 : InventoryItem( _ownerID, _type, _data )
 {
@@ -45,10 +45,10 @@ OwnerRef Owner::Load(uint32 ownerID)
 template<class _Ty>
 RefPtr<_Ty> Owner::_LoadOwner(uint32 ownerID,
     // InventoryItem stuff:
-    const ItemType &type, const ItemData &data )
+                              const InvTypeRef type, const ItemData &data)
 {
     // decide what to do next:
-    switch( type.groupID() )
+    switch (type->groupID)
     {
         ///////////////////////////////////////
         // Character:
@@ -66,11 +66,13 @@ RefPtr<_Ty> Owner::_LoadOwner(uint32 ownerID,
 OwnerRef Owner::Spawn(ItemData &data)
 {
     // obtain type of new item
-    const ItemType *t = ItemFactory::GetType(data.typeID);
-    if( t == NULL )
+    const InvTypeRef t = InvType::getType(data.typeID);
+    if (t.get() == nullptr)
+    {
         return OwnerRef();
+    }
 
-    switch( t->groupID() )
+    switch( t->groupID )
     {
         ///////////////////////////////////////
         // Character:

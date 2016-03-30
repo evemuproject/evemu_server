@@ -48,7 +48,7 @@ BlueprintData::BlueprintData(
 Blueprint::Blueprint(
     uint32 _blueprintID,
     // InventoryItem stuff:
-                     const ItemType &_bpType,
+                     const InvTypeRef _bpType,
     const ItemData &_data,
     // Blueprint stuff:
     const BlueprintData &_bpData)
@@ -59,8 +59,8 @@ Blueprint::Blueprint(
   m_licensedProductionRunsRemaining(_bpData.licensedProductionRunsRemaining)
 {
     // data consistency asserts
-    assert(_bpType.categoryID() == EVEDB::invCategories::Blueprint);
-    m_blueprintType = InvBlueprintType::getBlueprintType(m_type.id());
+    assert(_bpType->getCategoryID() == EVEDB::invCategories::Blueprint);
+    m_blueprintType = InvBlueprintType::getBlueprintType(m_type->typeID);
 }
 
 BlueprintRef Blueprint::Load(uint32 blueprintID)
@@ -71,7 +71,7 @@ BlueprintRef Blueprint::Load(uint32 blueprintID)
 template<class _Ty>
 RefPtr<_Ty> Blueprint::_LoadBlueprint(uint32 blueprintID,
     // InventoryItem stuff:
-                                      const ItemType &bpType, const ItemData &data,
+                                      const InvTypeRef bpType, const ItemData &data,
                                       // Blueprint stuff:
     const BlueprintData &bpData)
 {
@@ -93,8 +93,8 @@ uint32 Blueprint::_Spawn(
     BlueprintData &bpData
 ) {
     // make sure it's a blueprint type
-    const ItemType *bt = ItemFactory::GetType(data.typeID);
-    if (bt == NULL)
+    const InvTypeRef bt = InvType::getType(data.typeID);
+    if (bt.get() == nullptr)
     {
         return 0;
     }
