@@ -116,20 +116,6 @@ const ItemType *ItemFactory::GetType(uint32 typeID) {
     return _GetType<ItemType>(typeID);
 }
 
-const CharacterType *ItemFactory::GetCharacterType(uint32 characterTypeID) {
-    return _GetType<CharacterType>(characterTypeID);
-}
-
-const CharacterType *ItemFactory::GetCharacterTypeByBloodline(uint32 bloodlineID) {
-    // Unfortunately, we have it indexed by typeID, so we must get it ...
-    uint32 characterTypeID;
-    if (!InventoryDB::GetCharacterTypeByBloodline(bloodlineID, characterTypeID))
-    {
-        return NULL;
-    }
-    return GetCharacterType(characterTypeID);
-}
-
 template<class _Ty>
 RefPtr<_Ty> ItemFactory::_GetItem(uint32 itemID)
 {

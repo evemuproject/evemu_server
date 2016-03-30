@@ -30,93 +30,7 @@
 #include "character/Character.h"
 #include "character/CharacterDB.h"
 #include "inventory/AttributeEnum.h"
-
-/*
- * CharacterTypeData
- */
-CharacterTypeData::CharacterTypeData(
-    const char *_bloodlineName,
-    EVERace _race,
-    const char *_desc,
-    const char *_maleDesc,
-    const char *_femaleDesc,
-    uint32 _shipTypeID,
-    uint32 _corporationID,
-    uint8 _perception,
-    uint8 _willpower,
-    uint8 _charisma,
-    uint8 _memory,
-    uint8 _intelligence,
-    const char *_shortDesc,
-    const char *_shortMaleDesc,
-    const char *_shortFemaleDesc)
-: bloodlineName(_bloodlineName),
-  race(_race),
-  description(_desc),
-  maleDescription(_maleDesc),
-  femaleDescription(_femaleDesc),
-  shipTypeID(_shipTypeID),
-  corporationID(_corporationID),
-  perception(_perception),
-  willpower(_willpower),
-  charisma(_charisma),
-  memory(_memory),
-  intelligence(_intelligence),
-  shortDescription(_shortDesc),
-  shortMaleDescription(_shortMaleDesc),
-  shortFemaleDescription(_shortFemaleDesc)
-{
-}
-
-/*
- * CharacterType
- */
-CharacterType::CharacterType(
-    uint32 _id,
-    uint8 _bloodlineID,
-    // ItemType stuff:
-    const InvGroupRef _group,
-    const TypeData &_data,
-    // CharacterType stuff:
-    const ItemType &_shipType,
-    const CharacterTypeData &_charData)
-: ItemType(_id, _group, _data),
-  m_bloodlineID(_bloodlineID),
-  m_bloodlineName(_charData.bloodlineName),
-  m_description(_charData.description),
-  m_maleDescription(_charData.maleDescription),
-  m_femaleDescription(_charData.femaleDescription),
-  m_shipType(_shipType),
-  m_corporationID(_charData.corporationID),
-  m_perception(_charData.perception),
-  m_willpower(_charData.willpower),
-  m_charisma(_charData.charisma),
-  m_memory(_charData.memory),
-  m_intelligence(_charData.intelligence),
-  m_shortDescription(_charData.shortDescription),
-  m_shortMaleDescription(_charData.shortMaleDescription),
-  m_shortFemaleDescription(_charData.shortFemaleDescription)
-{
-    // check for consistency
-    assert(_data.race == _charData.race);
-    assert(_charData.shipTypeID == _shipType.id());
-}
-
-CharacterType *CharacterType::Load(uint32 characterTypeID)
-{
-    return ItemType::Load<CharacterType>( characterTypeID );
-}
-
-template<class _Ty>
-_Ty *CharacterType::_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
-    // ItemType stuff:
-    const InvGroupRef group, const TypeData &data,
-    // CharacterType stuff:
-    const ItemType &shipType, const CharacterTypeData &charData)
-{
-    // enough data for construction
-    return new CharacterType( typeID, bloodlineID, group, data, shipType, charData );
-}
+#include "chr/ChrBloodline.h"
 
 /*
  * CharacterData
@@ -138,7 +52,8 @@ CharacterData::CharacterData(
     uint32 _stationID,
     uint32 _solarSystemID,
     uint32 _constellationID,
-    uint32 _regionID,
+                             uint32 _regionID,
+                             ChrBloodlineRef _bloodline,
     uint32 _ancestryID,
     uint32 _careerID,
     uint32 _schoolID,
@@ -163,7 +78,8 @@ CharacterData::CharacterData(
   stationID(_stationID),
   solarSystemID(_solarSystemID),
   constellationID(_constellationID),
-  regionID(_regionID),
+regionID(_regionID),
+bloodline(_bloodline),
   ancestryID(_ancestryID),
   careerID(_careerID),
   schoolID(_schoolID),
@@ -321,7 +237,7 @@ fleetJob(_fleetJob)
 Character::Character(
     uint32 _characterID,
     // InventoryItem stuff:
-    const CharacterType &_charType,
+                     const ItemType &_charType,
     const ItemData &_data,
     // Character stuff:
     const CharacterData &_charData,
@@ -349,7 +265,8 @@ Character::Character(
   m_stationID(_charData.stationID),
   m_solarSystemID(_charData.solarSystemID),
   m_constellationID(_charData.constellationID),
-  m_regionID(_charData.regionID),
+m_regionID(_charData.regionID),
+m_bloodline(_charData.bloodline),
   m_ancestryID(_charData.ancestryID),
   m_careerID(_charData.careerID),
   m_schoolID(_charData.schoolID),
@@ -376,7 +293,7 @@ CharacterRef Character::Load(uint32 characterID)
 template<class _Ty>
 RefPtr<_Ty> Character::_LoadCharacter(uint32 characterID,
     // InventoryItem stuff:
-    const CharacterType &charType, const ItemData &data,
+                                      const ItemType &charType, const ItemData &data,
     // Character stuff:
     const CharacterData &charData, const CorpMemberInfo &corpData)
 {
@@ -409,9 +326,10 @@ uint32 Character::_Spawn(
     CharacterData &charData, CorpMemberInfo &corpData)
 {
     // make sure it's a character
-    const CharacterType *ct = ItemFactory::GetCharacterType(data.typeID);
-    if(ct == NULL)
+    if (charData.bloodline.get() == nullptr)
+    {
         return 0;
+    }
 
     // make sure it's a singleton with qty 1
     if(!data.singleton || data.quantity != 1) {
@@ -1363,7 +1281,8 @@ void Character::SaveCharacter()
             stationID(),
             solarSystemID(),
             constellationID(),
-            regionID(),
+                      regionID(),
+                      m_bloodline,
             ancestryID(),
             careerID(),
             schoolID(),

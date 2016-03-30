@@ -32,6 +32,8 @@
 #include "imageserver/ImageServer.h"
 #include "PyServiceMgr.h"
 
+#include "chr/ChrBloodline.h"
+
 PyCallable_Make_InnerDispatcher(CharUnboundMgrService)
 
 CharUnboundMgrService::CharUnboundMgrService()
@@ -181,9 +183,13 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     // obtain character type
     ItemFactory::SetUsingClient(call.client);
-    const CharacterType *char_type = ItemFactory::GetCharacterTypeByBloodline(arg.bloodlineID);
-    if(char_type == NULL)
-        return NULL;
+    ChrBloodlineRef char_type;
+    if (!ChrBloodline::getBloodline(arg.bloodlineID, char_type))
+    {
+        return nullptr;
+    }
+    uint32 charTypeID;
+    InventoryDB::GetCharacterTypeByBloodline(char_type->bloodlineID, charTypeID);
 
     // we need to fill these to successfully create character item
     ItemData idata;
@@ -191,7 +197,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     CharacterAppearance capp;
     CorpMemberInfo corpData;
 
-    idata.typeID = char_type->id();
+    idata.typeID = charTypeID;
     idata.name = arg.name;
     idata.ownerID = 1; // EVE System
     idata.quantity = 1;
@@ -201,6 +207,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     cdata.gender = arg.genderID != 0;
     cdata.ancestryID = arg.ancestryID;
     cdata.schoolID = arg.schoolID;
+    cdata.bloodline = ChrBloodline::getBloodline(arg.bloodlineID);
 
     //Set the character's career based on the school they picked.
     if (CharacterDB::GetCareerBySchool(cdata.schoolID, cdata.careerID))
@@ -220,11 +227,11 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     corpData.rolesAtOther = 0;
 
     // Variables for storing attribute bonuses
-    uint8 intelligence = char_type->intelligence();
-    uint8 charisma = char_type->charisma();
-    uint8 perception = char_type->perception();
-    uint8 memory = char_type->memory();
-    uint8 willpower = char_type->willpower();
+    uint8 intelligence = char_type->intelligence;
+    uint8 charisma = char_type->charisma;
+    uint8 perception = char_type->perception;
+    uint8 memory = char_type->memory;
+    uint8 willpower = char_type->willpower;
 
     // Setting character's starting position, and getting it's location...
     // Also query attribute bonuses from ancestry
@@ -232,7 +239,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
             || !CharacterDB::GetAttributesFromAncestry(cdata.ancestryID, intelligence, charisma, perception, memory, willpower)
     ) {
         codelog(CLIENT__ERROR, "Failed to load char create details. Bloodline %u, ancestry %u.",
-            char_type->bloodlineID(), cdata.ancestryID);
+            char_type->bloodlineID, cdata.ancestryID);
         return NULL;
     }
 
@@ -297,10 +304,10 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 
     //load skills
     CharSkillMap startingSkills;
-    if (!CharacterDB::GetSkillsByRace(char_type->race(), startingSkills))
+    if (!CharacterDB::GetSkillsByRace(char_type->raceID, startingSkills))
     {
         codelog(CLIENT__ERROR, "Failed to load char create skills. Bloodline %u, Ancestry %u.",
-            char_type->bloodlineID(), cdata.ancestryID);
+            char_type->bloodlineID, cdata.ancestryID);
         return NULL;
     }
 
@@ -371,7 +378,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     // give the player its ship.
     std::string ship_name = char_item->itemName() + "'s Ship";
 
-    ItemData shipItem( char_type->shipTypeID(), char_item->itemID(), char_item->locationID(), flagHangar, ship_name.c_str() );
+    ItemData shipItem( char_type->shipTypeID, char_item->itemID(), char_item->locationID(), flagHangar, ship_name.c_str() );
     ShipRef ship_item = ItemFactory::SpawnShip(shipItem);
 
     char_item->SetActiveShip( ship_item->itemID() );

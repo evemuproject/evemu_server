@@ -100,69 +100,8 @@ ItemType *ItemType::Load(uint32 typeID)
 }
 
 template<class _Ty>
-_Ty *ItemType::_LoadType(uint32 typeID,
-    // ItemType stuff:
-                         const InvGroupRef group, const TypeData &data)
+_Ty *ItemType::_LoadType(uint32 typeID, const InvGroupRef group, const TypeData &data)
 {
-    // See what to do next:
-    switch (group->categoryID)
-    {
-        //! TODO not handled.
-        case EVEDB::invCategories::Owner:
-        case EVEDB::invCategories::Celestial:
-        case EVEDB::invCategories::Skill:
-        case EVEDB::invCategories::_System:
-        case EVEDB::invCategories::Station:
-        case EVEDB::invCategories::Material:
-        case EVEDB::invCategories::Accessories:
-        case EVEDB::invCategories::Module:
-        case EVEDB::invCategories::Charge:
-        case EVEDB::invCategories::Trading:
-        case EVEDB::invCategories::Entity:
-        case EVEDB::invCategories::Bonus:
-        case EVEDB::invCategories::Commodity:
-        case EVEDB::invCategories::Drone:
-        case EVEDB::invCategories::Implant:
-        case EVEDB::invCategories::Deployable:
-        case EVEDB::invCategories::Structure:
-        case EVEDB::invCategories::Reaction:
-        case EVEDB::invCategories::Asteroid:
-             break;
-        ///////////////////////////////////////
-        // Blueprint:
-        ///////////////////////////////////////
-        case EVEDB::invCategories::Blueprint:
-        {
-            break;
-        }
-
-        ///////////////////////////////////////
-        // Ship:
-        ///////////////////////////////////////
-        case EVEDB::invCategories::Ship:
-        {
-            break;
-        }
-    }
-
-    // ItemCategory didn't do it, try ItemGroup:
-    switch( group->groupID ) {
-        ///////////////////////////////////////
-        // Character:
-        ///////////////////////////////////////
-        case EVEDB::invGroups::Character: {
-            return CharacterType::_LoadType<CharacterType>( typeID, group, data );
-        }
-
-        ///////////////////////////////////////
-        // Station:
-        ///////////////////////////////////////
-        case EVEDB::invGroups::Station:
-        {
-            break;
-        }
-    }
-
     // Generic one, create it:
     return new ItemType( typeID, group, data );
 }

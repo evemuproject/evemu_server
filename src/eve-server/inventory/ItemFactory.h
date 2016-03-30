@@ -50,21 +50,6 @@ public:
      */
     static const ItemType *GetType(uint32 typeID);
 
-    /**
-     * Loads character type, caches it and returns it.
-     *
-     * @param[in] characterTypeID Character type to be returned.
-     * @return Pointer to character type data container; NULL if fails.
-     */
-    static const CharacterType *GetCharacterType(uint32 characterTypeID);
-    /**
-     * Loads character type, caches it and returns it.
-     *
-     * @param[in] characterTypeID Character type to be returned.
-     * @return Pointer to character type data container; NULL if fails.
-     */
-    static const CharacterType *GetCharacterTypeByBloodline(uint32 bloodlineID);
-
     /*
      * Item stuff
      */

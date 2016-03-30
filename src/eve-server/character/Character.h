@@ -31,166 +31,7 @@
 #include "inventory/Inventory.h"
 #include "inventory/InventoryDB.h"
 #include "character/Skill.h"
-
-#define MAX_SP_FOR_100PCT_TRAINING_BONUS    1600000     // After 1.6 million Skill Points are trained, the 100% bonus to skill training goes away
-
-/**
- * Simple container for raw character type data.
- */
-class CharacterTypeData {
-public:
-    CharacterTypeData(
-        const char *_bloodlineName = "",
-        EVERace _race = (EVERace)0,
-        const char *_desc = "",
-        const char *_maleDesc = "",
-        const char *_femaleDesc = "",
-        uint32 _shipTypeID = 0,
-        uint32 _corporationID = 0,
-        uint8 _perception = 0,
-        uint8 _willpower = 0,
-        uint8 _charisma = 0,
-        uint8 _memory = 0,
-        uint8 _intelligence = 0,
-        const char *_shortDesc = "",
-        const char *_shortMaleDesc = "",
-        const char *_shortFemaleDesc = ""
-    );
-
-    // Content:
-    std::string bloodlineName;
-    EVERace race;
-    std::string description;
-    std::string maleDescription;
-    std::string femaleDescription;
-    uint32 shipTypeID;
-    uint32 corporationID;
-
-    uint8 perception;
-    uint8 willpower;
-    uint8 charisma;
-    uint8 memory;
-    uint8 intelligence;
-
-    std::string shortDescription;
-    std::string shortMaleDescription;
-    std::string shortFemaleDescription;
-};
-
-/**
- * Class which maintains character type data.
- */
-class CharacterType
-: public ItemType
-{
-    friend class ItemType; // to let it construct us
-public:
-    /**
-     * Loads and returns new CharacterType.
-     *
-     * @param[in] characterTypeID ID of character type to load.
-     * @return Pointer to new object, NULL if failed.
-     */
-    static CharacterType *Load(uint32 characterTypeID);
-
-    /*
-     * Access functions:
-     */
-    uint32 bloodlineID() const { return m_bloodlineID; }
-
-    const std::string &bloodlineName() const { return m_bloodlineName; }
-    const std::string &description() const { return m_description; }
-    const std::string &maleDescription() const { return m_maleDescription; }
-    const std::string &femaleDescription() const { return m_femaleDescription; }
-    const ItemType &shipType() const { return m_shipType; }
-    uint32 shipTypeID() const { return shipType().id(); }
-    uint32 corporationID() const { return m_corporationID; }
-
-    uint8 perception() const { return m_perception; }
-    uint8 willpower() const { return m_willpower; }
-    uint8 charisma() const { return m_charisma; }
-    uint8 memory() const { return m_memory; }
-    uint8 intelligence() const { return m_intelligence; }
-
-    const std::string &shortDescription() const { return m_shortDescription; }
-    const std::string &shortMaleDescription() const { return m_shortMaleDescription; }
-    const std::string &shortFemaleDescription() const { return m_shortFemaleDescription; }
-
-protected:
-    CharacterType(
-        uint32 _id,
-        uint8 _bloodlineID,
-        // ItemType stuff:
-                  const InvGroupRef _group,
-        const TypeData &_data,
-        // CharacterType stuff:
-        const ItemType &_shipType,
-        const CharacterTypeData &_charData
-    );
-
-    /*
-     * Member functions
-     */
-    using ItemType::_Load;
-
-    // Template loader:
-    template<class _Ty>
-    static _Ty *_LoadType(uint32 typeID,
-        // ItemType stuff:
-                          const InvGroupRef group, const TypeData &data)
-    {
-        // check we are really loading a character type
-        if (group->groupID != EVEDB::invGroups::Character)
-        {
-            SysLog::Error("Character", "Load of character type %u requested, but it's %s.", typeID, group->groupName.c_str());
-            return NULL;
-        }
-
-        // query character type data
-        uint32 bloodlineID;
-        CharacterTypeData charData;
-        if( !InventoryDB::GetCharacterType(typeID, bloodlineID, charData) )
-            return NULL;
-
-        // load ship type
-        const ItemType *shipType = ItemFactory::GetType(charData.shipTypeID);
-        if( shipType == NULL )
-            return NULL;
-
-        return _Ty::template _LoadCharacterType<_Ty>( typeID, bloodlineID, group, data, *shipType, charData );
-    }
-
-    // Actual loading stuff:
-    template<class _Ty>
-    static _Ty *_LoadCharacterType(uint32 typeID, uint8 bloodlineID,
-        // ItemType stuff:
-                                   const InvGroupRef group, const TypeData &data,
-        // CharacterType stuff:
-        const ItemType &shipType, const CharacterTypeData &charData
-    );
-
-    /*
-     * Data members
-     */
-    uint8 m_bloodlineID;
-
-    std::string m_bloodlineName;
-    std::string m_description;
-    std::string m_maleDescription;
-    std::string m_femaleDescription;
-    const ItemType &m_shipType;
-    uint32 m_corporationID;
-
-    uint8 m_perception;
-    uint8 m_willpower;
-    uint8 m_charisma;
-    uint8 m_memory;
-    uint8 m_intelligence;
-
-    std::string m_shortDescription;
-    std::string m_shortMaleDescription;
-    std::string m_shortFemaleDescription;
-};
+#include "chr/ChrBloodline.h"
 
 /**
  * Container for raw character data.
@@ -214,7 +55,8 @@ public:
         uint32 _stationID = 0,
         uint32 _solarSystemID = 0,
         uint32 _constellationID = 0,
-        uint32 _regionID = 0,
+                  uint32 _regionID = 0,
+                  ChrBloodlineRef _bloodline = ChrBloodlineRef(),
         uint32 _ancestryID = 0,
         uint32 _careerID = 0,
         uint32 _schoolID = 0,
@@ -246,6 +88,7 @@ public:
     uint32 constellationID;
     uint32 regionID;
 
+    ChrBloodlineRef bloodline;
     uint32 ancestryID;
     uint32 careerID;
     uint32 schoolID;
@@ -528,12 +371,18 @@ public:
      */
     InventoryItemRef GetImplant(uint32 slot);
 
-    /*
+/*
      * Public fields:
      */
-    const CharacterType &   type() const { return static_cast<const CharacterType &>(InventoryItem::type()); }
-    uint32                  bloodlineID() const { return type().bloodlineID(); }
-    EVERace                 race() const { return type().race(); }
+    uint32 bloodlineID() const
+    {
+        return m_bloodline->bloodlineID;
+    }
+
+    uint32 race() const
+    {
+        return m_bloodline->raceID;
+    }
 
     // Account:
     uint32                  accountID() const { return m_accountID; }
@@ -602,7 +451,7 @@ protected:
     Character(
         uint32 _characterID,
         // InventoryItem stuff:
-        const CharacterType &_charType,
+              const ItemType &_charType,
         const ItemData &_data,
         // Character stuff:
         const CharacterData &_charData,
@@ -618,16 +467,14 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadOwner(uint32 characterID,
         // InventoryItem stuff:
-        const ItemType &type, const ItemData &data)
+                                  const ItemType &charType, const ItemData &data)
     {
         // check it's a character
-        if( type.groupID() != EVEDB::invGroups::Character )
+        if (charType.groupID() != EVEDB::invGroups::Character)
         {
-            SysLog::Error("Character", "Trying to load %s as Character.", type.group()->groupName.c_str());
+            SysLog::Error("Character", "Trying to load %s as Character.", charType.group()->groupName.c_str());
             return RefPtr<_Ty>();
         }
-        // cast the type
-        const CharacterType &charType = static_cast<const CharacterType &>( type );
 
         CharacterData charData;
         if( !InventoryDB::GetCharacter( characterID, charData ) )
@@ -644,7 +491,7 @@ protected:
     template<class _Ty>
     static RefPtr<_Ty> _LoadCharacter(uint32 characterID,
         // InventoryItem stuff:
-        const CharacterType &charType, const ItemData &data,
+                                      const ItemType &charType, const ItemData &data,
         // Character stuff:
         const CharacterData &charData, const CorpMemberInfo &corpData
     );
@@ -709,6 +556,7 @@ protected:
     uint32 m_constellationID;
     uint32 m_regionID;
 
+    ChrBloodlineRef m_bloodline;
     uint32 m_ancestryID;
     uint32 m_careerID;
     uint32 m_schoolID;

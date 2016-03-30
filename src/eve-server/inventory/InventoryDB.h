@@ -57,14 +57,6 @@ public:
     static bool GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into);
 
     /**
-     * Loads character type data.
-     *
-     * @param[in] bloodlineID Bloodline to be loaded.
-     * @param[out] into Where loaded data should be stored.
-     * @return True on success, false on failure.
-     */
-    static bool GetCharacterType(uint32 bloodlineID, CharacterTypeData &into);
-    /**
      * Obtains ID of character type based on bloodline.
      *
      * @param[in] bloodlineID ID of bloodline.
@@ -80,25 +72,6 @@ public:
      * @return True on success, false on failure.
      */
     static bool GetBloodlineByCharacterType(uint32 characterTypeID, uint32 &bloodlineID);
-
-    /**
-     * Obtains bloodline and loads character type data.
-     *
-     * @param[in] characterTypeID ID of character type to be loaded.
-     * @param[out] bloodlineID Resulting bloodline.
-     * @param[out] into Where character type data should be stored.
-     * @return True on success, false on failure.
-     */
-    static bool GetCharacterType(uint32 characterTypeID, uint32 &bloodlineID, CharacterTypeData &into);
-    /**
-     * Obtains ID of character type and loads it.
-     *
-     * @param[in] bloodlineID ID of bloodline to be loaded.
-     * @param[out] characterTypeID Resulting character type.
-     * @param[out] into Where loaded character type data should be stored.
-     * @return True on success, false on failure.
-     */
-    static bool GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &characterTypeID, CharacterTypeData &into);
 
     /*
      * Type attribute stuff
