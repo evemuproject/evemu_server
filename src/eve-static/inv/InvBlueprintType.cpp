@@ -25,6 +25,12 @@
 
 #include "InvBlueprintType.h"
 
+#include "eveStatic.h"
+#include "python/classes/PyDatabase.h"
+#include "python/PyVisitor.h"
+#include "log/SystemLog.h"
+#include "database/EVEDBUtils.h"
+
 std::map<uint32, InvBlueprintTypeRef> InvBlueprintType::s_AllBlueprintTypes;
 
 InvBlueprintType::InvBlueprintType(uint32 _blueprintTypeID,
@@ -66,3 +72,60 @@ productType(InvType::getType(_productTypeID))
 
 InvBlueprintType::~InvBlueprintType() { }
 
+bool EVEStatic::loadInvBlueprintTypes()
+{
+    DBQueryResult result;
+    DBRowDescriptor *header;
+    CRowSet *rowset;
+    DBResultRow row;
+
+    std::string columns = "blueprintTypeID, parentBlueprintTypeID, productTypeID, productionTime, techLevel,"
+            " researchProductivityTime, researchMaterialTime, researchCopyTime, researchTechTime,"
+            " productivityModifier, materialModifier, wasteFactor, chanceOfReverseEngineering, maxProductionLimit";
+    std::string qry = "SELECT " + columns + " FROM invBlueprintTypes LEFT JOIN extInvBlueprintTypes Using(blueprintTypeID)";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    header = new DBRowDescriptor(result);
+    rowset = new CRowSet(&header);
+    while (result.GetRow(row))
+    {
+        PyPackedRow* into = rowset->NewRow();
+        FillPackedRow(row, into);
+        uint32 blueprintTypeID = row.GetInt(0);
+        uint32 parentBlueprintTypeID = row.getIntNC(1);
+        uint32 productTypeID = row.GetInt(2);
+        uint32 productionTime = row.GetInt(3);
+        uint32 techLevel = row.GetInt(4);
+        uint32 researchProductivityTime = row.GetInt(5);
+        uint32 researchMaterialTime = row.GetInt(6);
+        uint32 researchCopyTime = row.GetInt(7);
+        uint32 researchTechTime = row.GetInt(8);
+        uint32 productivityModifier = row.GetInt(9);
+        uint32 materialModifier = row.GetInt(10);
+        uint32 wasteFactor = row.GetInt(11);
+        uint32 maxProductionLimit = row.GetInt(13);
+        // from extInvBlueprintTypes
+        double chanceOfReverseEngineering = row.getDoubleNC(12);
+        new InvBlueprintType(
+                             blueprintTypeID,
+                             parentBlueprintTypeID,
+                             productTypeID,
+                             productionTime,
+                             techLevel,
+                             researchProductivityTime,
+                             researchMaterialTime,
+                             researchCopyTime,
+                             researchTechTime,
+                             productivityModifier,
+                             materialModifier,
+                             wasteFactor,
+                             maxProductionLimit,
+                             chanceOfReverseEngineering);
+    }
+    m_InvBlueprintTypesCache = rowset;
+
+    return true;
+}

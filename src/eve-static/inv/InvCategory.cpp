@@ -26,6 +26,12 @@
 #include "InvCategory.h"
 #include "InvGroup.h"
 
+#include "eveStatic.h"
+#include "python/classes/PyDatabase.h"
+#include "python/PyVisitor.h"
+#include "log/SystemLog.h"
+#include "database/EVEDBUtils.h"
+
 std::map<uint32, std::shared_ptr<InvCategory>> InvCategory::s_AllCategories;
 
 InvCategory::InvCategory(uint32 _categoryID,
@@ -79,3 +85,40 @@ published(_published)
 
 InvCategory::~InvCategory() { }
 
+bool EVEStatic::loadInvCategories(std::map<uint32, std::vector < uint32>> &categoryGroupList)
+{
+    DBQueryResult result;
+    DBRowDescriptor *header;
+    CRowSet *rowset;
+    DBResultRow row;
+    std::string columns = "categoryID, categoryName, description, 0 as graphicID, iconID, published, 0 as dataID";
+    std::string qry = "SELECT " + columns + " FROM invCategories";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    header = new DBRowDescriptor(result);
+    rowset = new CRowSet(&header);
+    while (result.GetRow(row))
+    {
+        PyPackedRow* into = rowset->NewRow();
+        FillPackedRow(row, into);
+        uint32 categoryID = row.GetInt(0);
+        std::string CategoryName = row.GetText(1);
+        std::string description = row.GetText(2);
+        uint32 iconID = row.getIntNC(4);
+        bool published = row.GetBool(5);
+        std::vector<uint32> categoryGroups;
+        auto itr = categoryGroupList.find(categoryID);
+        if (itr != categoryGroupList.end())
+        {
+            categoryGroups = itr->second;
+        }
+        new InvCategory(categoryID, CategoryName,
+                        description, iconID, published, categoryGroups);
+    }
+    m_InvCategoriesCache = rowset;
+
+    return true;
+}

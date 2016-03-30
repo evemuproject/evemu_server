@@ -25,6 +25,10 @@
 
 #include "StaStationType.h"
 
+#include "eveStatic.h"
+#include "log/SystemLog.h"
+#include "database/EVEDBUtils.h"
+
 std::map<uint32, StaStationTypeRef> StaStationType::s_AllTypes;
 
 StaStationType::StaStationType(
@@ -66,3 +70,52 @@ dockOrientation(_dockOrientationX, _dockOrientationY, _dockOrientationZ)
 
 StaStationType::~StaStationType() { }
 
+bool EVEStatic::loadStaStationTypes()
+{
+    DBQueryResult result;
+    DBResultRow row;
+    std::string columns = "stationTypeID, dockEntryX, dockEntryY, dockEntryZ,"
+            " dockOrientationX, dockOrientationY, dockOrientationZ,"
+            " operationID, officeSlots, reprocessingEfficiency, conquerable,"
+            " dockingBayGraphicID, hangarGraphicID";
+    std::string qry = "SELECT " + columns + " FROM staStationTypes LEFT JOIN extStaStationTypes Using(stationTypeID)";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    while (result.GetRow(row))
+    {
+        uint32 stationTypeID = row.GetInt(0);
+        double dockEntryX = row.GetDouble(1);
+        double dockEntryY = row.GetDouble(2);
+        double dockEntryZ = row.GetDouble(3);
+        double dockOrientationX = row.GetDouble(4);
+        double dockOrientationY = row.GetDouble(5);
+        double dockOrientationZ = row.GetDouble(6);
+        uint32 operationID = row.getIntNC(7);
+        uint32 officeSlots = row.getIntNC(8);
+        double reprocessingEfficiency = row.getDoubleNC(9);
+        bool conquerable = row.GetBool(10);
+        // From extStaStationTypes
+        uint32 dockingBayGraphicID = row.getIntNC(11);
+        uint32 hangarGraphicID = row.getIntNC(12);
+        new StaStationType(
+                           stationTypeID,
+                           dockEntryX,
+                           dockEntryY,
+                           dockEntryZ,
+                           dockOrientationX,
+                           dockOrientationY,
+                           dockOrientationZ,
+                           operationID,
+                           officeSlots,
+                           reprocessingEfficiency,
+                           conquerable,
+                           dockingBayGraphicID,
+                           hangarGraphicID
+                           );
+    }
+
+    return true;
+}

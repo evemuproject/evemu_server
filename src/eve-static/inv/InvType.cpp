@@ -23,11 +23,16 @@
     Author:        eve-moo
  */
 
-#include <map>
+#include "eveStatic.h"
 
 #include "InvType.h"
 #include "log/SystemLog.h"
 #include "InvGroup.h"
+
+#include "python/classes/PyDatabase.h"
+#include "python/PyVisitor.h"
+#include "log/SystemLog.h"
+#include "database/EVEDBUtils.h"
 
 std::map<uint32, InvTypeRef> InvType::s_AllTypes;
 
@@ -81,4 +86,57 @@ uint32 InvType::getCategoryID()
         return group->categoryID;
     }
     return 0;
+}
+
+bool EVEStatic::loadInvTypes(std::map<uint32, std::vector<uint32> >& groupTypeList)
+{
+    DBQueryResult result;
+    DBRowDescriptor *header;
+    CRowSet *rowset;
+    DBResultRow row;
+    // switch order of iconID and soundID because that's the way it was in objCacheDB.
+    std::string columns = "typeID, groupID, typeName, description,"
+            " graphicID, radius, mass, volume, capacity, portionSize,"
+            " raceID, basePrice, published, marketGroupID, chanceOfDuplicating,"
+            " soundID, iconID, dataID, typeNameID, descriptionID";
+    std::string qry = "SELECT " + columns + " FROM invTypes LEFT JOIN extInvTypes USING(typeID)";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    header = new DBRowDescriptor(result);
+    rowset = new CRowSet(&header);
+    while (result.GetRow(row))
+    {
+        PyPackedRow* into = rowset->NewRow();
+        FillPackedRow(row, into);
+        // Get the data for the global object.
+        uint32 typeID = row.GetInt(0);
+        uint32 groupID = row.GetInt(1);
+        std::string typeName = row.GetText(2);
+        std::string description = row.getStringNC(3);
+        uint32 graphicID = row.getIntNC(4);
+        double radius = row.GetDouble(5);
+        double mass = row.GetDouble(6);
+        double volume = row.GetDouble(7);
+        double capacity = row.GetDouble(8);
+        uint32 portionSize = row.GetInt(9);
+        uint32 raceID = row.getIntNC(10);
+        double basePrice = row.GetDouble(11);
+        bool published = row.GetBool(12);
+        uint32 marketGroupID = row.getIntNC(13);
+        double chanceOfDuplicating = row.GetDouble(14);
+        uint32 iconID = row.getIntNC(16);
+        // Create the type object.
+        InvType *type = new InvType(
+                                    typeID, groupID, typeName, description, graphicID,
+                                    radius, mass, volume, capacity, portionSize,
+                                    raceID, basePrice, published, marketGroupID,
+                                    chanceOfDuplicating, iconID);
+        groupTypeList[type->groupID].push_back(type->typeID);
+    }
+    m_InvTypesCache = rowset;
+
+    return true;
 }

@@ -27,6 +27,8 @@
 #define	EVESTATIC_H
 
 #include "python/PyRep.h"
+#include <map>
+#include <vector>
 
 class EVEStatic
 {
@@ -56,6 +58,15 @@ public:
 
         return m_InvBlueprintTypesCache;
     }
+
+protected:
+    static bool loadInvTypes(std::map<uint32, std::vector<uint32>> &groupTypeList);
+    static bool loadInvGroups(std::map<uint32, std::vector<uint32>> &groupTypeList, std::map<uint32, std::vector < uint32>> &categoryGroupList);
+    static bool loadInvCategories(std::map<uint32, std::vector < uint32>> &categoryGroupList);
+    static bool loadInvBlueprintTypes();
+    static bool loadStaStationTypes();
+    static bool loadBlkShipTypes();
+
 private:
     static bool staticLoaded;
     static PyRep *m_InvTypesCache;

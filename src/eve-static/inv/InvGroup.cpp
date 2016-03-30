@@ -26,6 +26,12 @@
 #include "InvGroup.h"
 #include "InvType.h"
 
+#include "eveStatic.h"
+#include "python/classes/PyDatabase.h"
+#include "python/PyVisitor.h"
+#include "log/SystemLog.h"
+#include "database/EVEDBUtils.h"
+
 std::map<uint32, InvGroupRef> InvGroup::s_AllGroups;
 
 InvGroup::InvGroup(uint32 _groupID,
@@ -81,3 +87,53 @@ published(_published)
 
 InvGroup::~InvGroup() { }
 
+bool EVEStatic::loadInvGroups(std::map<uint32, std::vector<uint32>> &groupTypeList, std::map<uint32, std::vector < uint32>> &categoryGroupList)
+{
+    DBQueryResult result;
+    DBRowDescriptor *header;
+    CRowSet *rowset;
+    DBResultRow row;
+    std::string columns = "groupID, categoryID, groupName, description, iconID,"
+            " 0 as graphicID, useBasePrice, allowManufacture, allowRecycler,"
+            " anchored, anchorable, fittableNonSingleton, published, 0 AS dataID";
+    std::string qry = "SELECT " + columns + " FROM invGroups";
+    if (!DBcore::RunQuery(result, qry.c_str()))
+    {
+        SysLog::Error("Static DB", "Error in query: %s", result.error.c_str());
+        return false;
+    }
+    header = new DBRowDescriptor(result);
+    rowset = new CRowSet(&header);
+    while (result.GetRow(row))
+    {
+        PyPackedRow* into = rowset->NewRow();
+        FillPackedRow(row, into);
+        uint32 groupID = row.GetInt(0);
+        uint32 categoryID = row.GetInt(1);
+        std::string groupName = row.GetText(2);
+        std::string description = row.GetText(3);
+        uint32 iconID = row.getIntNC(4);
+        bool useBasePrice = row.GetBool(6);
+        bool allowManufacture = row.GetBool(7);
+        bool allowRecycler = row.GetBool(8);
+        bool anchored = row.GetBool(9);
+        bool anchorable = row.GetBool(10);
+        bool fittableNonSingleton = row.GetBool(11);
+        bool published = row.GetBool(12);
+        std::vector<uint32> groupTypes;
+        auto itr = groupTypeList.find(groupID);
+        if (itr != groupTypeList.end())
+        {
+            groupTypes = itr->second;
+        }
+        InvGroup *group = new InvGroup(groupID, categoryID, groupName,
+                                       description, iconID, useBasePrice,
+                                       allowManufacture, allowRecycler, anchored,
+                                       anchorable, fittableNonSingleton,
+                                       published, groupTypes);
+        categoryGroupList[group->categoryID].push_back(group->groupID);
+    }
+    m_InvGroupsCache = rowset;
+
+    return true;
+}
