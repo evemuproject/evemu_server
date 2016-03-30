@@ -80,7 +80,11 @@ bool EVEStatic::loadChrBloodlines()
 {
     DBQueryResult result;
     DBResultRow row;
-    std::string columns = "shipTypeID, weaponTypeID, miningTypeID, skillTypeID";
+    std::string columns = "bloodlineID, bloodlineName, raceID,"
+            " description, maleDescription, femaleDescription,"
+            " shipTypeID, corporationID, perception,"
+            " willpower, charisma, memory, intelligence, iconID,"
+            " shortDescription, shortMaleDescription, shortFemaleDescription";
     std::string qry = "SELECT " + columns + " FROM chrBloodlines";
     if (!DBcore::RunQuery(result, qry.c_str()))
     {
