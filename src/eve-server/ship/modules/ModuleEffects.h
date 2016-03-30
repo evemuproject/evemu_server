@@ -237,20 +237,6 @@ private:
 
 // //////////////// Permanent Memory Object Classes //////////////////////
 
-class TypeEffectsList
-{
-public:
-	TypeEffectsList(uint32 effectID);
-	~TypeEffectsList();
-
-	bool HasEffect(uint32 effectID);
-	uint32 GetEffectCount() { return m_typeEffectsList.size(); }
-	void GetEffectsList(std::map<uint32,uint32> * effectsList);
-
-protected:
-	std::map<uint32,uint32> m_typeEffectsList;
-};
-
 // This class is a singleton object, containing all Effects loaded from dgmEffects table as memory objects of type MEffect:
 class DGM_Effects_Table
 {
@@ -274,41 +260,8 @@ protected:
 // -----------------------------------------------------------------------
 
 
-// This class is a singleton object, containing all effectIDs loaded from dgmTypeEffects table as a memory object:
-class DGM_Type_Effects_Table
-{
-private:
-    DGM_Type_Effects_Table();
-    ~DGM_Type_Effects_Table();
-public:
-
-    // Initializes the Table:
-    static int Initialize();
-
-    // Returns list of effectIDs for the given typeID:
-    static std::shared_ptr<TypeEffectsList> GetTypeEffectsList(uint32 typeID);
-
-protected:
-    static void _Populate();
-
-    static std::map<uint32, std::shared_ptr<TypeEffectsList>> m_TypeEffectsMap;
-};
-
 // -----------------------------------------------------------------------
-
-// This class is a singleton object, containing all Modifiers loaded from dgmImplantBonusModifiers table as memory objects of type MEffect:
-//class DGM_Implant_Bonus_Modifiers_Table
-//: public Singleton< DGM_Implant_Bonus_Modifiers_Table >
-//{
-//}
-//
-//#define sDGM_Implant_Bonus_Modifiers_Table \
-//    ( DGM_Implant_Bonus_Modifiers_Table::get() )
-// -----------------------------------------------------------------------
-
 //////////////////////////////////////////////////////////////////////////
-
-
 // ////////////////////// ModuleEffects Class ////////////////////////////
 
 //class contained by all modules that is populated on construction of the module

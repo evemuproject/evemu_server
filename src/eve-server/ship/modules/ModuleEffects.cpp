@@ -26,9 +26,9 @@
 #include "eve-server.h"
 
 #include "ship/modules/ModuleEffects.h"
+#include "inv/InvType.h"
 
 std::map<uint32, std::shared_ptr<MEffect>> DGM_Effects_Table::m_EffectsMap;
-std::map<uint32, std::shared_ptr<TypeEffectsList>> DGM_Type_Effects_Table::m_TypeEffectsMap;
 
 // ////////////////// MEffect Class ///////////////////////////
 MEffect::MEffect(uint32 effectID)
@@ -479,62 +479,6 @@ void ShipBonusModifier::_Populate(uint32 shipID)
     res = NULL;
 }
 
-
-// ////////////////////// DGM_Type_Effects_Table Class ////////////////////////////
-TypeEffectsList::TypeEffectsList(uint32 typeID)
-{
-    //first get list of all effects from dgmTypeEffects table for the given typeID
-    DBQueryResult *res = new DBQueryResult();
-    ModuleDB::GetDgmTypeEffects(typeID, *res);
-
-    //counter
-	uint32 effectID = 0;
-	uint32 isDefault = 0;
-	uint32 total_effect_count = 0;
-
-	m_typeEffectsList.clear();
-
-	//go through and insert each effectID into the list
-    DBResultRow row;
-    while( res->GetRow(row) )
-    {
-		effectID = row.GetUInt(0);
-		isDefault = row.IsNull(1) ? 0 : row.GetUInt(1);
-		m_typeEffectsList.insert(std::pair<uint32,uint32>(effectID,isDefault));
-		total_effect_count++;
-    }
-
-    //cleanup
-    delete res;
-    res = NULL;
-}
-
-TypeEffectsList::~TypeEffectsList()
-{
-}
-
-bool TypeEffectsList::HasEffect(uint32 effectID)
-{
-	if( m_typeEffectsList.find(effectID) != m_typeEffectsList.end() )
-		return true;
-	else
-		return false;
-}
-
-void TypeEffectsList::GetEffectsList(std::map<uint32,uint32> * effectsList)
-{
-	std::map<uint32,uint32>::iterator cur, end;
-	effectsList->clear();
-
-    cur = m_typeEffectsList.begin();
-    end = m_typeEffectsList.end();
-    for(; cur != end; cur++)
-	{
-		effectsList->insert(std::pair<uint32,uint32>((*cur).first,(*cur).second));
-	}
-}
-
-
 // ////////////////////// DGM_Effects_Table Class ////////////////////////////
 DGM_Effects_Table::DGM_Effects_Table()
 {
@@ -599,66 +543,6 @@ std::shared_ptr<MEffect> DGM_Effects_Table::GetEffect(uint32 effectID)
         mEffectPtr = mEffectMapIterator->second;
     }
     return mEffectPtr;
-}
-
-
-// ////////////////////// DGM_Type_Effects_Table Class ////////////////////////////
-DGM_Type_Effects_Table::DGM_Type_Effects_Table()
-{
-}
-
-DGM_Type_Effects_Table::~DGM_Type_Effects_Table()
-{
-}
-
-int DGM_Type_Effects_Table::Initialize()
-{
-    _Populate();
-
-    return 1;
-}
-
-void DGM_Type_Effects_Table::_Populate()
-{
-    //first get list of all effects from dgmEffects table
-    DBQueryResult *res = new DBQueryResult();
-    ModuleDB::GetAllTypeIDs(*res);
-
-    //counter
-	uint32 total_type_count = 0;
-    uint32 error_count = 0;
-
-    DBResultRow row;
-    while (res->GetRow(row))
-    {
-        std::shared_ptr<TypeEffectsList> typeEffectsListPtr = std::shared_ptr<TypeEffectsList>(new TypeEffectsList(row.GetUInt(0)));
-		if( typeEffectsListPtr->GetEffectCount() > 0)
-            m_TypeEffectsMap.insert(std::pair<uint32, std::shared_ptr < TypeEffectsList >> (row.GetUInt(0), typeEffectsListPtr));
-
-		total_type_count++;
-    }
-
-	if( error_count > 0)
-        SysLog::Error("DGM_Type_Effects_Table::_Populate()", "ERROR Populating the DGM_Type_Effects_Table memory object: %u of %u types failed to load!", error_count, total_type_count);
-
-    SysLog::Log("DGM_Type_Effects_Table", "%u total type effect objects loaded", total_type_count);
-
-    //cleanup
-    delete res;
-    res = NULL;
-}
-
-std::shared_ptr<TypeEffectsList> DGM_Type_Effects_Table::GetTypeEffectsList(uint32 typeID)
-{
-    // return TypeEffectsList * corresponding to effectID from m_EffectsMap
-    std::shared_ptr<TypeEffectsList> mTypeEffectsPtr;
-    std::map<uint32, std::shared_ptr < TypeEffectsList>>::iterator mTypeEffectMapIterator;
-
-    if ((mTypeEffectMapIterator = m_TypeEffectsMap.find(typeID)) != m_TypeEffectsMap.end())
-    {
-        mTypeEffectsPtr = mTypeEffectMapIterator->second;
-    }
-    return mTypeEffectsPtr;
 }
 
 // ////////////////////// ModuleEffects Class ////////////////////////////
@@ -732,14 +616,9 @@ void ModuleEffects::_populate(uint32 typeID)
 {
     //first get list of all of the effects associated with the typeID
     DBQueryResult *res = new DBQueryResult();
-    std::shared_ptr<TypeEffectsList> myTypeEffectsListPtr = DGM_Type_Effects_Table::GetTypeEffectsList(typeID);
+    InvTypeRef type = InvType::getType(typeID);
 
-	// TODO: Instead of the above commented-out line, we need to get our list of effectIDs some other way NOT querying the DB,
-	// in other words, using the new sDGM_Type_Effects_Table object, then take that list of effectIDs to loop through and create
-	// MEffect objects with each one.
-
-	std::map<uint32,uint32> effectsList;
-	myTypeEffectsListPtr->GetEffectsList(&effectsList);
+    uint32 defaultEffect = type->m_defaultEffect;
 
     //counter
     std::shared_ptr<MEffect> mEffectPtr;
@@ -748,16 +627,16 @@ void ModuleEffects::_populate(uint32 typeID)
     uint32 isDefault;
 
     //go through and find each effect, then add pointer to effect to our own map
-    for (auto cur : effectsList)
+    for (auto cur : type->m_effects)
     {
-        effectID = cur.first;
+        effectID = cur;
         mEffectPtr.reset(new MEffect(effectID));
 
         if (mEffectPtr)
 		{
 			if( mEffectPtr->IsEffectLoaded() )
-			{
-				isDefault = cur.second;
+            {
+                isDefault = (cur == defaultEffect);
 				switch( effectID )
 				{
 					case 11:    // loPower

@@ -119,7 +119,6 @@
 #include "ship/InsuranceService.h"
 #include "ship/RepairService.h"
 #include "ship/ShipService.h"
-#include "ship/modules/ModuleEffects.h"
 // standing services
 #include "standing/FactionWarMgrService.h"
 #include "standing/SovereigntyMgrService.h"
@@ -356,8 +355,6 @@ int main( int argc, char* argv[] )
   // Create In-Memory Database Objects for Critical Systems, such as ModuleManager:
   SysLog::Log("Server Init", "---> sDGM_Effects_Table: Loading...");
   DGM_Effects_Table::Initialize();
-  SysLog::Log("Server Init", "---> sDGM_Type_Effects_Table: Loading...");
-  DGM_Type_Effects_Table::Initialize();
   SysLog::Log("Server Init", "---> sDGM_Types_to_Wrecks_Table: Loading...");
   DGM_Types_to_Wrecks_Table::Initialize();
 
