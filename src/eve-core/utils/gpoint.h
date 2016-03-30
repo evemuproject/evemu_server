@@ -26,6 +26,10 @@
 #ifndef G_POINT_H
 #define G_POINT_H
 
+#include "dep/gangsta/GaMath.h"
+#include "dep/gangsta/GaTypes.h"
+#include "utils/misc.h"
+
 //typedef Ga::GaVec3 GPoint;
 class GPoint : public Ga::GaVec3 {
 public:

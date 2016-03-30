@@ -26,6 +26,8 @@
 #ifndef __MISC_H__INCL__
 #define __MISC_H__INCL__
 
+#include "eve-compat.h"
+
 /**
  * This is functionally equivalent to python's binascii.crc_hqx.
  *
