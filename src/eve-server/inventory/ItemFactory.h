@@ -31,7 +31,6 @@
 class ItemGroup;
 
 class ItemType;
-class BlueprintType;
 class CharacterType;
 class ShipType;
 class StationType;
@@ -52,8 +51,6 @@ public:
      * Type stuff
      */
     static const ItemType *GetType(uint32 typeID);
-
-    static const BlueprintType *GetBlueprintType(uint32 blueprintTypeID);
 
     /**
      * Loads character type, caches it and returns it.

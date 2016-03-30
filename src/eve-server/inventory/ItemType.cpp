@@ -131,8 +131,9 @@ _Ty *ItemType::_LoadType(uint32 typeID,
         ///////////////////////////////////////
         // Blueprint:
         ///////////////////////////////////////
-        case EVEDB::invCategories::Blueprint: {
-            return BlueprintType::_LoadType<BlueprintType>( typeID, group, data );
+        case EVEDB::invCategories::Blueprint:
+        {
+            break;
         }
 
         ///////////////////////////////////////

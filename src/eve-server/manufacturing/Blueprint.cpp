@@ -28,84 +28,6 @@
 #include "manufacturing/Blueprint.h"
 
 /*
- * BlueprintTypeData
- */
-BlueprintTypeData::BlueprintTypeData(
-    uint32 _parentBlueprintTypeID,
-    uint32 _productTypeID,
-    uint32 _productionTime,
-    uint32 _techLevel,
-    uint32 _researchProductivityTime,
-    uint32 _researchMaterialTime,
-    uint32 _researchCopyTime,
-    uint32 _researchTechTime,
-    uint32 _productivityModifier,
-    uint32 _materialModifier,
-    double _wasteFactor,
-    double _chanceOfReverseEngineering,
-    uint32 _maxProductionLimit)
-: parentBlueprintTypeID(_parentBlueprintTypeID),
-  productTypeID(_productTypeID),
-  productionTime(_productionTime),
-  techLevel(_techLevel),
-  researchProductivityTime(_researchProductivityTime),
-  researchMaterialTime(_researchMaterialTime),
-  researchCopyTime(_researchCopyTime),
-  researchTechTime(_researchTechTime),
-  productivityModifier(_productivityModifier),
-  materialModifier(_materialModifier),
-  wasteFactor(_wasteFactor),
-  chanceOfReverseEngineering(_chanceOfReverseEngineering),
-  maxProductionLimit(_maxProductionLimit)
-{
-}
-
-/*
- * BlueprintType
- */
-BlueprintType::BlueprintType(
-    uint32 _id,
-    const InvGroupRef _group,
-    const TypeData &_data,
-    const BlueprintType *_parentBlueprintType,
-    const ItemType &_productType,
-    const BlueprintTypeData &_bpData)
-: ItemType(_id, _group, _data),
-  m_parentBlueprintType(_parentBlueprintType),
-  m_productType(_productType),
-  m_productionTime(_bpData.productionTime),
-  m_techLevel(_bpData.techLevel),
-  m_researchProductivityTime(_bpData.researchProductivityTime),
-  m_researchMaterialTime(_bpData.researchMaterialTime),
-  m_researchCopyTime(_bpData.researchCopyTime),
-  m_researchTechTime(_bpData.researchTechTime),
-  m_productivityModifier(_bpData.productivityModifier),
-  m_wasteFactor(_bpData.wasteFactor),
-  m_chanceOfReverseEngineering(_bpData.chanceOfReverseEngineering),
-  m_maxProductionLimit(_bpData.maxProductionLimit)
-{
-    // asserts for data consistency
-    assert(_bpData.productTypeID == _productType.id());
-    if(_parentBlueprintType != NULL)
-        assert(_bpData.parentBlueprintTypeID == _parentBlueprintType->id());
-}
-
-BlueprintType *BlueprintType::Load(uint32 typeID)
-{
-    return ItemType::Load<BlueprintType>( typeID );
-}
-
-template<class _Ty>
-_Ty *BlueprintType::_LoadBlueprintType(uint32 typeID,
-    // ItemType stuff:
-    const InvGroupRef group, const TypeData &data,
-    // BlueprintType stuff:
-    const BlueprintType *parentBlueprintType, const ItemType &productType, const BlueprintTypeData &bpData)
-{
-    return new BlueprintType(typeID, group, data, parentBlueprintType, productType, bpData );
-}
-
-/*
  * BlueprintData
  */
 BlueprintData::BlueprintData(
@@ -126,7 +48,7 @@ BlueprintData::BlueprintData(
 Blueprint::Blueprint(
     uint32 _blueprintID,
     // InventoryItem stuff:
-    const BlueprintType &_bpType,
+                     const ItemType &_bpType,
     const ItemData &_data,
     // Blueprint stuff:
     const BlueprintData &_bpData)
@@ -138,6 +60,7 @@ Blueprint::Blueprint(
 {
     // data consistency asserts
     assert(_bpType.categoryID() == EVEDB::invCategories::Blueprint);
+    m_blueprintType = InvBlueprintType::getBlueprintType(m_type.id());
 }
 
 BlueprintRef Blueprint::Load(uint32 blueprintID)
@@ -148,8 +71,8 @@ BlueprintRef Blueprint::Load(uint32 blueprintID)
 template<class _Ty>
 RefPtr<_Ty> Blueprint::_LoadBlueprint(uint32 blueprintID,
     // InventoryItem stuff:
-    const BlueprintType &bpType, const ItemData &data,
-    // Blueprint stuff:
+                                      const ItemType &bpType, const ItemData &data,
+                                      // Blueprint stuff:
     const BlueprintData &bpData)
 {
     // we have enough data, construct the item
@@ -170,9 +93,11 @@ uint32 Blueprint::_Spawn(
     BlueprintData &bpData
 ) {
     // make sure it's a blueprint type
-    const BlueprintType *bt = ItemFactory::GetBlueprintType(data.typeID);
-    if(bt == NULL)
+    const ItemType *bt = ItemFactory::GetType(data.typeID);
+    if (bt == NULL)
+    {
         return 0;
+    }
 
     // get the blueprintID
     uint32 blueprintID = InventoryItem::_Spawn(data);
@@ -284,13 +209,13 @@ PyDict *Blueprint::GetBlueprintAttributes() const {
     rsp.licensedProductionRunsRemaining = licensedProductionRunsRemaining();
     rsp.wastageFactor = wasteFactor();
 
-    rsp.productTypeID = productTypeID();
-    rsp.manufacturingTime = type().productionTime();
-    rsp.maxProductionLimit = type().maxProductionLimit();
-    rsp.researchMaterialTime = type().researchMaterialTime();
-    rsp.researchTechTime = type().researchTechTime();
-    rsp.researchProductivityTime = type().researchProductivityTime();
-    rsp.researchCopyTime = type().researchCopyTime();
+    rsp.productTypeID = m_blueprintType->productTypeID;
+    rsp.manufacturingTime = m_blueprintType->productionTime;
+    rsp.maxProductionLimit = m_blueprintType->maxProductionLimit;
+    rsp.researchMaterialTime = m_blueprintType->researchMaterialTime;
+    rsp.researchTechTime = m_blueprintType->researchTechTime;
+    rsp.researchProductivityTime = m_blueprintType->researchProductivityTime;
+    rsp.researchCopyTime = m_blueprintType->researchCopyTime;
 
     return(rsp.Encode());
 }

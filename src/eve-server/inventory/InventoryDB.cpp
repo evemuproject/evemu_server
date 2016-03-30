@@ -112,53 +112,6 @@ bool InventoryDB::GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into) {
 	return true;
 }
 
-bool InventoryDB::GetBlueprintType(uint32 blueprintTypeID, BlueprintTypeData &into) {
-    DBQueryResult res;
-
-    if(!DBcore::RunQuery(res,
-        "SELECT"
-        " parentBlueprintTypeID,"
-        " productTypeID,"
-        " productionTime,"
-        " techLevel,"
-        " researchProductivityTime,"
-        " researchMaterialTime,"
-        " researchCopyTime,"
-        " researchTechTime,"
-        " productivityModifier,"
-        " materialModifier,"
-        " wasteFactor / 100,"   // we have it in db as percentage ...
-        " maxProductionLimit"
-        " FROM invBlueprintTypes"
-        " WHERE blueprintTypeID=%u",
-        blueprintTypeID))
-    {
-        _log(DATABASE__ERROR, "Error in query: %s.", res.error.c_str());
-        return false;
-    }
-
-    DBResultRow row;
-    if(!res.GetRow(row)) {
-        _log(DATABASE__ERROR, "Blueprint type %u not found.", blueprintTypeID);
-        return false;
-    }
-
-    into.parentBlueprintTypeID = row.IsNull(0) ? 0 : row.GetUInt(0);
-    into.productTypeID = row.GetUInt(1);
-    into.productionTime = row.GetUInt(2);
-    into.techLevel = row.GetUInt(3);
-    into.researchProductivityTime = row.GetUInt(4);
-    into.researchMaterialTime = row.GetUInt(5);
-    into.researchCopyTime = row.GetUInt(6);
-    into.researchTechTime = row.GetUInt(7);
-    into.productivityModifier = row.GetUInt(8);
-    into.materialModifier = row.GetUInt(9);
-    into.wasteFactor = row.GetDouble(10);
-    into.maxProductionLimit = row.GetUInt(11);
-
-    return true;
-}
-
 bool InventoryDB::GetCharacterType(uint32 bloodlineID, CharacterTypeData &into) {
     DBQueryResult res;
 

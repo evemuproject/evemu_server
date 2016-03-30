@@ -100,7 +100,6 @@ public:
     // other
     static std::string GetStationName(const uint32 stationID);
     static uint32 GetRegionOfContainer(const uint32 containerID);
-    static uint32 GetTech2Blueprint(const uint32 blueprintTypeID);
     static uint64 GetNextFreeTime(const uint32 assemblyLineID);
 
 protected:

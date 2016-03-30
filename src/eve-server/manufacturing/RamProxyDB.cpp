@@ -487,28 +487,6 @@ std::string RamProxyDB::GetStationName(const uint32 stationID) {
     return(row.GetText(0));
 }
 
-uint32 RamProxyDB::GetTech2Blueprint(const uint32 blueprintTypeID) {
-    DBQueryResult res;
-
-    if(!DBcore::RunQuery(res,
-                "SELECT blueprintTypeID"
-                " FROM invBlueprintTypes"
-                " WHERE parentBlueprintTypeID = %u",
-                blueprintTypeID))
-    {
-        _log(DATABASE__ERROR, "Unable to get T2 type for type ID %u: %s", blueprintTypeID, res.error.c_str());
-        return 0;
-    }
-
-    DBResultRow row;
-    if(!res.GetRow(row)) {
-        // no error because it's normal
-        return 0;
-    }
-
-    return(row.GetUInt(0));
-}
-
 uint64 RamProxyDB::GetNextFreeTime(const uint32 assemblyLineID) {
     DBQueryResult res;
 

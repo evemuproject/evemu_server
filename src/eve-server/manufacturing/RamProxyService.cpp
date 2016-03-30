@@ -315,11 +315,11 @@ PyResult RamProxyService::Handle_CompleteJob(PyCallArgs &call) {
                 BlueprintRef bp = BlueprintRef::StaticCast( installedItem );
 
                 ItemData idata(
-                    bp->productTypeID(),
+                               bp->blueprintType()->productTypeID,
                     ownerID,
                     0,  // temp location
                     outputFlag,
-                    bp->productType().portionSize() * runs
+                               bp->blueprintType()->getType()->portionSize * runs
                 );
 
                 InventoryItemRef item = ItemFactory::SpawnItem(idata);
@@ -417,7 +417,7 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
             if(!bp->infinite() && (bp->licensedProductionRunsRemaining() - args.runs) < 0)
                 throw(PyException(MakeUserError("RamTooManyProductionRuns")));
 
-            productType = &bp->productType();
+            productType = bp->productType();
             break;
         }
         /*
@@ -790,9 +790,9 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
         case ramActivityManufacturing: {
             BlueprintRef bp = BlueprintRef::StaticCast( installedItem );
 
-            productType = &bp->productType();
+            productType = bp->productType();
 
-            into.productionTime = bp->type().productionTime();
+            into.productionTime = bp->blueprintType()->productionTime;
 
             into.materialMultiplier *= bp->materialMultiplier();
             into.timeMultiplier *= bp->timeMultiplier();
@@ -818,7 +818,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
 
             productType = &installedItem->type();
 
-            into.productionTime = bp->type().researchProductivityTime();
+            into.productionTime = bp->blueprintType()->researchProductivityTime;
             into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
             into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrManufacturingTimeResearchSpeed).get_float();
             break;
@@ -831,7 +831,7 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
 
             productType = &installedItem->type();
 
-            into.productionTime = bp->type().researchMaterialTime();
+            into.productionTime = bp->blueprintType()->researchMaterialTime;
             into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
             into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrMineralNeedResearchSpeed).get_float();
             break;
@@ -839,13 +839,15 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
         /*
          * Copying
          */
-        case ramActivityCopying: {
-            BlueprintRef bp = BlueprintRef::StaticCast( installedItem );
+        case ramActivityCopying:
+        {
+            BlueprintRef bp = BlueprintRef::StaticCast(installedItem);
+            InvBlueprintTypeRef bpType = bp->blueprintType();
 
             productType = &installedItem->type();
 
             // no ceil() here on purpose
-            into.productionTime = (bp->type().researchCopyTime() / bp->type().maxProductionLimit()) * args.licensedProductionRuns;
+            into.productionTime = (bpType->researchCopyTime / bpType->maxProductionLimit) * args.licensedProductionRuns;
 
             into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
             into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrCopySpeedPercent).get_float();

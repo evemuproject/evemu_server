@@ -32,7 +32,6 @@
 class EVEAttributeMgr;
 
 class TypeData;
-class BlueprintTypeData;
 class CharacterTypeData;
 class ShipTypeData;
 class StationTypeData;
@@ -57,8 +56,6 @@ public:
     static bool GetType(uint32 typeID, TypeData &into);
 
     static bool GetTypeEffectsList(uint32 typeID, std::vector<uint32> &into);
-
-    static bool GetBlueprintType(uint32 blueprintTypeID, BlueprintTypeData &into);
 
     /**
      * Loads character type data.

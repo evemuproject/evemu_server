@@ -116,10 +116,6 @@ const ItemType *ItemFactory::GetType(uint32 typeID) {
     return _GetType<ItemType>(typeID);
 }
 
-const BlueprintType *ItemFactory::GetBlueprintType(uint32 blueprintTypeID) {
-    return _GetType<BlueprintType>(blueprintTypeID);
-}
-
 const CharacterType *ItemFactory::GetCharacterType(uint32 characterTypeID) {
     return _GetType<CharacterType>(characterTypeID);
 }
