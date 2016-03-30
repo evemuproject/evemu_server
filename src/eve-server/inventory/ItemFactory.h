@@ -32,8 +32,6 @@ class ItemGroup;
 
 class ItemType;
 class CharacterType;
-class ShipType;
-class StationType;
 
 class Inventory;
 
@@ -66,14 +64,6 @@ public:
      * @return Pointer to character type data container; NULL if fails.
      */
     static const CharacterType *GetCharacterTypeByBloodline(uint32 bloodlineID);
-
-    /**
-     * Loads ship type, caches it and returns it.
-     *
-     * @param[in] shipTypeID ID of ship type.
-     * @return Pointer to ship type data container; NULL if fails.
-     */
-    static const ShipType *GetShipType(uint32 shipTypeID);
 
     /*
      * Item stuff

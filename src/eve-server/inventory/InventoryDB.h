@@ -100,15 +100,6 @@ public:
      */
     static bool GetCharacterTypeByBloodline(uint32 bloodlineID, uint32 &characterTypeID, CharacterTypeData &into);
 
-    /**
-     * Loads ship type data into given container.
-     *
-     * @param[in] shipTypeID ID of ship type.
-     * @param[in] into Container to load data into.
-     * @return True on success, false on failure.
-     */
-    static bool GetShipType(uint32 shipTypeID, ShipTypeData &into);
-
     /*
      * Type attribute stuff
      * (dgmTypeAttributes)

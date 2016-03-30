@@ -130,10 +130,6 @@ const CharacterType *ItemFactory::GetCharacterTypeByBloodline(uint32 bloodlineID
     return GetCharacterType(characterTypeID);
 }
 
-const ShipType *ItemFactory::GetShipType(uint32 shipTypeID) {
-    return _GetType<ShipType>(shipTypeID);
-}
-
 template<class _Ty>
 RefPtr<_Ty> ItemFactory::_GetItem(uint32 itemID)
 {

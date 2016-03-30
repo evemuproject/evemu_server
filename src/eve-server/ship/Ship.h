@@ -38,130 +38,6 @@ class ShipOperatorInterface;
 #define SHIP_PROCESS_TICK_MS	5000
 
 /**
- * Basic container for raw ship type data.
- */
-class ShipTypeData {
-public:
-    ShipTypeData(
-        uint32 _weaponTypeID = 0,
-        uint32 _miningTypeID = 0,
-        uint32 _skillTypeID = 0
-    );
-
-    // Content:
-    uint32 mWeaponTypeID;
-    uint32 mMiningTypeID;
-    uint32 mSkillTypeID;
-};
-
-/**
- * Class managing ship type data.
- */
-class ShipType
-: public ItemType
-{
-    friend class ItemType; // to let them construct us
-public:
-    /**
-     * Loads ship type.
-     *
-     * @param[in] shipTypeID ID of ship type to load.
-     * @return Pointer to new ShipType object; NULL if failed.
-     */
-    static ShipType *Load(uint32 shipTypeID);
-
-    /*
-     * Access methods:
-     */
-    const ItemType *weaponType() const { return m_weaponType; }
-    const ItemType *miningType() const { return m_miningType; }
-    const ItemType *skillType() const { return m_skillType; }
-
-protected:
-    ShipType(
-        uint32 _id,
-        // ItemType stuff:
-        const InvGroupRef _group,
-        const TypeData &_data,
-        // ShipType stuff:
-        const ItemType *_weaponType,
-        const ItemType *_miningType,
-        const ItemType *_skillType,
-        const ShipTypeData &stData
-    );
-
-    /*
-     * Member functions:
-     */
-    using ItemType::_Load;
-
-    // Template loader:
-    template<class _Ty>
-    static _Ty *_LoadType(uint32 shipTypeID,
-        // ItemType stuff:
-        const InvGroupRef group, const TypeData &data)
-    {
-        // verify it's a ship
-        if( group->categoryID != EVEDB::invCategories::Ship )
-        {
-            _log(ITEM__ERROR, "Tried to load %u (%s) as a Ship.", shipTypeID, group->getCategory()->categoryName.c_str());
-            return NULL;
-        }
-
-        // load additional ship type stuff
-        ShipTypeData stData;
-        if( !InventoryDB::GetShipType(shipTypeID, stData) )
-            return NULL;
-
-        // try to load weapon type
-        const ItemType *weaponType = NULL;
-        if( stData.mWeaponTypeID != 0 )
-        {
-            weaponType = ItemFactory::GetType(stData.mWeaponTypeID);
-            if( weaponType == NULL )
-                return NULL;
-        }
-
-        // try to load mining type
-        const ItemType *miningType = NULL;
-        if( stData.mMiningTypeID != 0 )
-        {
-            miningType = ItemFactory::GetType(stData.mMiningTypeID);
-            if( miningType == NULL )
-                return NULL;
-        }
-
-        // try to load skill type
-        const ItemType *skillType = NULL;
-        if( stData.mSkillTypeID != 0 )
-        {
-            skillType = ItemFactory::GetType(stData.mSkillTypeID);
-            if( skillType == NULL )
-                return NULL;
-        }
-
-        // continue with load
-        return _Ty::template _LoadShipType<_Ty>( shipTypeID, group, data, weaponType, miningType, skillType, stData );
-    }
-
-    // Actual loading stuff:
-    template<class _Ty>
-    static _Ty *_LoadShipType(uint32 shipTypeID,
-        // ItemType stuff:
-        const InvGroupRef group, const TypeData &data,
-        // ShipType stuff:
-        const ItemType *weaponType, const ItemType *miningType, const ItemType *skillType, const ShipTypeData &stData
-    );
-
-    /*
-     * Data content:
-     */
-    const ItemType *m_weaponType;
-    const ItemType *m_miningType;
-    const ItemType *m_skillType;
-};
-
-/**
  * InventoryItem which represents ship.
  */
 class Ship
@@ -203,11 +79,9 @@ public:
      */
     bool ValidateItemSpecifics(InventoryItemRef equip) const;
 
-    /*
+/*
      * Public fields:
      */
-    const ShipType &    type() const { return static_cast<const ShipType &>(InventoryItem::type()); }
-
     /*
      * Primary public packet builders:
      */
@@ -272,7 +146,7 @@ protected:
     Ship(
         uint32 _shipID,
         // InventoryItem stuff:
-        const ShipType &_shipType,
+         const ItemType &_shipType,
         const ItemData &_data
     );
 
@@ -293,19 +167,17 @@ protected:
             _log(ITEM__ERROR, "Trying to load %s as Ship.", type.category()->categoryName.c_str());
             return RefPtr<_Ty>();
         }
-        // cast the type
-        const ShipType &shipType = static_cast<const ShipType &>( type );
 
         // no additional stuff
 
-        return _Ty::template _LoadShip<_Ty>( shipID, shipType, data );
+        return _Ty::template _LoadShip<_Ty>(shipID, type, data);
     }
 
     // Actual loading stuff:
     template<class _Ty>
     static RefPtr<_Ty> _LoadShip(uint32 shipID,
         // InventoryItem stuff:
-        const ShipType &shipType, const ItemData &data
+                                 const ItemType &shipType, const ItemData &data
     );
 
     bool _Load();

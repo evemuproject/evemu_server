@@ -32,60 +32,12 @@
 #include "system/BubbleManager.h"
 
 /*
- * ShipTypeData
- */
-ShipTypeData::ShipTypeData( uint32 weaponTypeID, uint32 miningTypeID, uint32 skillTypeID) : mWeaponTypeID(weaponTypeID),
-    mMiningTypeID(miningTypeID), mSkillTypeID(skillTypeID) {}
-/*
- * ShipType
- */
- ShipType::ShipType(
-    uint32 _id,
-    // ItemType stuff:
-    const InvGroupRef _group,
-    const TypeData &_data,
-    // ShipType stuff:
-    const ItemType *_weaponType,
-    const ItemType *_miningType,
-    const ItemType *_skillType,
-    const ShipTypeData &stData)
-: ItemType(_id, _group, _data),
-  m_weaponType(_weaponType),
-  m_miningType(_miningType),
-  m_skillType(_skillType)
- {
-    // data consistency checks:
-    if(_weaponType != NULL)
-        assert(_weaponType->id() == stData.mWeaponTypeID);
-    if(_miningType != NULL)
-        assert(_miningType->id() == stData.mMiningTypeID);
-    if(_skillType != NULL)
-        assert(_skillType->id() == stData.mSkillTypeID);
-}
-
-ShipType *ShipType::Load(uint32 shipTypeID)
-{
-    return ItemType::Load<ShipType>( shipTypeID );
-}
-
-template<class _Ty>
-_Ty *ShipType::_LoadShipType(uint32 shipTypeID,
-    // ItemType stuff:
-    const InvGroupRef group, const TypeData &data,
-    // ShipType stuff:
-    const ItemType *weaponType, const ItemType *miningType, const ItemType *skillType, const ShipTypeData &stData)
-{
-    // we have all the data, let's create new object
-    return new ShipType(shipTypeID, group, data, weaponType, miningType, skillType, stData );
-}
-
-/*
  * Ship
  */
 Ship::Ship(
    uint32 _shipID,
     // InventoryItem stuff:
-    const ShipType &_shipType,
+           const ItemType &_shipType,
     const ItemData &_data)
 : InventoryItem(_shipID, _shipType, _data),
   m_processTimerTick(SHIP_PROCESS_TICK_MS),
@@ -109,7 +61,7 @@ ShipRef Ship::Load(uint32 shipID)
 template<class _Ty>
 RefPtr<_Ty> Ship::_LoadShip(uint32 shipID,
     // InventoryItem stuff:
-    const ShipType &shipType, const ItemData &data)
+                            const ItemType &shipType, const ItemData &data)
 {
     // we don't need any additional stuff
     return ShipRef( new Ship(shipID, shipType, data ) );
@@ -214,7 +166,7 @@ ShipRef Ship::Spawn(ItemData &data) {
 
 uint32 Ship::_Spawn(ItemData &data) {
     // make sure it's a ship
-    const ShipType *st = ItemFactory::GetShipType(data.typeID);
+    const ItemType *st = ItemFactory::GetType(data.typeID);
     if(st == NULL)
         return 0;
 

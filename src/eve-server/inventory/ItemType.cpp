@@ -139,8 +139,9 @@ _Ty *ItemType::_LoadType(uint32 typeID,
         ///////////////////////////////////////
         // Ship:
         ///////////////////////////////////////
-        case EVEDB::invCategories::Ship: {
-            return ShipType::_LoadType<ShipType>( typeID, group, data );
+        case EVEDB::invCategories::Ship:
+        {
+            break;
         }
     }
 
