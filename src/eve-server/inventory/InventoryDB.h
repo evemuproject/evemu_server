@@ -29,8 +29,6 @@
 #include "ServiceDB.h"
 #include "inventory/ItemRef.h"
 
-class EVEAttributeMgr;
-
 class TypeData;
 class CharacterTypeData;
 class ShipTypeData;
@@ -67,19 +65,6 @@ public:
     static bool GetBloodlineByCharacterType(uint32 characterTypeID, uint32 &bloodlineID);
 
     /*
-     * Type attribute stuff
-     * (dgmTypeAttributes)
-     */
-    /**
-     * Loads type attributes into given attribute manager.
-     *
-     * @param[in] typeID ID of type which attributes should be loaded.
-     * @param[in] into Attribute manager the attributes should be loaded into.
-     * @return True if load was successful, false if not.
-     */
-    static bool LoadTypeAttributes(uint32 typeID, EVEAttributeMgr &into);
-
-    /*
      * Item stuff
      * (srvEntity)
      */
@@ -97,15 +82,6 @@ public:
      * Item attribute stuff
      * (srvEntity_attributes)
      */
-    /**
-     * Loads item attributes into given attribute manager.
-     *
-     * @param[in] itemID ID of item which attributes should be loaded.
-     * @param[in] into Attribute manager the attributes should be loaded into.
-     * @return True if load was successful, false if not.
-     */
-    static bool LoadItemAttributes(uint32 itemID, EVEAttributeMgr &into);
-
     static bool UpdateAttribute_int(uint32 itemID, uint32 attributeID, int v);
     static bool UpdateAttribute_double(uint32 itemID, uint32 attributeID, double v);
     static bool EraseAttribute(uint32 itemID, uint32 attributeID);
