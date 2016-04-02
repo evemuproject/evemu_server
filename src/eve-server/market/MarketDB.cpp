@@ -393,46 +393,6 @@ PyObject *MarketDB::GetRefTypes() {
     return DBResultToRowset(res);
 }
 
-//helper routine for GetMarketGroups
-static void _PropigateItems(std::map< int, std::set<uint32> > &types, std::map<int, int> &parentChild, std::map<int, std::set<int> > &childParent, int group) {
-    std::map<int, std::set<int> >::iterator children_res;
-    children_res = childParent.find(group);
-    if(children_res != childParent.end()) {
-        //recurse to all children first.
-        std::set<int>::iterator ccur, cend;
-        ccur = children_res->second.begin();
-        cend = children_res->second.end();
-        for(; ccur != cend; ccur++) {
-            _PropigateItems(types, parentChild, childParent, *ccur);
-        }
-    }
-
-    if(group == -1) {
-        return;    //we are root, we have no parent
-    }
-    //find our parent.
-    std::map<int, int>::iterator parent_res;
-    parent_res = parentChild.find(group);
-    if(parent_res == parentChild.end()) {
-        codelog(MARKET__ERROR, "Failed to find parent group in parentChild for %d", group);
-        return;    //should never happen...
-    }
-    int parentID = parent_res->second;
-    if(parentID == -1) {
-        return;    //do not propigate up to NULL, we dont need it, and it would contain ALL items..
-    }
-
-    //now propigate all our items (which now includes all children items) up to our parent.
-    //find our items
-    std::map< int, std::set<uint32> >::iterator self_res;
-    self_res = types.find(group);
-    if(self_res == types.end())
-        return;    //we have nothing for this group??
-
-    //add all of our items into parent.
-    types[parentID].insert(self_res->second.begin(), self_res->second.end());
-}
-
 //this is a crap load of work... there HAS to be a better way to do this..
 PyRep *MarketDB::GetMarketGroups() {
     
