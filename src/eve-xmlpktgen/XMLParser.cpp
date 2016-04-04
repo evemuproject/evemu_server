@@ -26,7 +26,7 @@
 #include "eve-core.h"
 
 #include "log/SystemLog.h"
-#include "utils/XMLParser.h"
+#include "XMLParser.h"
 
 /************************************************************************/
 /* XMLParser                                                            */

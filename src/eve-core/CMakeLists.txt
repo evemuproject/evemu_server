@@ -71,8 +71,8 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/utils_hex.h"
      "${TARGET_INCLUDE_DIR}/utils/utils_string.h"
      "${TARGET_INCLUDE_DIR}/utils/utils_time.h"
-     "${TARGET_INCLUDE_DIR}/utils/XMLParser.h"
-     "${TARGET_INCLUDE_DIR}/utils/XMLParserEx.h" )
+     "${TARGET_INCLUDE_DIR}/utils/XMLDocument.h"
+)
 SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/crc32.cpp"
      "${TARGET_SOURCE_DIR}/utils/Deflate.cpp"
@@ -84,7 +84,8 @@ SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/utils_hex.cpp"
      "${TARGET_SOURCE_DIR}/utils/utils_string.cpp"
      "${TARGET_SOURCE_DIR}/utils/utils_time.cpp"
-     "${TARGET_SOURCE_DIR}/utils/XMLParser.cpp" )
+     "${TARGET_SOURCE_DIR}/utils/XMLDocument.cpp"
+      )
 
 #####################
 # Setup the library #
@@ -111,14 +112,12 @@ TARGET_INCLUDE_DIRECTORIES( "${TARGET_NAME}"
                             ${Boost_INCLUDE_DIRS}
                             ${MYSQL_INCLUDE_DIRS}
                             ${GANGSTA_INCLUDE_DIRS}
-                            ${TINYXML_INCLUDE_DIRS}
                             "${ZLIB_INCLUDE_DIR}"
                             "${TARGET_INCLUDE_DIR}" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
                        ${Boost_LIBRARIES}
                        ${MYSQL_LIBRARIES}
                        ${GANGSTA_LIBRARIES}
-                       ${TINYXML_LIBRARIES}
                        "${ZLIB_LIBRARY}"
                        ${CMAKE_NET_LIBS}
                        ${CMAKE_THREAD_LIBS} )

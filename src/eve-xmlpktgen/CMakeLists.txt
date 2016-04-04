@@ -24,7 +24,10 @@ SET( INCLUDE
      "${TARGET_INCLUDE_DIR}/DumpGenerator.h"
      "${TARGET_INCLUDE_DIR}/EncodeGenerator.h"
      "${TARGET_INCLUDE_DIR}/HeaderGenerator.h"
-     "${TARGET_INCLUDE_DIR}/XMLPacketGen.h" )
+     "${TARGET_INCLUDE_DIR}/XMLPacketGen.h"
+     "${TARGET_INCLUDE_DIR}/XMLParser.h"
+     "${TARGET_INCLUDE_DIR}/XMLParserEx.h" 
+ )
 SET( SOURCE
      "${TARGET_SOURCE_DIR}/eve-xmlpktgen.cpp"
      "${TARGET_SOURCE_DIR}/Generator.cpp"
@@ -35,7 +38,9 @@ SET( SOURCE
      "${TARGET_SOURCE_DIR}/DumpGenerator.cpp"
      "${TARGET_SOURCE_DIR}/EncodeGenerator.cpp"
      "${TARGET_SOURCE_DIR}/HeaderGenerator.cpp"
-     "${TARGET_SOURCE_DIR}/XMLPacketGen.cpp" )
+     "${TARGET_SOURCE_DIR}/XMLPacketGen.cpp"
+     "${TARGET_SOURCE_DIR}/XMLParser.cpp"
+ )
 
 ########################
 # Setup the executable #
@@ -51,8 +56,10 @@ IF( NOT EVEMU_TARGETS_IMPORT )
                     "${TARGET_SOURCE_DIR}/eve-xmlpktgen.cpp" )
   TARGET_INCLUDE_DIRECTORIES( "${TARGET_NAME}"
                               ${eve-core_INCLUDE_DIRS}
+                            ${TINYXML_INCLUDE_DIRS}
                               "${TARGET_INCLUDE_DIR}" )
   TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
+                       ${TINYXML_LIBRARIES}
                          "eve-core" )
 
   IF( EVEMU_TARGETS_EXPORT )

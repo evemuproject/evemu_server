@@ -26,19 +26,22 @@
 #ifndef __EVE_SERVER_CONFIG__H__INCL__
 #define __EVE_SERVER_CONFIG__H__INCL__
 
+#include "utils/XMLDocument.h"
+
 /**
  * @brief Class which parses and stores eve-server configuration.
  *
  * @author Zhur, Bloody.Rabbit
  */
 class EVEServerConfig
-: public XMLParserEx
 {
 public:
     /**
      * @brief Primary constructor; initializes the object with default values.
      */
     EVEServerConfig();
+
+    bool ParseFile(const char *file);
 
     /// From <rates/>
     struct EVEConfigRates
@@ -128,13 +131,12 @@ public:
     static EVEConfigNet net;
 
 protected:
-    bool ProcessEveServer(const TiXmlElement* ele);
-    bool ProcessRates(const TiXmlElement* ele);
-    bool ProcessAccount(const TiXmlElement* ele);
-    bool ProcessCharacter(const TiXmlElement* ele);
-    bool ProcessDatabase(const TiXmlElement* ele);
-    bool ProcessFiles(const TiXmlElement* ele);
-    bool ProcessNet(const TiXmlElement* ele);
+    bool ProcessRates(const std::shared_ptr<XMLElement> ele);
+    bool ProcessAccount(const std::shared_ptr<XMLElement> ele);
+    bool ProcessCharacter(const std::shared_ptr<XMLElement> ele);
+    bool ProcessDatabase(const std::shared_ptr<XMLElement> ele);
+    bool ProcessFiles(const std::shared_ptr<XMLElement> ele);
+    bool ProcessNet(const std::shared_ptr<XMLElement> ele);
 };
 
 #endif /* !__EVE_SERVER_CONFIG__H__INCL__ */

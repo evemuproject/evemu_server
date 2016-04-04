@@ -145,8 +145,6 @@
 #include <GaPreReqs.h>
 #include <GaMath.h>
 #include <GaTypes.h>
-// TinyXML
-#include <tinyxml.h>
 // zlib
 #include <zlib.h>
 

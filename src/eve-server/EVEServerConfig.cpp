@@ -21,7 +21,7 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:     Zhur, Bloody.Rabbit
-*/
+ */
 
 #include "eve-server.h"
 
@@ -36,12 +36,10 @@ EVEServerConfig::EVEConfigNet EVEServerConfig::net;
 
 /*************************************************************************/
 /* EVEServerConfig                                                       */
+
 /*************************************************************************/
 EVEServerConfig::EVEServerConfig()
 {
-    // register needed parsers
-    AddMemberParser( "eve-server", &EVEServerConfig::ProcessEveServer );
-
     // Set sane defaults
 
     // rates
@@ -82,131 +80,189 @@ EVEServerConfig::EVEServerConfig()
     net.apiServerPort = 64;
 }
 
-bool EVEServerConfig::ProcessEveServer( const TiXmlElement* ele )
+bool EVEServerConfig::ParseFile(const char *file)
 {
-    // entering element, extend allowed syntax
-    AddMemberParser( "rates",   &EVEServerConfig::ProcessRates );
-    AddMemberParser( "account",   &EVEServerConfig::ProcessAccount );
-    AddMemberParser( "character", &EVEServerConfig::ProcessCharacter );
-    AddMemberParser( "database",  &EVEServerConfig::ProcessDatabase );
-    AddMemberParser( "files",     &EVEServerConfig::ProcessFiles );
-    AddMemberParser( "net",       &EVEServerConfig::ProcessNet );
+    auto doc = XMLDocument::loadFile(file);
+    auto root = doc->getRoot();
+    for (auto member : root->getChildren())
+    {
+        std::string name = member->getName();
+        if (name == "rates")
+        {
+            ProcessRates(member);
+        }
+        if (name == "account")
+        {
+            ProcessAccount(member);
+        }
+        if (name == "character")
+        {
+            ProcessCharacter(member);
+        }
+        if (name == "database")
+        {
+            ProcessDatabase(member);
+        }
+        if (name == "files")
+        {
+            ProcessFiles(member);
+        }
+        if (name == "net")
+        {
+            ProcessNet(member);
+        }
+    }
 
-    // parse the element
-    const bool result = ParseElementChildren( ele );
-
-    // leaving element, reduce allowed syntax
-    RemoveParser( "rates" );
-    RemoveParser( "account" );
-    RemoveParser( "character" );
-    RemoveParser( "database" );
-    RemoveParser( "files" );
-    RemoveParser( "net" );
-
-    // return status of parsing
-    return result;
+    return true;
 }
 
-bool EVEServerConfig::ProcessRates( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessRates(const std::shared_ptr<XMLElement> ele)
 {
-    AddValueParser( "skillRate", rates.skillRate );
-    AddValueParser( "secRate", rates.secRate );
-    AddValueParser( "npcBountyMultiply", rates.npcBountyMultiply );
-    AddValueParser( "corporationStartupCost", rates.corporationStartupCost );
+    for (auto value : ele->getChildren())
+    {
+        if (value->getName() == "skillRate")
+        {
+            rates.skillRate = std::stof(value->getValue());
+        }
+        if (value->getName() == "secRate")
+        {
+            rates.secRate = std::stof(value->getValue());
+        }
+        if (value->getName() == "npcBountyMultiply")
+        {
+            rates.npcBountyMultiply = std::stof(value->getValue());
+        }
+        if (value->getName() == "corporationStartupCost")
+        {
+            rates.corporationStartupCost = std::stod(value->getValue());
+        }
+    }
 
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "skillRate" );
-    RemoveParser( "secRate" );
-    RemoveParser( "npcBountyMultiply" );
-    RemoveParser( "corporationStartupCost" );
-
-    return result;
+    return true;
 }
 
-bool EVEServerConfig::ProcessAccount( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessAccount(const std::shared_ptr<XMLElement> ele)
 {
-    AddValueParser( "autoAccountRole", account.autoAccountRole );
-    AddValueParser( "loginMessage",    account.loginMessage );
+    for (auto value : ele->getChildren())
+    {
+        if (value->getName() == "autoAccountRole")
+        {
+            account.autoAccountRole = std::stol(value->getValue());
+        }
+        if (value->getName() == "loginMessage")
+        {
+            account.loginMessage = value->getValue();
+        }
+    }
 
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "autoAccountRole" );
-    RemoveParser( "loginMessage" );
-
-    return result;
+    return true;
 }
 
-bool EVEServerConfig::ProcessCharacter( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessCharacter(const std::shared_ptr<XMLElement> ele)
 {
-    AddValueParser( "startBalance", character.startBalance );
-    AddValueParser( "startStation", character.startStation );
-    AddValueParser( "startSecRating", character.startSecRating );
-    AddValueParser( "startCorporation", character.startCorporation );
-    AddValueParser( "terminationDelay", character.terminationDelay );
+    for (auto value : ele->getChildren())
+    {
+        if (value->getName() == "startBalance")
+        {
+            character.startBalance = std::stod(value->getValue());
+        }
+        if (value->getName() == "startStation")
+        {
+            character.startStation = std::stoi(value->getValue());
+        }
+        if (value->getName() == "startSecRating")
+        {
+            character.startSecRating = std::stod(value->getValue());
+        }
+        if (value->getName() == "startCorporation")
+        {
+            character.startCorporation = std::stoi(value->getValue());
+        }
+        if (value->getName() == "terminationDelay")
+        {
+            character.terminationDelay = std::stoi(value->getValue());
+        }
+    }
 
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "startBalance" );
-    RemoveParser( "startStation" );
-    RemoveParser( "startSecRating" );
-    RemoveParser( "startCorporation" );
-    RemoveParser( "terminationDelay" );
-
-    return result;
+    return true;
 }
 
-bool EVEServerConfig::ProcessDatabase( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessDatabase(const std::shared_ptr<XMLElement> ele)
 {
-    AddValueParser( "host",     database.host );
-    AddValueParser( "port",     database.port );
-    AddValueParser( "username", database.username );
-    AddValueParser( "password", database.password );
-    AddValueParser( "db",       database.db );
-
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "host" );
-    RemoveParser( "port" );
-    RemoveParser( "username" );
-    RemoveParser( "password" );
-    RemoveParser( "db" );
-
-    return result;
+    for (auto value : ele->getChildren())
+    {
+        if (value->getName() == "host")
+        {
+            database.host = value->getValue();
+        }
+        if (value->getName() == "port")
+        {
+            database.port = std::stoi(value->getValue());
+        }
+        if (value->getName() == "username")
+        {
+            database.username = value->getValue();
+        }
+        if (value->getName() == "password")
+        {
+            database.password = value->getValue();
+        }
+        if (value->getName() == "db")
+        {
+            database.db = value->getValue();
+        }
+    }
+    return true;
 }
 
-bool EVEServerConfig::ProcessFiles( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessFiles(const std::shared_ptr<XMLElement> ele)
 {
-    AddValueParser( "logDir",      files.logDir );
-    AddValueParser( "logSettings", files.logSettings );
-    AddValueParser( "cacheDir",    files.cacheDir );
-    AddValueParser( "imageDir",       files.imageDir );
-
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "logDir" );
-    RemoveParser( "logSettings" );
-    RemoveParser( "cacheDir" );
-    RemoveParser( "imageDir" );
-
-    return result;
+    for (auto value : ele->getChildren())
+    {
+        if (value->getName() == "logDir")
+        {
+            files.logDir = value->getValue();
+        }
+        if (value->getName() == "logSettings")
+        {
+            files.logSettings = value->getValue();
+        }
+        if (value->getName() == "cacheDir")
+        {
+            files.cacheDir = value->getValue();
+        }
+        if (value->getName() == "imageDir")
+        {
+            files.imageDir = value->getValue();
+        }
+    }
+    return true;
 }
 
-bool EVEServerConfig::ProcessNet( const TiXmlElement* ele )
+bool EVEServerConfig::ProcessNet(const std::shared_ptr<XMLElement> ele)
 {
-    AddValueParser( "port", net.port );
-    AddValueParser( "imageServerPort", net.imageServerPort);
-    AddValueParser( "imageServer", net.imageServer);
-    AddValueParser( "apiServerPort", net.apiServerPort);
-    AddValueParser( "apiServer", net.apiServer);
-
-    const bool result = ParseElementChildren( ele );
-
-    RemoveParser( "port" );
-    RemoveParser( "imageServerPort" );
-    RemoveParser( "imageServer" );
-    RemoveParser( "apiServerPort" );
-    RemoveParser( "apiServer" );
-
-    return result;
+    for (auto value : ele->getChildren())
+    {
+        if (value->getName() == "port")
+        {
+            net.port = std::stoi(value->getValue());
+        }
+        if (value->getName() == "imageServerPort")
+        {
+            net.imageServerPort = std::stoi(value->getValue());
+        }
+        if (value->getName() == "imageServer")
+        {
+            net.imageServer = value->getValue();
+        }
+        if (value->getName() == "apiServerPort")
+        {
+            net.apiServerPort = std::stoi(value->getValue());
+        }
+        if (value->getName() == "apiServer")
+        {
+            net.apiServer = value->getValue();
+        }
+    }
+    return true;
 }

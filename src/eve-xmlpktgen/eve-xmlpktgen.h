@@ -37,6 +37,6 @@
 // utils
 #include "utils/str2conv.h"
 #include "utils/utils_string.h"
-#include "utils/XMLParserEx.h"
+#include "XMLParserEx.h"
 
 #endif /* !__EVE_XMLPKTGEN_H__INCL__ */
