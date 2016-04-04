@@ -86,41 +86,6 @@ SET( admin_SOURCE
      "${TARGET_SOURCE_DIR}/admin/PetitionerService.cpp"
      "${TARGET_SOURCE_DIR}/admin/SlashService.cpp" )
 
-SET( apiserver_INCLUDE
-     "${TARGET_INCLUDE_DIR}/apiserver/APIAccountDB.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIAccountManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIActiveObjectManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIAdminManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APICacheManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APICharacterDB.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APICharacterManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APICorporationManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIEveSystemManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIMapManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIServer.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIServerConnection.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIServerListener.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIServerManager.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIServiceDB.h"
-     "${TARGET_INCLUDE_DIR}/apiserver/APIServiceManager.h" )
-SET( apiserver_SOURCE
-     "${TARGET_SOURCE_DIR}/apiserver/APIAccountDB.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIAccountManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIActiveObjectManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIAdminManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APICacheManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APICharacterDB.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APICharacterManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APICorporationManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIEveSystemManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIMapManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIServer.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIServerConnection.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIServerListener.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIServerManager.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIServiceDB.cpp"
-     "${TARGET_SOURCE_DIR}/apiserver/APIServiceManager.cpp" )
-
 SET( cache_INCLUDE
      "${TARGET_INCLUDE_DIR}/cache/BulkMgrService.h"
      "${TARGET_INCLUDE_DIR}/cache/ObjCacheDB.h"
@@ -503,7 +468,6 @@ SET( system_SOURCE
 SOURCE_GROUP( "src"                FILES ${SOURCE} )
 SOURCE_GROUP( "src\\account"       FILES ${account_SOURCE} )
 SOURCE_GROUP( "src\\admin"         FILES ${admin_SOURCE} )
-SOURCE_GROUP( "src\\apiserver"     FILES ${apiserver_SOURCE} )
 SOURCE_GROUP( "src\\cache"         FILES ${cache_SOURCE} )
 SOURCE_GROUP( "src\\character"     FILES ${character_SOURCE} )
 SOURCE_GROUP( "src\\chat"          FILES ${chat_SOURCE} )
@@ -532,7 +496,6 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
 ${SOURCE}
 ${account_SOURCE}
 ${admin_SOURCE}
-${apiserver_SOURCE}
 ${cache_SOURCE}
 ${character_SOURCE}
 ${chat_SOURCE}

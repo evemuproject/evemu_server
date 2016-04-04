@@ -44,8 +44,6 @@
 #include "admin/DevToolsProviderService.h"
 #include "admin/PetitionerService.h"
 #include "admin/SlashService.h"
-// apiserver services
-#include "apiserver/APIServer.h"
 // cache services
 #include "cache/BulkMgrService.h"
 #include "cache/ObjCacheService.h"
@@ -345,9 +343,9 @@ int main( int argc, char* argv[] )
   SysLog::Log("Server Init", "started image server");
 
     // start up the api server
-    APIServer::CreateServices();
-    APIServer::Run();
-  SysLog::Log("Server Init", "started API server");
+    //    APIServer::CreateServices();
+    //    APIServer::Run();
+    //  SysLog::Log("Server Init", "started API server");
 
     // start up the image server
   SysLog::Log("Server Init", "Loading Dynamic Database Table Objects...");
@@ -431,12 +429,12 @@ int main( int argc, char* argv[] )
     SysLog::Log("Server Shutdown", "TCP listener stopped." );
 
     // Shutting down API Server:
-    APIServer::Stop();
-    SysLog::Log("Server Shutdown", "Image Server TCP listener stopped." );
+    //    APIServer::Stop();
+    SysLog::Log("Server Shutdown", "API Server TCP listener stopped.");
 
     // Shutting down Image Server:
     ImageServer::Stop();
-    SysLog::Log("Server Shutdown", "API Server TCP listener stopped." );
+    SysLog::Log("Server Shutdown", "Image Server TCP listener stopped.");
 
     ServiceDB::SetServerOnlineStatus(false);
     PyServiceMgr::Shutdown();
