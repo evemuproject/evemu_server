@@ -84,7 +84,13 @@ bool EVEServerConfig::ParseFile(const char *file)
 {
     auto doc = XMLDocument::loadFile(file);
     auto root = doc->getRoot();
-    for (auto member : root->getChildren())
+    auto eve_server = root->getChildren("eve-server");
+    if (eve_server.empty())
+    {
+        return false;
+    }
+
+    for (auto member : (*eve_server.begin())->getChildren())
     {
         std::string name = member->getName();
         if (name == "rates")
