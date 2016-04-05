@@ -1050,8 +1050,8 @@ bool InventoryDB::GetSolarSystem(uint32 solarSystemID, SolarSystemData &into) {
         return false;
     }
 
-    into.minPosition = GPoint(row.GetDouble(0), row.GetDouble(1), row.GetDouble(2));
-    into.maxPosition = GPoint(row.GetDouble(3), row.GetDouble(4), row.GetDouble(5));
+    into.minPosition = Vector3D(row.GetDouble(0), row.GetDouble(1), row.GetDouble(2));
+    into.maxPosition = Vector3D(row.GetDouble(3), row.GetDouble(4), row.GetDouble(5));
     into.luminosity = row.GetDouble(6);
 
     into.border = row.GetInt(7) ? true : false;

@@ -99,7 +99,7 @@ public:
 
     //I really dont want this to be public, but it makes loading a lot
     //easier right now, so here it is.
-    std::vector<GPoint> bounds;
+    std::vector<Vector3D> bounds;
 protected:
     void _DoSpawn(SystemManager &mgr);
 

@@ -49,7 +49,7 @@ ItemData::ItemData(
     bool _contraband,
     bool _singleton,
     uint32 _quantity,
-    const GPoint &_position,
+    const Vector3D &_position,
     const char *_customInfo)
 : name(_name),
   typeID(_typeID),
@@ -91,7 +91,7 @@ ItemData::ItemData(
     uint32 _locationID,
     EVEItemFlags _flag,
     const char *_name,
-    const GPoint &_position,
+    const Vector3D &_position,
     const char *_customInfo,
     bool _contraband)
 : name(_name),
@@ -1280,7 +1280,7 @@ void InventoryItem::SetCustomInfo(const char *ci)
     }
 }
 
-void InventoryItem::Relocate(const GPoint &pos)
+void InventoryItem::Relocate(const Vector3D &pos)
 {
     if (IsStaticMapItem(m_itemID))
     {

@@ -46,7 +46,7 @@ public:
     virtual void ProcessDestiny() {}
     virtual void QueueDestinyUpdate(PyTuple **du);
     virtual void QueueDestinyEvent(PyTuple **multiEvent);
-    //virtual const GPoint &GetPosition() const;
+    //virtual const Vector3D &GetPosition() const;
     virtual void ApplyDamageModifiers(Damage &d, SystemEntity *target) {}
     virtual bool ApplyDamage(Damage &d) { return(false); }
     virtual void Killed(Damage &fatal_blow) {}
@@ -76,8 +76,8 @@ public:
     uint32 GetID() const { return(data.itemID); }
     virtual const char *GetName() const { return(data.itemName.c_str()); }
     virtual float GetRadius() const { return(static_cast<float>(data.radius)); }
-    virtual const GPoint &GetPosition() const { return( data.position ); }
-    virtual const GVector &GetVelocity() const;
+    virtual const Vector3D &GetPosition() const { return( data.position ); }
+    virtual const Vector3D &GetVelocity() const;
 };
 
 class SystemPlanetEntity : public SimpleSystemEntity {

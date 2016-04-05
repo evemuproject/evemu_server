@@ -50,8 +50,9 @@ uint32 SystemEntity::GetLocationID()
 	return (Item()->locationID());
 }
 
-double SystemEntity::DistanceTo2(const SystemEntity *other) const {
-    GVector delta(GetPosition(), other->GetPosition());
+double SystemEntity::DistanceTo2(const SystemEntity *other) const
+{
+    Vector3D delta(other->GetPosition() - GetPosition());
     return(delta.lengthSquared());
 }
 
@@ -108,15 +109,15 @@ float ItemSystemEntity::GetRadius() const {
     return static_cast<float>(m_self->GetAttribute(AttrRadius).get_float());
 }
 
-const GPoint &ItemSystemEntity::GetPosition() const {
-    static const GPoint err(0.0, 0.0, 0.0);
+const Vector3D &ItemSystemEntity::GetPosition() const {
+    static const Vector3D err(0.0, 0.0, 0.0);
     if(!m_self)
         return(err);
     return(m_self->position());
 }
 
-const GVector &ItemSystemEntity::GetVelocity() const {
-    static const GVector err(0.0, 0.0, 0.0);
+const Vector3D &ItemSystemEntity::GetVelocity() const {
+    static const Vector3D err(0.0, 0.0, 0.0);
     return(err);
 }
 
@@ -153,14 +154,14 @@ void DynamicSystemEntity::ProcessDestiny() {
         m_destiny->Process();
 }
 
-const GPoint &DynamicSystemEntity::GetPosition() const {
+const Vector3D &DynamicSystemEntity::GetPosition() const {
     if(m_destiny == NULL)
         return(ItemSystemEntity::GetPosition());
     return(m_destiny->GetPosition());
 }
 
-const GVector &DynamicSystemEntity::GetVelocity() const {
-       static const GVector err(0.0, 0.0, 0.0);
+const Vector3D &DynamicSystemEntity::GetVelocity() const {
+       static const Vector3D err(0.0, 0.0, 0.0);
     if(m_destiny == NULL)
         return(err);
     return(m_destiny->GetVelocity());
@@ -187,7 +188,7 @@ double DynamicSystemEntity::GetAgility() const {
 //TODO: ask the destiny manager to do this for us!
 void DynamicSystemEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
 /*    if(m_warpActive) {
@@ -221,7 +222,7 @@ void DynamicSystemEntity::EncodeDestiny( Buffer& into ) const
         item->mass.corpID = GetCorporationID();
         item->mass.unknown64 = 0xFFFFFFFF;
 
-        GVector vec(GetPosition(), m_movePoint);
+        Vector3D vec(GetPosition(), m_movePoint);
         vec.normalize();
         vec *= 45.0;    //no idea what to use...
 
@@ -317,7 +318,7 @@ CelestialDynamicSystemEntity::~CelestialDynamicSystemEntity() {
 //TODO: ask the destiny manager to do this for us!
 void CelestialDynamicSystemEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     // From SimpleSystemEntity::EncodeDestiny() in SystemEntities.cpp:

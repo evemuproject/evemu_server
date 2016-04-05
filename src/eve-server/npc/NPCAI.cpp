@@ -248,8 +248,8 @@ void NPCAIMgr::_EnterEngaged(SystemEntity *target) {
 			orbit_range = m_npc->Item()->GetAttribute(AttrEntityFlyRange);
     }
 	if( orbit_range.get_float() == 0.0 )
-	{
-		GVector vectorToTarget( m_npc->GetPosition(), target->GetPosition() );
+    {
+        Vector3D vectorToTarget(target->GetPosition() - m_npc->GetPosition());
     	orbit_range = vectorToTarget.length();
 	}
     m_npc->Destiny()->OrbitingCruise(target, orbit_range.get_float(),true, m_npc->Item()->GetAttribute(AttrEntityCruiseSpeed).get_float());

@@ -31,11 +31,11 @@ class DoDestiny_SetState;
 
 class SystemBubble {
 public:
-    SystemBubble(const GPoint &center, double radius);
+    SystemBubble(const Vector3D &center, double radius);
     ~SystemBubble() { m_bubbleID--; };
 
 
-    const GPoint m_center;
+    const Vector3D m_center;
     const double m_radius;
 
     void BubblecastDestiny(std::vector<PyTuple *> &updates, std::vector<PyTuple *> &events, const char *desc) const;
@@ -57,7 +57,7 @@ public:
 
     //void AppendBalls(DoDestiny_SetState &ss, std::vector<uint8> &setstate_buffer) const;
 
-    bool InBubble(const GPoint &pt) const;
+    bool InBubble(const Vector3D &pt) const;
 
 protected:
     void _SendAddBalls(SystemEntity *to_who);

@@ -231,7 +231,7 @@ bool ServiceDB::GetSystemInfo(uint32 systemID, uint32 *constellationID, uint32 *
     return true;
 }
 
-bool ServiceDB::GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position) {
+bool ServiceDB::GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, Vector3D *position) {
     if(       systemID == NULL
         && constellationID == NULL
         && regionID == NULL
@@ -267,7 +267,7 @@ bool ServiceDB::GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *const
     if(regionID != NULL)
         *regionID = row.GetUInt(2);
     if(position != NULL)
-        *position = GPoint(
+        *position = Vector3D(
             row.GetDouble(3),
             row.GetDouble(4),
             row.GetDouble(5)
@@ -276,7 +276,7 @@ bool ServiceDB::GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *const
     return true;
 }
 
-bool ServiceDB::GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position, GPoint *dockPosition, GVector *dockOrientation) {
+bool ServiceDB::GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, Vector3D *position, Vector3D *dockPosition, Vector3D *dockOrientation) {
     if(       systemID == NULL
         && constellationID == NULL
         && regionID == NULL
@@ -317,19 +317,19 @@ bool ServiceDB::GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *const
     if(regionID != NULL)
         *regionID = row.GetUInt(2);
     if(position != NULL)
-        *position = GPoint(
+        *position = Vector3D(
             row.GetDouble(3),
             row.GetDouble(4),
             row.GetDouble(5)
         );
     if(dockPosition != NULL)
-        *dockPosition = GPoint(
+        *dockPosition = Vector3D(
             row.GetDouble(3) + row.GetDouble(6),
             row.GetDouble(4) + row.GetDouble(7),
             row.GetDouble(5) + row.GetDouble(8)
         );
     if(dockOrientation != NULL) {
-        *dockOrientation = GVector(
+        *dockOrientation = Vector3D(
             row.GetDouble(9),
             row.GetDouble(10),
             row.GetDouble(11)

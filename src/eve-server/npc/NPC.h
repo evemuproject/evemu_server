@@ -45,7 +45,7 @@ public:
         InventoryItemRef self,
         uint32 corporationID,
         uint32 allianceID,
-        const GPoint &position,
+        const Vector3D &position,
         SpawnEntry *spawner = NULL);
     virtual ~NPC();
 
@@ -78,7 +78,7 @@ public:
 	virtual NPCAIMgr * AI() const { return(m_AI); }
 
 	void ForcedSetSpawner(SpawnEntry * spawner) { m_spawner = spawner; }
-    void ForcedSetPosition(const GPoint &pt);
+    void ForcedSetPosition(const Vector3D &pt);
 
 
     virtual bool ApplyDamage(Damage &d);

@@ -130,7 +130,7 @@ using namespace Destiny;
 StationEntity::StationEntity(
     StationRef station,
     SystemManager *system,
-    const GPoint &position)
+    const Vector3D &position)
 : DynamicSystemEntity(new DestinyManager(this, system), station),
   m_system(system)
 {
@@ -142,14 +142,14 @@ void StationEntity::Process() {
     SystemEntity::Process();
 }
 
-void StationEntity::ForcedSetPosition(const GPoint &pt) {
+void StationEntity::ForcedSetPosition(const Vector3D &pt) {
     m_destiny->SetPosition(pt, false);
 }
 
 void StationEntity::EncodeDestiny( Buffer& into ) const
 {
 
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 /*
     /*if(m_orbitingID != 0) {

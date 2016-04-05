@@ -39,7 +39,7 @@ NPC::NPC(
     InventoryItemRef self,
     uint32 corporationID,
     uint32 allianceID,
-    const GPoint &position,
+    const Vector3D &position,
     SpawnEntry *spawner)
 : DynamicSystemEntity(new DestinyManager(this, system), self),
   m_system(system),
@@ -159,7 +159,7 @@ void NPC::Orbit(SystemEntity *who) {
     }
 }
 
-void NPC::ForcedSetPosition(const GPoint &pt) {
+void NPC::ForcedSetPosition(const Vector3D &pt) {
     m_destiny->SetPosition(pt, false);
 }
 
@@ -179,7 +179,7 @@ void NPC::TargetedAdd(SystemEntity *who) {
 
 void NPC::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     /*if(m_orbitingID != 0) {

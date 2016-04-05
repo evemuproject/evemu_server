@@ -204,9 +204,9 @@ void DestinyManager::ProcessTic() {
 
         //first check the angle between our warp vector and our
         //velocity vector.
-        GVector warp_vector(m_position, m_targetPoint);
+            Vector3D warp_vector(m_targetPoint - m_position);
         warp_vector.normalize();
-        GVector vel_normalized(m_velocity);
+        Vector3D vel_normalized(m_velocity);
         vel_normalized.normalize();
         double dot = warp_vector.dotProduct(vel_normalized);    //cos(angle) between vectors.
         if(dot < (1.0 - 0.01)) {    //this is about 8 degrees
@@ -217,9 +217,8 @@ void DestinyManager::ProcessTic() {
 
         //ok, so they are heading in the right direction now, see about
         //velocity. We need to be going 75% of max velocity.
-        double needed_velocity2 = m_maxVelocity*0.75;
-        needed_velocity2 *= needed_velocity2;
-        if(m_velocity.lengthSquared() < needed_velocity2) {
+        double needed_velocity = m_maxVelocity*0.75;
+        if(m_velocity.length() < needed_velocity) {
             //execute normal GOTO code.
             _Move();
             break;
@@ -255,7 +254,7 @@ void DestinyManager::_Follow() {
     this was my idea of how it should be done, which doesn't agree with
     the client.
 
-    GVector targetDirection = GVector(m_position, goal);
+    Vector3D targetDirection = Vector3D(m_position, goal);
     double distance = targetDirection.normalize();
     _log(PHYSICS__TRACEPOS, "Entity %u: Moving towards (%.1f, %.1f, %.1f) which is %f away.",
         m_self->GetID(),
@@ -320,9 +319,9 @@ void DestinyManager::_Follow() {
         }
     }
 
-    const GPoint &target_point = m_targetEntity.second->GetPosition();
+    const Vector3D &target_point = m_targetEntity.second->GetPosition();
 
-    GVector them_to_us(target_point, m_position);
+    Vector3D them_to_us(m_position - target_point);
     them_to_us.normalize();
 
     double desired_distance =
@@ -338,8 +337,8 @@ void DestinyManager::_Follow() {
 void DestinyManager::_Move() {
 
     //CalcAcceleration:
-    GVector vector_to_goal(m_position, m_targetPoint); //m
-    Ga::GaFloat distance_to_goal2 = vector_to_goal.lengthSquared(); //m^2
+    Vector3D vector_to_goal(m_targetPoint - m_position); //m
+    double distance_to_goal = vector_to_goal.length(); //m^2
 //    Ga::GaFloat delta = ((tic_duration_in_seconds * speed_fraction * maxVelocity) + radius); //m
 //    Ga::GaFloat accel = (space_friction*speed_fraction*maxVelocity) / (agility * mass); //fric*m/(s*agi*kg)
 /*  if(delta*delta >= distance_to_goal2) {
@@ -347,10 +346,10 @@ void DestinyManager::_Move() {
         Ga::GaFloat tmp = distance_to_goal2/(delta*delta);
         accel *= tmp*tmp;
     } else {*/
-        vector_to_goal /= sqrt(distance_to_goal2); //normalize  yeilds unitless
+        vector_to_goal /= distance_to_goal; //normalize  yeilds unitless
     //}
     _log(PHYSICS__TRACEPOS, "Accel Magnitude = %.13f", m_accelerationFactor);
-    GVector calc_acceleration = vector_to_goal * m_accelerationFactor;    //fric*m/(s*agi*kg) = m/s^2
+    Vector3D calc_acceleration = vector_to_goal * m_accelerationFactor;    //fric*m/(s*agi*kg) = m/s^2
 
     // Check to see if we have a pending docking operation and attempt to dock if so:
     if( m_self->IsClient() && m_self->CastToClient()->GetPendingDockOperation() )
@@ -359,7 +358,7 @@ void DestinyManager::_Move() {
     _MoveAccel(calc_acceleration);
 }
 
-void DestinyManager::_MoveAccel(const GVector &calc_acceleration) {
+void DestinyManager::_MoveAccel(const Vector3D &calc_acceleration) {
     _log(PHYSICS__TRACEPOS, "Entity %u: Goal Point (%.1f, %.1f, %.1f) with accel (%f, %f, %f)",
         m_self->GetID(),
         m_targetPoint.x, m_targetPoint.y, m_targetPoint.z,
@@ -367,7 +366,7 @@ void DestinyManager::_MoveAccel(const GVector &calc_acceleration) {
 
     double mass_agility_friction = m_mass * m_shipAgility / SPACE_FRICTION;
 
-    GVector max_velocity = calc_acceleration * mass_agility_friction;
+    Vector3D max_velocity = calc_acceleration * mass_agility_friction;
 
 
     // position:
@@ -451,15 +450,15 @@ void DestinyManager::_InitWarp() {
 
     //init warp:
     //destiny_WARP_Math
-    GVector vector_from_goal(m_targetPoint, m_position);
+    Vector3D vector_from_goal(m_position - m_targetPoint);
     vector_from_goal.normalize();
 
     //the vector indicating how far from the goal we will stop warping.
-    GVector warp_to_distance_vector = vector_from_goal * m_targetDistance;
+    Vector3D warp_to_distance_vector = vector_from_goal * m_targetDistance;
 
-    GPoint stop_point = m_targetPoint + warp_to_distance_vector;
+    Vector3D stop_point = m_targetPoint + warp_to_distance_vector;
 
-    GPoint warp_vector = stop_point - m_position;
+    Vector3D warp_vector = stop_point - m_position;
     double warp_distance = warp_vector.length();
 
     m_targetPoint = stop_point;
@@ -647,7 +646,7 @@ void DestinyManager::_Warp() {
 //        m_self->Bubble()->Remove(m_self);
 //    }
 
-    GVector vector_to_us = m_warpState->normvec_them_to_us * dist_remaining;
+    Vector3D vector_to_us = m_warpState->normvec_them_to_us * dist_remaining;
 
     m_position = m_targetPoint + vector_to_us;
     m_velocity = m_warpState->normvec_them_to_us * (-velocity_magnitude);
@@ -705,11 +704,12 @@ void DestinyManager::_Orbit() {
         }
     }
 
-    const GPoint &orbit_point = m_targetEntity.second->GetPosition();
+    const Vector3D &orbit_point = m_targetEntity.second->GetPosition();
 
-    GVector delta(m_position, orbit_point);
+    Vector3D delta(orbit_point - m_position);
     PVN(delta);
-    double current_distance = delta.normalize();
+    delta.normalize();
+    double current_distance = delta.length();
     PVN(delta);
 
     double something = 0;
@@ -740,10 +740,10 @@ void DestinyManager::_Orbit() {
     double v438 = cos_coef * sin_v488;
     double v3C0 = cos_v488 * cos_coef;
 
-    GPoint pt( v3C0, sin_coef, v438 );    //this is a unit vector naturally
+    Vector3D pt( v3C0, sin_coef, v438 );    //this is a unit vector naturally
     PVN(pt);
 
-    GVector tan_vector = pt.crossProduct(delta);
+    Vector3D tan_vector = pt.crossProduct(delta);
     tan_vector.normalize();
     PVN(tan_vector);
 
@@ -752,9 +752,9 @@ void DestinyManager::_Orbit() {
     if(delta_d2 >= 0) {
         double mag = sqrt(delta_d2) * desired_distance / current_distance;
         _log(PHYSICS__TRACEPOS, "mag = %.15e", mag);
-        GVector s = tan_vector * mag;
+        Vector3D s = tan_vector * mag;
         PVN(s);
-        GVector d = delta * (delta_d2/current_distance);
+        Vector3D d = delta * (delta_d2/current_distance);
         PVN(d);
         delta = s + d;
         delta.normalize();
@@ -765,7 +765,7 @@ void DestinyManager::_Orbit() {
     d = exp(d*d / (-40000.0f));
     _log(PHYSICS__TRACEPOS, "d = %.15e", d);
 
-    GVector negative_delta = delta * -1;
+    Vector3D negative_delta = delta * -1;
     PVN(negative_delta);
 
     double tdn = tan_vector.dotProduct(negative_delta);
@@ -783,12 +783,12 @@ void DestinyManager::_Orbit() {
         iii *= -1;
     }
 
-    GPoint bliii = delta * iii;
+    Vector3D bliii = delta * iii;
     PVN(bliii);
-    GPoint vliii = tan_vector * d;
+    Vector3D vliii = tan_vector * d;
     PVN(vliii);
 
-    GPoint accel_vector = bliii + vliii;
+    Vector3D accel_vector = bliii + vliii;
     _log(PHYSICS__TRACEPOS, "m_accelerationFactor = %.15e", m_accelerationFactor);
     accel_vector *=  m_accelerationFactor;
     PVN(accel_vector);
@@ -796,7 +796,7 @@ void DestinyManager::_Orbit() {
     //copy delta_position into acceleration for input into movement.
 
     static const double ten_au = 1.495978707e12;
-    GVector big_delta_position = accel_vector * ten_au;
+    Vector3D big_delta_position = accel_vector * ten_au;
     PVN(big_delta_position);
 
     m_targetPoint = orbit_point + big_delta_position;
@@ -851,7 +851,7 @@ void DestinyManager::Stop(bool update) {
 		{
 			// Client just undocked from a station so DO NOT STOP:
 			m_self->CastToClient()->SetJustUndocking( false );
-			GPoint dest;
+			Vector3D dest;
 			m_self->CastToClient()->GetUndockAlignToPoint( dest );
 			//AlignTo( dest, true );
 			dest.normalize();
@@ -896,7 +896,7 @@ void DestinyManager::Stop(bool update) {
 void DestinyManager::Halt(bool update) {
     m_targetEntity.first = 0;
     m_targetEntity.second = NULL;
-    m_velocity = GVector(0, 0, 0);
+    m_velocity = Vector3D(0, 0, 0);
     m_activeSpeedFraction = 0.0f;
     _UpdateDerrived();
 
@@ -1037,7 +1037,7 @@ void DestinyManager::TractorBeamHalt(bool update)
 {
 	m_targetEntity.first = 0;
 	m_targetEntity.second = NULL;
-	m_velocity = GVector(0, 0, 0);
+	m_velocity = Vector3D(0, 0, 0);
 	m_activeSpeedFraction = 0.0f;
 	_UpdateDerrived();
 
@@ -1175,7 +1175,7 @@ void DestinyManager::SetShipCapabilities(InventoryItemRef ship)
     _UpdateDerrived();
 }
 
-void DestinyManager::SetPosition(const GPoint &pt, bool update, bool isWarping, bool isPostWarp) {
+void DestinyManager::SetPosition(const Vector3D &pt, bool update, bool isWarping, bool isPostWarp) {
     //m_body->setPosition( pt );
     m_position = pt;
     _log(PHYSICS__TRACE, "Entity %u set its position to (%.1f, %.1f, %.1f)",
@@ -1215,7 +1215,7 @@ void DestinyManager::SetSpeedFraction(double fraction, bool update) {
  *
  * @author xanarox
 */
-void DestinyManager::AlignTo(const GPoint &direction, bool update) {
+void DestinyManager::AlignTo(const Vector3D &direction, bool update) {
     State = DSTBALL_GOTO;
     m_targetPoint = m_position + (direction * 1.0e16);
     bool process = false;
@@ -1247,7 +1247,7 @@ void DestinyManager::AlignTo(const GPoint &direction, bool update) {
                 m_self->GetName(), direction.x, direction.y, direction.z, m_maxVelocity );
 }
 
-void DestinyManager::GotoDirection(const GPoint &direction, bool update) {
+void DestinyManager::GotoDirection(const Vector3D &direction, bool update) {
     State = DSTBALL_GOTO;
     m_targetPoint = m_position + (direction * 1.0e16);
     bool process = false;
@@ -1291,10 +1291,10 @@ PyResult DestinyManager::AttemptDockOperation()
         return NULL;
     }
 
-    GPoint stationOrigin = static_cast< StationEntity* >( station )->GetPosition();
-    GPoint stationDockPoint = static_cast< StationEntity* >( station )->GetStationObject()->GetStationType()->dockEntry;     //station->GetPosition();
-    GVector stationDockOrientation = static_cast< StationEntity*>( station )->GetStationObject()->GetStationType()->dockOrientation;
-    const GPoint &position = who->GetPosition();
+    Vector3D stationOrigin = static_cast< StationEntity* >( station )->GetPosition();
+    Vector3D stationDockPoint = static_cast< StationEntity* >( station )->GetStationObject()->GetStationType()->dockEntry;     //station->GetPosition();
+    Vector3D stationDockOrientation = static_cast< StationEntity*>( station )->GetStationObject()->GetStationType()->dockOrientation;
+    const Vector3D &position = who->GetPosition();
 
     // Leave stationOrigin alone, so that docking perimeter is a sphere centered on the station's center coordinate, not the undock point
     //// Calculate 1000m out from docking bay along dock orientation vector away from station:
@@ -1314,9 +1314,9 @@ PyResult DestinyManager::AttemptDockOperation()
     da.start_z = position.z;
     da.stationID = stationID;
 
-    GPoint start(da.start_x, da.start_y, da.start_z);
-    GPoint end(da.end_x, da.end_y, da.end_z);
-    GVector direction(start, end);
+    Vector3D start(da.start_x, da.start_y, da.start_z);
+    Vector3D end(da.end_x, da.end_y, da.end_z);
+    Vector3D direction(end - start);
     double rangeToStation = direction.length();
 
     // WARNING: DO NOT uncomment the following line as it for some reason causes HEAP corruption to occur on auto-docking
@@ -1450,7 +1450,7 @@ void DestinyManager::UnCloak()
 }
 
 
-void DestinyManager::WarpTo(const GPoint &where, double distance, bool update) {
+void DestinyManager::WarpTo(const Vector3D &where, double distance, bool update) {
     SetSpeedFraction(1.0, update);
 
     if(m_warpState != NULL) {

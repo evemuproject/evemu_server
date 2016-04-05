@@ -34,7 +34,7 @@
 
 uint32 SystemBubble::m_bubbleIncrementer = 0;
 
-SystemBubble::SystemBubble(const GPoint &center, double radius)
+SystemBubble::SystemBubble(const Vector3D &center, double radius)
 : m_center(center),
   m_radius(radius),
   m_radius2(radius*radius),
@@ -302,11 +302,11 @@ void SystemBubble::GetEntities(std::set<SystemEntity *> &into) const {
     }
 }
 
-bool SystemBubble::InBubble(const GPoint &pt) const
+bool SystemBubble::InBubble(const Vector3D &pt) const
 {
     // Return true (we're still in this bubble) when System Entity is still within BUBBLE_RADIUS_METERS + BUBBLE_HYSTERESIS_METERS
     // from the center of the bubble
-    return(GVector(m_center, pt).lengthSquared() < m_position_check_radius_sqrd);
+    return (Vector3D(pt - m_center).lengthSquared() < m_position_check_radius_sqrd);
 }
 
 //NOTE: not used right now. May never be used... see SystemManager::MakeSetState

@@ -227,7 +227,7 @@ bool SpawnDB::LoadSpawnEntries(uint32 solarSystemID, const std::map<uint32, Spaw
         //this could be more optimized, but I just wanna get it working right now...
         uint32 id = row.GetUInt(0);
         uint32 index = row.GetUInt(1);
-        GPoint p(
+        Vector3D p(
             row.GetDouble(2),
             row.GetDouble(3),
             row.GetDouble(4) );

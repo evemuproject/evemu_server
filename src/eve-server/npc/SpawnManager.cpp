@@ -169,18 +169,19 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr) {
 	bool warpThisSpawnIn = false;
 
     //pick our spawn point...
-    GPoint spawn_point;
+    Vector3D spawn_point;
     switch(m_boundsType) {    //safe to assume `bounds` are correct.
 
     case boundsPoint: {
         spawn_point = bounds[0];
     } break;
 
-    case boundsLine: {
-        GVector vec(bounds[0], bounds[1]);
-        double len = vec.length();
+    case boundsLine:
+        {
+            Vector3D vec(bounds[1] - bounds[0]);
+            double len = vec.length();
 
-        spawn_point = GPoint(bounds[0] + Ga::GaFloat(MakeRandomFloat(0, len))*Ga::GaVec3(vec));
+            spawn_point = Vector3D(bounds[0] + vec * MakeRandomFloat(0, len));
     } break;
 
     default:
@@ -192,7 +193,7 @@ void SpawnEntry::_DoSpawn(SystemManager &mgr) {
     std::vector<NPC *> spawned;
 
 	// Save Spawn point as Warp-In Point where NPCs will warp into from their "remote" spawn point off-grid:
-	GPoint warp_in_point = spawn_point;
+	Vector3D warp_in_point = spawn_point;
 	if( warpThisSpawnIn )
 	{
 		spawn_point.x += 100000000;			// Put spawn point actually out away from intended spawn point by 100,000,000 meters in all three dimensions

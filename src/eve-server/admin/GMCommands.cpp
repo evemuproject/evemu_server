@@ -216,7 +216,7 @@ PyResult Command_translocate( Client* who, const Seperator& args )
 
     Log::Log( "Command", "Translocate to %u.", loc );
 
-    GPoint p( 0.0f, 1000000.0f, 0.0f ); //when going to a system, who knows where to stick them... could find a stargate and stick them near it I guess...
+    Vector3D p( 0.0f, 1000000.0f, 0.0f ); //when going to a system, who knows where to stick them... could find a stargate and stick them near it I guess...
 
     if( !IsStation( loc ) && !IsSolarSystem( loc ) )
     {
@@ -264,7 +264,7 @@ PyResult Command_tr( Client* who, const Seperator& args )
 	Client * p_targetClient = NULL;
 	SystemEntity * destinationEntity = NULL;
 	uint32 solarSystemID = 0;
-	GPoint destinationPoint(0,0,0);
+	Vector3D destinationPoint(0,0,0);
 	uint32 argsCount = args.argCount();
     std::string name1 = args.arg( 1 );
 	std::string name2 = "";
@@ -310,7 +310,7 @@ PyResult Command_tr( Client* who, const Seperator& args )
 		//TODO
 		p_targetClient = who;
 		solarSystemID = atoi( args.arg( 1 ).c_str() );
-		destinationPoint = GPoint( 1245789420000.0f, -1725486480000.0f, 1485125480000.0f );
+		destinationPoint = Vector3D( 1245789420000.0f, -1725486480000.0f, 1485125480000.0f );
 		trMode = 1;
 	}
 
@@ -344,7 +344,7 @@ PyResult Command_tr( Client* who, const Seperator& args )
 			throw PyException( MakeCustomError(std::string(usageString+"<br><br>YOU MUST BE IN SPACE!").c_str()) );
 
 		if( args.isNumber(2) && args.isNumber(3) && args.isNumber(4) )
-			destinationPoint = GPoint( atoi(args.arg(2).c_str()), atoi(args.arg(3).c_str()), atoi(args.arg(4).c_str()) );
+			destinationPoint = Vector3D( atoi(args.arg(2).c_str()), atoi(args.arg(3).c_str()), atoi(args.arg(4).c_str()) );
 	}
 
 	if( trMode == 0 )
@@ -356,7 +356,7 @@ PyResult Command_tr( Client* who, const Seperator& args )
 	// We're still going, so we know now we have a target to translocate AND a destination solar system AND destination coordinates, so let's do the translocate:
 	//    p_targetClient - target character in a ship to translocate (Client *)
 	//    solarSystemID - destination solar system ID
-	//    destinationPoint - destination coordinates (GPoint)
+	//    destinationPoint - destination coordinates (Vector3D)
 
 	p_targetClient->Destiny()->SendJumpOutEffect("effects.JumpOut", solarSystemID);
 	p_targetClient->MoveToLocation(solarSystemID, destinationPoint);
@@ -367,7 +367,7 @@ PyResult Command_tr( Client* who, const Seperator& args )
 
     Log::Log( "Command", "Translocate to %u.", loc );
 
-    GPoint p( 0.0f, 0.0f, 1000000000.0f ); //when going to a system, who knows where to stick them... could find a stargate and stick them near it I guess...
+    Vector3D p( 0.0f, 0.0f, 1000000000.0f ); //when going to a system, who knows where to stick them... could find a stargate and stick them near it I guess...
 
 
     if( !IsStation( loc ) && !IsSolarSystem( loc ) )
@@ -462,7 +462,7 @@ PyResult Command_goto( Client* who, const Seperator& args)
         throw PyException( MakeCustomError( "Correct Usage: /goto [x coord] [y coor] [z coord]" ) );
     }
 
-    GPoint p( atof( args.arg( 1 ).c_str() ),
+    Vector3D p( atof( args.arg( 1 ).c_str() ),
               atof( args.arg( 2 ).c_str() ),
               atof( args.arg( 3 ).c_str() ) );
 
@@ -505,7 +505,7 @@ PyResult Command_spawnn( Client* who, const Seperator& args )
         return new PyString("Unknown typeID or typeName returned no matches.");
     }
 
-    GPoint loc( who->GetPosition() );
+    Vector3D loc( who->GetPosition() );
     // Calculate a random coordinate on the sphere centered on the player's position with
     // a radius equal to the radius of the ship/celestial being spawned times 10 for really good measure of separation:
     double radius = (type->radius * 5.0) * (double) (MakeRandomInt(1, 3)); // Scale the distance from player that the object will spawn to between 10x and 15x the object's radius
@@ -596,7 +596,7 @@ PyResult Command_spawn( Client* who, const Seperator& args )
 	}
 
     // Check to see if the X Y Z optional coordinates were supplied with the command:
-    GPoint offsetLocation;
+    Vector3D offsetLocation;
     if( args.argCount() > 3 )
     {
         if( !(args.isNumber(3)) )
@@ -624,7 +624,7 @@ PyResult Command_spawn( Client* who, const Seperator& args )
         offsetLocationSet = true;
     }
 
-    GPoint loc;
+    Vector3D loc;
 
 	for(spawnIndex=0; spawnIndex < spawnCount; spawnIndex++)
 	{
@@ -712,8 +712,8 @@ PyResult Command_location( Client* who, const Seperator& args )
 
     DestinyManager* dm = who->Destiny();
 
-    const GPoint& loc = dm->GetPosition();
-    const GVector& vel = dm->GetVelocity();
+    const Vector3D& loc = dm->GetPosition();
+    const Vector3D& vel = dm->GetVelocity();
 
     char reply[128];
     snprintf( reply, 128,

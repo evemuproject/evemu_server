@@ -77,8 +77,8 @@ public:
     void SendDestinyUpdate(std::vector<PyTuple *> &updates, std::vector<PyTuple *> &events, bool self_only) const;
 
 	// Information query functions:
-    const GPoint &GetPosition() const { return(m_position); }
-    const GVector &GetVelocity() const { return(m_velocity); }
+    const Vector3D &GetPosition() const { return(m_position); }
+    const Vector3D &GetVelocity() const { return(m_velocity); }
     double GetSpeedFraction() { return(m_activeSpeedFraction); }
 	SystemManager * const GetSystemManager() { return m_system; }
 	SystemBubble * const GetCurrentBubble() { return m_self->Bubble(); }
@@ -89,7 +89,7 @@ public:
     //Configuration:
     void SetShipCapabilities(InventoryItemRef ship);
 	void SetMaxVelocity(double maxVelocity) { m_maxShipVelocity = maxVelocity; }
-    void SetPosition(const GPoint &pt, bool update=true, bool isWarping=false, bool isPostWarp=false);
+    void SetPosition(const Vector3D &pt, bool update=true, bool isWarping=false, bool isPostWarp=false);
 
     //Global Actions:
     void Stop(bool update=true);
@@ -101,8 +101,8 @@ public:
     void Orbit(SystemEntity *who, double distance, bool update=true);
     void OrbitingCruise(SystemEntity *who, double distance, bool update=true, double cruiseSpeed=-1.0);
     void SetSpeedFraction(double fraction, bool update=true);
-    void AlignTo(const GPoint &direction, bool update=true);
-    void GotoDirection(const GPoint &direction, bool update=true);
+    void AlignTo(const Vector3D &direction, bool update=true);
+    void GotoDirection(const Vector3D &direction, bool update=true);
 	void TractorBeamFollow(SystemEntity *who, double mass, double maxVelocity, double distance, bool update=true);
     PyResult AttemptDockOperation();
 
@@ -110,7 +110,7 @@ public:
 	void UnCloak();
 
     //bigger movement:
-    void WarpTo(const GPoint &where, double distance, bool update=true);
+    void WarpTo(const Vector3D &where, double distance, bool update=true);
 
 	//Ship State Query functions:
 	bool IsMoving() { return (((State == Destiny::DSTBALL_GOTO) || (State == Destiny::DSTBALL_FOLLOW) || (State == Destiny::DSTBALL_ORBIT)) ? true : false); }
@@ -156,9 +156,9 @@ protected:
 	//uint32 m_lastDestinyTime;			//from Timer::GetTimeSeconds()
 
     //the results of our labors:
-    GPoint m_position;					//in m
-    GVector m_velocity;					//in m/s
-	//GVector m_direction;				//normalized, `m_velocity` stores our magnitude
+    Vector3D m_position;					//in m
+    Vector3D m_velocity;					//in m/s
+	//Vector3D m_direction;				//normalized, `m_velocity` stores our magnitude
 	//double m_velocity;				//in m/s, the magnitude of direction
 	//double m_acceleration;			//in m/s^2, should probably be using a vector here too.
 
@@ -178,7 +178,7 @@ protected:
     Destiny::BallMode State;
     double m_userSpeedFraction;			//unitless
     double m_activeSpeedFraction;		//unitless
-    GPoint m_targetPoint;
+    Vector3D m_targetPoint;
     double m_targetDistance;
     uint32 m_stateStamp;				//some states need to know when they were entered.
 	bool m_cloaked;
@@ -191,13 +191,13 @@ protected:
     double m_maxShipVelocity;			//in m/s
     double m_shipAgility;				//unitless
     double m_shipInertia;
-	//GVector m_inertia;
+	//Vector3D m_inertia;
 
     bool _Turn();						//compare m_targetDirection and m_direction, and turn as needed.
     void _Move();						//apply our velocity and direction to our position for 1 unit of time (a second)
     void _Follow();
     void _Warp();						//carry on our current warp.
-    void _MoveAccel(const GVector &calc_acceleration);
+    void _MoveAccel(const Vector3D &calc_acceleration);
     void _Orbit();
 
 private:
@@ -205,14 +205,14 @@ private:
     //internal state variables used during warp.
     class WarpState {
     public:
-        WarpState(uint32 start_stamp_, double total_distance_, double speed_, double acceleration_time_, double slow_time_, const GVector &normvec_them_to_us_)
+        WarpState(uint32 start_stamp_, double total_distance_, double speed_, double acceleration_time_, double slow_time_, const Vector3D &normvec_them_to_us_)
             : start_stamp(start_stamp_), total_distance(total_distance_), speed(speed_), acceleration_time(acceleration_time_), slow_time(slow_time_), normvec_them_to_us(normvec_them_to_us_) {}
         uint32 start_stamp;				//destiny stamp of when the warp started.
         double total_distance;
         double speed;
         double acceleration_time;
         double slow_time;
-        GVector normvec_them_to_us;
+        Vector3D normvec_them_to_us;
     };
     const WarpState *m_warpState;		//we own this. Allocated so we can have consts.
     void _InitWarp();

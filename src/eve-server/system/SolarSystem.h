@@ -35,8 +35,8 @@
 class SolarSystemData {
 public:
     SolarSystemData(
-        const GPoint &_minPos = GPoint(0, 0, 0),
-        const GPoint &_maxPos = GPoint(0, 0, 0),
+        const Vector3D &_minPos = Vector3D(0, 0, 0),
+        const Vector3D &_maxPos = Vector3D(0, 0, 0),
         double _luminosity = 0.0,
         bool _border = false,
         bool _fringe = false,
@@ -53,8 +53,8 @@ public:
     );
 
     // Data members:
-    GPoint minPosition;
-    GPoint maxPosition;
+    Vector3D minPosition;
+    Vector3D maxPosition;
     double luminosity;
 
     // use bitfield to save some memory...
@@ -94,8 +94,8 @@ public:
     /*
      * Public Fields:
      */
-    const GPoint &      minPosition() const { return m_minPosition; }
-    const GPoint &      maxPosition() const { return m_maxPosition; }
+    const Vector3D &      minPosition() const { return m_minPosition; }
+    const Vector3D &      maxPosition() const { return m_maxPosition; }
     double              luminosity() const { return m_luminosity; }
 
     bool                border() const { return m_border; }
@@ -186,8 +186,8 @@ protected:
     /*
      * Data members:
      */
-    GPoint m_minPosition;
-    GPoint m_maxPosition;
+    Vector3D m_minPosition;
+    Vector3D m_maxPosition;
     double m_luminosity;
 
     // use bitfield to save some memory...

@@ -111,7 +111,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
 	//     .arg2  -  itemID of the ship this client is currently piloting
 
     // Save position for old ship
-    GPoint shipPosition = call.client->GetPosition();
+    Vector3D shipPosition = call.client->GetPosition();
 
     // Get ShipRef of our current ship:
     ShipRef oldShipRef = call.client->GetShip();
@@ -141,8 +141,8 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
         {
             // Check for boarding perimeter maximum distance, after subtracting ship's radius
             // from the distance from player's existing ship to the dead center of the ship to board:
-            GVector boardingVector( shipPosition, pShipEntity->GetPosition() );
-            double rangeToBoardShip = boardingVector.length() - boardShipRef->GetAttribute(AttrRadius).get_float();
+            Vector3D boardinVector3D(pShipEntity->GetPosition() - shipPosition);
+            double rangeToBoardShip = boardinVector3D.length() - boardShipRef->GetAttribute(AttrRadius).get_float();
             if( rangeToBoardShip < 0.0)
                 rangeToBoardShip = 0.0;
 
@@ -232,10 +232,10 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
             }
 
             // Update bubble manager for this client's character's ship:
-            //call.client->MoveToLocation( call.client->GetLocationID(), GPoint(0.0,0.0,0.0) );
+            //call.client->MoveToLocation( call.client->GetLocationID(), Vector3D(0.0,0.0,0.0) );
             call.client->GetShip()->Move( call.client->GetLocationID(), (EVEItemFlags)flagHangar, true );
-            ////ItemFactory::GetShip( call.client->GetShipID() )->Relocate( GPoint(0.0,0.0,0.0) );
-            ////call.client->Destiny()->SetPosition( GPoint(0.0,0.0,0.0), true );
+            ////ItemFactory::GetShip( call.client->GetShipID() )->Relocate( Vector3D(0.0,0.0,0.0) );
+            ////call.client->Destiny()->SetPosition( Vector3D(0.0,0.0,0.0), true );
             call.client->System()->bubbles.UpdateBubble( call.client, true );
 
             return NULL;
@@ -257,8 +257,8 @@ PyResult ShipBound::Handle_Undock(PyCallArgs &call) {
 
     //int ignoreContraband = args.arg;
 
-    GPoint dockPosition;
-    GVector dockOrientation;
+    Vector3D dockPosition;
+    Vector3D dockOrientation;
     if (!ShipDB::GetStationInfo(call.client->GetLocationID(), NULL, NULL, NULL, NULL, &dockPosition, &dockOrientation))
     {
         _log(SERVICE__ERROR, "%s: Failed to query location of station %u for undock.", call.client->GetName(), call.client->GetLocationID());
@@ -291,8 +291,8 @@ PyResult ShipBound::Handle_Undock(PyCallArgs &call) {
     call.client->MoveToLocation(call.client->GetSystemID(), dockPosition);
 
     //calculate undock movement
-    GPoint dest =
-        GPoint
+    Vector3D dest =
+        Vector3D
         (
             dockOrientation.x,
             dockOrientation.y,
@@ -435,7 +435,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
     uint32 contID = 0;
 
     //Get location of our ship
-    GPoint location(call.client->GetPosition());
+    Vector3D location(call.client->GetPosition());
     double radius;
     double theta;
     double phi;
@@ -515,7 +515,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
             // This item IS a cargo container, so move it from the ship's cargo into space:
             cargoContainerItem = ItemFactory::GetCargoContainer(itemID);
             Client * who = call.client;
-            GPoint location( who->GetPosition() );
+            Vector3D location( who->GetPosition() );
             radius = 1500.0;
             theta = MakeRandomFloat( 0.0, (2*M_PI) );
             phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -546,7 +546,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
             // whilst keeping ownership of it to the character not using the corporation the character belongs to:
             structureItem = ItemFactory::GetStructure(itemID);
             Client * who = call.client;
-            GPoint location( who->GetPosition() );
+            Vector3D location( who->GetPosition() );
             radius = 1500.0;
             theta = MakeRandomFloat( 0.0, (2*M_PI) );
             phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -576,7 +576,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
             // This item is a Deployable item of some kind, so move it from the ship's cargo into space
             // whilst keeping ownership of it to the character not using the corporation the character belongs to:
             Client * who = call.client;
-            GPoint location( who->GetPosition() );
+            Vector3D location( who->GetPosition() );
             radius = 1500.0;
             theta = MakeRandomFloat( 0.0, (2*M_PI) );
             phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -715,7 +715,7 @@ PyResult ShipBound::Handle_Scoop(PyCallArgs &call) {
 
     // DONT NEED TO CHECK RANGE, CLIENT DOES THIS
     //// Check range to drone:
-    //GVector rangeVector( call.client->GetShip()->position(), drone->GetPosition() );
+    //Vector3D rangeVector( call.client->GetShip()->position(), drone->GetPosition() );
     //double rangeToDrone = rangeVector.length();   // This doesn't work
     //if( rangeToDrone > 1500 )
     //    return NULL;
@@ -773,7 +773,7 @@ PyResult ShipBound::Handle_ScoopDrone(PyCallArgs &call) {
 
         // DONT NEED TO CHECK RANGE, CLIENT DOES THIS
         //// Check range to drone:
-        //GVector rangeVector( call.client->GetShip()->position(), drone->GetPosition() );
+        //Vector3D rangeVector( call.client->GetShip()->position(), drone->GetPosition() );
         //double rangeToDrone = rangeVector.length();   // This doesn't work
         //if( rangeToDrone > 1500 )
         //    return NULL;
@@ -819,7 +819,7 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
     }
 
     //Get location of our ship
-    GPoint location(call.client->GetPosition());
+    Vector3D location(call.client->GetPosition());
     double radius;
     double theta;
     double phi;
@@ -849,7 +849,7 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
         {
             // This item IS a cargo container, so move it from the ship's cargo into space:
             Client * who = call.client;
-            GPoint location( who->GetPosition() );
+            Vector3D location( who->GetPosition() );
             radius = 1500.0;
             theta = MakeRandomFloat( 0.0, (2*M_PI) );
             phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -878,7 +878,7 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
             // This item is a POS structure of some kind, so move it from the ship's cargo into space
             // whilst keeping ownership of it to the character not using the corporation the character belongs to:
             Client * who = call.client;
-            GPoint location( who->GetPosition() );
+            Vector3D location( who->GetPosition() );
             radius = 1500.0;
             theta = MakeRandomFloat( 0.0, (2*M_PI) );
             phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -907,7 +907,7 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
             // This item is a Deployable item of some kind, so move it from the ship's cargo into space
             // whilst keeping ownership of it to the character not using the corporation the character belongs to:
             Client * who = call.client;
-            GPoint location( who->GetPosition() );
+            Vector3D location( who->GetPosition() );
             radius = 1500.0;
             theta = MakeRandomFloat( 0.0, (2*M_PI) );
             phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -942,7 +942,7 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
             {
                 // Spawn cargo container for the first time and only time in this function:
                 Client * who = call.client;
-                GPoint location( who->GetPosition() );
+                Vector3D location( who->GetPosition() );
                 radius = 1500.0;
                 theta = MakeRandomFloat( 0.0, (2*M_PI) );
                 phi = MakeRandomFloat( 0.0, (2*M_PI) );
@@ -997,9 +997,9 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     name += "'s Capsule";
 
     //save old ship position and itemID
-    GPoint shipPosition = call.client->GetPosition();
+    Vector3D shipPosition = call.client->GetPosition();
     uint32 oldShipItemID = call.client->GetShipID();
-    GPoint capsulePosition = call.client->GetPosition();
+    Vector3D capsulePosition = call.client->GetPosition();
 
     //set capsule position 500m off from old ship:
     capsulePosition.x += call.client->GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
@@ -1078,7 +1078,7 @@ PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
     std::string name = call.client->GetName();
     name += "'s Capsule";
 
-    GPoint capsulePosition;
+    Vector3D capsulePosition;
     capsulePosition.x = 0.0;
     capsulePosition.y = 0.0;
     capsulePosition.z = 0.0;

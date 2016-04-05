@@ -43,7 +43,7 @@
 // utils
 #include "utils/Deflate.h"
 #include "utils/EvilNumber.h"
-#include "utils/gpoint.h"
+#include "math/Vector3D.h"
 #include "utils/misc.h"
 #include "utils/RefPtr.h"
 #include "utils/Seperator.h"

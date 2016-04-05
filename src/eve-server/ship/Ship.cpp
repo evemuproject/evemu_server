@@ -1055,7 +1055,7 @@ using namespace Destiny;
 ShipEntity::ShipEntity(
     ShipRef ship,
     SystemManager *system,
-    const GPoint &position)
+    const Vector3D &position)
 : DynamicSystemEntity(new DestinyManager(this, system), ship),
   m_system(system)
 {
@@ -1073,13 +1073,13 @@ void ShipEntity::Process()
     SystemEntity::Process();
 }
 
-void ShipEntity::ForcedSetPosition( const GPoint &pt ) {
+void ShipEntity::ForcedSetPosition( const Vector3D &pt ) {
     m_destiny->SetPosition(pt, false);
 }
 
 void ShipEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     /*if(m_orbitingID != 0) {

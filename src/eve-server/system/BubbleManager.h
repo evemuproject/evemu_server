@@ -30,7 +30,7 @@
 
 class SystemEntity;
 class SystemBubble;
-class GPoint;
+class Vector3D;
 
 //the purpose of this object is to make a nice container for
 //any of the optimized space searching algorithms which we
@@ -53,10 +53,10 @@ public:
     void Add(SystemEntity *ent, bool notify, bool isPostWarp=false);
 	//call to find the bubble containing the SystemEntity specified, if no bubble does, return NULL
 	SystemBubble * FindBubble(SystemEntity *ent) const;
-	//call to find the bubble containing the GPoint specified, if no bubble does, return NULL
-	SystemBubble * FindBubble(const GPoint &pos) const;
+	//call to find the bubble containing the Vector3D specified, if no bubble does, return NULL
+	SystemBubble * FindBubble(const Vector3D &pos) const;
     //call to calculate new bubble's center from entity's velocity:
-    void NewBubbleCenter(GVector shipVelocity, GPoint & newBubbleCenter);
+    void NewBubbleCenter(Vector3D shipVelocity, Vector3D & newBubbleCenter);
     //call when an entity is removed from the system.
     void Remove(SystemEntity *ent, bool notify);
     void clear();

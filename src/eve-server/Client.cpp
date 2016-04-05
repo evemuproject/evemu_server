@@ -405,8 +405,8 @@ bool Client::UpdateLocation() {
         {
             // We are just logging in, so we need to warp to our last position from a
             // random vector 15.0AU away:
-            GPoint warpToPoint( GetShip()->position() );
-            GPoint warpFromPoint( GetShip()->position() );
+            Vector3D warpToPoint( GetShip()->position() );
+            Vector3D warpFromPoint( GetShip()->position() );
             warpFromPoint.MakeRandomPointOnSphere( 15.0*ONE_AU_IN_METERS );
             m_destiny->SetPosition( warpFromPoint, true );
             WarpTo( warpToPoint, 0.0 );        // Warp ship from the random login point to the position saved on last disconnect
@@ -424,7 +424,7 @@ bool Client::UpdateLocation() {
     return true;
 }
 
-void Client::MoveToLocation( uint32 location, const GPoint& pt )
+void Client::MoveToLocation( uint32 location, const Vector3D& pt )
 {
     if( GetLocationID() == location )
     {
@@ -484,7 +484,7 @@ void Client::MoveToLocation( uint32 location, const GPoint& pt )
     _SendSessionChange();
 }
 
-void Client::MoveToPosition(const GPoint &pt) {
+void Client::MoveToPosition(const Vector3D &pt) {
     if(m_destiny == NULL)
         return;
     m_destiny->Halt(true);
@@ -1038,7 +1038,7 @@ PyDict *Client::MakeSlimItem() const {
     return(slim);
 }
 
-void Client::WarpTo(const GPoint &to, double distance) {
+void Client::WarpTo(const Vector3D &to, double distance) {
     if(m_moveState != msIdle || m_moveTimer.Enabled()) {
         SysLog::Log("Client","%s: WarpTo called when a move is already pending. Ignoring.", GetName());
         return;
@@ -1058,7 +1058,7 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
     //TODO: verify that 'fromGate' actually jumps to 'toGate'
 
     uint32 solarSystemID, constellationID, regionID;
-    GPoint position;
+    Vector3D position;
     if (!ServiceDB::GetStaticItemInfo(
         toGate,
         &solarSystemID, &constellationID, &regionID, &position
@@ -1080,14 +1080,14 @@ void Client::StargateJump(uint32 fromGate, uint32 toGate) {
     _postMove(msJump, 5000);
 }
 
-void Client::SetDockingPoint(GPoint &dockPoint)
+void Client::SetDockinVector3D(Vector3D &dockPoint)
 {
     m_movePoint.x = dockPoint.x;
     m_movePoint.y = dockPoint.y;
     m_movePoint.z = dockPoint.z;
 }
 
-void Client::GetDockingPoint(GPoint &dockPoint)
+void Client::GetDockinVector3D(Vector3D &dockPoint)
 {
     dockPoint.x = m_movePoint.x;
     dockPoint.y = m_movePoint.y;
@@ -1099,14 +1099,14 @@ void Client::GetDockingPoint(GPoint &dockPoint)
 // *GetJustUndocking
 // *SetUndockAlignToPoint
 // *GetUndockAlignToPoint
-void Client::SetUndockAlignToPoint(GPoint &dest)
+void Client::SetUndockAlignToPoint(Vector3D &dest)
 {
     m_undockAlignToPoint.x = dest.x;
     m_undockAlignToPoint.y = dest.y;
     m_undockAlignToPoint.z = dest.z;
 }
 
-void Client::GetUndockAlignToPoint(GPoint &dest)
+void Client::GetUndockAlignToPoint(Vector3D &dest)
 {
     dest.x = m_undockAlignToPoint.x;
     dest.y = m_undockAlignToPoint.y;
@@ -1384,7 +1384,7 @@ DoDestinyUpdate ,*args= ([(31759,
     drone->Move(GetShipID(), flagDroneBay, false);
 
     //now we create an NPC to represent it.
-    GPoint position(GetPosition());
+    Vector3D position(GetPosition());
     position.x += 750.0f;   //total crap.
 
     //this adds itself into the system.

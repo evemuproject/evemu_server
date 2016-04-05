@@ -27,7 +27,7 @@
 #define	STASTATIONTYPE_H
 
 #include "inv/InvType.h"
-#include "utils/gpoint.h"
+#include "math/Vector3D.h"
 #include <map>
 #include <memory>
 
@@ -69,8 +69,8 @@ public:
     const uint32 hangarGraphicID;
 
     // Convenience values.
-    const GPoint dockEntry;
-    const GVector dockOrientation;
+    const Vector3D dockEntry;
+    const Vector3D dockOrientation;
 
     /**
      * Get the StaStationType for the specified typeID

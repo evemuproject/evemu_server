@@ -55,7 +55,7 @@ public:
     // Full + default constructor:
     ItemData( const char *_name = "", uint32 _typeID = 0, uint32 _ownerID = 0, uint32 _locationID = 0,
         EVEItemFlags _flag = flagAutoFit, bool _contraband = false, bool _singleton = false, uint32 _quantity = 0,
-        const GPoint &_position = GPoint(0, 0, 0), const char *_customInfo = "");
+        const Vector3D &_position = Vector3D(0, 0, 0), const char *_customInfo = "");
 
     // Usual-item friendly constructor:
     ItemData( uint32 _typeID, uint32 _ownerID, uint32 _locationID, EVEItemFlags _flag, uint32 _quantity,
@@ -63,7 +63,7 @@ public:
 
     // Singleton friendly constructor:
     ItemData( uint32 _typeID, uint32 _ownerID, uint32 _locationID, EVEItemFlags _flag, const char *_name = "",
-        const GPoint &_position = GPoint(0, 0, 0), const char *_customInfo = "", bool _contraband = false);
+        const Vector3D &_position = Vector3D(0, 0, 0), const char *_customInfo = "", bool _contraband = false);
 
     // Content:
     std::string     name;
@@ -74,7 +74,7 @@ public:
     bool            contraband;
     bool            singleton;
     uint32          quantity;
-    GPoint          position;
+    Vector3D          position;
     std::string     customInfo;
 };
 
@@ -112,7 +112,7 @@ public:
     bool AlterQuantity(int32 qty_change, bool notify=true);
     bool SetQuantity(uint32 qty_new, bool notify=true);
     bool SetFlag(EVEItemFlags new_flag, bool notify=true);
-    void Relocate(const GPoint &pos);
+    void Relocate(const Vector3D &pos);
     void SetCustomInfo(const char *ci);
 
 
@@ -159,7 +159,7 @@ public:
     bool                    contraband() const  { return m_contraband; }
     bool                    singleton() const   { return m_singleton; }
     int32                   quantity() const    { return m_quantity; }
-    const GPoint &          position() const    { return m_position; }
+    const Vector3D &          position() const    { return m_position; }
     const std::string &     customInfo() const  { return m_customInfo; }
 
 
@@ -345,7 +345,7 @@ protected:
     bool                m_contraband;
     bool                m_singleton;
     int32               m_quantity;
-    GPoint              m_position;
+    Vector3D              m_position;
     std::string         m_customInfo;
 
 	std::map<EVEItemFlags, double> m_cargoHoldsUsedVolumeByFlag;

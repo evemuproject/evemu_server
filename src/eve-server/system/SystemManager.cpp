@@ -86,15 +86,15 @@ SystemManager::~SystemManager() {
 }
 
 static const int num_hack_sentry_locs = 8;
-GPoint hack_sentry_locs[num_hack_sentry_locs] = {
-    GPoint(-35000.0f, -35000.0f, -35000.0f),
-    GPoint(-35000.0f, -35000.0f, 35000.0f),
-    GPoint(-35000.0f, 35000.0f, -35000.0f),
-    GPoint(-35000.0f, 35000.0f, 35000.0f),
-    GPoint(35000.0f, -35000.0f, -35000.0f),
-    GPoint(35000.0f, -35000.0f, 35000.0f),
-    GPoint(35000.0f, 35000.0f, -35000.0f),
-    GPoint(35000.0f, 35000.0f, 35000.0f)
+Vector3D hack_sentry_locs[num_hack_sentry_locs] = {
+    Vector3D(-35000.0f, -35000.0f, -35000.0f),
+    Vector3D(-35000.0f, -35000.0f, 35000.0f),
+    Vector3D(-35000.0f, 35000.0f, -35000.0f),
+    Vector3D(-35000.0f, 35000.0f, 35000.0f),
+    Vector3D(35000.0f, -35000.0f, -35000.0f),
+    Vector3D(35000.0f, -35000.0f, 35000.0f),
+    Vector3D(35000.0f, 35000.0f, -35000.0f),
+    Vector3D(35000.0f, 35000.0f, 35000.0f)
 };
 
 bool SystemManager::_LoadSystemCelestials() {
@@ -181,7 +181,7 @@ bool SystemManager::_LoadSystemCelestials() {
 class DynamicEntityFactory {
 public:
     static SystemEntity *BuildEntity(SystemManager &system, const DBSystemDynamicEntity &entity) {
-        GPoint location;
+        Vector3D location;
 
         switch(entity.categoryID) {
             case EVEDB::invCategories::Asteroid: {

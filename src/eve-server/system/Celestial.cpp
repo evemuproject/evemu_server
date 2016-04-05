@@ -153,7 +153,7 @@ CelestialEntity::CelestialEntity(
     CelestialObjectRef celestial,
     //InventoryItemRef celestial,
     SystemManager *system,
-    const GPoint &position)
+    const Vector3D &position)
 : CelestialDynamicSystemEntity(new DestinyManager(this, system), celestial),
   m_system(system)
 {
@@ -165,14 +165,14 @@ void CelestialEntity::Process() {
     SystemEntity::Process();
 }
 
-void CelestialEntity::ForcedSetPosition(const GPoint &pt) {
+void CelestialEntity::ForcedSetPosition(const Vector3D &pt) {
     m_destiny->SetPosition(pt, false);
 }
 
 /*
 void CelestialEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     /*if(m_orbitingID != 0) {

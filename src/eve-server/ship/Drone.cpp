@@ -34,7 +34,7 @@ using namespace Destiny;
 DroneEntity::DroneEntity(
     InventoryItemRef drone,
     SystemManager *system,
-    const GPoint &position)
+    const Vector3D &position)
 : DynamicSystemEntity(new DestinyManager(this, system), drone),
   m_system(system)
 {
@@ -46,13 +46,13 @@ void DroneEntity::Process() {
     SystemEntity::Process();
 }
 
-void DroneEntity::ForcedSetPosition(const GPoint &pt) {
+void DroneEntity::ForcedSetPosition(const Vector3D &pt) {
     m_destiny->SetPosition(pt, false);
 }
 
 void DroneEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     /*if(m_orbitingID != 0) {

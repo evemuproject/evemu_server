@@ -74,7 +74,7 @@ void TractorBeam::startCycle(bool continuing)
     // Initiate continued Destiny Action to move tractored object toward ship
     DynamicSystemEntity * targetEntity = static_cast<DynamicSystemEntity *>(m_targetEntity);
     // Check for distance to target > 5000m + ship radius
-    GVector distanceToTarget(targetEntity->GetPosition(), m_ship->position());
+    Vector3D distanceToTarget(m_ship->position() - targetEntity->GetPosition());
     if (distanceToTarget.length() > (5000.0 + m_ship->GetAttribute(AttrRadius).get_float()))
     {
         // Range higher?  Then start it moving toward ship @ 200m/s

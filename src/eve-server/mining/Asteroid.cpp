@@ -33,7 +33,7 @@ using namespace Destiny;
 AsteroidEntity::AsteroidEntity(
     InventoryItemRef asteroid,
     SystemManager *system,
-    const GPoint &position)
+    const Vector3D &position)
 : DynamicSystemEntity(new DestinyManager(this, system), asteroid),
   m_system(system)
 {
@@ -45,13 +45,13 @@ void AsteroidEntity::Process() {
     SystemEntity::Process();
 }
 
-void AsteroidEntity::ForcedSetPosition(const GPoint &pt) {
+void AsteroidEntity::ForcedSetPosition(const Vector3D &pt) {
     m_destiny->SetPosition(pt, false);
 }
 
 void AsteroidEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
     /*if(m_orbitingID != 0) {
         #pragma pack(1)
@@ -197,7 +197,7 @@ bool Asteroid::ApplyDamage(Damage &d)
 
 void Asteroid::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     BallHeader head;

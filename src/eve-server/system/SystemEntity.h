@@ -38,7 +38,7 @@ class DoDestinyDamageState;
 class DBSystemEntity;
 class InventoryItem;
 class SystemDB;
-class GPoint;
+class Vector3D;
 class Damage;
 class SystemBubble;
 class SystemManager;
@@ -95,9 +95,9 @@ public:
     //get the item ID of this entity
     virtual uint32 GetID() const = 0;
     //get the position of this entity in space.
-    virtual const GPoint &GetPosition() const = 0;
+    virtual const Vector3D &GetPosition() const = 0;
     //get the velocity vector of this entity in space.
-    virtual const GVector &GetVelocity() const = 0;
+    virtual const Vector3D &GetVelocity() const = 0;
     //get other attributes of the entity:
     virtual const char *GetName() const = 0;
     virtual float GetRadius() const = 0;
@@ -150,8 +150,8 @@ public:
     virtual uint32 GetID() const;
     virtual InventoryItemRef Item() const { return(m_self); }
     virtual const char *GetName() const;
-    virtual const GPoint &GetPosition() const;
-    virtual const GVector &GetVelocity() const;
+    virtual const Vector3D &GetPosition() const;
+    virtual const Vector3D &GetVelocity() const;
     virtual float GetRadius() const;
     virtual PyDict *MakeSlimItem() const;
     virtual void MakeDamageState(DoDestinyDamageState &into) const;
@@ -178,8 +178,8 @@ public:
 
     //partial implementation of SystemEntity interface:
     virtual void ProcessDestiny();
-    virtual const GPoint &GetPosition() const;
-    virtual const GVector &GetVelocity() const;
+    virtual const Vector3D &GetPosition() const;
+    virtual const Vector3D &GetVelocity() const;
     virtual void EncodeDestiny( Buffer& into ) const;
     virtual bool IsStaticEntity() const { return false; }
 

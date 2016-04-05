@@ -817,9 +817,9 @@ void Client::Killed(Damage &fatal_blow) {
         //we have been pod killed... off we go.
 
 		//TODO: explode the capsule and make a new one in the last medical clone's station:
-		GPoint deadPodPosition = GetPosition();
+		Vector3D deadPodPosition = GetPosition();
 		uint32 oldPodItemID = GetShipID();
-		GPoint capsulePosition = GPoint(0,0,0);
+		Vector3D capsulePosition = Vector3D(0,0,0);
 
 		ShipRef deadPodRef = GetShip();    //grab a ship ref to ensure that nobody else nukes it first.
         std::string corpse_name = GetName();
@@ -914,9 +914,9 @@ void Client::Killed(Damage &fatal_blow) {
 	{
         //our ship has been destroyed. Off to our capsule.
         //We are currently not keeping our real capsule around in the DB, so we need to make a new one.
-		GPoint deadShipPosition = GetPosition();
+		Vector3D deadShipPosition = GetPosition();
 		uint32 oldShipItemID = GetShipID();
-		GPoint capsulePosition = GetPosition();
+		Vector3D capsulePosition = GetPosition();
 
 		//set capsule position 500m off from old ship:
 		capsulePosition.x += GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
@@ -1070,7 +1070,7 @@ void NPC::Killed(Damage &fatal_blow)
         client = killer->CastToClient();
     }
 
-	GPoint deadNPCPosition = this->Destiny()->GetPosition();
+	Vector3D deadNPCPosition = this->Destiny()->GetPosition();
 	uint32 wreckTypeID = DGM_Types_to_Wrecks_Table::GetWreckID(this->Item()->typeID());
 	this->AI()->ClearAllTargets();
 	this->Bubble()->Remove(this, true);
@@ -1238,7 +1238,7 @@ void ShipEntity::Killed(Damage &fatal_blow)
 	// Spawn a wreck for the Ship that was destroyed:
 	uint32 wreckTypeID = DGM_Types_to_Wrecks_Table::GetWreckID(this->Item()->typeID());
 	std::string wreck_name = this->Item()->itemName();
-	GPoint wreckPosition = this->Destiny()->GetPosition();
+	Vector3D wreckPosition = this->Destiny()->GetPosition();
 	InventoryItemRef wreckItemRef;
 	ItemData wreckItemData(
 		wreckTypeID,

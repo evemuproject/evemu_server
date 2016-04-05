@@ -118,8 +118,8 @@ void BubbleManager::Add(SystemEntity *ent, bool notify, bool isPostWarp) {
     // We'll use this new possible bubble location to check for an existing bubble that may contain
     // the center of this new possible bubble, and if a bubble is found, we'll use that instead of
     // creating an entirely new bubble:
-    GPoint newBubbleCenter(ent->GetPosition());
-    GVector shipVelocity(ent->GetVelocity());
+    Vector3D newBubbleCenter(ent->GetPosition());
+    Vector3D shipVelocity(ent->GetVelocity());
     NewBubbleCenter( shipVelocity, newBubbleCenter );   // Calculate new bubble's center based on entity's velocity and current position
 
     SystemBubble *in_bubble;
@@ -138,8 +138,8 @@ void BubbleManager::Add(SystemEntity *ent, bool notify, bool isPostWarp) {
 //    // using the current position of this System Entity, however, we want to create this
 //    // new bubble's center further along the direction of travel from the position of this
 //    // System Entity by the amount specified by BUBBLE_HYSTERESIS_METERS and BUBBLE_RADIUS_METERS:
-//    GPoint newBubbleCenter(ent->GetPosition());
-//    GVector shipVelocity(ent->GetVelocity());
+//    Vector3D newBubbleCenter(ent->GetPosition());
+//    Vector3D shipVelocity(ent->GetVelocity());
 //    NewBubbleCenter( shipVelocity, newBubbleCenter );   // Calculate new bubble's center based on entity's velocity and current position
 
     in_bubble = new SystemBubble(newBubbleCenter, BUBBLE_RADIUS_METERS);
@@ -149,7 +149,7 @@ void BubbleManager::Add(SystemEntity *ent, bool notify, bool isPostWarp) {
     in_bubble->Add(ent, notify);
 }
 
-void BubbleManager::NewBubbleCenter(GVector shipVelocity, GPoint & newBubbleCenter)
+void BubbleManager::NewBubbleCenter(Vector3D shipVelocity, Vector3D & newBubbleCenter)
 {
     shipVelocity.normalize();
     newBubbleCenter.x += shipVelocity.x * (BUBBLE_RADIUS_METERS - BUBBLE_HYSTERESIS_METERS);
@@ -184,7 +184,7 @@ void BubbleManager::Remove(SystemEntity *ent, bool notify) {
 //NOTE: this should probably eventually be optimized to use a
 //spacial partitioning scheme to speed up this search.
 SystemBubble * BubbleManager::FindBubble(SystemEntity *ent) const {
-	GPoint pos = ent->GetPosition();
+	Vector3D pos = ent->GetPosition();
     std::vector<SystemBubble *>::const_iterator cur, end;
     cur = m_bubbles.begin();
     end = m_bubbles.end();
@@ -200,7 +200,7 @@ SystemBubble * BubbleManager::FindBubble(SystemEntity *ent) const {
 
 //NOTE: this should probably eventually be optimized to use a
 //spacial partitioning scheme to speed up this search.
-SystemBubble * BubbleManager::FindBubble(const GPoint &pos) const {
+SystemBubble * BubbleManager::FindBubble(const Vector3D &pos) const {
     std::vector<SystemBubble *>::const_iterator cur, end;
     cur = m_bubbles.begin();
     end = m_bubbles.end();

@@ -42,7 +42,7 @@ public:
     DroneEntity(
         InventoryItemRef drone,
         SystemManager *system,
-        const GPoint &position);
+        const Vector3D &position);
 
     /*
      * Primary public interface:
@@ -73,7 +73,7 @@ public:
     virtual void Killed(Damage &fatal_blow);
     virtual SystemManager *System() const { return(m_system); }
 
-    void ForcedSetPosition(const GPoint &pt);
+    void ForcedSetPosition(const Vector3D &pt);
 
     virtual bool ApplyDamage(Damage &d);
     virtual void MakeDamageState(DoDestinyDamageState &into) const;

@@ -34,7 +34,7 @@ public:
     uint32 typeID;
     uint32 groupID;
     uint32 orbitID;
-    GPoint position;
+    Vector3D position;
     double radius;
     double security;
     std::string itemName;

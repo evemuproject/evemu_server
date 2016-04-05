@@ -67,8 +67,8 @@ public:
     static PyObject *GetSolDroneState(uint32 systemID);
 
     static bool GetSystemInfo(uint32 systemID, uint32 *constellationID, uint32 *regionID, std::string *name, std::string *securityClass); // mapSolarSystems
-    static bool GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position); // mapDenormalize
-    static bool GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, GPoint *position, GPoint *dockPosition, GVector *dockOrientation); // staStations
+    static bool GetStaticItemInfo(uint32 itemID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, Vector3D *position); // mapDenormalize
+    static bool GetStationInfo(uint32 stationID, uint32 *systemID, uint32 *constellationID, uint32 *regionID, Vector3D *position, Vector3D *dockPosition, Vector3D *dockOrientation); // staStations
 
     static uint32 GetDestinationStargateID(uint32 fromSystem, uint32 toSystem);
 

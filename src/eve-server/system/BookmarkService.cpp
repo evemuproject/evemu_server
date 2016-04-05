@@ -162,7 +162,7 @@ PyResult BookmarkService::Handle_BookmarkLocation(PyCallArgs &call)
     uint32 typeCheck = 0;
     uint32 creatorID = call.client->GetCharacterID();       //  will need more research when trade is implemented for sharing bm's between chars....corp/friend/etc.  this should be the original characterID that made the bm.
     uint32 folderID = 0;
-    GPoint point;
+    Vector3D point;
 
     ////////////////////////////////////////
     // Verify expected packet structure:            updated 20Jan14   -allan

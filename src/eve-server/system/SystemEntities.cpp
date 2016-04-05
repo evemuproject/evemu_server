@@ -81,8 +81,8 @@ void SimpleSystemEntity::MakeDamageState(DoDestinyDamageState &into) const {
     into.timestamp = Win32TimeNow();
 }
 
-const GVector &SimpleSystemEntity::GetVelocity() const {
-    static const GVector err(0.0, 0.0, 0.0);
+const Vector3D &SimpleSystemEntity::GetVelocity() const {
+    static const Vector3D err(0.0, 0.0, 0.0);
     return(err);
 }
 
@@ -277,7 +277,7 @@ PyDict *SystemDungeonEntranceEntity::MakeSlimItem() const {
 
 void SystemDungeonEntranceEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = m_self->position();
+    const Vector3D& position = m_self->position();
     const std::string itemName( GetName() );
 
     BallHeader head;

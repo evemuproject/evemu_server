@@ -69,7 +69,7 @@ public:
     AsteroidEntity(
         InventoryItemRef asteroid,
         SystemManager *system,
-        const GPoint &position);
+        const Vector3D &position);
 
     /*
      * Primary public interface:
@@ -100,7 +100,7 @@ public:
     virtual void Killed(Damage &fatal_blow);
     virtual SystemManager *System() const { return(m_system); }
 
-    void ForcedSetPosition(const GPoint &pt);
+    void ForcedSetPosition(const Vector3D &pt);
 
     virtual bool ApplyDamage(Damage &d);
     virtual void MakeDamageState(DoDestinyDamageState &into) const;
@@ -108,7 +108,7 @@ public:
     void SendNotification(const PyAddress &dest, EVENotificationStream &noti, bool seq=true);
     void SendNotification(const char *notifyType, const char *idType, PyTuple **payload, bool seq=true);
 
-    //inline const GPoint &GetPosition() const { return(m_position); }
+    //inline const Vector3D &GetPosition() const { return(m_position); }
     //uint32 GetID() const { return(m_asteroidID); }
     //virtual const char *GetName() const { return("Asteroid"); }
     //virtual double GetRadius() const;    // { return(m_radius); }
@@ -142,7 +142,7 @@ public:
     virtual bool IsStaticEntity() const { return(true); }
     virtual bool ApplyDamage(Damage &d);
 
-    //inline const GPoint &GetPosition() const { return(m_position); }
+    //inline const Vector3D &GetPosition() const { return(m_position); }
     //uint32 GetID() const { return(m_asteroidID); }
     //virtual const char *GetName() const { return("Asteroid"); }
     //virtual double GetRadius() const;    // { return(m_radius); }
@@ -157,7 +157,7 @@ protected:
     SystemManager *const m_system;
     //const uint32 m_asteroidID;
     //const uint32 m_typeID;
-    //const GPoint m_position;
+    //const Vector3D m_position;
     //asteroid owner: 500021
     //double m_radius;    //radius of 91-95 makes for reasonable asteroids.
 };

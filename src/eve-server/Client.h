@@ -148,8 +148,8 @@ public:
     bool AddBalance(double amount);
 
     void BoardShip(ShipRef new_ship);
-    void MoveToLocation(uint32 location, const GPoint &pt);
-    void MoveToPosition(const GPoint &pt);
+    void MoveToLocation(uint32 location, const Vector3D &pt);
+    void MoveToPosition(const Vector3D &pt);
     void MoveItem(uint32 itemID, uint32 location, EVEItemFlags flag);
     bool EnterSystem(bool login);
     bool UpdateLocation();
@@ -167,12 +167,12 @@ public:
     void SendNotification(const char *notifyType, const char *idType, PyTuple **payload, bool seq=true);
 
     //destiny stuff...
-    void WarpTo(const GPoint &p, double distance);
+    void WarpTo(const Vector3D &p, double distance);
     void StargateJump(uint32 fromGate, uint32 toGate);
     void SetDockStationID(uint32 stationID) { m_dockStationID = stationID; };
     uint32 GetDockStationID() { return m_dockStationID; };
-    void SetDockingPoint(GPoint &dockPoint);
-    void GetDockingPoint(GPoint &dockPoint);
+    void SetDockinVector3D(Vector3D &dockPoint);
+    void GetDockinVector3D(Vector3D &dockPoint);
     bool GetPendingDockOperation() { return m_needToDock; };
     void SetPendingDockOperation(bool needToDock) { m_needToDock = needToDock; }
 
@@ -188,8 +188,8 @@ public:
             m_justUndocked = justUndocking;
     }
     bool GetJustUndocking() { return m_justUndocked; };
-    void SetUndockAlignToPoint(GPoint &dest);
-    void GetUndockAlignToPoint(GPoint &dest);
+    void SetUndockAlignToPoint(Vector3D &dest);
+    void GetUndockAlignToPoint(Vector3D &dest);
     // --- END HACK FUNCTIONS FOR UNDOCK ---
 
     void SendErrorMsg(const char *fmt, ...);
@@ -270,7 +270,7 @@ protected:
     _MoveState m_moveState;
     Timer m_moveTimer;
     uint32 m_moveSystemID;
-    GPoint m_movePoint;
+    Vector3D m_movePoint;
     uint32 m_dockStationID;
     void _ExecuteJump();
     bool m_needToDock;
@@ -288,7 +288,7 @@ protected:
 
     bool m_justUndocked;
     int m_justUndockedCount;
-    GPoint m_undockAlignToPoint;
+    Vector3D m_undockAlignToPoint;
     // --- END HACK VARIABLES FOR UNDOCK ---
 
     EvilNumber m_timeEndTrain;

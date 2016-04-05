@@ -73,7 +73,7 @@ bool SurveyScanner::endCycle(bool continuing)
             item->groupID() == EVEDB::invGroups::Harvestable_Cloud)
         {
             // Yes, is it in range?
-            GPoint rel = entity->GetPosition() - shipEntity->GetPosition();
+            Vector3D rel = entity->GetPosition() - shipEntity->GetPosition();
             if (rel.length() - entity->GetRadius() <= maxDist)
             {
                 // Yes, add it to list.

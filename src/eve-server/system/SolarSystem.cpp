@@ -31,8 +31,8 @@
  * SolarSystemData
  */
 SolarSystemData::SolarSystemData(
-    const GPoint &_minPos,
-    const GPoint &_maxPos,
+    const Vector3D &_minPos,
+    const Vector3D &_maxPos,
     double _luminosity,
     bool _border,
     bool _fringe,

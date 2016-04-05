@@ -182,7 +182,7 @@ using namespace Destiny;
 ContainerEntity::ContainerEntity(
     CargoContainerRef container,
     SystemManager *system,
-    const GPoint &position)
+    const Vector3D &position)
 : DynamicSystemEntity(new DestinyManager(this, system), container),
   m_system(system)
 {
@@ -194,13 +194,13 @@ void ContainerEntity::Process() {
     SystemEntity::Process();
 }
 
-void ContainerEntity::ForcedSetPosition(const GPoint &pt) {
+void ContainerEntity::ForcedSetPosition(const Vector3D &pt) {
     m_destiny->SetPosition(pt, false);
 }
 
 void ContainerEntity::EncodeDestiny( Buffer& into ) const
 {
-    const GPoint& position = GetPosition();
+    const Vector3D& position = GetPosition();
     const std::string itemName( GetName() );
 
     /*if(m_orbitingID != 0) {

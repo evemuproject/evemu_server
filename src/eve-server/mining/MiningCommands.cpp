@@ -32,7 +32,7 @@
 #include "system/SystemManager.h"
 
 uint32 GetAsteroidType( double p, const std::map<double, uint32>& roids );
-void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const GVector& position );
+void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const Vector3D& position );
 
 PyResult Command_roid( Client* who, const Seperator& args )
 {
@@ -52,7 +52,7 @@ PyResult Command_roid( Client* who, const Seperator& args )
 
     SysLog::Log( "Command", "Roid %u of radius %f", typeID, radius );
 
-    GPoint position( who->GetPosition() );
+    Vector3D position( who->GetPosition() );
     position.x += radius + 1 + who->GetRadius();    //put it raw enough away to not push us around.
 
     SpawnAsteroid( who->System(), typeID, radius, position );
@@ -175,7 +175,7 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
         }
     }
 
-    const GPoint position(who->GetPosition());
+    const Vector3D position(who->GetPosition());
     double phi = atan(position.x / position.z);
     if (position.z == 0)
     {
@@ -185,21 +185,21 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
     {
         phi += M_PI;
     }
-    GPoint beltOffset;
+    Vector3D beltOffset;
     if (makeIceBelt)
     {
         beltOffset.x = (beltradius * 0.75) * sin(phi);
         beltOffset.z = (beltradius * 0.75) * cos(phi);
     }
     double alpha;
-    GPoint mposition;
+    Vector3D mposition;
     double beltThickness = 3000;
     double height;
     double roidradius;
     const double beltangle = M_PI * 2.0 / 3.0;
     int triesLeft = pcs * 25;
     int pcsLeft = pcs;
-    std::vector<std::pair<GPoint, double>> spawned;
+    std::vector<std::pair<Vector3D, double>> spawned;
     while (triesLeft-- && pcsLeft)
     {
         uint32 typeID = GetAsteroidType(MakeRandomFloat(), roidDist);
@@ -230,7 +230,7 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
         bool collision = false;
         for (auto pair : spawned)
         {
-            GPoint point = pair.first;
+            Vector3D point = pair.first;
             double dist = (mposition - point).length();
             double radii = (roidradius + pair.second);
             if ((dist - radii) < 0)
@@ -248,7 +248,7 @@ PyResult Command_spawnbelt( Client* who, const Seperator& args )
         pcsLeft--;
         SpawnAsteroid(who->System(), typeID, roidradius, mposition + position - beltOffset);
         // Save the location for collision checks.
-        spawned.push_back(std::pair<GPoint, double>(mposition, roidradius));
+        spawned.push_back(std::pair<Vector3D, double>(mposition, roidradius));
     }
 
     return new PyString( "Spawn successsfull." );
@@ -274,7 +274,7 @@ uint32 GetAsteroidType( double p, const std::map<double, uint32>& roids )
 	return cur->second;
 }
 
-void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const GVector& position )
+void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const Vector3D& position )
 {
     ItemData idata( typeID,
                     1,

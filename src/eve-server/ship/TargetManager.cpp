@@ -94,7 +94,7 @@ void TargetManager::process()
                     targetLost.push_back(cur.first);
                     continue;
                 }
-                GVector rangeToTarget(cur.first->GetPosition(), m_self->GetPosition());
+                Vector3D rangeToTarget(m_self->GetPosition() - cur.first->GetPosition());
                 if (rangeToTarget.length() - cur.first->GetRadius() > m_maxTargetLockRange)
                 {
                     targetLost.push_back(cur.first);
@@ -143,7 +143,7 @@ bool TargetManager::startTargeting(SystemEntity *who, ShipRef ship)
 
     // Check against max locked target range
     m_maxTargetLockRange = ship->GetAttribute(AttrMaxTargetRange).get_float();
-    //    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
+    //    Vector3D rangeToTarget(who->GetPosition(), m_self->GetPosition());
     //    if (rangeToTarget.length() - who->GetRadius() > m_maxTargetLockRange)
     //    {
     //        // TO-DO: send real out of range notice.
@@ -196,7 +196,7 @@ bool TargetManager::startTargeting(SystemEntity *who, double lockTime, uint32 ma
 
     // Check against max locked target range
     m_maxTargetLockRange = maxTargetLockRange;
-    //    GVector rangeToTarget(who->GetPosition(), m_self->GetPosition());
+    //    Vector3D rangeToTarget(who->GetPosition(), m_self->GetPosition());
     //    if (rangeToTarget.length() - who->GetRadius() > m_maxTargetLockRange)
     //    {
     //        // TO-DO: send real out of range notice.

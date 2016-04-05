@@ -60,7 +60,6 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/Deflate.h"
      "${TARGET_INCLUDE_DIR}/utils/DirWalker.h"
      "${TARGET_INCLUDE_DIR}/utils/FastInt.h"
-     "${TARGET_INCLUDE_DIR}/utils/gpoint.h"
      "${TARGET_INCLUDE_DIR}/utils/Lock.h"
      "${TARGET_INCLUDE_DIR}/utils/misc.h"
      "${TARGET_INCLUDE_DIR}/utils/RefPtr.h"
@@ -72,6 +71,7 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/utils_string.h"
      "${TARGET_INCLUDE_DIR}/utils/utils_time.h"
      "${TARGET_INCLUDE_DIR}/utils/XMLDocument.h"
+     "${TARGET_INCLUDE_DIR}/math/Vector3D.h"
 )
 SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/crc32.cpp"
@@ -85,6 +85,7 @@ SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/utils_string.cpp"
      "${TARGET_SOURCE_DIR}/utils/utils_time.cpp"
      "${TARGET_SOURCE_DIR}/utils/XMLDocument.cpp"
+     "${TARGET_SOURCE_DIR}/math/Vector3D.cpp"
       )
 
 #####################
@@ -111,13 +112,11 @@ TARGET_BUILD_PCH( "${TARGET_NAME}"
 TARGET_INCLUDE_DIRECTORIES( "${TARGET_NAME}"
                             ${Boost_INCLUDE_DIRS}
                             ${MYSQL_INCLUDE_DIRS}
-                            ${GANGSTA_INCLUDE_DIRS}
                             "${ZLIB_INCLUDE_DIR}"
                             "${TARGET_INCLUDE_DIR}" )
 TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
                        ${Boost_LIBRARIES}
                        ${MYSQL_LIBRARIES}
-                       ${GANGSTA_LIBRARIES}
                        "${ZLIB_LIBRARY}"
                        ${CMAKE_NET_LIBS}
                        ${CMAKE_THREAD_LIBS} )

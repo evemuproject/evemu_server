@@ -94,13 +94,13 @@ PyResult KeeperService::Handle_ActivateAccelerationGate(PyCallArgs &call) {
 
 	who->Destiny()->SendSpecialEffect10(args.arg, who->GetShip(), 0, "effects.WarpGateEffect", 0, 1, 0);
 	double distance = 10 * ONE_AU_IN_METERS;
-	GPoint currentPosition(who->GetPosition());
-	GPoint deltaPosition;
+	Vector3D currentPosition(who->GetPosition());
+	Vector3D deltaPosition;
 	deltaPosition.x = MakeRandomFloat(-1.0, 1.0) * distance;
 	deltaPosition.y = MakeRandomFloat(-1.0, 1.0) * distance;
 	deltaPosition.z = MakeRandomFloat(-2.0, 2.0) * ONE_AU_IN_METERS;
-	GPoint warpToPoint(currentPosition+deltaPosition);		// Make a warp-in point variable
-	GVector vectorToDestination(currentPosition, warpToPoint);
+	Vector3D warpToPoint(currentPosition+deltaPosition);		// Make a warp-in point variable
+    Vector3D vectorToDestination(warpToPoint - currentPosition);
 	double distanceToDestination = vectorToDestination.length();
     who->WarpTo( warpToPoint, distanceToDestination );
 

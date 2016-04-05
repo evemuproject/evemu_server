@@ -418,7 +418,7 @@ PyResult DogmaIMBound::Handle_AddTarget(PyCallArgs &call) {
         return NULL;
 
     // For Debugging purposes, put a message in the log to print out the range to the target:
-    GVector vectorToTarget( call.client->GetPosition(), target->GetPosition() );
+    Vector3D vectorToTarget(target->GetPosition() - call.client->GetPosition());
     double rangeToTarget = vectorToTarget.length();
     // TODO: calculate double distance = SQRT(x^2 + y^2 + z^), where x,y,z are to.x-from.x, etc
     SysLog::Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET ADDED - Range to Target = %f meters.", rangeToTarget );
@@ -449,7 +449,7 @@ PyResult DogmaIMBound::Handle_RemoveTarget(PyCallArgs &call) {
     }
 
     // For Debugging purposes, put a message in the log to print out the range to the target:
-    GVector vectorToTarget( call.client->GetPosition(), target->GetPosition() );
+    Vector3D vectorToTarget(target->GetPosition() - call.client->GetPosition());
     double rangeToTarget = vectorToTarget.length();
     SysLog::Warning( "DogmaIMBound::Handle_AddTarget()", "TARGET REMOVED - Range to Target = %f meters.", rangeToTarget );
 
