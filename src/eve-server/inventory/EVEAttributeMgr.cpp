@@ -128,13 +128,21 @@ EvilNumber AttributeMap::GetAttribute( const uint32 attributeId ) const
     }
 }
 
-bool AttributeMap::HasAttribute(const uint32 attributeID) const
+bool AttributeMap::fetchAttribute(const uint32 attributeID, EvilNumber &value) const
 {
     AttrMapConstItr itr = mAttributes.find(attributeID);
     if (itr != mAttributes.end())
+    {
+        value = itr->second;
         return true;
-    else
-        return false;
+    }
+    return false;
+}
+
+bool AttributeMap::HasAttribute(const uint32 attributeID) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    return (itr != mAttributes.end());
 }
 
 bool AttributeMap::Change( uint32 attributeID, EvilNumber& old_val, EvilNumber& new_val )

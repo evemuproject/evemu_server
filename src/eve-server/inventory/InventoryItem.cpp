@@ -1362,14 +1362,19 @@ bool InventoryItem::SetAttribute( uint32 attributeID, uint32 num, bool notify /*
 	return status;
 }
 
-EvilNumber InventoryItem::GetAttribute( const uint32 attributeID ) const
-{
-     return mAttributeMap.GetAttribute(attributeID);
-}
-
 EvilNumber InventoryItem::GetDefaultAttribute( const uint32 attributeID ) const
 {
-     return mDefaultAttributeMap.GetAttribute(attributeID);
+    return mDefaultAttributeMap.GetAttribute(attributeID);
+}
+
+EvilNumber InventoryItem::GetAttribute(const uint32 attributeID) const
+{
+    return mAttributeMap.GetAttribute(attributeID);
+}
+
+bool InventoryItem::fetchAttribute(const uint32 attributeID, EvilNumber &value) const
+{
+    return mAttributeMap.fetchAttribute(attributeID, value);
 }
 
 bool InventoryItem::HasAttribute(const uint32 attributeID) const

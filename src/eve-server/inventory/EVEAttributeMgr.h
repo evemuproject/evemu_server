@@ -79,13 +79,25 @@ public:
      */
     bool SetAttribute(uint32 attributeId, EvilNumber &num, bool nofity = true);
 
-    EvilNumber GetAttribute(const uint32 attributeId) const;
+    /**
+     * Get the desired attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @return The attribute or zero if no found.
+     */
+    EvilNumber GetAttribute(const uint32 attributeID) const;
 
-    /*
-     * HasAttribute
-     *
-     * returns true if this item has the attribute 'attributeID', false if it does not have this attribute
-     *
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, EvilNumber &value) const;
+
+    /**
+     * Check if item HasAttribute.
+     * @param attributeID the attribute to check.
+     * @returns true if this item has the attribute 'attributeID', false if it does not have this attribute
      * @note this function should be used very infrequently and only for specific reasons
      */
     bool HasAttribute(const uint32 attributeID) const;
