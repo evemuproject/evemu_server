@@ -102,11 +102,24 @@ const char *ItemSystemEntity::GetName() const {
     return(m_self->itemName().c_str());
 }
 
-float ItemSystemEntity::GetRadius() const {
-    if(!m_self)
-        return(1.0f);
-    //return(m_self->radius());
-    return static_cast<float>(m_self->GetAttribute(AttrRadius).get_float());
+float ItemSystemEntity::GetRadius() const
+{
+    if (m_self)
+    {
+        EvilNumber radius;
+        // Do we have a radius attribute?
+        if (m_self->fetchAttribute(AttrRadius, radius))
+        {
+            // Is it a realistic value?
+            if (radius.get_float() > 0)
+            {
+                // Yes, use that.
+                return radius.get_float();
+            }
+        }
+    }
+    // Use type default.
+    return Item()->type()->radius;
 }
 
 const Vector3D &ItemSystemEntity::GetPosition() const {

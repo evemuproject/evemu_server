@@ -390,51 +390,41 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
             return NULL;
         }
 
-        Vector3D origin(0.0,0.0,0.0);
+        // Make a warp-in point variable
+        Vector3D warpToPoint(se->GetPosition());
         double distanceFromBodyOrigin = 0.0;
-        Vector3D warpToPoint(se->GetPosition());                                // Make a warp-in point variable
-        if( IsStaticMapItem(se->GetID()) )
+        Vector3D vectorToWarpPoint(1, 1, 1);
+        if (IsStaticMapItem(se->GetID()))
         {
-            switch( ((SimpleSystemEntity *)(se))->data.groupID )
+            // Calculate final distance out from origin of celestial body along common warp-to vector:
+            switch (((SimpleSystemEntity *) (se))->data.groupID)
             {
+                    // This should calculate a common warp in point around a celestial body.
                 case EVEDB::invGroups::Sun:
-                case EVEDB::invGroups::Planet:
-                case EVEDB::invGroups::Moon:
-                {
-                    // Calculate final distance out from origin of celestial body along common warp-to vector:
-                    distanceFromBodyOrigin = se->GetRadius();            // Add celestial body's radius
-                    distanceFromBodyOrigin += 20000000;                    // Add 20,000km along common vector from celestial body origin to ensure
-                                                                        // client camera rotation about ship does not take camera inside the celestial body's wireframe
-
-                    // Calculate final warp-to point along common vector from celestial body's origin and add randomized position adjustment for multiple ships coming out of warp to not bump
-                    Vector3D celestialOrigin(se->GetPosition());                            // Make a celestial body origin point variable
-                    Vector3D vectorFromOrigin(origin - celestialOrigin); // Make a celestial body TO system origin origin vector variable
-                    if( vectorFromOrigin.length() == 0 )
-                    {
-                        // This is the special case where we are warping to the Star, so we have to construct
-                        // a vector from the star's center (0,0,0) to the warp-in point using the distanceFromBodyOrigin
-                        // calculated earlier:
-                        vectorFromOrigin = Vector3D(call.client->GetPosition() - celestialOrigin);
-                        vectorFromOrigin.normalize();
-                        vectorFromOrigin *= distanceFromBodyOrigin;
-                    }
-                    // To-do: this should also calculate a common warp in point around a celestial body.
-                    Vector3D vectorToWarpPoint(vectorFromOrigin);                        // Make a vector to the Warp-In point
-                    vectorToWarpPoint.normalize();
-                    warpToPoint += vectorToWarpPoint * distanceFromBodyOrigin;
-
-                    // Randomize warp-in point:
-                    warpToPoint.MakeRandomPointOnSphereLayer(1000.0,(1000.0+call.client->GetRadius()));
+                    // 20,000km
+                    distanceFromBodyOrigin = 20000000;
                     break;
-                }
-                default:
-                    // For all other objects, simply just add radius of ship and object:
-                    distance += call.client->GetRadius() + se->GetRadius();
+                case EVEDB::invGroups::Moon:
+                    // 50 km
+                    distanceFromBodyOrigin = 50000;
+                    break;
+                case EVEDB::invGroups::Planet:
+                    // 500 km
+                    distanceFromBodyOrigin = 500000;
                     break;
             }
         }
+        if (distanceFromBodyOrigin > 0)
+        {
+            distanceFromBodyOrigin += se->GetRadius();
+            warpToPoint += vectorToWarpPoint * distanceFromBodyOrigin;
+            // Randomize warp-in point:
+            warpToPoint.MakeRandomPointOnSphereLayer(1000.0, (1000.0 + call.client->GetRadius()));
+        }
         else
+        {
             distance += call.client->GetRadius() + se->GetRadius();
+        }
 
         call.client->WarpTo( warpToPoint, distance );
     }
