@@ -100,10 +100,7 @@ public:
         m_item->ResetAttribute(AttrHp, true);
     }
 
-    virtual void repair(EvilNumber amount) { m_item->SetAttribute(AttrHp, m_item->GetAttribute(AttrHp) + amount); }
-    virtual void setAttribute(uint32 attrID, EvilNumber val) { m_item->SetAttribute(attrID, val); }
-    virtual EvilNumber getAttribute(uint32 attrID) { return m_item->GetAttribute(attrID); }
-    virtual bool hasAttribute(uint32 attrID) { return m_item->HasAttribute(attrID); }
+    virtual void repair(EvilNumber amount) { m_item->setAttribute(AttrHp, m_item->getAttribute(AttrHp) + amount); }
 
     //access functions
 
@@ -111,7 +108,7 @@ public:
     virtual uint32 itemID() { return m_item->itemID(); }
     virtual EVEItemFlags flag() { return m_item->flag(); }
     virtual uint32 typeID() { return m_item->typeID(); }
-    virtual bool isOnline() { return (m_item->GetAttribute(AttrIsOnline) == 1); }
+    virtual bool isOnline() { return (m_item->getAttribute(AttrIsOnline) == 1); }
     virtual bool isHighPower() { return m_effects->isHighSlot(); }
     virtual bool isMediumPower() { return m_effects->isMediumSlot(); }
     virtual bool isLowPower() { return m_effects->isLowSlot(); }

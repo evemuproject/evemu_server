@@ -102,7 +102,7 @@ PyResult SkillMgrBound::Handle_GetCharacterAttributeModifiers(PyCallArgs &call)
             continue;
         }
         // Does this implant have the bonus we are looking for?
-        if (!item->HasAttribute(bonusAttr))
+        if (!item->hasAttribute(bonusAttr))
         {
             // No, continue.
             continue;
@@ -112,7 +112,7 @@ PyResult SkillMgrBound::Handle_GetCharacterAttributeModifiers(PyCallArgs &call)
         tuple->SetItem(0, new PyInt(item->itemID()));
         tuple->SetItem(1, new PyInt(item->typeID()));
         tuple->SetItem(2, new PyInt(EVECalculationType::CALC_ADDITION)); // operation?
-        tuple->SetItem(3, new PyInt(item->GetAttribute(bonusAttr).get_int()));
+        tuple->SetItem(3, new PyInt(item->getAttribute(bonusAttr).get_int()));
         list->AddItem(tuple);
     }
     return list;
@@ -207,7 +207,7 @@ PyResult SkillMgrBound::Handle_CharAddImplant( PyCallArgs& call )
         {
             item = item->Split(1);
         }
-        InventoryItemRef existing = charRef->GetImplant(item->GetAttribute(AttrImplantness).get_int());
+        InventoryItemRef existing = charRef->GetImplant(item->getAttribute(AttrImplantness).get_int());
         if (existing.get() != nullptr && existing != item)
         {
             // We are replacing an existing implant!
@@ -319,11 +319,11 @@ PyResult SkillMgrBound::Handle_RespecCharacter(PyCallArgs &call)
         return NULL;
 
     // TODO: validate these values (and their sum)
-    cref->SetAttribute(AttrCharisma, spec.charisma);
-    cref->SetAttribute(AttrIntelligence, spec.intelligence);
-    cref->SetAttribute(AttrMemory, spec.memory);
-    cref->SetAttribute(AttrPerception, spec.perception);
-    cref->SetAttribute(AttrWillpower, spec.willpower);
+    cref->setAttribute(AttrCharisma, spec.charisma);
+    cref->setAttribute(AttrIntelligence, spec.intelligence);
+    cref->setAttribute(AttrMemory, spec.memory);
+    cref->setAttribute(AttrPerception, spec.perception);
+    cref->setAttribute(AttrWillpower, spec.willpower);
     cref->SaveAttributes();
 
     // no return value

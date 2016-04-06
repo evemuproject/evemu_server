@@ -40,11 +40,11 @@ void ArmorRepairer::startCycle(bool continuing)
 {
     // Apply repair amount:
     EvilNumber newDamageAmount;
-    newDamageAmount = m_ship->GetAttribute(AttrArmorDamage) - m_item->GetAttribute(AttrArmorDamageAmount);
+    newDamageAmount = m_ship->getAttribute(AttrArmorDamage) - m_item->getAttribute(AttrArmorDamageAmount);
     if( newDamageAmount < 0.0 )
     {
         newDamageAmount = 0.0;
     }
 
-    m_ship->SetAttribute(AttrArmorDamage, newDamageAmount);
+    m_ship->setAttribute(AttrArmorDamage, newDamageAmount);
 }

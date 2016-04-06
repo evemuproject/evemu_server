@@ -107,9 +107,9 @@ double Structure::GetCapacity(EVEItemFlags flag) const
     switch( flag ) {
         // the .get_float() part is a evil hack.... as this function should return a EvilNumber.
         case flagAutoFit:
-        case flagCargoHold:           return GetAttribute(AttrCapacity).get_float();
-        case flagSecondaryStorage:    return GetAttribute(AttrCapacitySecondary).get_float();
-        case flagSpecializedAmmoHold: return GetAttribute(AttrAmmoCapacity).get_float();
+        case flagCargoHold: return getAttribute(AttrCapacity).get_float();
+        case flagSecondaryStorage: return getAttribute(AttrCapacitySecondary).get_float();
+        case flagSpecializedAmmoHold: return getAttribute(AttrAmmoCapacity).get_float();
         default:                      return 0.0;
     }
 }
@@ -124,9 +124,9 @@ bool Structure::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
         FindByFlag(flag, items);
         for (uint32 i = 0; i < items.size(); i++)
         {
-            capacityUsed += items[i]->GetAttribute(AttrVolume);
+            capacityUsed += items[i]->getAttribute(AttrVolume);
         }
-        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrCapacity))
+        if (capacityUsed + (item->getAttribute(AttrVolume) * item->quantity()) > getAttribute(AttrCapacity))
         {
             throw PyException(MakeCustomError("Not enough cargo space!"));
         }
@@ -140,9 +140,9 @@ bool Structure::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
         FindByFlag(flag, items);
         for (uint32 i = 0; i < items.size(); i++)
         {
-            capacityUsed += items[i]->GetAttribute(AttrVolume);
+            capacityUsed += items[i]->getAttribute(AttrVolume);
         }
-        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrCapacitySecondary))
+        if (capacityUsed + (item->getAttribute(AttrVolume) * item->quantity()) > getAttribute(AttrCapacitySecondary))
         {
             throw PyException(MakeCustomError("Not enough Secondary Storage space!"));
         }
@@ -156,9 +156,9 @@ bool Structure::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
         FindByFlag(flag, items);
         for (uint32 i = 0; i < items.size(); i++)
         {
-            capacityUsed += items[i]->GetAttribute(AttrVolume);
+            capacityUsed += items[i]->getAttribute(AttrVolume);
         }
-        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrAmmoCapacity))
+        if (capacityUsed + (item->getAttribute(AttrVolume) * item->quantity()) > getAttribute(AttrAmmoCapacity))
         {
             throw PyException(MakeCustomError("Not enough Ammo Storage space!"));
         }
@@ -335,11 +335,11 @@ void StructureEntity::EncodeDestiny( Buffer& into ) const
 
 void StructureEntity::MakeDamageState(DoDestinyDamageState &into) const
 {
-    into.shield = (m_self->GetAttribute(AttrShieldCharge).get_float() / m_self->GetAttribute(AttrShieldCapacity).get_float());
+    into.shield = (m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float());
     into.tau = 100000;    //no freaking clue.
     into.timestamp = Win32TimeNow();
 //    armor damage isn't working...
-    into.armor = 1.0 - (m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float());
+    into.armor = 1.0 - (m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float());
+    into.structure = 1.0 - (m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float());
 }
 

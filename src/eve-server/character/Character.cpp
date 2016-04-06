@@ -314,7 +314,7 @@ CharacterRef Character::Spawn(
     CharacterRef charRef = Character::Load( characterID );
 
     // Create default dynamic attributes in the AttributeMap:
-    charRef.get()->SetAttribute(AttrIsOnline, 1);     // Is Online
+    charRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
 
     return charRef;
 }
@@ -486,7 +486,7 @@ bool Character::HasSkillTrainedToLevel(uint32 skillTypeID, uint32 skillLevel) co
         return false;
 
     // Second, check for required minimum level of skill, note it must already be trained to this level:
-    if( requiredSkill->GetAttribute(AttrSkillLevel) < skillLevel )
+    if (requiredSkill->getAttribute(AttrSkillLevel) < skillLevel)
         return false;
 
     return true;
@@ -508,7 +508,7 @@ uint8 Character::GetSkillLevel(uint32 skillTypeID, bool zeroForNotInjected /*tru
     SkillRef requiredSkill = GetSkill( skillTypeID );
     // First, check for existence of skill trained or in training:
     if (!requiredSkill) return (zeroForNotInjected ? 0 : -1);
-    return requiredSkill->GetAttribute(AttrSkillLevel).get_int() ;
+    return requiredSkill->getAttribute(AttrSkillLevel).get_int();
 }
 
 SkillRef Character::GetSkill(uint32 skillTypeID) const
@@ -540,22 +540,22 @@ void Character::GetSkillsList(std::vector<InventoryItemRef> &skills) const
 
 double Character::GetSPPerMin(SkillRef skill)
 {
-    EvilNumber primarySkillTrainingAttr = skill->GetAttribute(AttrPrimaryAttribute);
-    EvilNumber secondarySkillTrainingAttr = skill->GetAttribute(AttrSecondaryAttribute);
+    EvilNumber primarySkillTrainingAttr = skill->getAttribute(AttrPrimaryAttribute);
+    EvilNumber secondarySkillTrainingAttr = skill->getAttribute(AttrSecondaryAttribute);
     uint32 primarySkill = primarySkillTrainingAttr.get_int();
     uint32 secondarySkill = secondarySkillTrainingAttr.get_int();
 
-    double primarySPperMin = GetAttribute(primarySkill).get_float();
-    double secondarySPperMin = GetAttribute(secondarySkill).get_float();
+    double primarySPperMin = getAttribute(primarySkill).get_float();
+    double secondarySPperMin = getAttribute(secondarySkill).get_float();
     primarySkill -= AttrCharisma;
     secondarySkill -= AttrCharisma;
     // Get custom bonus.
     uint32 customAttr[] = {170, 174, 173, 172, 171};
-    primarySPperMin += GetAttribute(customAttr[primarySkill]).get_int();
-    secondarySPperMin += GetAttribute(customAttr[secondarySkill]).get_int();
+    primarySPperMin += getAttribute(customAttr[primarySkill]).get_int();
+    secondarySPperMin += getAttribute(customAttr[secondarySkill]).get_int();
     // Get implant bonus.
-    primarySPperMin += GetAttribute(primarySkill + AttrCharismaBonus).get_int();
-    secondarySPperMin += GetAttribute(secondarySkill + AttrCharismaBonus).get_int();
+    primarySPperMin += getAttribute(primarySkill + AttrCharismaBonus).get_int();
+    secondarySPperMin += getAttribute(secondarySkill + AttrCharismaBonus).get_int();
 
     return primarySPperMin + secondarySPperMin / 2.0f;
 }
@@ -566,7 +566,7 @@ EvilNumber Character::GetEndOfTraining() const
     if( !skill )
         return 0;
 
-    return skill->GetAttribute(AttrExpiryTime);
+    return skill->getAttribute(AttrExpiryTime);
 }
 
 bool Character::InjectSkillIntoBrain(SkillRef skill)
@@ -614,7 +614,7 @@ bool Character::InjectSkillIntoBrain(SkillRef skill)
     }
     // Inject the skill.
     // Set level in defaults to integer as client does not like floats!
-    skill->SetAttribute(AttrSkillLevel, (uint8) 0, true, true);
+    skill->setAttribute(AttrSkillLevel, (uint8) 0, true, true);
     skill->MoveInto(*this, flagSkill);
     skill->SaveItem();
 
@@ -678,13 +678,13 @@ void Character::StopTraining()
     _log(ITEM__ERROR, "%s (%u): Stopping training of skill %s (%u).", itemName().c_str(), itemID(), stopTraining->itemName().c_str(), stopTraining->itemID());
 
     // Get new skill Level.
-    int skillLevel = stopTraining->GetAttribute(AttrSkillLevel).get_int() + 1;
+    int skillLevel = stopTraining->getAttribute(AttrSkillLevel).get_int() + 1;
     // Limit skill to level 5
     skillLevel = std::min(skillLevel, 5);
     // Get skill points for next level.
     double nextLevelPoints = stopTraining->GetSPForLevel(skillLevel);
     // Get current skill points.
-    double currentPoints = stopTraining->GetAttribute(AttrSkillPoints).get_float();
+    double currentPoints = stopTraining->getAttribute(AttrSkillPoints).get_float();
     // Get SP to finish level.
     double SPToNextLevel = nextLevelPoints - currentPoints;
     // Get SP rate.
@@ -692,7 +692,7 @@ void Character::StopTraining()
     // Get stop time.
     uint64 stopTime = Win32TimeNow();
     // Get planed end time.
-    uint64 timeEndTrain = stopTraining->GetAttribute(AttrExpiryTime).get_int();
+    uint64 timeEndTrain = stopTraining->getAttribute(AttrExpiryTime).get_int();
     // Find minutes remaining in training.
     double minRemaining = (timeEndTrain - stopTime) / (double) Win32Time_Minute;
     // Calculate total points trained.
@@ -717,13 +717,13 @@ void Character::StopTraining()
         nextLevelPoints = stopTraining->GetSPForLevel(skillLevel);
     }
     // Set skill points trained.
-    stopTraining->SetAttribute(AttrSkillPoints, totalPointsTrained);
+    stopTraining->setAttribute(AttrSkillPoints, totalPointsTrained);
     SysLog::Debug("", "Skill %s (%u) trained %f skill points before termination from training queue", stopTraining->itemName().c_str(), stopTraining->itemID(), totalPointsTrained);
 
     // Set flag to just be a skill.
     stopTraining->SetFlag(flagSkill);
     // Set completion time to 0;
-    stopTraining->SetAttribute(AttrExpiryTime, 0);
+    stopTraining->setAttribute(AttrExpiryTime, 0);
 
     // Add event to database.
     uint32 method = 38; // 38 - SkillTrainingCanceled
@@ -742,7 +742,7 @@ void Character::StopTraining()
     if (levelUp)
     {
         // We completed a level...
-        stopTraining->SetAttribute(AttrSkillLevel, skillLevel);
+        stopTraining->setAttribute(AttrSkillLevel, skillLevel);
         // Remove it from the queue and send updates.
         auto cur = m_skillQueue.begin();
         while (cur != m_skillQueue.end())
@@ -831,7 +831,7 @@ SkillRef Character::StartTraining(uint32 skillID, uint64 nextStartTime)
 
     // Get the characters skill entry.
     startTraining = GetSkill(skillID);
-    if (startTraining.get() == nullptr || startTraining->GetAttribute(AttrSkillLevel).get_int() >= 5)
+    if (startTraining.get() == nullptr || startTraining->getAttribute(AttrSkillLevel).get_int() >= 5)
     {
         // Remove un-trainable skill from list.
         m_skillQueue.erase(m_skillQueue.begin());
@@ -846,18 +846,18 @@ SkillRef Character::StartTraining(uint32 skillID, uint64 nextStartTime)
     // Get training rate.
     double SPPerMinute = GetSPPerMin(startTraining);
     // Get new skill Level.
-    int skillLevel = startTraining->GetAttribute(AttrSkillLevel).get_int() + 1;
+    int skillLevel = startTraining->getAttribute(AttrSkillLevel).get_int() + 1;
     // Get skill points for level.
     double skillPoints = startTraining->GetSPForLevel(skillLevel);
     // Get SP to finish level.
-    double SPToNextLevel = skillPoints - startTraining->GetAttribute(AttrSkillPoints).get_float();
+    double SPToNextLevel = skillPoints - startTraining->getAttribute(AttrSkillPoints).get_float();
     // Calculate the time training will finish.
     uint64 timeTraining = nextStartTime + (EvilTime_Minute.get_float() * (SPToNextLevel / SPPerMinute));
 
     // Minimum of 10 seconds training time,
     timeTraining = std::max(timeTraining, Win32Time_Second * 10);
     // Set training time end.
-    startTraining->SetAttribute(AttrExpiryTime, (double) timeTraining);
+    startTraining->setAttribute(AttrExpiryTime, (double) timeTraining);
     // Set training flag.
     startTraining->SetFlag(flagSkillInTraining);
     // Save changes to this skill before removing it from training:
@@ -913,7 +913,7 @@ void Character::UpdateSkillQueue()
             StopTraining();
             return;
         }
-        if (currentTraining->GetAttribute(AttrExpiryTime).get_float() == 0)
+        if (currentTraining->getAttribute(AttrExpiryTime).get_float() == 0)
         {
             // Start training next skill.
             StartTraining(currentTraining->typeID());
@@ -928,7 +928,7 @@ void Character::UpdateSkillQueue()
 
     uint64 nextStartTime = Win32TimeNow();
     uint64 expiry;
-    while ((expiry = currentTraining->GetAttribute(AttrExpiryTime).get_float()) <= Win32TimeNow())
+    while ((expiry = currentTraining->getAttribute(AttrExpiryTime).get_float()) <= Win32TimeNow())
     {
         if (expiry == 0)
         {
@@ -944,19 +944,19 @@ void Character::UpdateSkillQueue()
         SysLog::Debug("Character::UpdateSkillQueue()", "%s (%u): Finishing training of skill %s (%u).", itemName().c_str(), itemID(), currentTraining->itemName().c_str(), currentTraining->itemID());
 
         // Get new skill Level.
-        int skillLevel = currentTraining->GetAttribute(AttrSkillLevel).get_int() + 1;
+        int skillLevel = currentTraining->getAttribute(AttrSkillLevel).get_int() + 1;
         // Limit skill to level 5
         skillLevel = std::min(skillLevel, 5);
         // Get skill points for level.
         double skillPoints = currentTraining->GetSPForLevel(skillLevel);
         // Set new attributes.
-        currentTraining->SetAttribute(AttrSkillLevel, skillLevel);
-        currentTraining->SetAttribute(AttrSkillPoints, skillPoints, true);
+        currentTraining->setAttribute(AttrSkillLevel, skillLevel);
+        currentTraining->setAttribute(AttrSkillPoints, skillPoints, true);
 
         // Get completion time as new start time.
         nextStartTime = expiry;
         // Clear completion time.
-        currentTraining->SetAttribute(AttrExpiryTime, 0);
+        currentTraining->setAttribute(AttrExpiryTime, 0);
         // Set skill flag to not training.
         currentTraining->SetFlag(flagSkill);
         // Save changes to this skill now that it has finished training:
@@ -1025,7 +1025,7 @@ void Character::UpdateSkillQueueEndTime(const SkillQueue &queue)
         const QueuedSkill &qs = queue[ i ];     // get skill id from queue
         SkillRef skill = Character::GetSkill( qs.typeID );   //make ref for current skill
 
-        chrMinRemaining += (skill->GetSPForLevel(qs.level) - skill->GetAttribute(AttrSkillPoints).get_float()) / GetSPPerMin(skill);
+        chrMinRemaining += (skill->GetSPForLevel(qs.level) - skill->getAttribute(AttrSkillPoints).get_float()) / GetSPPerMin(skill);
     }
     chrMinRemaining = chrMinRemaining * Win32Time_Minute + Win32TimeNow();
 
@@ -1156,24 +1156,24 @@ void Character::AddItem(InventoryItemRef item)
         else
         {
             item->ChangeSingleton(true);
-            uint32 slot = item->GetAttribute(AttrImplantness).get_int();
+            uint32 slot = item->getAttribute(AttrImplantness).get_int();
             if (m_implants.find(slot) != m_implants.end())
             {
                 // Remove existing implant.
                 InventoryItemRef existing = m_implants[slot];
                 for (int i = AttrCharismaBonus; i <= AttrWillpowerBonus; i++)
                 {
-                    SetAttribute(i, GetAttribute(i).get_int()
-                                 - existing->GetAttribute(i).get_int()
-                                 + item->GetAttribute(i).get_int());
+                    setAttribute(i, getAttribute(i).get_int()
+                                 - existing->getAttribute(i).get_int()
+                                 + item->getAttribute(i).get_int());
                 }
             }
             else
             {
                 for (int i = AttrCharismaBonus; i <= AttrWillpowerBonus; i++)
                 {
-                    SetAttribute(i, GetAttribute(i).get_int()
-                                 + item->GetAttribute(i).get_int());
+                    setAttribute(i, getAttribute(i).get_int()
+                                 + item->getAttribute(i).get_int());
                 }
             }
             // Install new implant
@@ -1206,18 +1206,18 @@ void Character::AddItem(InventoryItemRef item)
                 // Make it singleton and set initial skill values.
                 skill->ChangeSingleton( true );
 
-                skill->SetAttribute(AttrSkillLevel, 0);
-                skill->SetAttribute(AttrSkillPoints, 0);
+                skill->setAttribute(AttrSkillLevel, 0);
+                skill->setAttribute(AttrSkillPoints, 0);
             }
             // Do sanity check on skill level.
-            if (skill->GetAttribute(AttrSkillLevel).get_int() >= 5)
+            if (skill->getAttribute(AttrSkillLevel).get_int() >= 5)
             {
-                skill->SetAttribute(AttrSkillLevel, 5);
-                skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(5));
+                skill->setAttribute(AttrSkillLevel, 5);
+                skill->setAttribute(AttrSkillPoints, skill->GetSPForLevel(5));
             }
             if (skill->flag() != flagSkillInTraining)
             {
-                skill->SetAttribute(AttrExpiryTime, 0);
+                skill->setAttribute(AttrExpiryTime, 0);
             }
             else
             {
@@ -1234,7 +1234,7 @@ void Character::RemoveItem(InventoryItemRef item)
     if (item->flag() == flagImplant)
     {
         // Item removed is an implant.
-        uint32 slot = item->GetAttribute(AttrImplantness).get_int();
+        uint32 slot = item->getAttribute(AttrImplantness).get_int();
         if (m_implants.find(slot) != m_implants.end())
         {
             // Implant slot found
@@ -1245,8 +1245,8 @@ void Character::RemoveItem(InventoryItemRef item)
                 // Remove implant bonuses.
                 for (int i = AttrCharismaBonus; i <= AttrWillpowerBonus; i++)
                 {
-                    SetAttribute(i, GetAttribute(i).get_int()
-                                 - item->GetAttribute(i).get_int());
+                    setAttribute(i, getAttribute(i).get_int()
+                                 - item->getAttribute(i).get_int());
                 }
             }
         }
@@ -1378,7 +1378,7 @@ bool Character::canUse(InventoryItemRef item)
     for (int i = 0; i < 6; i++)
     {
         // Is there a required skill?
-        uint32 skillTypeID = item->GetAttribute(requiredAttr[i]).get_int();
+        uint32 skillTypeID = item->getAttribute(requiredAttr[i]).get_int();
         if (skillTypeID != 0)
         {
             // There is a required skill.
@@ -1389,7 +1389,7 @@ bool Character::canUse(InventoryItemRef item)
                 return false;
             }
             // Do we have the required level?
-            if (requiredSkill->GetSkillLevel() < item->GetAttribute(requiredLevel[i]).get_int())
+            if (requiredSkill->GetSkillLevel() < item->getAttribute(requiredLevel[i]).get_int())
             {
                 // We do not have necessary level.
                 return false;
@@ -1412,7 +1412,7 @@ void Character::_CalculateTotalSPTrained()
     end = skills.end();
     for(; cur != end; cur++)
     {
-        totalSP = totalSP + cur->get()->GetAttribute( AttrSkillPoints );    // much cleaner and more accurate    -allan
+        totalSP = totalSP + cur->get()->getAttribute(AttrSkillPoints); // much cleaner and more accurate    -allan
     }
 
     m_totalSPtrained = totalSP;

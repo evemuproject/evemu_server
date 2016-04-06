@@ -324,11 +324,11 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 	capp.Build(char_item->itemID(), arg.avatarInfo);
 
     // add attribute bonuses
-    char_item->SetAttribute(AttrIntelligence, intelligence);
-    char_item->SetAttribute(AttrCharisma, charisma);
-    char_item->SetAttribute(AttrPerception, perception);
-    char_item->SetAttribute(AttrMemory, memory);
-    char_item->SetAttribute(AttrWillpower, willpower);
+    char_item->setAttribute(AttrIntelligence, intelligence);
+    char_item->setAttribute(AttrCharisma, charisma);
+    char_item->setAttribute(AttrPerception, perception);
+    char_item->setAttribute(AttrMemory, memory);
+    char_item->setAttribute(AttrWillpower, willpower);
 
     // register name
     CharacterDB::add_name_validation_set(char_item->itemName().c_str(), char_item->itemID());
@@ -348,8 +348,8 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
         }
 
         skillLevel = cur->second;
-        i->SetAttribute(AttrSkillLevel, skillLevel );
-        i->SetAttribute(AttrSkillPoints, i->GetSPForLevel(cur->second));
+        i->setAttribute(AttrSkillLevel, skillLevel );
+        i->setAttribute(AttrSkillPoints, i->GetSPForLevel(cur->second));
         i->SaveAttributes();
     }
 

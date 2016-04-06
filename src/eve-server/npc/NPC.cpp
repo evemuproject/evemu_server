@@ -56,68 +56,68 @@ NPC::NPC(
 
 	// SET ALL ATTRIBUTES MISSING FROM DATABASE BEFORE USING THEM FOR ANYTHING:
     // Create default dynamic attributes in the AttributeMap:
-    self->SetAttribute(AttrIsOnline,            1, true);											// Is Online
-    self->SetAttribute(AttrShieldCharge,        self->GetAttribute(AttrShieldCapacity), true);		// Shield Charge
-    self->SetAttribute(AttrArmorDamage,         0.0, true);											// Armor Damage
-    self->SetAttribute(AttrMass, self->type()->getAttr(AttrMass), true); // Mass
-    self->SetAttribute(AttrRadius, self->type()->getAttr(AttrRadius), true); // Radius
-    self->SetAttribute(AttrVolume, self->type()->getAttr(AttrVolume), true); // Volume
-    self->SetAttribute(AttrCapacity, self->type()->getAttr(AttrCapacity), true); // Capacity
-    self->SetAttribute(AttrInertia,             1, true);											// Inertia
-    self->SetAttribute(AttrCharge,              self->GetAttribute(AttrCapacitorCapacity), true);	// Set Capacitor Charge to the Capacitor Capacity
-	self->SetAttribute(AttrShieldCharge,        self->GetAttribute(AttrShieldCapacity), true);		// Shield Charge
+    self->setAttribute(AttrIsOnline,            1, true);											// Is Online
+    self->setAttribute(AttrShieldCharge,        self->getAttribute(AttrShieldCapacity), true);		// Shield Charge
+    self->setAttribute(AttrArmorDamage,         0.0, true);											// Armor Damage
+    self->setAttribute(AttrMass, self->type()->getAttr(AttrMass), true); // Mass
+    self->setAttribute(AttrRadius, self->type()->getAttr(AttrRadius), true); // Radius
+    self->setAttribute(AttrVolume, self->type()->getAttr(AttrVolume), true); // Volume
+    self->setAttribute(AttrCapacity, self->type()->getAttr(AttrCapacity), true); // Capacity
+    self->setAttribute(AttrInertia,             1, true);											// Inertia
+    self->setAttribute(AttrCharge,              self->getAttribute(AttrCapacitorCapacity), true);	// Set Capacitor Charge to the Capacitor Capacity
+	self->setAttribute(AttrShieldCharge,        self->getAttribute(AttrShieldCapacity), true);		// Shield Charge
 
 	// Agility - WARNING!  NO NPC Ships have Agility, so we're setting it to 1 for ALL NPC ships
-	if( !(self->HasAttribute(AttrAgility)) )
-        self->SetAttribute(AttrAgility, 1, true);
+	if( !(self->hasAttribute(AttrAgility)) )
+        self->setAttribute(AttrAgility, 1, true);
 
 	// Shield Resonance
 	// AttrShieldEmDamageResonance
-	if( !(self->HasAttribute(AttrShieldEmDamageResonance)) )
-		self->SetAttribute(AttrShieldEmDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrShieldEmDamageResonance)) )
+		self->setAttribute(AttrShieldEmDamageResonance, 1.0, true);
 	// AttrShieldExplosiveDamageResonance
-	if( !(self->HasAttribute(AttrShieldExplosiveDamageResonance)) )
-		self->SetAttribute(AttrShieldExplosiveDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrShieldExplosiveDamageResonance)) )
+		self->setAttribute(AttrShieldExplosiveDamageResonance, 1.0, true);
 	// AttrShieldKineticDamageResonance
-	if( !(self->HasAttribute(AttrShieldKineticDamageResonance)) )
-		self->SetAttribute(AttrShieldKineticDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrShieldKineticDamageResonance)) )
+		self->setAttribute(AttrShieldKineticDamageResonance, 1.0, true);
 	// AttrShieldThermalDamageResonance
-	if( !(self->HasAttribute(AttrShieldThermalDamageResonance)) )
-		self->SetAttribute(AttrShieldThermalDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrShieldThermalDamageResonance)) )
+		self->setAttribute(AttrShieldThermalDamageResonance, 1.0, true);
 
 	// Armor Resonance
 	// AttrArmorEmDamageResonance
-	if( !(self->HasAttribute(AttrArmorEmDamageResonance)) )
-		self->SetAttribute(AttrArmorEmDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrArmorEmDamageResonance)) )
+		self->setAttribute(AttrArmorEmDamageResonance, 1.0, true);
 	// AttrArmorExplosiveDamageResonance
-	if( !(self->HasAttribute(AttrArmorExplosiveDamageResonance)) )
-		self->SetAttribute(AttrArmorExplosiveDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrArmorExplosiveDamageResonance)) )
+		self->setAttribute(AttrArmorExplosiveDamageResonance, 1.0, true);
 	// AttrArmorKineticDamageResonance
-	if( !(self->HasAttribute(AttrArmorKineticDamageResonance)) )
-		self->SetAttribute(AttrArmorKineticDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrArmorKineticDamageResonance)) )
+		self->setAttribute(AttrArmorKineticDamageResonance, 1.0, true);
 	// AttrArmorThermalDamageResonance
-	if( !(self->HasAttribute(AttrArmorThermalDamageResonance)) )
-		self->SetAttribute(AttrArmorThermalDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrArmorThermalDamageResonance)) )
+		self->setAttribute(AttrArmorThermalDamageResonance, 1.0, true);
 
 	// Hull Damage
-	if( !(self->HasAttribute(AttrDamage)) )
-        self->SetAttribute(AttrDamage, 0, true );
+	if( !(self->hasAttribute(AttrDamage)) )
+        self->setAttribute(AttrDamage, 0, true );
 	// AttrHullEmDamageResonance
-	if( !(self->HasAttribute(AttrHullEmDamageResonance)) )
-		self->SetAttribute(AttrHullEmDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrHullEmDamageResonance)) )
+		self->setAttribute(AttrHullEmDamageResonance, 1.0, true);
 	// AttrHullExplosiveDamageResonance
-	if( !(self->HasAttribute(AttrHullExplosiveDamageResonance)) )
-		self->SetAttribute(AttrHullExplosiveDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrHullExplosiveDamageResonance)) )
+		self->setAttribute(AttrHullExplosiveDamageResonance, 1.0, true);
 	// AttrHullKineticDamageResonance
-	if( !(self->HasAttribute(AttrHullKineticDamageResonance)) )
-		self->SetAttribute(AttrHullKineticDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrHullKineticDamageResonance)) )
+		self->setAttribute(AttrHullKineticDamageResonance, 1.0, true);
 	// AttrHullThermalDamageResonance
-	if( !(self->HasAttribute(AttrHullThermalDamageResonance)) )
-		self->SetAttribute(AttrHullThermalDamageResonance, 1.0, true);
+	if( !(self->hasAttribute(AttrHullThermalDamageResonance)) )
+		self->setAttribute(AttrHullThermalDamageResonance, 1.0, true);
 
 	// AttrOrbitRange
-	if( !(self->HasAttribute(AttrOrbitRange)) )
-		self->SetAttribute(AttrOrbitRange, 5000, true);
+	if( !(self->hasAttribute(AttrOrbitRange)) )
+		self->setAttribute(AttrOrbitRange, 5000, true);
 
 
 	// Set internal and Destiny values FROM these Attributes, now that they are all setup:
@@ -128,7 +128,7 @@ NPC::NPC(
 
 	/* Gets the value from the NPC and put on our own vars */
     //m_shieldCharge = self->shieldCharge();
-    m_shieldCharge = self->GetAttribute(AttrShieldCapacity).get_float();
+    m_shieldCharge = self->getAttribute(AttrShieldCapacity).get_float();
     m_armorDamage = 0.0;
     m_hullDamage = 0.0;
 }
@@ -264,25 +264,25 @@ void NPC::EncodeDestiny( Buffer& into ) const
 
 void NPC::MakeDamageState(DoDestinyDamageState &into) const {
     //into.shield = m_shieldCharge / m_self->shieldCapacity();
-    into.shield = m_shieldCharge / m_self->GetAttribute(AttrShieldCapacity).get_float();
+    into.shield = m_shieldCharge / m_self->getAttribute(AttrShieldCapacity).get_float();
     into.tau = 100000;    //no freakin clue.
     into.timestamp = Win32TimeNow();
     //into.armor = 1.0 - (m_armorDamage / m_self->armorHP());
     //into.structure = 1.0 - (m_hullDamage / m_self->hp());
 
     // the get_float is still a hack... majorly
-    into.armor = 1.0 - (m_armorDamage / m_self->GetAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_hullDamage / m_self->GetAttribute(AttrHp).get_float());
+    into.armor = 1.0 - (m_armorDamage / m_self->getAttribute(AttrArmorHP).get_float());
+    into.structure = 1.0 - (m_hullDamage / m_self->getAttribute(AttrHp).get_float());
 }
 
 void NPC::UseShieldRecharge()
 {
     // We recharge our shield until it's reaches the shield capacity.
-    if( this->Item()->GetAttribute(AttrShieldCapacity) > m_shieldCharge )
+    if( this->Item()->getAttribute(AttrShieldCapacity) > m_shieldCharge )
     {
         // Not found the information on how much it's consume from capacitor
         //m_shieldCharge += this->Item()->entityShieldBoostAmount();
-        m_shieldCharge += this->Item()->GetAttribute(AttrEntityShieldBoostAmount).get_float();
+        m_shieldCharge += this->Item()->getAttribute(AttrEntityShieldBoostAmount).get_float();
     }
     // TODO: Need to send SpecialFX / amount update
 }
@@ -294,7 +294,7 @@ void NPC::UseArmorRepairer()
     {
         // Not found the information on how much it's consume from capacitor
         //m_armorDamage -= this->Item()->entityArmorRepairAmount();
-        m_armorDamage -= this->Item()->GetAttribute(AttrEntityArmorRepairAmount).get_float();
+        m_armorDamage -= this->Item()->getAttribute(AttrEntityArmorRepairAmount).get_float();
         if( m_armorDamage < 0.0 )
             m_armorDamage = 0.0;
     }

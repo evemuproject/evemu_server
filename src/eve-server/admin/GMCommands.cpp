@@ -817,7 +817,7 @@ PyResult Command_getattr( Client* who, const Seperator& args )
         throw PyException( MakeCustomError( "Failed to load item %u.", itemID ) );
 
     //return item->attributes.PyGet( attribute );
-    return item->GetAttribute(attribute).GetPyObject();
+    return item->getAttribute(attribute).GetPyObject();
 }
 
 PyResult Command_setattr( Client* who, const Seperator& args )
@@ -860,7 +860,7 @@ PyResult Command_setattr( Client* who, const Seperator& args )
 
     //item->attributes.SetReal( attribute, value );
     SysLog::Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
-    item->SetAttribute(attribute, (float)value);
+    item->setAttribute(attribute, (float)value);
 
     return new PyString( "Operation successful." );
 }
@@ -994,9 +994,9 @@ PyResult Command_giveallskills( Client* who, const Seperator& args )
         {
             // Character already has this skill, so let's get the current level and check to see
             // Set the skill level.
-            skill->SetAttribute(AttrSkillLevel, level);
+            skill->setAttribute(AttrSkillLevel, level);
             // Set the skill points.
-            skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
+            skill->setAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
         }
         else
         {
@@ -1018,9 +1018,9 @@ PyResult Command_giveallskills( Client* who, const Seperator& args )
             }
 
             // Set the skill level.
-            skill->SetAttribute(AttrSkillLevel, level, false);
+            skill->setAttribute(AttrSkillLevel, level, false);
             // Set the skill points.
-            skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level), false);
+            skill->setAttribute(AttrSkillPoints, skill->GetSPForLevel(level), false);
             // save the new item.
             skill->SaveItem();
             // Finally, move the skill into our brain.
@@ -1099,15 +1099,15 @@ PyResult Command_giveskill( Client* who, const Seperator& args )
             // Character already has this skill, so let's get the current level and check to see
             // if we need to update its level to what's required:
             skill = character->GetSkill( typeID.get_int() );
-            skillLevel = skill->GetAttribute(AttrSkillLevel).get_int();
+            skillLevel = skill->getAttribute(AttrSkillLevel).get_int();
             if( skillLevel >= level )
             {
                 return new PyNone;
             }
             else
             {
-                skill->SetAttribute(AttrSkillLevel, level);
-                skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
+                skill->setAttribute(AttrSkillLevel, level);
+                skill->setAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
             }
         }
         else
@@ -1132,8 +1132,8 @@ PyResult Command_giveskill( Client* who, const Seperator& args )
             else
             {
                 skill = SkillRef::StaticCast( item );
-                skill->SetAttribute(AttrSkillLevel, level);
-                skill->SetAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
+                skill->setAttribute(AttrSkillLevel, level);
+                skill->setAttribute(AttrSkillPoints, skill->GetSPForLevel(level));
             }
         }
 
@@ -1242,11 +1242,11 @@ PyResult Command_heal( Client* who, const Seperator& args )
         who->GetShip()->Set_damage(0);
         who->GetShip()->Set_shieldCharge(who->GetShip()->shieldCapacity());*/
 
-        who->GetShip()->SetAttribute(AttrArmorDamage, 0);
-        who->GetShip()->SetAttribute(AttrDamage, 0);
-        EvilNumber shield_charge = who->GetShip()->GetAttribute(AttrShieldCapacity);
-        who->GetShip()->SetAttribute(AttrShieldCharge, shield_charge);
-		who->GetShip()->SetAttribute(AttrCharge, who->GetShip()->GetAttribute(AttrCapacitorCapacity) );
+        who->GetShip()->setAttribute(AttrArmorDamage, 0);
+        who->GetShip()->setAttribute(AttrDamage, 0);
+        EvilNumber shield_charge = who->GetShip()->getAttribute(AttrShieldCapacity);
+        who->GetShip()->setAttribute(AttrShieldCharge, shield_charge);
+		who->GetShip()->setAttribute(AttrCharge, who->GetShip()->getAttribute(AttrCapacitorCapacity) );
     }
     if( args.argCount() == 2 )
     {
@@ -1260,10 +1260,10 @@ PyResult Command_heal( Client* who, const Seperator& args )
         if(target == NULL)
             throw PyException( MakeCustomError( "Cannot find Character by the entity %d", entity ) );
 
-        who->GetShip()->SetAttribute(AttrArmorDamage, 0);
-        who->GetShip()->SetAttribute(AttrDamage, 0);
-        EvilNumber shield_charge = who->GetShip()->GetAttribute(AttrShieldCapacity);
-        who->GetShip()->SetAttribute(AttrShieldCharge, shield_charge);
+        who->GetShip()->setAttribute(AttrArmorDamage, 0);
+        who->GetShip()->setAttribute(AttrDamage, 0);
+        EvilNumber shield_charge = who->GetShip()->getAttribute(AttrShieldCapacity);
+        who->GetShip()->setAttribute(AttrShieldCharge, shield_charge);
     }
 
     return(new PyString("Heal successful!"));
@@ -1363,7 +1363,7 @@ PyResult Command_dogma( Client* who, const Seperator& args )
     uint32 attributeID = CommandDB::GetAttributeID(attributeName);
 
     SysLog::Warning( "GMCommands: Command_dogma()", "This command will modify attribute and send change to client, but change does not take effect in client for some reason." );
-    item->SetAttribute( attributeID, attributeValue );
+    item->setAttribute( attributeID, attributeValue );
 
     return NULL;
 }

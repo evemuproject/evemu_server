@@ -106,15 +106,15 @@ float ItemSystemEntity::GetRadius() const
 {
     if (m_self)
     {
-        EvilNumber radius;
+        float radius;
         // Do we have a radius attribute?
         if (m_self->fetchAttribute(AttrRadius, radius))
         {
             // Is it a realistic value?
-            if (radius.get_float() > 0)
+            if (radius > 0)
             {
                 // Yes, use that.
-                return radius.get_float();
+                return radius;
             }
         }
     }
@@ -183,19 +183,19 @@ const Vector3D &DynamicSystemEntity::GetVelocity() const {
 double DynamicSystemEntity::GetMass() const {
     if(!Item())
         return(0.0f);
-    return Item()->GetAttribute(AttrMass).get_float();
+    return Item()->getAttribute(AttrMass).get_float();
 }
 
 double DynamicSystemEntity::GetMaxVelocity() const {
     if(!Item())
         return(0.0f);
-    return Item()->GetAttribute(AttrMaxVelocity).get_float();
+    return Item()->getAttribute(AttrMaxVelocity).get_float();
 }
 
 double DynamicSystemEntity::GetAgility() const {
     if(!Item())
         return(0.0f);
-    return Item()->GetAttribute(AttrAgility).get_float();
+    return Item()->getAttribute(AttrAgility).get_float();
 }
 
 //TODO: ask the destiny manager to do this for us!
@@ -306,12 +306,12 @@ void DynamicSystemEntity::EncodeDestiny( Buffer& into ) const
 
 
 void ItemSystemEntity::MakeDamageState(DoDestinyDamageState &into) const {
-    into.shield = (m_self->GetAttribute(AttrShieldCharge).get_float() / m_self->GetAttribute(AttrShieldCapacity).get_float());
+    into.shield = (m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float());
     into.tau = 100000;    //no freaking clue.
     into.timestamp = Win32TimeNow();
 //    armor damage isn't working...
-    into.armor = 1.0 - (m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float());
+    into.armor = 1.0 - (m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float());
+    into.structure = 1.0 - (m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float());
 }
 
 

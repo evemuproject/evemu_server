@@ -79,7 +79,7 @@ bool MiningLaser::canActivate(SystemEntity *targetEntity)
         throw PyException(MakeCustomError("ERROR!  invalid target!"));
     }
     // We have a valid target, are we in range?
-    double maxRange = miner->GetAttribute(AttrMaxRange).get_float();
+    double maxRange = miner->getAttribute(AttrMaxRange).get_float();
     double targetRange = targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
     targetRange = std::sqrt(targetRange);
     targetRange -= targetEntity->GetRadius();
@@ -107,7 +107,7 @@ bool MiningLaser::endCycle(bool continuing)
         return false;
     }
     // Check range
-    double maxRange = m_item->GetAttribute(AttrMaxRange).get_float();
+    double maxRange = m_item->getAttribute(AttrMaxRange).get_float();
     double targetRange = m_targetEntity->DistanceTo2(m_ship->GetOperator()->GetSystemEntity());
     targetRange = std::sqrt(targetRange);
     targetRange -= m_targetEntity->GetRadius();
@@ -120,20 +120,21 @@ bool MiningLaser::endCycle(bool continuing)
     }
     // Retrieve ore from target Asteroid and put into flagCargoHold
     InventoryItemRef asteroidRef = m_targetEntity->Item();
-	uint32 remainingOreUnits = asteroidRef->GetAttribute(AttrQuantity).get_int();
-	double oreUnitVolume = asteroidRef->GetAttribute(AttrVolume).get_float();
+	uint32 remainingOreUnits = asteroidRef->getAttribute(AttrQuantity).get_int();
+	double oreUnitVolume = asteroidRef->getAttribute(AttrVolume).get_float();
 
     // Calculate how many units of ore to pull from the asteroid on this cycle:
     // Get base mining amount.
-    double oreUnitsToPull = m_item->GetAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
+    double oreUnitsToPull = m_item->getAttribute(AttrMiningAmount).get_float() / oreUnitVolume;
     // Do we have a crystal?
-	if( m_chargeRef )
+	if( m_chargeRef)
     {
+        double mult;
         // Yes, apply yield multiplier.
-        if (m_chargeRef->HasAttribute(AttrSpecialisationAsteroidYieldMultiplier))
+        if (m_chargeRef->fetchAttribute(AttrSpecialisationAsteroidYieldMultiplier, mult))
         {
             // TO-DO: check for correct type of crystal.
-            oreUnitsToPull *= m_chargeRef->GetAttribute(AttrSpecialisationAsteroidYieldMultiplier).get_float();
+            oreUnitsToPull *= mult;
         }
         // TO-DO: do crystal damage.
     }
@@ -160,7 +161,7 @@ bool MiningLaser::endCycle(bool continuing)
     // Find what cargo hold to use.
     EVEItemFlags cargoFlag = flagCargoHold;
     // Check for specialized cargo hold.
-    if (m_ship->HasAttribute(AttrSpecialOreHoldCapacity))
+    if (m_ship->hasAttribute(AttrSpecialOreHoldCapacity))
     {
         // We have a specialized ore hold all or goes here.
         cargoFlag = flagSpecializedOreHold;
@@ -229,7 +230,7 @@ bool MiningLaser::endCycle(bool continuing)
     }
     // Finally, reduce the amount of ore in the asteroid by how much we took out:
     remainingOreUnits -= oreUnitsToPull;
-    asteroidRef->SetAttribute(AttrQuantity, remainingOreUnits);
+    asteroidRef->setAttribute(AttrQuantity, remainingOreUnits);
 
     // Check to see is ship is full or asteroid depleted.
     remainingCargoVolume = m_ship->GetRemainingVolumeByFlag(cargoFlag);

@@ -139,6 +139,72 @@ bool AttributeMap::fetchAttribute(const uint32 attributeID, EvilNumber &value) c
     return false;
 }
 
+bool AttributeMap::fetchAttribute(const uint32 attributeID, double &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second.get_float();
+        return true;
+    }
+    return false;
+}
+
+bool AttributeMap::fetchAttribute(const uint32 attributeID, float &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second.get_float();
+        return true;
+    }
+    return false;
+}
+
+bool AttributeMap::fetchAttribute(const uint32 attributeID, int32 &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second.get_int();
+        return true;
+    }
+    return false;
+}
+
+bool AttributeMap::fetchAttribute(const uint32 attributeID, uint32 &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second.get_int();
+        return true;
+    }
+    return false;
+}
+
+bool AttributeMap::fetchAttribute(const uint32 attributeID, int64 &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second.get_int();
+        return true;
+    }
+    return false;
+}
+
+bool AttributeMap::fetchAttribute(const uint32 attributeID, uint64 &value) const
+{
+    AttrMapConstItr itr = mAttributes.find(attributeID);
+    if (itr != mAttributes.end())
+    {
+        value = itr->second.get_int();
+        return true;
+    }
+    return false;
+}
+
 bool AttributeMap::HasAttribute(const uint32 attributeID) const
 {
     AttrMapConstItr itr = mAttributes.find(attributeID);

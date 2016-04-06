@@ -142,7 +142,7 @@ PyResult ShipBound::Handle_Board(PyCallArgs &call) {
             // Check for boarding perimeter maximum distance, after subtracting ship's radius
             // from the distance from player's existing ship to the dead center of the ship to board:
             Vector3D boardinVector3D(pShipEntity->GetPosition() - shipPosition);
-            double rangeToBoardShip = boardinVector3D.length() - boardShipRef->GetAttribute(AttrRadius).get_float();
+            double rangeToBoardShip = boardinVector3D.length() - boardShipRef->getAttribute(AttrRadius).get_float();
             if( rangeToBoardShip < 0.0)
                 rangeToBoardShip = 0.0;
 
@@ -409,7 +409,7 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
         for(uint32 index=0; index<subSystemList.size(); index++)
         {
             subSystemItem = ItemFactory::GetItem(subSystemList.at(index));
-            subSystemItem->MoveInto( *ship, (EVEItemFlags)(subSystemItem->GetAttribute(AttrSubSystemSlot).get_int()), true );
+            subSystemItem->MoveInto( *ship, (EVEItemFlags)(subSystemItem->getAttribute(AttrSubSystemSlot).get_int()), true );
         }
     }
 
@@ -722,7 +722,7 @@ PyResult ShipBound::Handle_Scoop(PyCallArgs &call) {
 
     // Check cargo bay capacity:
     double capacity = call.client->GetShip()->GetCapacity( flagCargoHold );
-    double volume = item->GetAttribute(AttrVolume).get_float();
+    double volume = item->getAttribute(AttrVolume).get_float();
     if( capacity < volume )
         throw PyException( MakeCustomError( "%s is too large to fit in remaining Cargo bay capacity.", item->itemName().c_str() ) );
     else
@@ -780,7 +780,7 @@ PyResult ShipBound::Handle_ScoopDrone(PyCallArgs &call) {
 
         // Check drone bay capacity:
         double capacity = call.client->GetShip()->GetCapacity( flagDroneBay );
-        double volume = item->GetAttribute(AttrVolume).get_float();
+        double volume = item->getAttribute(AttrVolume).get_float();
         if( capacity < volume )
             throw PyException( MakeCustomError( "%s is too large to fit in remaining Drone bay capacity.", item->itemName().c_str() ) );
         else
@@ -1002,9 +1002,9 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     Vector3D capsulePosition = call.client->GetPosition();
 
     //set capsule position 500m off from old ship:
-    capsulePosition.x += call.client->GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
-    capsulePosition.y += call.client->GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
-    capsulePosition.z += call.client->GetShip()->GetAttribute(AttrRadius).get_float() - 100.0;
+    capsulePosition.x += call.client->GetShip()->getAttribute(AttrRadius).get_float() + 100.0;
+    capsulePosition.y += call.client->GetShip()->getAttribute(AttrRadius).get_float() + 100.0;
+    capsulePosition.z += call.client->GetShip()->getAttribute(AttrRadius).get_float() - 100.0;
 
     //spawn capsule (inside ship, flagCapsule, singleton)
     ItemData idata(

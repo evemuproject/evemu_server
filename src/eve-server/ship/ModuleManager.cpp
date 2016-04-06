@@ -767,13 +767,13 @@ void ModuleContainer::_initializeModuleContainers()
 ModuleManager::ModuleManager(Ship *const ship)
 {
     // Create ModuleContainer object and initialize with sizes for all slot banks for this ship:
-    m_Modules = new ModuleContainer((uint32)ship->GetAttribute(AttrLowSlots).get_int(),
-                                    (uint32)ship->GetAttribute(AttrMedSlots).get_int(),
-                                    (uint32)ship->GetAttribute(AttrHiSlots).get_int(),
-                                    (uint32)ship->GetAttribute(AttrRigSlots).get_int(),
-                                    (uint32)ship->GetAttribute(AttrSubSystemSlot).get_int(),
-                                    (uint32)ship->GetAttribute(AttrTurretSlotsLeft).get_int(),
-                                    (uint32)ship->GetAttribute(AttrLauncherSlotsLeft).get_int(),
+    m_Modules = new ModuleContainer((uint32) ship->getAttribute(AttrLowSlots).get_int(),
+                                    (uint32) ship->getAttribute(AttrMedSlots).get_int(),
+                                    (uint32) ship->getAttribute(AttrHiSlots).get_int(),
+                                    (uint32) ship->getAttribute(AttrRigSlots).get_int(),
+                                    (uint32) ship->getAttribute(AttrSubSystemSlot).get_int(),
+                                    (uint32) ship->getAttribute(AttrTurretSlotsLeft).get_int(),
+                                    (uint32) ship->getAttribute(AttrLauncherSlotsLeft).get_int(),
                                     this);
 
     // Store reference to the Ship object to which the ModuleManager belongs:
@@ -815,7 +815,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
 				{
 					//_fitModule( moduleRef, (EVEItemFlags)flagIndex );
-					if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
+                    if (moduleRef->getAttribute(AttrIsOnline).get_int() == 1)
 						Online(moduleRef->itemID());
 					else
 						Offline(moduleRef->itemID());
@@ -854,7 +854,7 @@ ModuleManager::ModuleManager(Ship *const ship)
 				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
 				{
 					//_fitModule( moduleRef, (EVEItemFlags)flagIndex );
-					if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
+                    if (moduleRef->getAttribute(AttrIsOnline).get_int() == 1)
 						Online(moduleRef->itemID());
 					else
 						Offline(moduleRef->itemID());
@@ -891,8 +891,8 @@ ModuleManager::ModuleManager(Ship *const ship)
 			if( moduleRef )
 			{
 				if( _fitModule( moduleRef, (EVEItemFlags)flagIndex ) )
-				{
-					if( moduleRef->GetAttribute(AttrIsOnline).get_int() == 1 )
+                {
+                    if (moduleRef->getAttribute(AttrIsOnline).get_int() == 1)
 						Online(moduleRef->itemID());
 					else
 						Offline(moduleRef->itemID());
@@ -1135,7 +1135,7 @@ bool ModuleManager::_fitModule(InventoryItemRef item, EVEItemFlags flag)
 			verifyFailed = true;
 		}
 		// Check for max modules of group allowed:
-		else if( mod->isMaxGroupFitLimited() && (m_Modules->GetFittedModuleCountByGroup(item->groupID()) == mod->getItem()->GetAttribute(AttrMaxGroupFitted).get_int()) )
+        else if (mod->isMaxGroupFitLimited() && (m_Modules->GetFittedModuleCountByGroup(item->groupID()) == mod->getItem()->getAttribute(AttrMaxGroupFitted).get_int()))
 		{
 			//std::map<std::string, PyRep *> args;
 			//args["typename"] = new PyString(item->itemName().c_str());
@@ -1271,7 +1271,7 @@ void ModuleManager::DamageModule(uint32 itemID, EvilNumber val)
     GenericModule * mod = m_Modules->GetModule(itemID);
     if( mod != NULL)
     {
-        mod->setAttribute(AttrHp, val);
+        mod->getItem()->setAttribute(AttrHp, val);
     }
 }
 
@@ -1300,8 +1300,8 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 		// * module ref -> capacity of module
 		// * charge to add ref -> qty and volume/unit
 
-		EvilNumber modCapacity = mod->getItem()->GetAttribute(AttrCapacity);
-		EvilNumber chargeToLoadVolume = chargeRef->GetAttribute(AttrVolume);
+        EvilNumber modCapacity = mod->getItem()->getAttribute(AttrCapacity);
+        EvilNumber chargeToLoadVolume = chargeRef->getAttribute(AttrVolume);
 		EvilNumber chargeToLoadQty = EvilNumber(chargeRef->quantity());
 
 		/////////////////////////////////////////
@@ -1317,7 +1317,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 		{
 			// Module is loaded, let's check available capacity:
 			InventoryItemRef loadedChargeRef = mod->getLoadedChargeRef();
-			EvilNumber loadedChargeVolume = loadedChargeRef->GetAttribute(AttrVolume);
+            EvilNumber loadedChargeVolume = loadedChargeRef->getAttribute(AttrVolume);
 			EvilNumber loadedChargeQty = EvilNumber(loadedChargeRef->quantity());
 			modCapacity -= (loadedChargeVolume * loadedChargeQty);		// Calculate remaining capacity
 			if( chargeRef->typeID() != loadedChargeRef->typeID() )
@@ -1373,7 +1373,7 @@ void ModuleManager::LoadCharge(InventoryItemRef chargeRef, EVEItemFlags flag)
 		}
 
 		// Refresh ammo capacity of module in case it was modified in previous code block ahead of a load action:
-		modCapacity = mod->getItem()->GetAttribute(AttrCapacity);
+        modCapacity = mod->getItem()->getAttribute(AttrCapacity);
 
 		// Load charge supplied if this module was either never loaded, or just unloaded from a different type right above:
 		if( !(mod->isLoaded()) )
@@ -1558,18 +1558,19 @@ void ModuleManager::_processExternalEffect(SubEffect * s)
 {
     //50-50 it's targeting a specific module ( i'm assuming here )
     GenericModule * mod = m_Modules->GetModule(s->TargetItemID());
-    if( mod != NULL )
+    if( mod != NULL)
     {
+        auto item = mod->getItem();
         //calculate new attribute
-        mod->setAttribute(s->AttributeID(),
-                          CalculateNewAttributeValue(mod->getAttribute(s->AttributeID()),
+        item->setAttribute(s->AttributeID(),
+                           CalculateNewAttributeValue(item->getAttribute(s->AttributeID()),
                                                                        s->AppliedValue(), s->CalculationType()));
     }
     else if( s->TargetItemID() == m_Ship->itemID() ) //guess it's not, but that means it should be targeting our ship itself
     {
         //calculate new attribute
-        m_Ship->SetAttribute(s->AttributeID(),
-                             CalculateNewAttributeValue(m_Ship->GetAttribute(s->AttributeID()),
+        m_Ship->setAttribute(s->AttributeID(),
+                             CalculateNewAttributeValue(m_Ship->getAttribute(s->AttributeID()),
                                                                              s->AppliedValue(), s->CalculationType()));
     }
     else //i have no idea what their targeting X_X

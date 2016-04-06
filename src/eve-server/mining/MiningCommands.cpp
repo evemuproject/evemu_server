@@ -293,13 +293,13 @@ void SpawnAsteroid( SystemManager* system, uint32 typeID, double radius, const V
     // (this should yield around 90,000 units of Veldspar in an asteroid with 1000.0m radius)
     double volume = (1.0/100000.0) * (4.0/3.0) * M_PI * pow(radius,3);
     //uint32 qty = floor((volume/(i->GetAttribute(AttrVolume).get_float())));
-    uint32 qty = (radius * 10) / std::sqrt(i->GetAttribute(AttrVolume).get_float());
+    uint32 qty = (radius * 10) / std::sqrt(i->getAttribute(AttrVolume).get_float());
     if (i->groupID() == EVEDB::invGroups::Veldspar)
     {
         qty *= 2;
     }
-    i->SetAttribute(AttrQuantity, qty);
-    i->SetAttribute(AttrRadius, radius);
+    i->setAttribute(AttrQuantity, qty);
+    i->setAttribute(AttrRadius, radius);
 
     // Create astroid srvEntity.
     AsteroidEntity* new_roid = new AsteroidEntity(i, system, position);

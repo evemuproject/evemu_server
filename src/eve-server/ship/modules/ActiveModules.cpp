@@ -72,7 +72,7 @@ void ActiveModule::process()
     if (m_timer.Check())
     {
         // Check for sufficient capacitor charge.
-        if (m_ship->GetAttribute(AttrCharge) < getAttribute(AttrCapacitorNeed))
+        if (m_ship->getAttribute(AttrCharge) < m_item->getAttribute(AttrCapacitorNeed))
         {
             deactivate();
             // TO-DO: send capacitor depleted message.
@@ -98,10 +98,10 @@ void ActiveModule::process()
                 return;
             }
             // Drain capacitor.
-            EvilNumber capCapacity = m_ship->GetAttribute(AttrCharge);
-            EvilNumber capNeed = getAttribute(AttrCapacitorNeed);
+            EvilNumber capCapacity = m_ship->getAttribute(AttrCharge);
+            EvilNumber capNeed = m_item->getAttribute(AttrCapacitorNeed);
             capCapacity -= capNeed;
-            m_ship->SetAttribute(AttrCharge, capCapacity);
+            m_ship->setAttribute(AttrCharge, capCapacity);
             // Reset the timer.
             m_timer.Start(getCycleTime());
             // Tell the module we are starting a cycle after ending another.
@@ -119,7 +119,7 @@ void ActiveModule::activate(SystemEntity * targetEntity)
     }
     m_stop = false;
     // Check for sufficient capacitor charge.
-    if (m_ship->GetAttribute(AttrCharge) < getAttribute(AttrCapacitorNeed))
+    if (m_ship->getAttribute(AttrCharge) < m_item->getAttribute(AttrCapacitorNeed))
     {
         // TO-DO: send client insufficient power notice.
         return;
@@ -143,10 +143,10 @@ void ActiveModule::activate(SystemEntity * targetEntity)
     m_timer.Start(getCycleTime());
     m_moduleState = MOD_ACTIVATED;
     // Drain capacitor.
-    EvilNumber capCapacity = m_ship->GetAttribute(AttrCharge);
-    EvilNumber capNeed = getAttribute(AttrCapacitorNeed);
+    EvilNumber capCapacity = m_ship->getAttribute(AttrCharge);
+    EvilNumber capNeed = m_item->getAttribute(AttrCapacitorNeed);
     capCapacity -= capNeed;
-    m_ship->SetAttribute(AttrCharge, capCapacity);
+    m_ship->setAttribute(AttrCharge, capCapacity);
     // Show the module effects.
     showEffects();
     // Tell the module that we started a new cycle.
@@ -187,15 +187,16 @@ bool ActiveModule::canActivate(SystemEntity *targetEntity)
 
 uint32 ActiveModule::getCycleTime()
 {
-    if (hasAttribute(AttrDuration))
+    uint32 dur;
+    if (m_item->fetchAttribute(AttrDuration, dur))
     {
-        return getAttribute(AttrDuration).get_int();
+        return dur;
     }
     else
     {
-        if (hasAttribute(AttrSpeed))
+        if (m_item->fetchAttribute(AttrSpeed, dur))
         {
-            return getAttribute(AttrSpeed).get_int();
+            return dur;
         }
         else
         {
@@ -272,7 +273,7 @@ void ActiveModule::doEffect(bool active, std::shared_ptr<MEffect> effect, std::s
         return;
     }
     // Get the effect cycle time.
-    double cycleTime = m_item->GetAttribute(effect->GetDurationAttributeID()).get_float();
+    double cycleTime = m_item->getAttribute(effect->GetDurationAttributeID()).get_float();
     // Create Destiny Updates:
     Notify_OnGodmaShipEffect shipEff;
     shipEff.itemID = m_item->itemID();

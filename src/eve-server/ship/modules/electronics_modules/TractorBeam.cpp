@@ -75,13 +75,13 @@ void TractorBeam::startCycle(bool continuing)
     DynamicSystemEntity * targetEntity = static_cast<DynamicSystemEntity *>(m_targetEntity);
     // Check for distance to target > 5000m + ship radius
     Vector3D distanceToTarget(m_ship->position() - targetEntity->GetPosition());
-    if (distanceToTarget.length() > (5000.0 + m_ship->GetAttribute(AttrRadius).get_float()))
+    if (distanceToTarget.length() > (5000.0 + m_ship->getAttribute(AttrRadius).get_float()))
     {
         // Range higher?  Then start it moving toward ship @ 200m/s
         targetEntity->Destiny()->SetMaxVelocity(1000.0);
         targetEntity->Destiny()->SetSpeedFraction(1.0);
         // Tractor objects at 1000m/s:
-        targetEntity->Destiny()->TractorBeamFollow(m_ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_ship->GetAttribute(AttrRadius).get_float()));
+        targetEntity->Destiny()->TractorBeamFollow(m_ship->GetOperator()->GetSystemEntity(), 10, 1000, (5000.0 + m_ship->getAttribute(AttrRadius).get_float()));
     }
     else
     {

@@ -61,7 +61,7 @@ bool SurveyScanner::endCycle(bool continuing)
     PyList *roids = new PyList();
     result->SetItem(1, roids);
     // Get max scan distance.
-    double maxDist = m_item->GetAttribute(AttrSurveyScanRange).get_float();
+    double maxDist = m_item->getAttribute(AttrSurveyScanRange).get_float();
     // Search for asteroids in range.
     std::set<SystemEntity *> entities;
     bubble->GetEntities(entities);
@@ -80,7 +80,7 @@ bool SurveyScanner::endCycle(bool continuing)
                 PyTuple *roid = new PyTuple(3);
                 roid->SetItem(0, new PyInt(item->itemID()));
                 roid->SetItem(1, new PyInt(item->typeID()));
-                roid->SetItem(2, new PyInt(item->GetAttribute(AttrQuantity).get_int()));
+                roid->SetItem(2, new PyInt(item->getAttribute(AttrQuantity).get_int()));
                 roids->AddItem(roid);
             }
         }

@@ -103,16 +103,17 @@ void SuperWeapon::startCycle(bool continuing)
 		double em_damage = 0.0;
 		double explosive_damage = 0.0;
 
-		// This still somehow needs skill, ship, module, and implant bonuses to be applied:
-		// This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
-		if (m_item->HasAttribute(AttrKineticDamage))
-			kinetic_damage = (m_item->GetAttribute(AttrKineticDamage)).get_float();
-		if (m_item->HasAttribute(AttrThermalDamage))
-			thermal_damage = (m_item->GetAttribute(AttrThermalDamage)).get_float();
-		if (m_item->HasAttribute(AttrEmDamage))
-			em_damage = (m_item->GetAttribute(AttrEmDamage)).get_float();
-		if (m_item->HasAttribute(AttrExplosiveDamage))
-			explosive_damage = (m_item->GetAttribute(AttrExplosiveDamage)).get_float();
+    // This still somehow needs skill, ship, module, and implant bonuses to be applied:
+    // This still somehow needs to have optimal range and falloff attributes applied as a damage modification factor:
+    double multiplyer = m_item->getAttribute(AttrDamageMultiplier).get_float();
+    m_chargeRef->fetchAttribute(AttrKineticDamage, kinetic_damage);
+    m_chargeRef->fetchAttribute(AttrThermalDamage, thermal_damage);
+    m_chargeRef->fetchAttribute(AttrEmDamage, em_damage);
+    m_chargeRef->fetchAttribute(AttrExplosiveDamage, explosive_damage);
+    kinetic_damage *= multiplyer;
+    thermal_damage *= multiplyer;
+    em_damage *= multiplyer;
+    explosive_damage *= multiplyer;
 
 		Damage damageDealt
 			(

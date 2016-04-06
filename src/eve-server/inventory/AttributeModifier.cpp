@@ -54,11 +54,11 @@ double AttributeModifier::getAmount()
     EVECalculationType m_Type = m_effect->GetCalculationType(m_effectIndex);
     if (m_Type == CALC_ADDITION)
     {
-        return m_item->GetAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float();
+        return m_item->getAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float();
     }
     if (m_Type == CALC_SUBTRACTION)
     {
-        return -(m_item->GetAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float());
+        return -(m_item->getAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float());
     }
     return 0;
 }
@@ -69,7 +69,7 @@ double AttributeModifier::getFactor()
     {
         return 0;
     }
-    double source = m_item->GetAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float();
+    double source = m_item->getAttribute(m_effect->GetSourceAttributeID(m_effectIndex)).get_float();
     EVECalculationType m_Type = m_effect->GetCalculationType(m_effectIndex);
     if(m_Type == CALC_PERCENTAGE)
     {

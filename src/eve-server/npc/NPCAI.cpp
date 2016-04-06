@@ -35,14 +35,14 @@
 
 NPCAIMgr::NPCAIMgr(NPC *who)
 : m_state(Idle),
-  m_entityFlyRange2(who->Item()->GetAttribute(AttrEntityFlyRange)*who->Item()->GetAttribute(AttrEntityFlyRange)),
-  m_entityChaseMaxDistance2(who->Item()->GetAttribute(AttrEntityChaseMaxDistance)*who->Item()->GetAttribute(AttrEntityChaseMaxDistance)),
-  m_entityAttackRange2(who->Item()->GetAttribute(AttrEntityAttackRange)*who->Item()->GetAttribute(AttrEntityAttackRange)),
+  m_entityFlyRange2(who->Item()->getAttribute(AttrEntityFlyRange)*who->Item()->getAttribute(AttrEntityFlyRange)),
+  m_entityChaseMaxDistance2(who->Item()->getAttribute(AttrEntityChaseMaxDistance)*who->Item()->getAttribute(AttrEntityChaseMaxDistance)),
+  m_entityAttackRange2(who->Item()->getAttribute(AttrEntityAttackRange)*who->Item()->getAttribute(AttrEntityAttackRange)),
   m_npc(who),
   m_processTimer(50),    //arbitrary.
   m_mainAttackTimer(1),    //we want this to always trigger the first time through.
-  m_shieldBoosterTimer(static_cast<int32>(who->Item()->GetAttribute(AttrEntityShieldBoostDuration).get_int())),
-  m_armorRepairTimer(static_cast<int32>(who->Item()->GetAttribute(AttrEntityArmorRepairDuration).get_int())),
+  m_shieldBoosterTimer(static_cast<int32>(who->Item()->getAttribute(AttrEntityShieldBoostDuration).get_int())),
+  m_armorRepairTimer(static_cast<int32>(who->Item()->getAttribute(AttrEntityArmorRepairDuration).get_int())),
   m_beginFindTarget(20000)
 
 {
@@ -51,10 +51,10 @@ NPCAIMgr::NPCAIMgr(NPC *who)
 	m_beginFindTarget.Start();
 
     // This NPC uses Shield Booster
-    if( who->Item()->GetAttribute(AttrEntityShieldBoostDuration) > 0 )
+    if( who->Item()->getAttribute(AttrEntityShieldBoostDuration) > 0 )
         m_shieldBoosterTimer.Start();
     // This NPC uses armor repairer
-    if( who->Item()->GetAttribute(AttrEntityArmorRepairDuration) > 0 )
+    if( who->Item()->getAttribute(AttrEntityArmorRepairDuration) > 0 )
         m_armorRepairTimer.Start();
 }
 
@@ -223,12 +223,12 @@ void NPCAIMgr::ClearAllTargets()
 
 void NPCAIMgr::_EnterChasing(SystemEntity *target) {
     //TODO: we actually use MWD if we have them...
-    m_npc->Destiny()->Follow(target, m_npc->Item()->GetAttribute(AttrEntityFlyRange).get_float());
+    m_npc->Destiny()->Follow(target, m_npc->Item()->getAttribute(AttrEntityFlyRange).get_float());
     m_state = Chasing;
 }
 
 void NPCAIMgr::_EnterFollowing(SystemEntity *target) {
-    m_npc->Destiny()->Follow(target, m_npc->Item()->GetAttribute(AttrEntityFlyRange).get_float());
+    m_npc->Destiny()->Follow(target, m_npc->Item()->getAttribute(AttrEntityFlyRange).get_float());
     m_state = Following;
 }
 
@@ -240,19 +240,19 @@ void NPCAIMgr::_EnterIdle() {
 void NPCAIMgr::_EnterEngaged(SystemEntity *target) {
     //m_npc->Destiny()->Follow(target, m_npc->Item()->entityFlyRange());
     //not sure if we should use orbitRange or entityFlyRange...
-    EvilNumber orbit_range = m_npc->Item()->GetAttribute(AttrOrbitRange);
-    if( orbit_range > m_npc->Item()->GetAttribute(AttrEntityAttackRange) )
+    EvilNumber orbit_range = m_npc->Item()->getAttribute(AttrOrbitRange);
+    if( orbit_range > m_npc->Item()->getAttribute(AttrEntityAttackRange) )
 	{
-        orbit_range = m_npc->Item()->GetAttribute(AttrMaxRange);
-		if( orbit_range > m_npc->Item()->GetAttribute(AttrEntityAttackRange) )
-			orbit_range = m_npc->Item()->GetAttribute(AttrEntityFlyRange);
+        orbit_range = m_npc->Item()->getAttribute(AttrMaxRange);
+		if( orbit_range > m_npc->Item()->getAttribute(AttrEntityAttackRange) )
+			orbit_range = m_npc->Item()->getAttribute(AttrEntityFlyRange);
     }
 	if( orbit_range.get_float() == 0.0 )
     {
         Vector3D vectorToTarget(target->GetPosition() - m_npc->GetPosition());
     	orbit_range = vectorToTarget.length();
 	}
-    m_npc->Destiny()->OrbitingCruise(target, orbit_range.get_float(),true, m_npc->Item()->GetAttribute(AttrEntityCruiseSpeed).get_float());
+    m_npc->Destiny()->OrbitingCruise(target, orbit_range.get_float(),true, m_npc->Item()->getAttribute(AttrEntityCruiseSpeed).get_float());
     m_state = Engaged;
 }
 
@@ -262,7 +262,7 @@ void NPCAIMgr::Targeted(SystemEntity *by_who) {
     //m_npc->targets.StartTargeting(by_who, 1000);
     //if( m_npc->Item()->GetAttribute(AttrMaxLockedTargets) > m_npc->targets.getTotalTargets())
         //m_npc->targets.StartTargeting( by_who, NEED_A_SHIPREF_HERE );		// TO BE UPDATED DUE TO StartTargeting() signature change
-    m_npc->targets.startTargeting( by_who, (uint32)m_npc->Item()->GetAttribute(AttrSpeed).get_int(), (uint32)m_npc->Item()->GetAttribute(AttrMaxAttackTargets).get_int(), m_npc->Item()->GetAttribute(AttrEntityAttackRange).get_float() );
+    m_npc->targets.startTargeting( by_who, (uint32)m_npc->Item()->getAttribute(AttrSpeed).get_int(), (uint32)m_npc->Item()->getAttribute(AttrMaxAttackTargets).get_int(), m_npc->Item()->getAttribute(AttrEntityAttackRange).get_float() );
 
     switch(m_state) 
 	{
@@ -349,7 +349,7 @@ void NPCAIMgr::CheckAttacks(SystemEntity *target) {
         //NOTE: there is probably a more intelligent way to make this descision.
         //if(self->entityAttackDelayMax() <= 0) {
             //use speed field...
-            m_mainAttackTimer.Start(static_cast<uint32>(self->GetAttribute(AttrSpeed).get_int()));
+            m_mainAttackTimer.Start(static_cast<uint32>(self->getAttribute(AttrSpeed).get_int()));
         //} else {
             //I think this field is actually meant as a reaction time to the player showing up in range.
         //    m_mainAttackTimer.Start(MakeRandomInt(
@@ -398,7 +398,7 @@ void NPCAIMgr::_SendWeaponEffect( const char*effect, SystemEntity *target )
     //omit these for now, setting up the repeat might be a network optimization, but we don't need it right now.
     //sfx.duration_ms = 1960;    //no idea...
     //sfx.duration_ms = m_npc->Item()->speed();
-    sfx.duration_ms = m_npc->Item()->GetAttribute(AttrSpeed).get_float();
+    sfx.duration_ms = m_npc->Item()->getAttribute(AttrSpeed).get_float();
     sfx.repeat = new PyBool(true);
     sfx.startTime = Win32TimeNow();
 

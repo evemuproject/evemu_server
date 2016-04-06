@@ -75,91 +75,91 @@ ShipRef Ship::Spawn(ItemData &data) {
     ShipRef sShipRef = Ship::Load( shipID );
 
     // Create default dynamic attributes in the AttributeMap:
-    sShipRef->SetAttribute(AttrIsOnline,            1, true);												// Is Online
-    sShipRef->SetAttribute(AttrShieldCharge,        sShipRef->GetAttribute(AttrShieldCapacity), true);		// Shield Charge
-    sShipRef->SetAttribute(AttrArmorDamage,         0.0, true);												// Armor Damage
-    sShipRef->SetAttribute(AttrMass, sShipRef->type()->getAttr(AttrMass), true); // Mass
-    sShipRef->SetAttribute(AttrRadius, sShipRef->type()->getAttr(AttrRadius), true); // Radius
-    sShipRef->SetAttribute(AttrVolume, sShipRef->type()->getAttr(AttrVolume), true); // Volume
-    sShipRef->SetAttribute(AttrCapacity, sShipRef->type()->getAttr(AttrCapacity), true); // Capacity
-    sShipRef->SetAttribute(AttrInertia,             1, true);												// Inertia
-    sShipRef->SetAttribute(AttrCharge,              sShipRef->GetAttribute(AttrCapacitorCapacity), true);	// Set Capacitor Charge to the Capacitor Capacity
+    sShipRef->setAttribute(AttrIsOnline, 1, true); // Is Online
+    sShipRef->setAttribute(AttrShieldCharge, sShipRef->getAttribute(AttrShieldCapacity), true); // Shield Charge
+    sShipRef->setAttribute(AttrArmorDamage, 0.0, true); // Armor Damage
+    sShipRef->setAttribute(AttrMass, sShipRef->type()->getAttr(AttrMass), true); // Mass
+    sShipRef->setAttribute(AttrRadius, sShipRef->type()->getAttr(AttrRadius), true); // Radius
+    sShipRef->setAttribute(AttrVolume, sShipRef->type()->getAttr(AttrVolume), true); // Volume
+    sShipRef->setAttribute(AttrCapacity, sShipRef->type()->getAttr(AttrCapacity), true); // Capacity
+    sShipRef->setAttribute(AttrInertia, 1, true); // Inertia
+    sShipRef->setAttribute(AttrCharge, sShipRef->getAttribute(AttrCapacitorCapacity), true); // Set Capacitor Charge to the Capacitor Capacity
 
     // Check for existence of some attributes that may or may not have already been loaded and set them
     // to default values:
 	// Hull Damage
-	if( !(sShipRef->HasAttribute(AttrDamage)) )
-        sShipRef->SetAttribute(AttrDamage, 0, true );
+    if (!(sShipRef->hasAttribute(AttrDamage)))
+        sShipRef->setAttribute(AttrDamage, 0, true);
     // Theoretical Maximum Targeting Range
-    if( !(sShipRef->HasAttribute(AttrMaximumRangeCap)) )
-        sShipRef->SetAttribute(AttrMaximumRangeCap, ((double)BUBBLE_RADIUS_METERS), true );
+    if (!(sShipRef->hasAttribute(AttrMaximumRangeCap)))
+        sShipRef->setAttribute(AttrMaximumRangeCap, ((double) BUBBLE_RADIUS_METERS), true);
     // Maximum Armor Damage Resonance
-    if( !(sShipRef->HasAttribute(AttrArmorMaxDamageResonance)) )
-        sShipRef->SetAttribute(AttrArmorMaxDamageResonance, 1.0f, true);
+    if (!(sShipRef->hasAttribute(AttrArmorMaxDamageResonance)))
+        sShipRef->setAttribute(AttrArmorMaxDamageResonance, 1.0f, true);
     // Maximum Shield Damage Resonance
-    if( !(sShipRef->HasAttribute(AttrShieldMaxDamageResonance)) )
-        sShipRef->SetAttribute(AttrShieldMaxDamageResonance, 1.0f, true);
+    if (!(sShipRef->hasAttribute(AttrShieldMaxDamageResonance)))
+        sShipRef->setAttribute(AttrShieldMaxDamageResonance, 1.0f, true);
     // Warp Speed Multiplier
-    if( !(sShipRef.get()->HasAttribute(AttrWarpSpeedMultiplier)) )
-        sShipRef.get()->SetAttribute(AttrWarpSpeedMultiplier, 1.0f, true);
+    if (!(sShipRef.get()->hasAttribute(AttrWarpSpeedMultiplier)))
+        sShipRef.get()->setAttribute(AttrWarpSpeedMultiplier, 1.0f, true);
     // CPU Load of the ship (new ships have zero load with no modules fitted, of course):
-    if( !(sShipRef.get()->HasAttribute(AttrCpuLoad)) )
-        sShipRef.get()->SetAttribute(AttrCpuLoad, 0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrCpuLoad)))
+        sShipRef.get()->setAttribute(AttrCpuLoad, 0, true);
     // Power Load of the ship (new ships have zero load with no modules fitted, of course):
-    if( !(sShipRef.get()->HasAttribute(AttrPowerLoad)) )
-        sShipRef.get()->SetAttribute(AttrPowerLoad, 0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrPowerLoad)))
+        sShipRef.get()->setAttribute(AttrPowerLoad, 0, true);
 	// Warp Scramble Status of the ship (most ships have zero warp scramble status, but some already have it defined):
-	if( !(sShipRef.get()->HasAttribute(AttrWarpScrambleStatus)) )
-		sShipRef.get()->SetAttribute(AttrWarpScrambleStatus, 0.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrWarpScrambleStatus)))
+        sShipRef.get()->setAttribute(AttrWarpScrambleStatus, 0.0, true);
 
 	// Shield Resonance
 	// AttrShieldEmDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrShieldEmDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrShieldEmDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrShieldEmDamageResonance)))
+        sShipRef.get()->setAttribute(AttrShieldEmDamageResonance, 1.0, true);
 	// AttrShieldExplosiveDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrShieldExplosiveDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrShieldExplosiveDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrShieldExplosiveDamageResonance)))
+        sShipRef.get()->setAttribute(AttrShieldExplosiveDamageResonance, 1.0, true);
 	// AttrShieldKineticDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrShieldKineticDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrShieldKineticDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrShieldKineticDamageResonance)))
+        sShipRef.get()->setAttribute(AttrShieldKineticDamageResonance, 1.0, true);
 	// AttrShieldThermalDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrShieldThermalDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrShieldThermalDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrShieldThermalDamageResonance)))
+        sShipRef.get()->setAttribute(AttrShieldThermalDamageResonance, 1.0, true);
 
 	// Armor Resonance
 	// AttrArmorEmDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrArmorEmDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrArmorEmDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrArmorEmDamageResonance)))
+        sShipRef.get()->setAttribute(AttrArmorEmDamageResonance, 1.0, true);
 	// AttrArmorExplosiveDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrArmorExplosiveDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrArmorExplosiveDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrArmorExplosiveDamageResonance)))
+        sShipRef.get()->setAttribute(AttrArmorExplosiveDamageResonance, 1.0, true);
 	// AttrArmorKineticDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrArmorKineticDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrArmorKineticDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrArmorKineticDamageResonance)))
+        sShipRef.get()->setAttribute(AttrArmorKineticDamageResonance, 1.0, true);
 	// AttrArmorThermalDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrArmorThermalDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrArmorThermalDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrArmorThermalDamageResonance)))
+        sShipRef.get()->setAttribute(AttrArmorThermalDamageResonance, 1.0, true);
 
 	// Hull Resonance
 	// AttrHullEmDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrHullEmDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrHullEmDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrHullEmDamageResonance)))
+        sShipRef.get()->setAttribute(AttrHullEmDamageResonance, 1.0, true);
 	// AttrHullExplosiveDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrHullExplosiveDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrHullExplosiveDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrHullExplosiveDamageResonance)))
+        sShipRef.get()->setAttribute(AttrHullExplosiveDamageResonance, 1.0, true);
 	// AttrHullKineticDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrHullKineticDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrHullKineticDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrHullKineticDamageResonance)))
+        sShipRef.get()->setAttribute(AttrHullKineticDamageResonance, 1.0, true);
 	// AttrHullThermalDamageResonance
-	if( !(sShipRef.get()->HasAttribute(AttrHullThermalDamageResonance)) )
-		sShipRef.get()->SetAttribute(AttrHullThermalDamageResonance, 1.0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrHullThermalDamageResonance)))
+        sShipRef.get()->setAttribute(AttrHullThermalDamageResonance, 1.0, true);
 
 	// AttrTurretSlotsLeft
-	if( !(sShipRef.get()->HasAttribute(AttrTurretSlotsLeft)) )
-		sShipRef.get()->SetAttribute(AttrTurretSlotsLeft, 0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrTurretSlotsLeft)))
+        sShipRef.get()->setAttribute(AttrTurretSlotsLeft, 0, true);
 	// AttrLauncherSlotsLeft
-	if( !(sShipRef.get()->HasAttribute(AttrLauncherSlotsLeft)) )
-		sShipRef.get()->SetAttribute(AttrLauncherSlotsLeft, 0, true);
+    if (!(sShipRef.get()->hasAttribute(AttrLauncherSlotsLeft)))
+        sShipRef.get()->setAttribute(AttrLauncherSlotsLeft, 0, true);
 
     return sShipRef;
 }
@@ -192,32 +192,57 @@ bool Ship::_Load()
 
     bool loadSuccess = InventoryItem::_Load();      // Attributes are loaded here!
 
+    double capacity;
 	// fill cargo holds data here:
 	// NOTE: These all still need to have skill and ship bonuses applied when creating the capacities!
-	if( HasAttribute(AttrCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold,mAttributeMap.GetAttribute(AttrCapacity).get_float()));
-	if( HasAttribute(AttrDroneCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagDroneBay,mAttributeMap.GetAttribute(AttrDroneCapacity).get_float()));
-	if( HasAttribute(AttrSpecialFuelBayCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedFuelBay,mAttributeMap.GetAttribute(AttrSpecialFuelBayCapacity).get_float()));
-	if( HasAttribute(AttrSpecialOreHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedOreHold,mAttributeMap.GetAttribute(AttrSpecialOreHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialGasHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedGasHold,mAttributeMap.GetAttribute(AttrSpecialGasHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialMineralHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedMineralHold,mAttributeMap.GetAttribute(AttrSpecialMineralHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialSalvageHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedSalvageHold,mAttributeMap.GetAttribute(AttrSpecialSalvageHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialShipHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedShipHold,mAttributeMap.GetAttribute(AttrSpecialShipHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialSmallShipHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedSmallShipHold,mAttributeMap.GetAttribute(AttrSpecialSmallShipHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialLargeShipHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedLargeShipHold,mAttributeMap.GetAttribute(AttrSpecialLargeShipHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialIndustrialShipHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedIndustrialShipHold,mAttributeMap.GetAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float()));
-	if( HasAttribute(AttrSpecialAmmoHoldCapacity) )
-		m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagSpecializedAmmoHold,mAttributeMap.GetAttribute(AttrSpecialAmmoHoldCapacity).get_float()));
+    if (fetchAttribute(AttrCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagCargoHold, capacity));
+    }
+    if (fetchAttribute(AttrDroneCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagDroneBay, capacity));
+    }
+    if (fetchAttribute(AttrSpecialFuelBayCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedFuelBay, capacity));
+    }
+    if (fetchAttribute(AttrSpecialOreHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedOreHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialGasHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedGasHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialMineralHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedMineralHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialSalvageHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedSalvageHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialShipHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedShipHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialSmallShipHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedSmallShipHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialLargeShipHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedLargeShipHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialIndustrialShipHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedIndustrialShipHold, capacity));
+    }
+    if (fetchAttribute(AttrSpecialAmmoHoldCapacity, capacity))
+    {
+        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedAmmoHold, capacity));
+    }
 
 	_UpdateCargoHoldsUsedVolume();
 
@@ -234,29 +259,29 @@ bool Ship::_Load()
 
 void Ship::_UpdateCargoHoldsUsedVolume()
 {
-	if( HasAttribute(AttrCapacity) )
+    if (hasAttribute(AttrCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagCargoHold)->second = GetStoredVolume(flagCargoHold);
-	if( HasAttribute(AttrDroneCapacity) )
+    if (hasAttribute(AttrDroneCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagDroneBay)->second = GetStoredVolume(flagDroneBay);
-	if( HasAttribute(AttrSpecialFuelBayCapacity) )
+    if (hasAttribute(AttrSpecialFuelBayCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedFuelBay)->second = GetStoredVolume(flagSpecializedFuelBay);
-	if( HasAttribute(AttrSpecialOreHoldCapacity) )
+    if (hasAttribute(AttrSpecialOreHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedOreHold)->second = GetStoredVolume(flagSpecializedOreHold);
-	if( HasAttribute(AttrSpecialGasHoldCapacity) )
+    if (hasAttribute(AttrSpecialGasHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedGasHold)->second = GetStoredVolume(flagSpecializedGasHold);
-	if( HasAttribute(AttrSpecialMineralHoldCapacity) )
+    if (hasAttribute(AttrSpecialMineralHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedMineralHold)->second = GetStoredVolume(flagSpecializedMineralHold);
-	if( HasAttribute(AttrSpecialSalvageHoldCapacity) )
+    if (hasAttribute(AttrSpecialSalvageHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSalvageHold)->second = GetStoredVolume(flagSpecializedSalvageHold);
-	if( HasAttribute(AttrSpecialShipHoldCapacity) )
+    if (hasAttribute(AttrSpecialShipHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedShipHold)->second = GetStoredVolume(flagSpecializedShipHold);
-	if( HasAttribute(AttrSpecialSmallShipHoldCapacity) )
+    if (hasAttribute(AttrSpecialSmallShipHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSmallShipHold)->second = GetStoredVolume(flagSpecializedSmallShipHold);
-	if( HasAttribute(AttrSpecialLargeShipHoldCapacity) )
+    if (hasAttribute(AttrSpecialLargeShipHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedLargeShipHold)->second = GetStoredVolume(flagSpecializedLargeShipHold);
-	if( HasAttribute(AttrSpecialIndustrialShipHoldCapacity) )
+    if (hasAttribute(AttrSpecialIndustrialShipHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedIndustrialShipHold)->second = GetStoredVolume(flagSpecializedIndustrialShipHold);
-	if( HasAttribute(AttrSpecialAmmoHoldCapacity) )
+    if (hasAttribute(AttrSpecialAmmoHoldCapacity))
 		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedAmmoHold)->second = GetStoredVolume(flagSpecializedAmmoHold);
 }
 
@@ -289,73 +314,73 @@ double Ship::GetCapacity(EVEItemFlags flag) const
     switch( flag ) {
 		case flagAutoFit:
 		case flagCargoHold:
-			if( HasAttribute(AttrCapacity) )
-				return GetAttribute(AttrCapacity).get_float();
+            if (hasAttribute(AttrCapacity))
+                return getAttribute(AttrCapacity).get_float();
 			break;
 
 		case flagDroneBay:
-			if( HasAttribute(AttrDroneCapacity) )
-				return GetAttribute(AttrDroneCapacity).get_float();
+            if (hasAttribute(AttrDroneCapacity))
+                return getAttribute(AttrDroneCapacity).get_float();
 			break;
 
 		case flagSpecializedFuelBay:
-			if( HasAttribute(AttrSpecialFuelBayCapacity) )
-				return GetAttribute(AttrSpecialFuelBayCapacity).get_float();
+            if (hasAttribute(AttrSpecialFuelBayCapacity))
+                return getAttribute(AttrSpecialFuelBayCapacity).get_float();
 			break;
 
 		case flagSpecializedOreHold:
-			if( HasAttribute(AttrSpecialOreHoldCapacity) )
-				return GetAttribute(AttrSpecialOreHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialOreHoldCapacity))
+                return getAttribute(AttrSpecialOreHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedGasHold:
-			if( HasAttribute(AttrSpecialGasHoldCapacity) )
-				return GetAttribute(AttrSpecialGasHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialGasHoldCapacity))
+                return getAttribute(AttrSpecialGasHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedMineralHold:
-			if( HasAttribute(AttrSpecialMineralHoldCapacity) )
-				return GetAttribute(AttrSpecialMineralHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialMineralHoldCapacity))
+                return getAttribute(AttrSpecialMineralHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedSalvageHold:
-			if( HasAttribute(AttrSpecialSalvageHoldCapacity) )
-				return GetAttribute(AttrSpecialSalvageHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialSalvageHoldCapacity))
+                return getAttribute(AttrSpecialSalvageHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedShipHold:
-			if( HasAttribute(AttrSpecialShipHoldCapacity) )
-				return GetAttribute(AttrSpecialShipHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialShipHoldCapacity))
+                return getAttribute(AttrSpecialShipHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedSmallShipHold:
-			if( HasAttribute(AttrSpecialSmallShipHoldCapacity) )
-				return GetAttribute(AttrSpecialSmallShipHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialSmallShipHoldCapacity))
+                return getAttribute(AttrSpecialSmallShipHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedLargeShipHold:
-			if( HasAttribute(AttrSpecialLargeShipHoldCapacity) )
-				return GetAttribute(AttrSpecialLargeShipHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialLargeShipHoldCapacity))
+                return getAttribute(AttrSpecialLargeShipHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedIndustrialShipHold:
-			if( HasAttribute(AttrSpecialIndustrialShipHoldCapacity) )
-				return GetAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialIndustrialShipHoldCapacity))
+                return getAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float();
 			break;
 
 		case flagSpecializedAmmoHold:
-			if( HasAttribute(AttrSpecialAmmoHoldCapacity) )
-				return GetAttribute(AttrSpecialAmmoHoldCapacity).get_float();
+            if (hasAttribute(AttrSpecialAmmoHoldCapacity))
+                return getAttribute(AttrSpecialAmmoHoldCapacity).get_float();
 			break;
 
         case flagShipHangar:
-			if( HasAttribute(AttrShipMaintenanceBayCapacity) )
-				return GetAttribute(AttrShipMaintenanceBayCapacity).get_float();
+            if (hasAttribute(AttrShipMaintenanceBayCapacity))
+                return getAttribute(AttrShipMaintenanceBayCapacity).get_float();
 			break;
 
         case flagHangar:
-			if( HasAttribute(AttrCorporateHangarCapacity) )
-				return GetAttribute(AttrCorporateHangarCapacity).get_float();
+            if (hasAttribute(AttrCorporateHangarCapacity))
+                return getAttribute(AttrCorporateHangarCapacity).get_float();
 			break;
 
 		default:
@@ -372,51 +397,51 @@ double Ship::GetRemainingVolumeByFlag(EVEItemFlags flag) const
 	switch( flag ) {
 		case flagAutoFit:
 		case flagCargoHold:
-			return (GetAttribute(AttrCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagCargoHold)->second);
+            return (getAttribute(AttrCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagCargoHold)->second);
 			break;
 
 		case flagDroneBay:
-			return (GetAttribute(AttrDroneCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagDroneBay)->second);
+            return (getAttribute(AttrDroneCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagDroneBay)->second);
 			break;
 
 		case flagSpecializedFuelBay:
-			return (GetAttribute(AttrSpecialFuelBayCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedFuelBay)->second);
+            return (getAttribute(AttrSpecialFuelBayCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedFuelBay)->second);
 			break;
 
 		case flagSpecializedOreHold:
-			return (GetAttribute(AttrSpecialOreHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedOreHold)->second);
+            return (getAttribute(AttrSpecialOreHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedOreHold)->second);
 			break;
 
 		case flagSpecializedGasHold:
-			return (GetAttribute(AttrSpecialGasHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedGasHold)->second);
+            return (getAttribute(AttrSpecialGasHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedGasHold)->second);
 			break;
 
 		case flagSpecializedMineralHold:
-			return (GetAttribute(AttrSpecialMineralHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedMineralHold)->second);
+            return (getAttribute(AttrSpecialMineralHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedMineralHold)->second);
 			break;
 
 		case flagSpecializedSalvageHold:
-			return (GetAttribute(AttrSpecialSalvageHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSalvageHold)->second);
+            return (getAttribute(AttrSpecialSalvageHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSalvageHold)->second);
 			break;
 
 		case flagSpecializedShipHold:
-			return (GetAttribute(AttrSpecialShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedShipHold)->second);
+            return (getAttribute(AttrSpecialShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedShipHold)->second);
 			break;
 
 		case flagSpecializedSmallShipHold:
-			return (GetAttribute(AttrSpecialSmallShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSmallShipHold)->second);
+            return (getAttribute(AttrSpecialSmallShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSmallShipHold)->second);
 			break;
 
 		case flagSpecializedLargeShipHold:
-			return (GetAttribute(AttrSpecialLargeShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedLargeShipHold)->second);
+            return (getAttribute(AttrSpecialLargeShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedLargeShipHold)->second);
 			break;
 
 		case flagSpecializedIndustrialShipHold:
-			return (GetAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedIndustrialShipHold)->second);
+            return (getAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedIndustrialShipHold)->second);
 			break;
 
 		case flagSpecializedAmmoHold:
-			return (GetAttribute(AttrSpecialAmmoHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedAmmoHold)->second);
+            return (getAttribute(AttrSpecialAmmoHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedAmmoHold)->second);
 			break;
 
 		default:
@@ -439,7 +464,7 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
     }
     else if( flag == flagShipHangar )
     {
-        if (m_pOperator->GetShip()->GetAttribute(AttrHasShipMaintenanceBay) != 0)
+        if (m_pOperator->GetShip()->getAttribute(AttrHasShipMaintenanceBay) != 0)
         {
             // We have no ship maintenance bay
             throw PyException(MakeCustomError("%s has no ship maintenance bay.", item->itemName().c_str()));
@@ -452,7 +477,7 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
     }
     else if( flag == flagHangar )
     {
-        if (m_pOperator->GetShip()->GetAttribute(AttrHasCorporateHangars) != 0)
+        if (m_pOperator->GetShip()->getAttribute(AttrHasCorporateHangars) != 0)
         {
             // We have no corporate hangars
             throw PyException(MakeCustomError("%s has no corporate hangars.", item->itemName().c_str()));
@@ -478,9 +503,9 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 			{
 				InventoryItemRef module;
 				module = m_ModuleManager->GetModule(flag)->getItem();
-				if(module->GetAttribute(AttrChargeSize) != item->GetAttribute(AttrChargeSize) )
+                if (module->getAttribute(AttrChargeSize) != item->getAttribute(AttrChargeSize))
 					throw PyException( MakeCustomError( "The charge is not the correct size for this module." ) );
-				if(module->GetAttribute(AttrChargeGroup1) != item->groupID())
+                if (module->getAttribute(AttrChargeGroup1) != item->groupID())
 					throw PyException( MakeCustomError( "Incorrect charge type for this module.") );
 
 				// NOTE: Module Manager will check for actual room to load charges and make stack splits, or reject loading altogether
@@ -509,11 +534,11 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
                 throw PyException(MakeCustomError("You do not have the required skills to fit this \n%s", item->itemName().c_str()));
             }
         }
-        if (m_pOperator->GetShip()->GetAttribute(AttrRigSize) != item->GetAttribute(AttrRigSize))
+        if (m_pOperator->GetShip()->getAttribute(AttrRigSize) != item->getAttribute(AttrRigSize))
         {
             throw PyException(MakeCustomError("Your ship cannot fit this size module"));
         }
-        if (m_pOperator->GetShip()->GetAttribute(AttrUpgradeLoad) + item->GetAttribute(AttrUpgradeCost) > m_pOperator->GetShip()->GetAttribute(AttrUpgradeCapacity))
+        if (m_pOperator->GetShip()->getAttribute(AttrUpgradeLoad) + item->getAttribute(AttrUpgradeCost) > m_pOperator->GetShip()->getAttribute(AttrUpgradeCapacity))
         {
             throw PyException(MakeCustomError("Your ship cannot handle the extra calibration"));
         }
@@ -537,7 +562,7 @@ bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
     capacityRemaining = GetRemainingVolumeByFlag(flag);
 
     // Check for sufficient capacity.
-    if ((capacityRemaining < (item->GetAttribute(AttrVolume).get_float() * (double) item->quantity())))
+    if ((capacityRemaining < (item->getAttribute(AttrVolume).get_float() * (double) item->quantity())))
     {
         throw PyException(MakeCustomError("Not enough cargo space!<br><br>flag = %u", (uint32) flag));
         return false;
@@ -638,14 +663,14 @@ bool Ship::ValidateItemSpecifics(InventoryItemRef equip) const
     //declaring explicitly as int...not sure if this is needed or not
     int groupID = m_pOperator->GetShip()->groupID();
     int typeID = m_pOperator->GetShip()->typeID();
-    EvilNumber canFitShipGroup1 = equip->GetAttribute(AttrCanFitShipGroup1);
-    EvilNumber canFitShipGroup2 = equip->GetAttribute(AttrCanFitShipGroup2);
-    EvilNumber canFitShipGroup3 = equip->GetAttribute(AttrCanFitShipGroup3);
-    EvilNumber canFitShipGroup4 = equip->GetAttribute(AttrCanFitShipGroup4);
-    EvilNumber canFitShipType1 = equip->GetAttribute(AttrCanFitShipType1);
-    EvilNumber canFitShipType2 = equip->GetAttribute(AttrCanFitShipType2);
-    EvilNumber canFitShipType3 = equip->GetAttribute(AttrCanFitShipType3);
-    EvilNumber canFitShipType4 = equip->GetAttribute(AttrCanFitShipType4);
+    EvilNumber canFitShipGroup1 = equip->getAttribute(AttrCanFitShipGroup1);
+    EvilNumber canFitShipGroup2 = equip->getAttribute(AttrCanFitShipGroup2);
+    EvilNumber canFitShipGroup3 = equip->getAttribute(AttrCanFitShipGroup3);
+    EvilNumber canFitShipGroup4 = equip->getAttribute(AttrCanFitShipGroup4);
+    EvilNumber canFitShipType1 = equip->getAttribute(AttrCanFitShipType1);
+    EvilNumber canFitShipType2 = equip->getAttribute(AttrCanFitShipType2);
+    EvilNumber canFitShipType3 = equip->getAttribute(AttrCanFitShipType3);
+    EvilNumber canFitShipType4 = equip->getAttribute(AttrCanFitShipType4);
 
 	if( canFitShipGroup1 != 0 || canFitShipGroup2 != 0 || canFitShipGroup3 != 0 || canFitShipGroup4 != 0 )
 		if( canFitShipGroup1 != groupID && canFitShipGroup2 != groupID && canFitShipGroup3 != groupID && canFitShipGroup4 != groupID )
@@ -791,7 +816,7 @@ uint32 Ship::AddItem(EVEItemFlags flag, InventoryItemRef item)
 		// The default case handles ANY other items added to ship and assumes they go into one of the valid cargo holds on this ship:
 		default:
 			//Log::Error( "Ship::AddItem(flag,item)", "ERROR! Function called with item '%s' (id: %u) of category neither Charge nor Module!", item->itemName().c_str(), item->itemID() );
-			_IncreaseCargoHoldsUsedVolume( item->flag(), (item->GetAttribute(AttrVolume).get_float() * item->quantity()) );
+            _IncreaseCargoHoldsUsedVolume(item->flag(), (item->getAttribute(AttrVolume).get_float() * item->quantity()));
 			item->Move(itemID(), flag);
 			break;
 	}
@@ -836,8 +861,8 @@ void Ship::RemoveItem(InventoryItemRef item, uint32 inventoryID, EVEItemFlags fl
     // Move New item to its new location:
 	if( !( ((item->flag() >= flagLowSlot0)  &&  (item->flag() <= flagHiSlot7)) || ((item->flag() >= flagRigSlot0)  &&  (item->flag() <= flagRigSlot7))
 		|| ((item->flag() >= flagSubSystem0)  &&  (item->flag() <= flagSubSystem7)) ) )
-	{
-		_DecreaseCargoHoldsUsedVolume( item->flag(), (item->GetAttribute(AttrVolume).get_float() * item->quantity()) );
+    {
+        _DecreaseCargoHoldsUsedVolume(item->flag(), (item->getAttribute(AttrVolume).get_float() * item->quantity()));
 		m_pOperator->MoveItem(item->itemID(), inventoryID, flag);
 	}
 	else
@@ -855,7 +880,7 @@ bool Ship::AlterCargoQty(InventoryItemRef item, int qtyChange)
         return false;
     }
     // Calculate total volume needed.
-    double volumeNeed = item->GetAttribute(AttrVolume).get_float() * qtyChange;
+    double volumeNeed = item->getAttribute(AttrVolume).get_float() * qtyChange;
     // Get remaining volume.
     double remain = GetRemainingCapacity(item->flag());
     if (remain >= volumeNeed)
@@ -943,21 +968,21 @@ void Ship::Process()
 		if( m_processTimer.Check() )
 		{
 			// shield
-			if( GetAttribute(AttrShieldCharge) < GetAttribute(AttrShieldCapacity) )
-			{
-				EvilNumber newCharge = GetAttribute(AttrShieldCharge) + ((EvilNumber(m_processTimerTick/1000.0)) * GetAttribute(AttrShieldCapacity)/(GetAttribute(AttrShieldRechargeRate)/1000.0));
-				if( newCharge > GetAttribute(AttrShieldCapacity) )
-					newCharge = GetAttribute(AttrShieldCapacity);
-				SetAttribute(AttrShieldCharge, newCharge);
+            if (getAttribute(AttrShieldCharge) < getAttribute(AttrShieldCapacity))
+                {
+                EvilNumber newCharge = getAttribute(AttrShieldCharge) + ((EvilNumber(m_processTimerTick / 1000.0)) * getAttribute(AttrShieldCapacity) / (getAttribute(AttrShieldRechargeRate) / 1000.0));
+                if (newCharge > getAttribute(AttrShieldCapacity))
+                    newCharge = getAttribute(AttrShieldCapacity);
+                setAttribute(AttrShieldCharge, newCharge);
 			}
 
 			// capacitor
-			if( GetAttribute(AttrCharge) < GetAttribute(AttrCapacitorCapacity) )
-			{
-				EvilNumber newCharge = GetAttribute(AttrCharge) + ((EvilNumber(m_processTimerTick/1000.0)) * GetAttribute(AttrCapacitorCapacity)/(GetAttribute(AttrRechargeRate)/1000.0));
-				if( newCharge > GetAttribute(AttrCapacitorCapacity) )
-					newCharge = GetAttribute(AttrCapacitorCapacity);
-				SetAttribute(AttrCharge, newCharge);
+            if (getAttribute(AttrCharge) < getAttribute(AttrCapacitorCapacity))
+                {
+                EvilNumber newCharge = getAttribute(AttrCharge) + ((EvilNumber(m_processTimerTick / 1000.0)) * getAttribute(AttrCapacitorCapacity) / (getAttribute(AttrRechargeRate) / 1000.0));
+                if (newCharge > getAttribute(AttrCapacitorCapacity))
+                    newCharge = getAttribute(AttrCapacitorCapacity);
+                setAttribute(AttrCharge, newCharge);
 			}
 		}
 	}
@@ -994,11 +1019,11 @@ void Ship::SetShipShields(double shieldChargeFraction)
 	if( shieldChargeFraction < 0.0 )
 		shieldChargeFraction = 0.0;
 
-	newShieldCharge = GetAttribute(AttrShieldCapacity) * shieldChargeFraction;
-	if( (newShieldCharge + 0.5) > GetAttribute(AttrShieldCapacity) )
-		newShieldCharge = GetAttribute(AttrShieldCapacity);
+    newShieldCharge = getAttribute(AttrShieldCapacity) * shieldChargeFraction;
+    if ((newShieldCharge + 0.5) > getAttribute(AttrShieldCapacity))
+        newShieldCharge = getAttribute(AttrShieldCapacity);
 
-	SetAttribute(AttrShieldCharge, newShieldCharge);
+    setAttribute(AttrShieldCharge, newShieldCharge);
 }
 
 void Ship::SetShipArmor(double armorHealthFraction)
@@ -1010,11 +1035,11 @@ void Ship::SetShipArmor(double armorHealthFraction)
 	if( armorHealthFraction < 0.0 )
 		armorHealthFraction = 0.0;
 
-	newArmorDamage = GetAttribute(AttrArmorHP) * (1.0 - armorHealthFraction);
+    newArmorDamage = getAttribute(AttrArmorHP) * (1.0 - armorHealthFraction);
 	if( (newArmorDamage - 0.5) < 0.0 )
 		newArmorDamage = 0.0;
 
-	SetAttribute(AttrArmorDamage, newArmorDamage);
+    setAttribute(AttrArmorDamage, newArmorDamage);
 }
 
 void Ship::SetShipHull(double hullHealthFraction)
@@ -1026,11 +1051,11 @@ void Ship::SetShipHull(double hullHealthFraction)
 	if( hullHealthFraction < 0.0 )
 		hullHealthFraction = 0.0;
 
-	newHullDamage = GetAttribute(AttrHp) * (1.0 - hullHealthFraction);
+    newHullDamage = getAttribute(AttrHp) * (1.0 - hullHealthFraction);
 	if( (newHullDamage - 0.5) > 0.0 )
 		newHullDamage = 0.0;
 
-	SetAttribute(AttrDamage, newHullDamage);
+    setAttribute(AttrDamage, newHullDamage);
 }
 
 void Ship::SetShipCapacitorLevel(double capacitorChargeFraction)
@@ -1042,11 +1067,11 @@ void Ship::SetShipCapacitorLevel(double capacitorChargeFraction)
 	if( capacitorChargeFraction < 0.0 )
 		capacitorChargeFraction = 0.0;
 
-	newCapacitorCharge = GetAttribute(AttrCapacitorCapacity) * capacitorChargeFraction;
-	if( (newCapacitorCharge + 0.5) > GetAttribute(AttrCapacitorCapacity) )
-		newCapacitorCharge = GetAttribute(AttrCapacitorCapacity);
+    newCapacitorCharge = getAttribute(AttrCapacitorCapacity) * capacitorChargeFraction;
+    if ((newCapacitorCharge + 0.5) > getAttribute(AttrCapacitorCapacity))
+        newCapacitorCharge = getAttribute(AttrCapacitorCapacity);
 
-	SetAttribute(AttrCharge, newCapacitorCharge);
+    setAttribute(AttrCharge, newCapacitorCharge);
 }
 
 
@@ -1163,11 +1188,11 @@ void ShipEntity::EncodeDestiny( Buffer& into ) const
 
 void ShipEntity::MakeDamageState(DoDestinyDamageState &into) const
 {
-    into.shield = (m_self->GetAttribute(AttrShieldCharge).get_float() / m_self->GetAttribute(AttrShieldCapacity).get_float());
+    into.shield = (m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float());
     into.tau = 100000;    //no freaking clue.
     into.timestamp = Win32TimeNow();
 //    armor damage isn't working...
-    into.armor = 1.0 - (m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float());
+    into.armor = 1.0 - (m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float());
+    into.structure = 1.0 - (m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float());
 }
 

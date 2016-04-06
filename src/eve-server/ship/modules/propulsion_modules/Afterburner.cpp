@@ -40,16 +40,16 @@ bool Afterburner::endCycle(bool continuing)
         return true;
     }
 	// Tell Destiny Manager about our new speed so it properly tracks ship movement:
-	m_ship->GetOperator()->GetDestiny()->SetMaxVelocity(m_ship->GetDefaultAttribute(AttrMaxVelocity).get_float());
+	m_ship->GetOperator()->GetDestiny()->SetMaxVelocity(m_ship->getDefaultAttribute(AttrMaxVelocity).get_float());
 	m_ship->GetOperator()->GetDestiny()->SetSpeedFraction(1.0);
 
 	DoDestiny_SetMaxSpeed speed;
 	speed.entityID = m_ship->itemID();
-	speed.speedValue = m_ship->GetDefaultAttribute(AttrMaxVelocity).get_float();
+	speed.speedValue = m_ship->getDefaultAttribute(AttrMaxVelocity).get_float();
 
 	DoDestiny_SetBallMass mass;
 	mass.entityID = m_ship->itemID();
-	mass.mass = m_ship->GetAttribute(AttrMass).get_float();
+	mass.mass = m_ship->getAttribute(AttrMass).get_float();
 
 	std::vector<PyTuple *> updates;
 	updates.push_back(speed.Encode());
@@ -68,7 +68,7 @@ void Afterburner::startCycle(bool continuing)
     }
 	double implantBonuses = 1.0;	// TODO: gather and accumulate all implant bonuses for MWDs/Afterburners
 	double accelerationControlSkillLevel = 0.0;	// TODO: Figure out how to get access to skills list of character running this ship and get this value
-	double boostSpeed = m_ship->GetAttribute(AttrMaxVelocity).get_float() * (1.0 + (m_item->GetAttribute(AttrSpeedFactor).get_float() / 100.0 * (1 + accelerationControlSkillLevel * 0.05) * (implantBonuses) * (m_item->GetAttribute(AttrSpeedBoostFactor).get_float() / (m_ship->GetAttribute(AttrMass).get_float()))));
+	double boostSpeed = m_ship->getAttribute(AttrMaxVelocity).get_float() * (1.0 + (m_item->getAttribute(AttrSpeedFactor).get_float() / 100.0 * (1 + accelerationControlSkillLevel * 0.05) * (implantBonuses) * (m_item->getAttribute(AttrSpeedBoostFactor).get_float() / (m_ship->getAttribute(AttrMass).get_float()))));
 
 	// Tell Destiny Manager about our new speed so it properly tracks ship movement:
 	m_ship->GetOperator()->GetDestiny()->SetMaxVelocity(boostSpeed);
@@ -76,7 +76,7 @@ void Afterburner::startCycle(bool continuing)
 
 	DoDestiny_SetBallMass mass;
 	mass.entityID = m_ship->itemID();
-	mass.mass = m_ship->GetAttribute(AttrMass).get_float();
+	mass.mass = m_ship->getAttribute(AttrMass).get_float();
 
 	DoDestiny_SetMaxSpeed speed;
 	speed.entityID = m_ship->itemID();

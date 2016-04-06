@@ -83,7 +83,7 @@ PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {
                                     // Item cannot be repackaged once used!
                                     continue;
                                 }
-                                if (item->GetAttribute(AttrDamage) == 0)
+                                if (item->getAttribute(AttrDamage) == 0)
                                 {
                                     item->ChangeSingleton(false);
                                 }

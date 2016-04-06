@@ -489,19 +489,21 @@ void RamProxyService::_VerifyInstallJob_Call(const Call_InstallJob &args, Invent
     if(args.activityID == ramActivityManufacturing)
     {
         uint32 jobCount = RamProxyDB::CountManufacturingJobs(c->GetCharacterID());
-        if(c->GetChar()->GetAttribute(AttrManufactureSlotLimit).get_int() <= jobCount) {
+        if (c->GetChar()->getAttribute(AttrManufactureSlotLimit).get_int() <= jobCount)
+        {
             std::map<std::string, PyRep *> exceptArgs;
             exceptArgs["current"] = new PyInt(jobCount);
-            exceptArgs["max"] = c->GetChar()->GetAttribute(AttrManufactureSlotLimit).GetPyObject();
+            exceptArgs["max"] = c->GetChar()->getAttribute(AttrManufactureSlotLimit).GetPyObject();
             throw(PyException(MakeUserError("MaxFactorySlotUsageReached", exceptArgs)));
         }
     } else
     {
         uint32 jobCount = RamProxyDB::CountResearchJobs(c->GetCharacterID());
-        if(c->GetChar()->GetAttribute(AttrMaxLaborotorySlots).get_int() <= jobCount) {
+        if (c->GetChar()->getAttribute(AttrMaxLaborotorySlots).get_int() <= jobCount)
+        {
             std::map<std::string, PyRep *> exceptArgs;
             exceptArgs["current"] = new PyInt(jobCount);
-            exceptArgs["max"] = c->GetChar()->GetAttribute(AttrMaxLaborotorySlots).GetPyObject();
+            exceptArgs["max"] = c->GetChar()->getAttribute(AttrMaxLaborotorySlots).GetPyObject();
             throw(PyException(MakeUserError("MaxResearchFacilitySlotUsageReached", exceptArgs)));
         }
     }
@@ -798,15 +800,19 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             into.materialMultiplier *= bp->materialMultiplier();
             into.timeMultiplier *= bp->timeMultiplier();
 
-            into.charMaterialMultiplier = c->GetChar()->GetAttribute(AttrManufactureCostMultiplier).get_float();
-            into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrManufactureTimeMultiplier).get_float();
+            into.charMaterialMultiplier = c->GetChar()->getAttribute(AttrManufactureCostMultiplier).get_float();
+            into.charTimeMultiplier = c->GetChar()->getAttribute(AttrManufactureTimeMultiplier).get_float();
 
             switch (productType->raceID)
             {
-                case raceCaldari:       into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrCaldariTechTimePercent).get_int()) / 100.0; break;
-                case raceMinmatar:      into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrMinmatarTechTimePercent).get_int()) / 100.0; break;
-                case raceAmarr:         into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrAmarrTechTimePercent).get_int()) / 100.0; break;
-                case raceGallente:      into.charTimeMultiplier *= double(c->GetChar()->GetAttribute(AttrGallenteTechTimePercent).get_int()) / 100.0; break;
+                case raceCaldari: into.charTimeMultiplier *= double(c->GetChar()->getAttribute(AttrCaldariTechTimePercent).get_int()) / 100.0;
+                    break;
+                case raceMinmatar: into.charTimeMultiplier *= double(c->GetChar()->getAttribute(AttrMinmatarTechTimePercent).get_int()) / 100.0;
+                    break;
+                case raceAmarr: into.charTimeMultiplier *= double(c->GetChar()->getAttribute(AttrAmarrTechTimePercent).get_int()) / 100.0;
+                    break;
+                case raceGallente: into.charTimeMultiplier *= double(c->GetChar()->getAttribute(AttrGallenteTechTimePercent).get_int()) / 100.0;
+                    break;
                 case raceJove:          break;
                 case racePirate:        break;
             }
@@ -821,8 +827,8 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             productType = installedItem->type();
 
             into.productionTime = bp->blueprintType()->researchProductivityTime;
-            into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
-            into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrManufacturingTimeResearchSpeed).get_float();
+            into.charMaterialMultiplier = double(c->GetChar()->getAttribute(AttrResearchCostPercent).get_int()) / 100.0;
+            into.charTimeMultiplier = c->GetChar()->getAttribute(AttrManufacturingTimeResearchSpeed).get_float();
             break;
         }
         /*
@@ -834,8 +840,8 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             productType = installedItem->type();
 
             into.productionTime = bp->blueprintType()->researchMaterialTime;
-            into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
-            into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrMineralNeedResearchSpeed).get_float();
+            into.charMaterialMultiplier = double(c->GetChar()->getAttribute(AttrResearchCostPercent).get_int()) / 100.0;
+            into.charTimeMultiplier = c->GetChar()->getAttribute(AttrMineralNeedResearchSpeed).get_float();
             break;
         }
         /*
@@ -851,8 +857,8 @@ bool RamProxyService::_Calculate(const Call_InstallJob &args, InventoryItemRef i
             // no ceil() here on purpose
             into.productionTime = (bpType->researchCopyTime / bpType->maxProductionLimit) * args.licensedProductionRuns;
 
-            into.charMaterialMultiplier = double(c->GetChar()->GetAttribute(AttrResearchCostPercent).get_int()) / 100.0;
-            into.charTimeMultiplier = c->GetChar()->GetAttribute(AttrCopySpeedPercent).get_float();
+            into.charMaterialMultiplier = double(c->GetChar()->getAttribute(AttrResearchCostPercent).get_int()) / 100.0;
+            into.charTimeMultiplier = c->GetChar()->getAttribute(AttrCopySpeedPercent).get_float();
             break;
         }
         default: {
@@ -953,9 +959,9 @@ void RamProxyService::_EncodeMissingMaterials(const std::vector<RequiredItem> &r
         for(; curi != endi && qtyReq > 0; curi++) {
             if((*curi)->typeID() == cur->typeID && (*curi)->ownerID() == c->GetCharacterID()) {
                 if(cur->isSkill)
-                    qtyReq -= std::min((uint32)qtyReq, (uint32)(*curi)->GetAttribute(AttrSkillLevel).get_int());
+                    qtyReq -= std::min((uint32) qtyReq, (uint32) (*curi)->getAttribute(AttrSkillLevel).get_int());
                 else
-                    qtyReq -= std::min((uint32)qtyReq, (uint32)(*curi)->GetAttribute(AttrQuantity).get_int());
+                    qtyReq -= std::min((uint32) qtyReq, (uint32) (*curi)->getAttribute(AttrQuantity).get_int());
             }
         }
 

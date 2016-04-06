@@ -1365,28 +1365,28 @@ bool InventoryDB::GetOpenPowerSlots(uint32 slotType, ShipRef ship, uint32 &into)
         attributeID = 1137;
         firstFlag = 92; //rigslot0
         //slotsOnShip = ship->rigSlots();
-        slotsOnShip = static_cast<uint32>(ship->GetAttribute(AttrRigSlots).get_int());
+        slotsOnShip = static_cast<uint32>(ship->getAttribute(AttrRigSlots).get_int());
     }
     else if( slotType == 1 )
     {
         attributeID = 12;
         firstFlag = 11; //lowslot0
         //slotsOnShip = ship->lowSlots();
-        slotsOnShip = static_cast<uint32>(ship->GetAttribute(AttrLowSlots).get_int());
+        slotsOnShip = static_cast<uint32>(ship->getAttribute(AttrLowSlots).get_int());
     }
     else if( slotType == 2 )
     {
         attributeID = 13;
         firstFlag = 19; //medslot0
         //slotsOnShip = ship->medSlots();
-        slotsOnShip = static_cast<uint32>(ship->GetAttribute(AttrMedSlots).get_int());
+        slotsOnShip = static_cast<uint32>(ship->getAttribute(AttrMedSlots).get_int());
     }
     else if( slotType == 3 )
     {
         attributeID = 14;
         firstFlag = 27; //hislot0
         //slotsOnShip = ship->hiSlots();
-        slotsOnShip = static_cast<uint32>(ship->GetAttribute(AttrHiSlots).get_int());
+        slotsOnShip = static_cast<uint32>(ship->getAttribute(AttrHiSlots).get_int());
     }
 
     for( uint32 flag = firstFlag; flag < (firstFlag + slotsOnShip); flag++ )

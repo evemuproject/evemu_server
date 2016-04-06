@@ -102,8 +102,8 @@ public:
 	InventoryItemRef GetModule(EVEItemFlags flag);
 	InventoryItemRef GetModule(uint32 itemID);
     uint32 FindAvailableModuleSlot( InventoryItemRef item );
-    EvilNumber GetMaxTurrentHardpoints() { return GetAttribute(AttrTurretSlotsLeft); }
-    EvilNumber GetMaxLauncherHardpoints() { return GetAttribute(AttrLauncherSlotsLeft); }
+    EvilNumber GetMaxTurrentHardpoints() { return getAttribute(AttrTurretSlotsLeft); }
+    EvilNumber GetMaxLauncherHardpoints() { return getAttribute(AttrLauncherSlotsLeft); }
     uint32 AddItem( EVEItemFlags flag, InventoryItemRef item);
     void RemoveItem(InventoryItemRef item, uint32 inventoryID, EVEItemFlags flag);
     /**

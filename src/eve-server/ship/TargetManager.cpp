@@ -128,7 +128,7 @@ bool TargetManager::startTargeting(SystemEntity *who, ShipRef ship)
     }
 
     // Check against max locked target count
-    m_maxLockedTargets = ship->GetAttribute(AttrMaxLockedTargets).get_int();
+    m_maxLockedTargets = ship->getAttribute(AttrMaxLockedTargets).get_int();
     //    if (m_targets.size() >= m_maxLockedTargets)
     //    {
     //        // TO-DO: send real max targets notice.
@@ -142,7 +142,7 @@ bool TargetManager::startTargeting(SystemEntity *who, ShipRef ship)
     }
 
     // Check against max locked target range
-    m_maxTargetLockRange = ship->GetAttribute(AttrMaxTargetRange).get_float();
+    m_maxTargetLockRange = ship->getAttribute(AttrMaxTargetRange).get_float();
     //    Vector3D rangeToTarget(who->GetPosition(), m_self->GetPosition());
     //    if (rangeToTarget.length() - who->GetRadius() > m_maxTargetLockRange)
     //    {
@@ -447,15 +447,12 @@ uint32 TargetManager::timeToLock(ShipRef ship, SystemEntity *target) const
     {
         return 0;
     }
-    double scanRes = ship->GetAttribute(AttrScanResolution).get_float();
+    double scanRes = ship->getAttribute(AttrScanResolution).get_float();
     InventoryItemRef item = target->Item();
     double sigRad = 500;
     if (item.get() != nullptr)
     {
-        if (item->HasAttribute(AttrSignatureRadius))
-        {
-            sigRad = item->GetAttribute(AttrSignatureRadius).get_float();
-        }
+        item->fetchAttribute(AttrSignatureRadius, sigRad);
     }
 
     double sigFactor = std::asinh(sigRad);

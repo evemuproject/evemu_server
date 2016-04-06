@@ -85,25 +85,14 @@ Damage::Damage(
     InventoryItemRef _weapon,
     EVEEffectID _effect): source(_source), charge(), effect(_effect)
 {
-	if(_weapon->HasAttribute(AttrKineticDamage))
-		kinetic = _weapon->GetAttribute(AttrKineticDamage).get_float();
-	else
-		kinetic = 0.0;
-
-	if(_weapon->HasAttribute(AttrThermalDamage))
-		thermal = _weapon->GetAttribute(AttrThermalDamage).get_float();
-	else
-		thermal = 0.0;
-
-	if(_weapon->HasAttribute(AttrEmDamage))
-		em = _weapon->GetAttribute(AttrEmDamage).get_float();
-	else
-		em = 0.0;
-
-	if(_weapon->HasAttribute(AttrExplosiveDamage))
-		explosive = _weapon->GetAttribute(AttrExplosiveDamage).get_float();
-	else
-		explosive = 0.0;
+    kinetic = 0.0;
+    thermal = 0.0;
+    em = 0.0;
+    explosive = 0.0;
+    _weapon->fetchAttribute(AttrKineticDamage, kinetic);
+    _weapon->fetchAttribute(AttrThermalDamage, thermal);
+    _weapon->fetchAttribute(AttrEmDamage, em);
+    _weapon->fetchAttribute(AttrExplosiveDamage, explosive);
 
 	weapon = _weapon;
 }
@@ -114,23 +103,23 @@ Damage::Damage(
     InventoryItemRef _charge,
     EVEEffectID _effect): source(_source), charge(_charge), effect(_effect)
 {
-	if(_charge->HasAttribute(AttrKineticDamage))
-		kinetic = (_charge->GetAttribute(AttrKineticDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+    if (_charge->fetchAttribute(AttrKineticDamage, kinetic))
+        kinetic *= _weapon->getAttribute(AttrDamageMultiplier).get_float();
 	else
 		kinetic = 0.0;
 
-	if(_charge->HasAttribute(AttrThermalDamage))
-		thermal = (_charge->GetAttribute(AttrThermalDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+    if (_charge->fetchAttribute(AttrThermalDamage, thermal))
+        thermal *= _weapon->getAttribute(AttrDamageMultiplier).get_float();
 	else
 		thermal = 0.0;
 
-	if(_charge->HasAttribute(AttrEmDamage))
-		em = (_charge->GetAttribute(AttrEmDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+    if (_charge->fetchAttribute(AttrEmDamage, em))
+        em *= _weapon->getAttribute(AttrDamageMultiplier).get_float();
 	else
 		em = 0.0;
 
-	if(_charge->HasAttribute(AttrExplosiveDamage))
-		explosive = (_charge->GetAttribute(AttrExplosiveDamage) * _weapon->GetAttribute(AttrDamageMultiplier)).get_float();
+    if (_charge->fetchAttribute(AttrExplosiveDamage, explosive))
+        explosive *= _weapon->getAttribute(AttrDamageMultiplier).get_float();
 	else
 		explosive = 0.0;
 
@@ -174,10 +163,11 @@ static const char *DamageMessageIDs_Other[6] = {
 void ItemSystemEntity::ApplyDamageModifiers(Damage &d, SystemEntity *target) {
     //m_self->damageMultiplier()
 
+    double mod;
 	// Basic damage multiplier
-	if( target->Item()->HasAttribute(AttrDamageMultiplier) )
-	{
-		double damageMultiplier = target->Item()->GetAttribute(AttrDamageMultiplier).get_float();
+    if (target->Item()->fetchAttribute(AttrDamageMultiplier, mod))
+    {
+        double damageMultiplier = mod;
 		d.SumWithMultFactor(damageMultiplier);
 	}
 
@@ -213,12 +203,12 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
     );*/
 
 
-    double available_shield = m_self->GetAttribute(AttrShieldCharge).get_float();
+    double available_shield = m_self->getAttribute(AttrShieldCharge).get_float();
     Damage shield_damage = d.MultiplyDup(
-        (1.0 - m_self->GetAttribute(AttrShieldKineticDamageResonance).get_float()),
-        (1.0 - m_self->GetAttribute(AttrShieldThermalDamageResonance).get_float()),
-        (1.0 - m_self->GetAttribute(AttrShieldEmDamageResonance).get_float()),
-        (1.0 - m_self->GetAttribute(AttrShieldExplosiveDamageResonance).get_float())
+                                         (1.0 - m_self->getAttribute(AttrShieldKineticDamageResonance).get_float()),
+                                         (1.0 - m_self->getAttribute(AttrShieldThermalDamageResonance).get_float()),
+                                         (1.0 - m_self->getAttribute(AttrShieldEmDamageResonance).get_float()),
+                                         (1.0 - m_self->getAttribute(AttrShieldExplosiveDamageResonance).get_float())
         );
 
 
@@ -261,8 +251,8 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
         //we can take all this damage with our shield...
         //double new_charge = m_self->shieldCharge() - total_shield_damage;
         //m_self->Set_shieldCharge(new_charge);
-        EvilNumber new_charge = m_self->GetAttribute(AttrShieldCharge) - EvilNumber(total_shield_damage);
-        m_self->SetAttribute(AttrShieldCharge, new_charge);
+        EvilNumber new_charge = m_self->getAttribute(AttrShieldCharge) - EvilNumber(total_shield_damage);
+        m_self->setAttribute(AttrShieldCharge, new_charge);
 
         total_damage += total_shield_damage;
         _log(ITEM__TRACE, "%s(%u): Applying entire %.1f damage to shields. New charge: %.1f", GetName(), GetID(), total_shield_damage, new_charge.get_float());
@@ -279,16 +269,16 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
             _log(ITEM__TRACE, "%s(%u): Shield depleated with %.1f damage. %.1f damage remains.", GetName(), GetID(), available_shield, d.GetTotal());
 
             //set shield to 0, it is fully depleted.
-            m_self->SetAttribute(AttrShieldCharge, 0);
+            m_self->setAttribute(AttrShieldCharge, 0);
         }
 
         //Armor:
-        double available_armor = m_self->GetAttribute(AttrArmorHP).get_float() - m_self->GetAttribute(AttrArmorDamage).get_float();
+        double available_armor = m_self->getAttribute(AttrArmorHP).get_float() - m_self->getAttribute(AttrArmorDamage).get_float();
         Damage armor_damage = d.MultiplyDup(
-            (1.0 - m_self->GetAttribute(AttrArmorKineticDamageResonance).get_float()),
-            (1.0 - m_self->GetAttribute(AttrArmorThermalDamageResonance).get_float()),
-            (1.0 - m_self->GetAttribute(AttrArmorEmDamageResonance).get_float()),
-            (1.0 - m_self->GetAttribute(AttrArmorExplosiveDamageResonance).get_float())
+                                            (1.0 - m_self->getAttribute(AttrArmorKineticDamageResonance).get_float()),
+                                            (1.0 - m_self->getAttribute(AttrArmorThermalDamageResonance).get_float()),
+                                            (1.0 - m_self->getAttribute(AttrArmorEmDamageResonance).get_float()),
+                                            (1.0 - m_self->getAttribute(AttrArmorExplosiveDamageResonance).get_float())
         );
         //other:
         //activeEmResistanceBonus
@@ -312,8 +302,8 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
             //double new_damage = m_self->armorDamage() + total_armor_damage;
             //m_self->Set_armorDamage(new_damage);
 
-            EvilNumber new_damage = m_self->GetAttribute(AttrArmorDamage) + EvilNumber(total_armor_damage);
-            m_self->SetAttribute(AttrArmorDamage, new_damage);
+            EvilNumber new_damage = m_self->getAttribute(AttrArmorDamage) + EvilNumber(total_armor_damage);
+            m_self->setAttribute(AttrArmorDamage, new_damage);
 
             total_damage += total_armor_damage;
             _log(ITEM__TRACE, "%s(%u): Applying entire %.1f damage to armor. New armor damage: %.1f", GetName(), GetID(), total_armor_damage, new_damage.get_float());
@@ -332,18 +322,18 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
                 _log(ITEM__TRACE, "%s(%u): Armor depleated with %.1f damage. %.1f damage remains.", GetName(), GetID(), available_armor, d.GetTotal());
 
                 //all armor has been penetrated.
-                m_self->SetAttribute(AttrArmorDamage, m_self->GetAttribute(AttrArmorHP));
+                m_self->setAttribute(AttrArmorDamage, m_self->getAttribute(AttrArmorHP));
             }
 
             //Hull/Structure:
 
             //The base hp and damage attributes represent structure.
-            double available_hull = m_self->GetAttribute(AttrHp).get_float() - m_self->GetAttribute(AttrDamage).get_float();
+            double available_hull = m_self->getAttribute(AttrHp).get_float() - m_self->getAttribute(AttrDamage).get_float();
             Damage hull_damage = d.MultiplyDup(
-                (1.0 - m_self->GetAttribute(AttrHullKineticDamageResonance).get_float()),
-                (1.0 - m_self->GetAttribute(AttrHullThermalDamageResonance).get_float()),
-                (1.0 - m_self->GetAttribute(AttrHullEmDamageResonance).get_float()),
-                (1.0 - m_self->GetAttribute(AttrHullExplosiveDamageResonance).get_float())
+                                               (1.0 - m_self->getAttribute(AttrHullKineticDamageResonance).get_float()),
+                                               (1.0 - m_self->getAttribute(AttrHullThermalDamageResonance).get_float()),
+                                               (1.0 - m_self->getAttribute(AttrHullEmDamageResonance).get_float()),
+                                               (1.0 - m_self->getAttribute(AttrHullExplosiveDamageResonance).get_float())
             );
             //other:
             //passiveEmDamageResonanceMultiplier
@@ -373,8 +363,8 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
                 //we can take all this damage with our hull...
                 /*double new_damage = m_self->damage() + total_hull_damage;
                 m_self->Set_damage(new_damage);*/
-                EvilNumber new_damage = m_self->GetAttribute(AttrDamage) + EvilNumber(total_hull_damage);
-                m_self->SetAttribute(AttrDamage, new_damage);
+                EvilNumber new_damage = m_self->getAttribute(AttrDamage) + EvilNumber(total_hull_damage);
+                m_self->setAttribute(AttrDamage, new_damage);
                 _log(ITEM__TRACE, "%s(%u): Applying entire %.1f damage to structure. New structure damage: %.1f", GetName(), GetID(), total_hull_damage, new_damage.get_float());
             }
             else
@@ -383,7 +373,7 @@ bool ItemSystemEntity::ApplyDamage(Damage &d) {
                 _log(ITEM__TRACE, "%s(%u): %.1f damage has depleated our structure. Time to explode.", GetName(), GetID(), total_hull_damage);
                 killed = true;
                 //m_self->Set_damage(m_self->hp());
-                m_self->SetAttribute(AttrDamage, m_self->GetAttribute(AttrDamage));
+                m_self->setAttribute(AttrDamage, m_self->getAttribute(AttrDamage));
             }
 
             //TODO: deal with damaging modules. no idea the mechanics on this.
@@ -489,10 +479,10 @@ bool NPC::ApplyDamage(Damage &d) {
     //Shield:
     double available_shield = m_shieldCharge;
     Damage shield_damage = d.MultiplyDup(
-        (1.0 - m_self->GetAttribute(AttrShieldKineticDamageResonance).get_float()),
-        (1.0 - m_self->GetAttribute(AttrShieldThermalDamageResonance).get_float()),
-        (1.0 - m_self->GetAttribute(AttrShieldEmDamageResonance).get_float()),
-        (1.0 - m_self->GetAttribute(AttrShieldExplosiveDamageResonance).get_float())
+                                         (1.0 - m_self->getAttribute(AttrShieldKineticDamageResonance).get_float()),
+                                         (1.0 - m_self->getAttribute(AttrShieldThermalDamageResonance).get_float()),
+                                         (1.0 - m_self->getAttribute(AttrShieldEmDamageResonance).get_float()),
+                                         (1.0 - m_self->getAttribute(AttrShieldExplosiveDamageResonance).get_float())
     );
     //other:
     //emDamageResistanceBonus
@@ -537,7 +527,7 @@ bool NPC::ApplyDamage(Damage &d) {
         double new_charge = m_shieldCharge - total_shield_damage;
 
         m_shieldCharge = new_charge;
-        m_self->SetAttribute(AttrShieldCharge, new_charge);
+        m_self->setAttribute(AttrShieldCharge, new_charge);
         total_damage += total_shield_damage;
         _log(ITEM__TRACE, "%s(%u): Applying entire %.1f damage to shields. New charge: %.1f", GetName(), GetID(), total_shield_damage, new_charge);
     }
@@ -554,16 +544,16 @@ bool NPC::ApplyDamage(Damage &d) {
 
             //set shield to 0, it is fully depleated.
             m_shieldCharge = 0;
-			m_self->SetAttribute(AttrShieldCharge, 0);
+            m_self->setAttribute(AttrShieldCharge, 0);
         }
 
         //Armor:
-        double available_armor = m_self->GetAttribute(AttrArmorHP).get_float() - m_armorDamage;
+        double available_armor = m_self->getAttribute(AttrArmorHP).get_float() - m_armorDamage;
         Damage armor_damage = d.MultiplyDup(
-            (1.0 - m_self->GetAttribute(AttrArmorKineticDamageResonance).get_float()),
-            (1.0 - m_self->GetAttribute(AttrArmorThermalDamageResonance).get_float()),
-            (1.0 - m_self->GetAttribute(AttrArmorEmDamageResonance).get_float()),
-            (1.0 - m_self->GetAttribute(AttrArmorExplosiveDamageResonance).get_float())
+                                            (1.0 - m_self->getAttribute(AttrArmorKineticDamageResonance).get_float()),
+                                            (1.0 - m_self->getAttribute(AttrArmorThermalDamageResonance).get_float()),
+                                            (1.0 - m_self->getAttribute(AttrArmorEmDamageResonance).get_float()),
+                                            (1.0 - m_self->getAttribute(AttrArmorExplosiveDamageResonance).get_float())
         );
         //other:
         //activeEmResistanceBonus
@@ -589,7 +579,7 @@ bool NPC::ApplyDamage(Damage &d) {
             double new_damage = m_armorDamage + total_armor_damage;
             m_armorDamage = new_damage;
 
-            m_self->SetAttribute(AttrArmorDamage, new_damage);
+            m_self->setAttribute(AttrArmorDamage, new_damage);
             total_damage += total_armor_damage;
             _log(ITEM__TRACE, "%s(%u): Applying entire %.1f damage to armor. New armor damage: %.1f", GetName(), GetID(), total_armor_damage, new_damage);
         }
@@ -607,20 +597,20 @@ bool NPC::ApplyDamage(Damage &d) {
                 _log(ITEM__TRACE, "%s(%u): Armor depleated with %.1f damage. %.1f damage remains.", GetName(), GetID(), available_armor, d.GetTotal());
 
                 //all armor has been penetrated.
-                m_self->SetAttribute(AttrArmorDamage, m_self->GetAttribute(AttrArmorHP));
-                m_armorDamage = m_self->GetAttribute(AttrArmorHP).get_float();
+                m_self->setAttribute(AttrArmorDamage, m_self->getAttribute(AttrArmorHP));
+                m_armorDamage = m_self->getAttribute(AttrArmorHP).get_float();
             }
 
 
             //Hull/Structure:
 
             //The base hp and damage attributes represent structure.
-            double available_hull = m_self->GetAttribute(AttrHp).get_float() - m_hullDamage;
+            double available_hull = m_self->getAttribute(AttrHp).get_float() - m_hullDamage;
             Damage hull_damage = d.MultiplyDup(
-                (1.0 - m_self->GetAttribute(AttrHullKineticDamageResonance).get_float()),
-                (1.0 - m_self->GetAttribute(AttrHullThermalDamageResonance).get_float()),
-                (1.0 - m_self->GetAttribute(AttrHullEmDamageResonance).get_float()),
-                (1.0 - m_self->GetAttribute(AttrHullExplosiveDamageResonance).get_float())
+                                               (1.0 - m_self->getAttribute(AttrHullKineticDamageResonance).get_float()),
+                                               (1.0 - m_self->getAttribute(AttrHullThermalDamageResonance).get_float()),
+                                               (1.0 - m_self->getAttribute(AttrHullEmDamageResonance).get_float()),
+                                               (1.0 - m_self->getAttribute(AttrHullExplosiveDamageResonance).get_float())
             );
             //other:
             //passiveEmDamageResonanceMultiplier
@@ -644,7 +634,7 @@ bool NPC::ApplyDamage(Damage &d) {
 
                 //we can take all this damage with our hull...
                 double new_damage = m_hullDamage + total_hull_damage;
-                m_self->SetAttribute(AttrDamage, new_damage);
+                m_self->setAttribute(AttrDamage, new_damage);
                 m_hullDamage = new_damage;
                 _log(ITEM__TRACE, "%s(%u): Applying entire %.1f damage to structure. New structure damage: %.1f", GetName(), GetID(), total_hull_damage, new_damage);
             }
@@ -654,8 +644,8 @@ bool NPC::ApplyDamage(Damage &d) {
                 _log(ITEM__TRACE, "%s(%u): %.1f damage has depleated our structure. Time to explode.", GetName(), GetID(), total_hull_damage);
                 killed = true;
                 //m_hullDamage = m_self->hp();
-                m_self->SetAttribute(AttrDamage, m_self->GetAttribute(AttrDamage));
-                m_hullDamage = m_self->GetAttribute(AttrHp).get_float();
+                m_self->setAttribute(AttrDamage, m_self->getAttribute(AttrDamage));
+                m_hullDamage = m_self->getAttribute(AttrHp).get_float();
             }
 
             //TODO: deal with damaging modules. no idea the mechanics on this.
@@ -729,9 +719,9 @@ void NPC::_SendDamageStateChanged() const
     DoDestinyDamageState state;
     MakeDamageState(state);
 
-	double shieldHealth = m_self->GetAttribute(AttrShieldCharge).get_float() / m_self->GetAttribute(AttrShieldCapacity).get_float();
-	double armorHealth = 1.0 - m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float();
-	double hullHealth = 1.0 - m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float();
+    double shieldHealth = m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float();
+    double armorHealth = 1.0 - m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float();
+    double hullHealth = 1.0 - m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float();
 
 	DoDestiny_OnDamageStateChange dmgChange;
     dmgChange.entityID = GetID();
@@ -757,10 +747,10 @@ void ItemSystemEntity::_SendDamageStateChanged() const {
     DoDestinyDamageState state;
     MakeDamageState(state);
 
-	double shieldRecharge = m_self->GetAttribute(AttrShieldRechargeRate).get_float();
-	double shieldHealth = m_self->GetAttribute(AttrShieldCharge).get_float() / m_self->GetAttribute(AttrShieldCapacity).get_float();
-	double armorHealth = 1.0 - m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float();
-	double hullHealth = 1.0 - m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float();
+    double shieldRecharge = m_self->getAttribute(AttrShieldRechargeRate).get_float();
+    double shieldHealth = m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float();
+    double armorHealth = 1.0 - m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float();
+    double hullHealth = 1.0 - m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float();
 
 	DoDestiny_OnDamageStateChange dmgChange;
     dmgChange.entityID = GetID();
@@ -919,9 +909,9 @@ void Client::Killed(Damage &fatal_blow) {
 		Vector3D capsulePosition = GetPosition();
 
 		//set capsule position 500m off from old ship:
-		capsulePosition.x += GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
-		capsulePosition.y += GetShip()->GetAttribute(AttrRadius).get_float() + 100.0;
-		capsulePosition.z += GetShip()->GetAttribute(AttrRadius).get_float() - 100.0;
+        capsulePosition.x += GetShip()->getAttribute(AttrRadius).get_float() + 100.0;
+        capsulePosition.y += GetShip()->getAttribute(AttrRadius).get_float() + 100.0;
+        capsulePosition.z += GetShip()->getAttribute(AttrRadius).get_float() - 100.0;
 
 		ShipRef deadShipRef = GetShip();    //grab a ship ref to ensure that nobody else nukes it first.
         std::string wreck_name = GetName();
@@ -1027,8 +1017,8 @@ void Client::Killed(Damage &fatal_blow) {
 		}
 
 		//TODO: award status changes. (entitySecurityStatusKillBonus)
-		if( client != NULL )
-			client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+		if( client != NULL)
+            client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
 		// TODO: Place random selection of modules/charges/cargo/drones into container of wreck
 		// For now, though, just transfer 100% of cargo, modules, charges, drones, anything in the Ship's inventory to the wreck all w/ flagAutoFit
@@ -1123,8 +1113,8 @@ void NPC::Killed(Damage &fatal_blow)
     _AwardBounty(killer);
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-	if( client != NULL )
-		client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+	if( client != NULL)
+        client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     //notify our spawner that we are gone.
     if(m_spawner != NULL) {
@@ -1151,7 +1141,7 @@ void NPC::_DropLoot(SystemEntity *owner) {
 
 void NPC::_AwardBounty(SystemEntity *who) {
     //double bounty = m_self->entityKillBounty();
-    double bounty = m_self->GetAttribute(AttrEntityKillBounty).get_float();
+    double bounty = m_self->getAttribute(AttrEntityKillBounty).get_float();
     if(bounty <= 0) {
         return;    //no bounty to award...
     }
@@ -1282,8 +1272,8 @@ void ShipEntity::Killed(Damage &fatal_blow)
     _DropLoot(killer);
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-	if( client != NULL )
-		client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+	if( client != NULL)
+        client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }
@@ -1349,7 +1339,7 @@ void DroneEntity::Killed(Damage &fatal_blow)
     }
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-    client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+    client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }
@@ -1400,7 +1390,7 @@ void StructureEntity::Killed(Damage &fatal_blow)
     }
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-    client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+    client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }
@@ -1451,7 +1441,7 @@ void ContainerEntity::Killed(Damage &fatal_blow)
     }
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-    client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+    client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }
@@ -1502,7 +1492,7 @@ void DeployableEntity::Killed(Damage &fatal_blow)
     }
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-    client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+    client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }
@@ -1584,7 +1574,7 @@ void CelestialEntity::Killed(Damage &fatal_blow)
     }
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-    client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+    client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }
@@ -1635,7 +1625,7 @@ void StationEntity::Killed(Damage &fatal_blow)
     }
 
     //TODO: award status changes. (entitySecurityStatusKillBonus)
-    client->GetChar()->addSecurityRating( m_self->GetAttribute(AttrEntitySecurityStatusKillBonus).get_float() );
+    client->GetChar()->addSecurityRating(m_self->getAttribute(AttrEntitySecurityStatusKillBonus).get_float());
 
     m_system->RemoveEntity(this);
 }

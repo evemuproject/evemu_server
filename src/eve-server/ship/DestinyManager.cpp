@@ -484,8 +484,8 @@ void DestinyManager::_InitWarp() {
     if( m_self->IsClient() )
 	{
         shipRef = m_self->CastToClient()->GetShip();
-		baseWarpSpeed = shipRef->GetAttribute(AttrBaseWarpSpeed).get_float();
-		warpSpeedMultiplier = shipRef->GetAttribute(AttrWarpSpeedMultiplier).get_float();
+		baseWarpSpeed = shipRef->getAttribute(AttrBaseWarpSpeed).get_float();
+		warpSpeedMultiplier = shipRef->getAttribute(AttrWarpSpeedMultiplier).get_float();
 	}
 	else if( m_self->IsNPC() )
 	{
@@ -1141,11 +1141,11 @@ void DestinyManager::OrbitingCruise(SystemEntity *who, double distance, bool upd
 
 void DestinyManager::SetShipCapabilities(InventoryItemRef ship)
 {
-    double mass = ship->GetAttribute(AttrMass).get_float();
-    double radius = ship->GetAttribute(AttrRadius).get_float();
-    double Inertia = ship->GetAttribute(AttrInertia).get_float();
-    double agility = ship->GetAttribute(AttrAgility).get_float();
-    double maxVelocity = ship->GetAttribute(AttrMaxVelocity).get_float();
+    double mass = ship->getAttribute(AttrMass).get_float();
+    double radius = ship->getAttribute(AttrRadius).get_float();
+    double Inertia = ship->getAttribute(AttrInertia).get_float();
+    double agility = ship->getAttribute(AttrAgility).get_float();
+    double maxVelocity = ship->getAttribute(AttrMaxVelocity).get_float();
 
     //might need to care about turnAngle: Maximum turn angle of a ship in Radians, 0 to pi (3.14).
     //might need newAgility: Maximum "Thrust angle" for an object in Radians, 0 to pi (3.14).
@@ -1470,9 +1470,9 @@ void DestinyManager::WarpTo(const Vector3D &where, double distance, bool update)
 
 	double warpSpeedMultiplier = 1.0;
 	if( m_self->IsClient() )
-		warpSpeedMultiplier = m_self->CastToClient()->GetShip()->GetAttribute(AttrWarpSpeedMultiplier).get_float();
+		warpSpeedMultiplier = m_self->CastToClient()->GetShip()->getAttribute(AttrWarpSpeedMultiplier).get_float();
 	else
-		warpSpeedMultiplier = m_self->Item()->GetAttribute(AttrWarpSpeedMultiplier).get_float();
+		warpSpeedMultiplier = m_self->Item()->getAttribute(AttrWarpSpeedMultiplier).get_float();
 
     uint32 warpSpeedAUperSecondTimesTen = (uint32)(((double)BASE_WARP_SPEED) * warpSpeedMultiplier * 10);
 
@@ -1701,7 +1701,7 @@ void DestinyManager::SendBallInfoOnUndock(bool update) const {
 
     DoDestiny_SetBallMass sbmass;
     sbmass.entityID = m_self->GetID();
-    sbmass.mass = m_self->Item()->GetAttribute(AttrMass).get_float();
+    sbmass.mass = m_self->Item()->getAttribute(AttrMass).get_float();
     updates.push_back(sbmass.Encode());
 
     DoDestiny_SetBallVelocity sbvelocity;
@@ -1785,7 +1785,7 @@ void DestinyManager::SendEjectShip(const ShipRef capsuleRef, const ShipRef oldSh
     // Set Capsule's max velocity:
     DoDestiny_CmdSetMaxSpeed du_setMaxSpeed;
     du_setMaxSpeed.entityID = capsuleRef->itemID();
-    du_setMaxSpeed.speed = capsuleRef->GetAttribute(AttrMaxVelocity).get_float();
+    du_setMaxSpeed.speed = capsuleRef->getAttribute(AttrMaxVelocity).get_float();
     updates.push_back(du_setMaxSpeed.Encode());
 
     SendDestinyUpdate(updates, false);

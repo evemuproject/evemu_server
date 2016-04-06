@@ -545,7 +545,7 @@ double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
 	end = items.end();
     EvilNumber totalVolume(0.0);
 	for(; cur != end; cur++)
-		totalVolume += ((*cur)->GetAttribute(AttrVolume) * (*cur)->quantity());
+        totalVolume += ((*cur)->getAttribute(AttrVolume) * (*cur)->quantity());
 
     // this is crap... bleh... as it should return a EvilNumber
     return totalVolume.get_float();
@@ -557,7 +557,7 @@ double Inventory::GetStoredVolume(EVEItemFlags locationFlag) const
 bool InventoryEx::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const
 {
     //double volume = item->quantity() * item->volume();
-    double volume = item->quantity() * item->GetAttribute(AttrVolume).get_float();
+    double volume = item->quantity() * item->getAttribute(AttrVolume).get_float();
     double capacity = GetRemainingCapacity( flag );
     if( volume > capacity )
     {

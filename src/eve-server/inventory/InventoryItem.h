@@ -204,25 +204,25 @@ public:
     /* start experimental new attribute system ( semi-operational )         */
     /************************************************************************/
 protected:
-    AttributeMap mAttributeMap;
-    AttributeMap mDefaultAttributeMap;
+    AttributeMap m_AttributeMap;
+    AttributeMap m_DefaultAttributeMap;
 public:
-    bool SetAttribute(uint32 attributeID, int num, bool notify = true, bool shadow_copy_to_default_set = false);
-    bool SetAttribute(uint32 attributeID, uint32 num, bool notify = true, bool shadow_copy_to_default_set = false);
-    bool SetAttribute(uint32 attributeID, int64 num, bool notify = true, bool shadow_copy_to_default_set = false);
-    bool SetAttribute(uint32 attributeID, uint64 num, bool notify = true, bool shadow_copy_to_default_set = false);
-    bool SetAttribute(uint32 attributeID, double num, bool notify = true, bool shadow_copy_to_default_set = false);
-    bool SetAttribute(uint32 attributeID, EvilNumber num, bool notify = true, bool shadow_copy_to_default_set = false);
+    bool setAttribute(uint32 attributeID, int num, bool notify = true, bool shadow_copy_to_default_set = false);
+    bool setAttribute(uint32 attributeID, uint32 num, bool notify = true, bool shadow_copy_to_default_set = false);
+    bool setAttribute(uint32 attributeID, int64 num, bool notify = true, bool shadow_copy_to_default_set = false);
+    bool setAttribute(uint32 attributeID, uint64 num, bool notify = true, bool shadow_copy_to_default_set = false);
+    bool setAttribute(uint32 attributeID, double num, bool notify = true, bool shadow_copy_to_default_set = false);
+    bool setAttribute(uint32 attributeID, EvilNumber num, bool notify = true, bool shadow_copy_to_default_set = false);
 
 
-    EvilNumber GetDefaultAttribute(const uint32 attributeID) const;
+    EvilNumber getDefaultAttribute(const uint32 attributeID) const;
 
     /**
      * Get the desired attribute.
      * @param attributeID The attributeID of the attribute to get.
      * @return The attribute or zero if no found.
      */
-    EvilNumber GetAttribute(const uint32 attributeID) const;
+    EvilNumber getAttribute(const uint32 attributeID) const;
 
     /**
      * Attempt to fetch the attribute.
@@ -231,6 +231,48 @@ public:
      * @return True if the value was found.
      */
     bool fetchAttribute(const uint32 attributeID, EvilNumber &value) const;
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, double &value) const;
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, float &value) const;
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, int32 &value) const;
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, uint32 &value) const;
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, int64 &value) const;
+    /**
+     * Attempt to fetch the attribute.
+     * @param attributeID The attributeID of the attribute to get.
+     * @param value The value, if found.
+     * @return True if the value was found.
+     */
+    bool fetchAttribute(const uint32 attributeID, uint64 &value) const;
 
     /**
      * Check if item HasAttribute.
@@ -238,7 +280,7 @@ public:
      * @returns true if this item has the attribute 'attributeID', false if it does not have this attribute
      * @note this function should be used very infrequently and only for specific reasons
      */
-    bool HasAttribute(const uint32 attributeID) const;
+    bool hasAttribute(const uint32 attributeID) const;
 
     /**
      * SaveAttributes

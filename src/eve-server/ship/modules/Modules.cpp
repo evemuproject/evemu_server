@@ -112,7 +112,7 @@ bool GenericModule::isLauncherFitted()
 
 bool GenericModule::isMaxGroupFitLimited()
 {
-    return m_item->HasAttribute(AttrMaxGroupFitted); // AttrMaxGroupFitted from enum EveAttrEnum::AttrMaxGroupFitted
+    return m_item->hasAttribute(AttrMaxGroupFitted); // AttrMaxGroupFitted from enum EveAttrEnum::AttrMaxGroupFitted
 }
 
 bool GenericModule::isRig()

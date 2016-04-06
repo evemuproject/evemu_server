@@ -64,13 +64,13 @@ CargoContainerRef CargoContainer::Spawn(
     CargoContainerRef containerRef = CargoContainer::Load( containerID );
 
     // Create default dynamic attributes in the AttributeMap:
-    containerRef->SetAttribute(AttrRadius, containerRef->type()->getDoubleAttr(AttrRadius), true); // Radius
+    containerRef->setAttribute(AttrRadius, containerRef->type()->getDoubleAttr(AttrRadius), true); // Radius
 
     // Check for existence of some attributes that may or may not have already been loaded and set them
     // to default values:
 	// Hull Damage
-	if( !(containerRef->HasAttribute(AttrDamage)) )
-        containerRef->SetAttribute(AttrDamage, 0, true );
+	if( !(containerRef->hasAttribute(AttrDamage)) )
+        containerRef->setAttribute(AttrDamage, 0, true );
 
 	return containerRef;
 }
@@ -117,7 +117,7 @@ double CargoContainer::GetCapacity(EVEItemFlags flag) const
 {
     switch( flag ) {
         case flagAutoFit:
-        case flagCargoHold:     return GetAttribute(AttrCapacity).get_float();
+        case flagCargoHold:     return getAttribute(AttrCapacity).get_float();
         default:
             return 0.0;
     }
@@ -133,9 +133,9 @@ bool CargoContainer::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) c
         FindByFlag(flag, items);
         for (uint32 i = 0; i < items.size(); i++)
         {
-            capacityUsed += items[i]->GetAttribute(AttrVolume);
+            capacityUsed += items[i]->getAttribute(AttrVolume);
         }
-        if (capacityUsed + (item->GetAttribute(AttrVolume) * item->quantity()) > GetAttribute(AttrCapacity))
+        if (capacityUsed + (item->getAttribute(AttrVolume) * item->quantity()) > getAttribute(AttrCapacity))
         {
             throw PyException(MakeCustomError("Not enough cargo space!"));
             return false;
@@ -314,11 +314,11 @@ void ContainerEntity::EncodeDestiny( Buffer& into ) const
 
 void ContainerEntity::MakeDamageState(DoDestinyDamageState &into) const
 {
-    into.shield = 0.0;//(m_self->GetAttribute(AttrShieldCharge).get_float() / m_self->GetAttribute(AttrShieldCapacity).get_float());
+    into.shield = 0.0; //(m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float());
     into.tau = 100000;    //no freaking clue.
     into.timestamp = Win32TimeNow();
 //    armor damage isn't working...
-    into.armor = 0.0;//1.0 - (m_self->GetAttribute(AttrArmorDamage).get_float() / m_self->GetAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_self->GetAttribute(AttrDamage).get_float() / m_self->GetAttribute(AttrHp).get_float());
+    into.armor = 0.0; //1.0 - (m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float());
+    into.structure = 1.0 - (m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float());
 }
 

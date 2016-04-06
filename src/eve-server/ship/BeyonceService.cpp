@@ -602,7 +602,7 @@ PyResult BeyonceBound::Handle_CmdStop(PyCallArgs &call) {
 
     // Only disallow Stopping ship when in warp state AND ship speed is greater than 0.75 times ship's maxVelocity
     if( (destiny->GetState() == Destiny::DSTBALL_WARP)
-        && (destiny->GetVelocity().length() >= (0.75*call.client->GetShip()->GetAttribute(AttrMaxVelocity).get_float())) ) {
+        && (destiny->GetVelocity().length() >= (0.75*call.client->GetShip()->getAttribute(AttrMaxVelocity).get_float())) ) {
             call.client->SendNotifyMsg( "You can't do this while warping");
             return NULL;
     }

@@ -1217,14 +1217,14 @@ double Client::GetPropulsionStrength() const {
      * tend to end up with 3.038 instead of the base 3.0 on their ship..
      */
     EvilNumber res;
-    res =  GetShip()->GetAttribute( AttrPropulsionFusionStrength );
-    res += GetShip()->GetAttribute( AttrPropulsionIonStrength );
-    res += GetShip()->GetAttribute( AttrPropulsionMagpulseStrength );
-    res += GetShip()->GetAttribute( AttrPropulsionPlasmaStrength );
-    res += GetShip()->GetAttribute( AttrPropulsionFusionStrengthBonus );
-    res += GetShip()->GetAttribute( AttrPropulsionIonStrengthBonus );
-    res += GetShip()->GetAttribute( AttrPropulsionMagpulseStrengthBonus );
-    res += GetShip()->GetAttribute( AttrPropulsionPlasmaStrengthBonus );
+    res =  GetShip()->getAttribute( AttrPropulsionFusionStrength );
+    res += GetShip()->getAttribute( AttrPropulsionIonStrength );
+    res += GetShip()->getAttribute( AttrPropulsionMagpulseStrength );
+    res += GetShip()->getAttribute( AttrPropulsionPlasmaStrength );
+    res += GetShip()->getAttribute( AttrPropulsionFusionStrengthBonus );
+    res += GetShip()->getAttribute( AttrPropulsionIonStrengthBonus );
+    res += GetShip()->getAttribute( AttrPropulsionMagpulseStrengthBonus );
+    res += GetShip()->getAttribute( AttrPropulsionPlasmaStrengthBonus );
 
     res += 0.038f;
 

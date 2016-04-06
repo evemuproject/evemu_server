@@ -64,7 +64,7 @@ SkillRef Skill::Spawn(ItemData &data)
 
     SkillRef skillRef = Skill::Load( skillID );
 
-    skillRef->SetAttribute(AttrIsOnline, 1);      // Is Online
+    skillRef->setAttribute(AttrIsOnline, 1);      // Is Online
 	skillRef->SaveItem();
 
     return skillRef;
@@ -91,13 +91,13 @@ uint32 Skill::_Spawn(ItemData &data)
 
 double Skill::GetSPForLevel(int level)
 {
-    double timeConst = GetAttribute(AttrSkillTimeConstant).get_float();
+    double timeConst = getAttribute(AttrSkillTimeConstant).get_float();
     return (uint32) (SKILL_BASE_POINTS * timeConst * std::pow(2, (2.5 * (level - 1))));
 }
 
 uint8 Skill::GetSkillLevel()
 {
-    return GetAttribute(AttrSkillLevel).get_int();
+    return getAttribute(AttrSkillLevel).get_int();
 }
 
 bool Skill::SetSkillLevel(uint8 level)
@@ -106,12 +106,12 @@ bool Skill::SetSkillLevel(uint8 level)
     {
         return false;
     }
-    return SetAttribute(AttrSkillLevel, level);
+    return setAttribute(AttrSkillLevel, level);
 }
 
 double Skill::GetSkillPoints()
 {
-    return GetAttribute(AttrSkillPoints).get_float();
+    return getAttribute(AttrSkillPoints).get_float();
 }
 
 bool Skill::SetSkillPoints(double points)
@@ -120,5 +120,5 @@ bool Skill::SetSkillPoints(double points)
     {
         return false;
     }
-    return SetAttribute(AttrSkillPoints, points);
+    return setAttribute(AttrSkillPoints, points);
 }
