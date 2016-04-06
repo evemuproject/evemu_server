@@ -37,6 +37,40 @@
 
 const int32 ITEM_DB_SAVE_TIMER_EXPIRY(10);
 
+const std::map<uint32, EVEItemFlags> InventoryItem::m_cargoAttributeFlagMap = {
+    {AttrCapacity, flagCargoHold},
+    {AttrDroneCapacity, flagDroneBay},
+    {AttrSpecialFuelBayCapacity, flagSpecializedFuelBay},
+    {AttrSpecialOreHoldCapacity, flagSpecializedOreHold},
+    {AttrSpecialGasHoldCapacity, flagSpecializedGasHold},
+    {AttrSpecialMineralHoldCapacity, flagSpecializedMineralHold},
+    {AttrSpecialSalvageHoldCapacity, flagSpecializedSalvageHold},
+    {AttrSpecialShipHoldCapacity, flagSpecializedShipHold},
+    {AttrSpecialSmallShipHoldCapacity, flagSpecializedSmallShipHold},
+    {AttrSpecialLargeShipHoldCapacity, flagSpecializedLargeShipHold},
+    {AttrSpecialIndustrialShipHoldCapacity, flagSpecializedIndustrialShipHold},
+    {AttrSpecialAmmoHoldCapacity, flagSpecializedAmmoHold},
+    {AttrShipMaintenanceBayCapacity, flagShipHangar},
+    {AttrCorporateHangarCapacity, flagHangar}
+};
+
+const std::map<EVEItemFlags, uint32 > InventoryItem::m_cargoFlagAttributeMap = {
+    {flagCargoHold, AttrCapacity},
+    {flagDroneBay, AttrDroneCapacity},
+    {flagSpecializedFuelBay, AttrSpecialFuelBayCapacity},
+    {flagSpecializedOreHold, AttrSpecialOreHoldCapacity},
+    {flagSpecializedGasHold, AttrSpecialGasHoldCapacity},
+    {flagSpecializedMineralHold, AttrSpecialMineralHoldCapacity},
+    {flagSpecializedSalvageHold, AttrSpecialSalvageHoldCapacity},
+    {flagSpecializedShipHold, AttrSpecialShipHoldCapacity},
+    {flagSpecializedSmallShipHold, AttrSpecialSmallShipHoldCapacity},
+    {flagSpecializedLargeShipHold, AttrSpecialLargeShipHoldCapacity},
+    {flagSpecializedIndustrialShipHold, AttrSpecialIndustrialShipHoldCapacity},
+    {flagSpecializedAmmoHold, AttrSpecialAmmoHoldCapacity},
+    {flagShipHangar, AttrShipMaintenanceBayCapacity},
+    {flagHangar, AttrCorporateHangarCapacity}
+};
+
 /*
  * ItemData
  */
@@ -116,8 +150,8 @@ InventoryItem::InventoryItem(
     const ItemData &_data)
 : RefObject( 0 ),
   //attributes( *this, true, true),
-  m_AttributeMap(*this),
-  m_DefaultAttributeMap(*this,true),
+m_AttributeMap(*this),
+m_DefaultAttributeMap(*this, true),
   m_saveTimer(0,true),
   m_itemID(_itemID),
   m_itemName(_data.name),
@@ -278,10 +312,10 @@ bool InventoryItem::_Load()
 {
     // load attributes
     m_AttributeMap.Load();
-	m_DefaultAttributeMap.Load();
+    m_DefaultAttributeMap.Load();
 
 	// fill basic cargo hold data:
-	m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags,double>(flagCargoHold,m_AttributeMap.GetAttribute(AttrCapacity).get_float()));
+    m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagCargoHold, m_AttributeMap.GetAttribute(AttrCapacity).get_float()));
 
     // update inventory
     Inventory *inventory = ItemFactory::GetInventory(locationID(), false);
@@ -366,8 +400,8 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
                 // THESE SHOULD BE MOVED INTO A CargoContainer::Spawn() function that does not exist yet
                 // Create default dynamic attributes in the AttributeMap:
-                cargoRef.get()->setAttribute(AttrIsOnline,      1);                                                 // Is Online
-                cargoRef.get()->setAttribute(AttrDamage,        0.0);                                               // Structure Damage
+                cargoRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+                cargoRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
                 //cargoRef.get()->SetAttribute(AttrShieldCharge,  cargoRef.get()->GetAttribute(AttrShieldCapacity));  // Shield Charge
                 //cargoRef.get()->SetAttribute(AttrArmorDamage,   0.0);                                               // Armor Damage
                 cargoRef.get()->setAttribute(AttrMass, cargoRef.get()->type()->getAttr(AttrMass)); // Mass
@@ -434,8 +468,8 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO A Charge::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            itemRef.get()->setAttribute(AttrIsOnline,   1);                                             // Is Online
-            itemRef.get()->setAttribute(AttrDamage,     0.0);                                             // Structure Damage
+            itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+            itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
             itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
             itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
@@ -459,8 +493,8 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO A Module::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            itemRef.get()->setAttribute(AttrIsOnline,   1);                                             // Is Online
-            itemRef.get()->setAttribute(AttrDamage,     0.0);                                             // Structure Damage
+            itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+            itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
             itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
             itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
@@ -484,10 +518,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO A Drone::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            itemRef.get()->setAttribute(AttrIsOnline,       1);                                             // Is Online
-            itemRef.get()->setAttribute(AttrDamage,         0.0);                                             // Structure Damage
-            itemRef.get()->setAttribute(AttrShieldCharge,   itemRef.get()->getAttribute(AttrShieldCapacity));       // Shield Charge
-            itemRef.get()->setAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
+            itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+            itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
+            itemRef.get()->setAttribute(AttrShieldCharge, itemRef.get()->getAttribute(AttrShieldCapacity)); // Shield Charge
+            itemRef.get()->setAttribute(AttrArmorDamage, 0.0); // Armor Damage
             itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
             itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
             itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
@@ -511,8 +545,8 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO A Deployable::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            itemRef.get()->setAttribute(AttrIsOnline,       1);                                             // Is Online
-            itemRef.get()->setAttribute(AttrDamage,         0.0);                                             // Structure Damage
+            itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+            itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             //itemRef.get()->SetAttribute(AttrShieldCharge,   itemRef.get()->GetAttribute(AttrShieldCapacity));       // Shield Charge
             //itemRef.get()->SetAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
             itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
@@ -543,10 +577,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO AN Asteroid::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            itemRef.get()->setAttribute(AttrRadius, 500.0);       // Radius
-            itemRef.get()->setAttribute(AttrMass,   1000000.0);    // Mass
+            itemRef.get()->setAttribute(AttrRadius, 500.0); // Radius
+            itemRef.get()->setAttribute(AttrMass, 1000000.0); // Mass
             itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-            itemRef.get()->setAttribute(AttrQuantity, 5000.0);      // Quantity
+            itemRef.get()->setAttribute(AttrQuantity, 5000.0); // Quantity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -566,10 +600,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO A Structure::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            itemRef.get()->setAttribute(AttrIsOnline,       1);                                             // Is Online
-            itemRef.get()->setAttribute(AttrDamage,         0.0);                                             // Structure Damage
-            itemRef.get()->setAttribute(AttrShieldCharge,   itemRef.get()->getAttribute(AttrShieldCapacity));       // Shield Charge
-            itemRef.get()->setAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
+            itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+            itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
+            itemRef.get()->setAttribute(AttrShieldCharge, itemRef.get()->getAttribute(AttrShieldCapacity)); // Shield Charge
+            itemRef.get()->setAttribute(AttrArmorDamage, 0.0); // Armor Damage
             itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
             itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
             itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
@@ -596,10 +630,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 
             // THESE SHOULD BE MOVED INTO A Station::Spawn() function that does not exist yet
             // Create default dynamic attributes in the AttributeMap:
-            stationRef.get()->setAttribute(AttrIsOnline,    1);                                              // Is Online
-            stationRef.get()->setAttribute(AttrDamage,      0.0);                                              // Structure Damage
-            stationRef.get()->setAttribute(AttrShieldCharge,stationRef.get()->getAttribute(AttrShieldCapacity));     // Shield Charge
-            stationRef.get()->setAttribute(AttrArmorDamage, 0.0);                                         // Armor Damage
+            stationRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+            stationRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
+            stationRef.get()->setAttribute(AttrShieldCharge, stationRef.get()->getAttribute(AttrShieldCapacity)); // Shield Charge
+            stationRef.get()->setAttribute(AttrArmorDamage, 0.0); // Armor Damage
             stationRef.get()->setAttribute(AttrMass, stationRef.get()->type()->getAttr(AttrMass)); // Mass
             stationRef.get()->setAttribute(AttrRadius, stationRef.get()->type()->getAttr(AttrRadius)); // Radius
             stationRef.get()->setAttribute(AttrVolume, stationRef.get()->type()->getAttr(AttrVolume)); // Volume
@@ -617,8 +651,8 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
     InventoryItemRef itemRef = InventoryItem::Load( itemID );
 
 	// Create some basic attributes that are NOT found in dgmTypeAttributes for most items, yet most items DO need:
-    itemRef.get()->setAttribute(AttrIsOnline,    1);                                              // Is Online
-    itemRef.get()->setAttribute(AttrDamage,      0.0);                                              // Structure Damage
+    itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+    itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
     itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
     itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
     itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
@@ -787,7 +821,7 @@ bool InventoryItem::Populate( Rsp_CommonGetInfo_Entry& result )
     result.invItem = GetItemRow();
 
     //hacky, but it doesn't really hurt anything.
-    if( getAttribute(AttrIsOnline).get_int() != 0 )
+    if (getAttribute(AttrIsOnline).get_int() != 0)
     {
         //there is an effect that goes along with this. We should
         //probably be properly tracking the effect due to some
@@ -1172,7 +1206,8 @@ void InventoryItem::SendItemChange(uint32 toID, std::map<int32, PyRep *> &change
 } EffectCategories;*/
 
 
-void InventoryItem::SetOnline(bool online) {
+void InventoryItem::SetOnline(bool online)
+{
 
     setAttribute(AttrIsOnline, int(online));
 
@@ -1304,66 +1339,66 @@ void InventoryItem::Relocate(const Vector3D &pos)
     }
 }
 
-bool InventoryItem::setAttribute( uint32 attributeID, int64 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
-{
-    EvilNumber devil_number(num);
-	bool status = m_AttributeMap.SetAttribute(attributeID, devil_number, notify);
-	if(shadow_copy_to_default_set)
-		status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
-
-	return status;
-}
-
-bool InventoryItem::setAttribute( uint32 attributeID, double num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
+bool InventoryItem::setAttribute(uint32 attributeID, int64 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */)
 {
     EvilNumber devil_number(num);
     bool status = m_AttributeMap.SetAttribute(attributeID, devil_number, notify);
 	if(shadow_copy_to_default_set)
-		status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
+        status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
 
 	return status;
 }
 
-bool InventoryItem::setAttribute( uint32 attributeID, EvilNumber num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
+bool InventoryItem::setAttribute(uint32 attributeID, double num, bool notify /* true */, bool shadow_copy_to_default_set /* false */)
+{
+    EvilNumber devil_number(num);
+    bool status = m_AttributeMap.SetAttribute(attributeID, devil_number, notify);
+	if(shadow_copy_to_default_set)
+        status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
+
+	return status;
+}
+
+bool InventoryItem::setAttribute(uint32 attributeID, EvilNumber num, bool notify /* true */, bool shadow_copy_to_default_set /* false */)
 {
     bool status = m_AttributeMap.SetAttribute(attributeID, num, notify);
 	if(shadow_copy_to_default_set)
-		status = status && m_DefaultAttributeMap.SetAttribute(attributeID, num, notify);
+        status = status && m_DefaultAttributeMap.SetAttribute(attributeID, num, notify);
 
 	return status;
 }
 
-bool InventoryItem::setAttribute( uint32 attributeID, int num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
+bool InventoryItem::setAttribute(uint32 attributeID, int num, bool notify /* true */, bool shadow_copy_to_default_set /* false */)
 {
     EvilNumber devil_number(num);
     bool status = m_AttributeMap.SetAttribute(attributeID, devil_number, notify);
 	if(shadow_copy_to_default_set)
-		status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
+        status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
 
 	return status;
 }
 
-bool InventoryItem::setAttribute( uint32 attributeID, uint64 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
+bool InventoryItem::setAttribute(uint32 attributeID, uint64 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */)
 {
     EvilNumber devil_number(*((int64*)&num));
     bool status = m_AttributeMap.SetAttribute(attributeID, devil_number, notify);
 	if(shadow_copy_to_default_set)
-		status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
+        status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
 
 	return status;
 }
 
-bool InventoryItem::setAttribute( uint32 attributeID, uint32 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */ )
+bool InventoryItem::setAttribute(uint32 attributeID, uint32 num, bool notify /* true */, bool shadow_copy_to_default_set /* false */)
 {
     EvilNumber devil_number((int64)num);
     bool status = m_AttributeMap.SetAttribute(attributeID, devil_number, notify);
 	if(shadow_copy_to_default_set)
-		status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
+        status = status && m_DefaultAttributeMap.SetAttribute(attributeID, devil_number, notify);
 
 	return status;
 }
 
-EvilNumber InventoryItem::getDefaultAttribute( const uint32 attributeID ) const
+EvilNumber InventoryItem::getDefaultAttribute(const uint32 attributeID) const
 {
     return m_DefaultAttributeMap.GetAttribute(attributeID);
 }
@@ -1415,7 +1450,7 @@ bool InventoryItem::hasAttribute(const uint32 attributeID) const
 
 bool InventoryItem::SaveAttributes()
 {
-	return (m_AttributeMap.SaveAttributes() && m_DefaultAttributeMap.SaveAttributes());
+    return (m_AttributeMap.SaveAttributes() && m_DefaultAttributeMap.SaveAttributes());
 }
 
 bool InventoryItem::ResetAttribute(uint32 attrID, bool notify)

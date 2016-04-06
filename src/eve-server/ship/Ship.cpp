@@ -195,53 +195,14 @@ bool Ship::_Load()
     double capacity;
 	// fill cargo holds data here:
 	// NOTE: These all still need to have skill and ship bonuses applied when creating the capacities!
-    if (fetchAttribute(AttrCapacity, capacity))
+    for (auto attrFlag : m_cargoAttributeFlagMap)
     {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagCargoHold, capacity));
-    }
-    if (fetchAttribute(AttrDroneCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagDroneBay, capacity));
-    }
-    if (fetchAttribute(AttrSpecialFuelBayCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedFuelBay, capacity));
-    }
-    if (fetchAttribute(AttrSpecialOreHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedOreHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialGasHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedGasHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialMineralHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedMineralHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialSalvageHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedSalvageHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialShipHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedShipHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialSmallShipHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedSmallShipHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialLargeShipHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedLargeShipHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialIndustrialShipHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedIndustrialShipHold, capacity));
-    }
-    if (fetchAttribute(AttrSpecialAmmoHoldCapacity, capacity))
-    {
-        m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flagSpecializedAmmoHold, capacity));
+        uint32 attributeID = attrFlag.first;
+        auto flag = attrFlag.second;
+        if (fetchAttribute(attributeID, capacity))
+        {
+            m_cargoHoldsUsedVolumeByFlag.insert(std::pair<EVEItemFlags, double>(flag, capacity));
+        }
     }
 
 	_UpdateCargoHoldsUsedVolume();
@@ -259,30 +220,15 @@ bool Ship::_Load()
 
 void Ship::_UpdateCargoHoldsUsedVolume()
 {
-    if (hasAttribute(AttrCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagCargoHold)->second = GetStoredVolume(flagCargoHold);
-    if (hasAttribute(AttrDroneCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagDroneBay)->second = GetStoredVolume(flagDroneBay);
-    if (hasAttribute(AttrSpecialFuelBayCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedFuelBay)->second = GetStoredVolume(flagSpecializedFuelBay);
-    if (hasAttribute(AttrSpecialOreHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedOreHold)->second = GetStoredVolume(flagSpecializedOreHold);
-    if (hasAttribute(AttrSpecialGasHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedGasHold)->second = GetStoredVolume(flagSpecializedGasHold);
-    if (hasAttribute(AttrSpecialMineralHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedMineralHold)->second = GetStoredVolume(flagSpecializedMineralHold);
-    if (hasAttribute(AttrSpecialSalvageHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSalvageHold)->second = GetStoredVolume(flagSpecializedSalvageHold);
-    if (hasAttribute(AttrSpecialShipHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedShipHold)->second = GetStoredVolume(flagSpecializedShipHold);
-    if (hasAttribute(AttrSpecialSmallShipHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSmallShipHold)->second = GetStoredVolume(flagSpecializedSmallShipHold);
-    if (hasAttribute(AttrSpecialLargeShipHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedLargeShipHold)->second = GetStoredVolume(flagSpecializedLargeShipHold);
-    if (hasAttribute(AttrSpecialIndustrialShipHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedIndustrialShipHold)->second = GetStoredVolume(flagSpecializedIndustrialShipHold);
-    if (hasAttribute(AttrSpecialAmmoHoldCapacity))
-		m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedAmmoHold)->second = GetStoredVolume(flagSpecializedAmmoHold);
+    for (auto attrFlag : m_cargoAttributeFlagMap)
+    {
+        uint32 attributeID = attrFlag.first;
+        auto flag = attrFlag.second;
+        if (hasAttribute(attributeID))
+        {
+            m_cargoHoldsUsedVolumeByFlag.find(flag)->second = GetStoredVolume(flag);
+        }
+    }
 }
 
 void Ship::_IncreaseCargoHoldsUsedVolume(EVEItemFlags flag, double volumeToConsume)
@@ -311,143 +257,35 @@ void Ship::Delete()
 
 double Ship::GetCapacity(EVEItemFlags flag) const
 {
-    switch( flag ) {
-		case flagAutoFit:
-		case flagCargoHold:
-            if (hasAttribute(AttrCapacity))
-                return getAttribute(AttrCapacity).get_float();
-			break;
-
-		case flagDroneBay:
-            if (hasAttribute(AttrDroneCapacity))
-                return getAttribute(AttrDroneCapacity).get_float();
-			break;
-
-		case flagSpecializedFuelBay:
-            if (hasAttribute(AttrSpecialFuelBayCapacity))
-                return getAttribute(AttrSpecialFuelBayCapacity).get_float();
-			break;
-
-		case flagSpecializedOreHold:
-            if (hasAttribute(AttrSpecialOreHoldCapacity))
-                return getAttribute(AttrSpecialOreHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedGasHold:
-            if (hasAttribute(AttrSpecialGasHoldCapacity))
-                return getAttribute(AttrSpecialGasHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedMineralHold:
-            if (hasAttribute(AttrSpecialMineralHoldCapacity))
-                return getAttribute(AttrSpecialMineralHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedSalvageHold:
-            if (hasAttribute(AttrSpecialSalvageHoldCapacity))
-                return getAttribute(AttrSpecialSalvageHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedShipHold:
-            if (hasAttribute(AttrSpecialShipHoldCapacity))
-                return getAttribute(AttrSpecialShipHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedSmallShipHold:
-            if (hasAttribute(AttrSpecialSmallShipHoldCapacity))
-                return getAttribute(AttrSpecialSmallShipHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedLargeShipHold:
-            if (hasAttribute(AttrSpecialLargeShipHoldCapacity))
-                return getAttribute(AttrSpecialLargeShipHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedIndustrialShipHold:
-            if (hasAttribute(AttrSpecialIndustrialShipHoldCapacity))
-                return getAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float();
-			break;
-
-		case flagSpecializedAmmoHold:
-            if (hasAttribute(AttrSpecialAmmoHoldCapacity))
-                return getAttribute(AttrSpecialAmmoHoldCapacity).get_float();
-			break;
-
-        case flagShipHangar:
-            if (hasAttribute(AttrShipMaintenanceBayCapacity))
-                return getAttribute(AttrShipMaintenanceBayCapacity).get_float();
-			break;
-
-        case flagHangar:
-            if (hasAttribute(AttrCorporateHangarCapacity))
-                return getAttribute(AttrCorporateHangarCapacity).get_float();
-			break;
-
-		default:
-			return 0.0;
-			break;
-	}
-
-	// Handle all missing/unsupported/illegal flag by reporting available capacity of 0.0:
-	return 0.0;
+    if (flag == flagAutoFit)
+    {
+        flag = flagCargoHold;
+    }
+    double capacity;
+    auto attrFlag = m_cargoFlagAttributeMap.find(flag);
+    if (attrFlag != m_cargoFlagAttributeMap.end())
+    {
+        fetchAttribute(attrFlag->second, capacity);
+    }
+    return capacity;
 }
 
 double Ship::GetRemainingVolumeByFlag(EVEItemFlags flag) const
 {
-	switch( flag ) {
-		case flagAutoFit:
-		case flagCargoHold:
-            return (getAttribute(AttrCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagCargoHold)->second);
-			break;
-
-		case flagDroneBay:
-            return (getAttribute(AttrDroneCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagDroneBay)->second);
-			break;
-
-		case flagSpecializedFuelBay:
-            return (getAttribute(AttrSpecialFuelBayCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedFuelBay)->second);
-			break;
-
-		case flagSpecializedOreHold:
-            return (getAttribute(AttrSpecialOreHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedOreHold)->second);
-			break;
-
-		case flagSpecializedGasHold:
-            return (getAttribute(AttrSpecialGasHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedGasHold)->second);
-			break;
-
-		case flagSpecializedMineralHold:
-            return (getAttribute(AttrSpecialMineralHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedMineralHold)->second);
-			break;
-
-		case flagSpecializedSalvageHold:
-            return (getAttribute(AttrSpecialSalvageHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSalvageHold)->second);
-			break;
-
-		case flagSpecializedShipHold:
-            return (getAttribute(AttrSpecialShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedShipHold)->second);
-			break;
-
-		case flagSpecializedSmallShipHold:
-            return (getAttribute(AttrSpecialSmallShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedSmallShipHold)->second);
-			break;
-
-		case flagSpecializedLargeShipHold:
-            return (getAttribute(AttrSpecialLargeShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedLargeShipHold)->second);
-			break;
-
-		case flagSpecializedIndustrialShipHold:
-            return (getAttribute(AttrSpecialIndustrialShipHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedIndustrialShipHold)->second);
-			break;
-
-		case flagSpecializedAmmoHold:
-            return (getAttribute(AttrSpecialAmmoHoldCapacity).get_float() - m_cargoHoldsUsedVolumeByFlag.find(flagSpecializedAmmoHold)->second);
-			break;
-
-		default:
-			return 0.0;
-			break;
-	}
+    if (flag == flagAutoFit)
+    {
+        flag = flagCargoHold;
+    }
+    double capacity;
+    auto attrFlag = m_cargoFlagAttributeMap.find(flag);
+    if (attrFlag != m_cargoFlagAttributeMap.end())
+    {
+        if (fetchAttribute(attrFlag->second, capacity))
+        {
+            capacity - m_cargoHoldsUsedVolumeByFlag.find(flag)->second;
+        }
+    }
+    return capacity;
 }
 
 bool Ship::ValidateAddItem(EVEItemFlags flag, InventoryItemRef item) const

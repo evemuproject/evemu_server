@@ -403,7 +403,10 @@ protected:
     Vector3D              m_position;
     std::string         m_customInfo;
 
-	std::map<EVEItemFlags, double> m_cargoHoldsUsedVolumeByFlag;
+    const static std::map<uint32, EVEItemFlags> m_cargoAttributeFlagMap;
+    const static std::map<EVEItemFlags, uint32 > m_cargoFlagAttributeMap;
+
+    std::map<EVEItemFlags, double> m_cargoHoldsUsedVolumeByFlag;
     std::vector<AttributeModifierSourceRef> m_attributeModifiers;
 };
 
