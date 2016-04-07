@@ -241,7 +241,11 @@ int main( int argc, char* argv[] )
 
     //make the item factory
     SysLog::Log("Server Init", "Loading static data.");
-    EVEStatic::loadStaticData();
+    if (!EVEStatic::loadStaticData())
+    {
+        SysLog::Error("Server Init", "Failed to load static data.");
+        return 1;
+    }
 
     //now, the service manager...
     PyServiceMgr::Init(888444);
