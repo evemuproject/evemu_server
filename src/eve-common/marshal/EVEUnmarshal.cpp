@@ -34,6 +34,7 @@
 #include "marshal/EVEMarshalStringTable.h"
 
 #include "utils/EVEUtils.h"
+#include "utils/utfUtils.h"
 
 PyRep* Unmarshal( const Buffer& data )
 {
@@ -288,7 +289,7 @@ PyRep* UnmarshalStream::LoadWStringUCS2Char()
 
     // convert to UTF-8
     std::string str;
-    utf8::utf16to8( wstr, wstr + 1, std::back_inserter( str ) );
+    //    utf8::utf16to8( wstr, wstr + 1, std::back_inserter( str ) );
 
     return new PyWString( str );
 }
@@ -299,8 +300,9 @@ PyRep* UnmarshalStream::LoadWStringUCS2()
     const Buffer::const_iterator<uint16> wstr = Read<uint16>( len );
 
     // convert to UTF-8
-    std::string str;
-    utf8::utf16to8( wstr, wstr + len, std::back_inserter( str ) );
+    std::u16string _wstr(wstr, wstr + len);
+    std::string str = utf16to8(_wstr);
+    //utf8::utf16to8( wstr, wstr + len, std::back_inserter( str ) );
 
     return new PyWString( str );
 }

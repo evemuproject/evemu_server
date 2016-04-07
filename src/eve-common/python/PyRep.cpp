@@ -33,6 +33,7 @@
 #include "python/PyVisitor.h"
 #include "python/PyRep.h"
 #include "utils/EVEUtils.h"
+#include "utils/utfUtils.h"
 
 /************************************************************************/
 /* PyRep base Class                                                     */
@@ -431,7 +432,11 @@ bool PyWString::visit( PyVisitor& v ) const
 
 size_t PyWString::size() const
 {
-    return utf8::distance( content().begin(), content().end() );
+    // This is kind of hackish but should work.
+    std::string str = content();
+    std::u16string wide = utf8to16(str);
+    return wide.length();
+    //return utf8::distance( content().begin(), content().end() );
 }
 
 int32 PyWString::hash() const

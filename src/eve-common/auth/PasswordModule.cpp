@@ -28,6 +28,8 @@
 #include "auth/PasswordModule.h"
 #include "auth/ShaModule.h"
 
+#include "utils/utfUtils.h"
+
 bool PasswordModule::GeneratePassHash(
     const std::string& user,
     const std::string& pass,
@@ -43,14 +45,20 @@ bool PasswordModule::GeneratePassHash(
 bool PasswordModule::GeneratePassHash(
     const char* user, size_t userLen,
     const char* pass, size_t passLen,
-    std::string& hash )
+    std::string& hash)
 {
+    std::string un(user);
+    std::string ps(pass);
     // Convert username and password to UTF-16
-    std::vector< uint16 > username, password;
-    utf8::utf8to16( user, user + userLen,
-                    std::back_inserter( username ) );
-    utf8::utf8to16( pass, pass + passLen,
-                    std::back_inserter( password ) );
+    std::u16string unStr, psStr;
+    unStr = utf8to16(un);
+    psStr = utf8to16(ps);
+    std::vector< uint16 > username(unStr.begin(), unStr.end());
+    std::vector< uint16 > password(psStr.begin(), psStr.end());
+    //    utf8::utf8to16( user, user + userLen,
+    //                    std::back_inserter( username ) );
+    //    utf8::utf8to16( pass, pass + passLen,
+    //                    std::back_inserter( password ) );
 
     // Lowercase the username
     std::transform( username.begin(), username.end(),

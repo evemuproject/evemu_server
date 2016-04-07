@@ -20,41 +20,25 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:     Bloody.Rabbit
-*/
+    Author:     eve-moo
+ */
 
-#ifndef __EVE_COMMON_H__INCL__
-#define __EVE_COMMON_H__INCL__
+#ifndef UTFUTILS_H
+#define	UTFUTILS_H
 
-/************************************************************************/
-/* eve-core includes                                                    */
-/************************************************************************/
-#include "eve-core.h"
+#include <string>
 
-// database
-#include "database/dbtype.h"
-// log
-#include "log/logsys.h"
-#include "log/SystemLog.h"
-// network
-#include "network/Socket.h"
-#include "network/StreamPacketizer.h"
-#include "network/TCPConnection.h"
-// utils
-#include "utils/Buffer.h"
-#include "utils/Deflate.h"
-#include "utils/misc.h"
-#include "utils/RefPtr.h"
-#include "utils/timer.h"
-#include "utils/utils_hex.h"
-#include "utils/utils_string.h"
-#include "utils/utils_time.h"
-#include "utils/Util.h"
+/**
+ * Convert a UTF8 string to a UTF16 string
+ * @param str The UTF8 string.
+ * @return The UTF16 string. Returns an empty string on failure.
+ */
+std::u16string utf8to16(std::string &str);
+/**
+ * Convert a UTF16 string to a UTF8 string
+ * @param str The UTF16 string.
+ * @return The UTF8 string. Returns an empty string on failure.
+ */
+std::string utf16to8(std::u16string &str);
 
-/************************************************************************/
-/* eve-common includes                                                  */
-/************************************************************************/
-// Base64 encoding utilities
-#include <Base64.h>
-
-#endif /* !__EVE_COMMON_H__INCL__ */
+#endif	/* UTFUTILS_H */
