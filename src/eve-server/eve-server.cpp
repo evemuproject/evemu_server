@@ -23,6 +23,25 @@
     Author:     Zhur, mmcs
  */
 
+// uncomment to throw exceptions
+//#define _THROW_FP_EXCEPTIONS
+#ifdef _THROW_FP_EXCEPTIONS
+#ifdef HAVE_WINDOWS_H
+// Need windows equivalent.
+#else /* !HAVE_WINDOWS_H */
+// Set throw errors on floating point exceptions.
+#define _GNU_SOURCE 1
+#include <fenv.h>
+
+static void __attribute__((constructor))
+trapfpe()
+{
+    /* Enable some exceptions.  At startup all exceptions are masked.  */
+    feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
+}
+#endif /* !HAVE_WINDOWS_H */
+#endif
+
 #include "eve-server.h"
 #include "eveStatic.h"
 
