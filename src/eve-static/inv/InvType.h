@@ -145,12 +145,12 @@ public:
         }
         return std::find(m_effects.begin(), m_effects.end(), effectID) != m_effects.end();
     }
-    bool hasAttr(uint32 attrID)
+    bool hasAttribute(uint32 attrID)
     {
         auto itr = m_attributes.find(attrID);
         return itr != m_attributes.end();
     }
-    EvilNumber getAttr(uint32 attrID)
+    EvilNumber getAttribute(uint32 attrID)
     {
         auto itr = m_attributes.find(attrID);
         if (itr != m_attributes.end())
@@ -160,7 +160,7 @@ public:
         return 0;
     }
 
-    int64 getIntAttr(uint32 attrID)
+    int64 getIntAttribute(uint32 attrID)
     {
         auto itr = m_attributes.find(attrID);
         if (itr != m_attributes.end())
@@ -170,7 +170,7 @@ public:
         return 0;
     }
 
-    double getDoubleAttr(uint32 attrID)
+    double getDoubleAttribute(uint32 attrID)
     {
         auto itr = m_attributes.find(attrID);
         if (itr != m_attributes.end())
@@ -179,6 +179,84 @@ public:
         }
         return 0;
     }
+
+    bool fetchAttribute(const uint32 attributeID, EvilNumber &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second;
+            return true;
+        }
+        return false;
+    }
+
+    bool fetchAttribute(const uint32 attributeID, double &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second.get_float();
+            return true;
+        }
+        return false;
+    }
+
+    bool fetchAttribute(const uint32 attributeID, float &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second.get_float();
+            return true;
+        }
+        return false;
+    }
+
+    bool fetchAttribute(const uint32 attributeID, int32 &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second.get_int();
+            return true;
+        }
+        return false;
+    }
+
+    bool fetchAttribute(const uint32 attributeID, uint32 &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second.get_int();
+            return true;
+        }
+        return false;
+    }
+
+    bool fetchAttribute(const uint32 attributeID, int64 &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second.get_int();
+            return true;
+        }
+        return false;
+    }
+
+    bool fetchAttribute(const uint32 attributeID, uint64 &value) const
+    {
+        auto itr = m_attributes.find(attributeID);
+        if (itr != m_attributes.end())
+        {
+            value = itr->second.get_int();
+            return true;
+        }
+        return false;
+    }
+
 
 private:
     virtual ~InvType();

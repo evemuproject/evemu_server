@@ -59,10 +59,10 @@ NPC::NPC(
     self->setAttribute(AttrIsOnline,            1, true);											// Is Online
     self->setAttribute(AttrShieldCharge,        self->getAttribute(AttrShieldCapacity), true);		// Shield Charge
     self->setAttribute(AttrArmorDamage,         0.0, true);											// Armor Damage
-    self->setAttribute(AttrMass, self->type()->getAttr(AttrMass), true); // Mass
-    self->setAttribute(AttrRadius, self->type()->getAttr(AttrRadius), true); // Radius
-    self->setAttribute(AttrVolume, self->type()->getAttr(AttrVolume), true); // Volume
-    self->setAttribute(AttrCapacity, self->type()->getAttr(AttrCapacity), true); // Capacity
+    self->setAttribute(AttrMass, self->type()->getAttribute(AttrMass), true); // Mass
+    self->setAttribute(AttrRadius, self->type()->getAttribute(AttrRadius), true); // Radius
+    self->setAttribute(AttrVolume, self->type()->getAttribute(AttrVolume), true); // Volume
+    self->setAttribute(AttrCapacity, self->type()->getAttribute(AttrCapacity), true); // Capacity
     self->setAttribute(AttrInertia,             1, true);											// Inertia
     self->setAttribute(AttrCharge,              self->getAttribute(AttrCapacitorCapacity), true);	// Set Capacitor Charge to the Capacitor Capacity
 	self->setAttribute(AttrShieldCharge,        self->getAttribute(AttrShieldCapacity), true);		// Shield Charge

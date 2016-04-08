@@ -404,10 +404,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
                 cargoRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
                 //cargoRef.get()->SetAttribute(AttrShieldCharge,  cargoRef.get()->GetAttribute(AttrShieldCapacity));  // Shield Charge
                 //cargoRef.get()->SetAttribute(AttrArmorDamage,   0.0);                                               // Armor Damage
-                cargoRef.get()->setAttribute(AttrMass, cargoRef.get()->type()->getAttr(AttrMass)); // Mass
-                cargoRef.get()->setAttribute(AttrRadius, cargoRef.get()->type()->getAttr(AttrRadius)); // Radius
-                cargoRef.get()->setAttribute(AttrVolume, cargoRef.get()->type()->getAttr(AttrVolume)); // Volume
-                cargoRef.get()->setAttribute(AttrCapacity, cargoRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+                cargoRef.get()->setAttribute(AttrMass, cargoRef.get()->type()->getAttribute(AttrMass)); // Mass
+                cargoRef.get()->setAttribute(AttrRadius, cargoRef.get()->type()->getAttribute(AttrRadius)); // Radius
+                cargoRef.get()->setAttribute(AttrVolume, cargoRef.get()->type()->getAttribute(AttrVolume)); // Volume
+                cargoRef.get()->setAttribute(AttrCapacity, cargoRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
                 cargoRef.get()->SaveAttributes();
 
                 return cargoRef;
@@ -470,10 +470,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
             itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
-            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
-            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
-            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttribute(AttrMass)); // Mass
+            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttribute(AttrRadius)); // Radius
+            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
+            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -495,10 +495,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
             itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
-            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
-            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
-            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttribute(AttrMass)); // Mass
+            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttribute(AttrRadius)); // Radius
+            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
+            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -522,10 +522,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             itemRef.get()->setAttribute(AttrShieldCharge, itemRef.get()->getAttribute(AttrShieldCapacity)); // Shield Charge
             itemRef.get()->setAttribute(AttrArmorDamage, 0.0); // Armor Damage
-            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
-            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
-            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttribute(AttrMass)); // Mass
+            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttribute(AttrRadius)); // Radius
+            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
+            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -549,10 +549,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             //itemRef.get()->SetAttribute(AttrShieldCharge,   itemRef.get()->GetAttribute(AttrShieldCapacity));       // Shield Charge
             //itemRef.get()->SetAttribute(AttrArmorDamage,    0.0);                                        // Armor Damage
-            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
-            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
-            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttribute(AttrMass)); // Mass
+            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttribute(AttrRadius)); // Radius
+            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
+            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -579,7 +579,7 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             // Create default dynamic attributes in the AttributeMap:
             itemRef.get()->setAttribute(AttrRadius, 500.0); // Radius
             itemRef.get()->setAttribute(AttrMass, 1000000.0); // Mass
-            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
+            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
             itemRef.get()->setAttribute(AttrQuantity, 5000.0); // Quantity
             itemRef.get()->SaveAttributes();
 
@@ -604,10 +604,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             itemRef.get()->setAttribute(AttrShieldCharge, itemRef.get()->getAttribute(AttrShieldCapacity)); // Shield Charge
             itemRef.get()->setAttribute(AttrArmorDamage, 0.0); // Armor Damage
-            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
-            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
-            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+            itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttribute(AttrMass)); // Mass
+            itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttribute(AttrRadius)); // Radius
+            itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
+            itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
             itemRef.get()->SaveAttributes();
 
             return itemRef;
@@ -634,10 +634,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
             stationRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
             stationRef.get()->setAttribute(AttrShieldCharge, stationRef.get()->getAttribute(AttrShieldCapacity)); // Shield Charge
             stationRef.get()->setAttribute(AttrArmorDamage, 0.0); // Armor Damage
-            stationRef.get()->setAttribute(AttrMass, stationRef.get()->type()->getAttr(AttrMass)); // Mass
-            stationRef.get()->setAttribute(AttrRadius, stationRef.get()->type()->getAttr(AttrRadius)); // Radius
-            stationRef.get()->setAttribute(AttrVolume, stationRef.get()->type()->getAttr(AttrVolume)); // Volume
-            stationRef.get()->setAttribute(AttrCapacity, stationRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+            stationRef.get()->setAttribute(AttrMass, stationRef.get()->type()->getAttribute(AttrMass)); // Mass
+            stationRef.get()->setAttribute(AttrRadius, stationRef.get()->type()->getAttribute(AttrRadius)); // Radius
+            stationRef.get()->setAttribute(AttrVolume, stationRef.get()->type()->getAttribute(AttrVolume)); // Volume
+            stationRef.get()->setAttribute(AttrCapacity, stationRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
             stationRef.get()->SaveAttributes();
 
             return stationRef;
@@ -653,10 +653,10 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
 	// Create some basic attributes that are NOT found in dgmTypeAttributes for most items, yet most items DO need:
     itemRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
     itemRef.get()->setAttribute(AttrDamage, 0.0); // Structure Damage
-    itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttr(AttrMass)); // Mass
-    itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttr(AttrRadius)); // Radius
-    itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttr(AttrVolume)); // Volume
-    itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttr(AttrCapacity)); // Capacity
+    itemRef.get()->setAttribute(AttrMass, itemRef.get()->type()->getAttribute(AttrMass)); // Mass
+    itemRef.get()->setAttribute(AttrRadius, itemRef.get()->type()->getAttribute(AttrRadius)); // Radius
+    itemRef.get()->setAttribute(AttrVolume, itemRef.get()->type()->getAttribute(AttrVolume)); // Volume
+    itemRef.get()->setAttribute(AttrCapacity, itemRef.get()->type()->getAttribute(AttrCapacity)); // Capacity
 
 	itemRef.get()->SaveAttributes();
     return itemRef;
