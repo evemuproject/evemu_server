@@ -259,12 +259,30 @@ void StationEntity::EncodeDestiny( Buffer& into ) const
     into.Append( miniball );
 }
 
-void StationEntity::MakeDamageState(DoDestinyDamageState &into) const {
-    into.shield = (m_self->getAttribute(AttrShieldCharge).get_float() / m_self->getAttribute(AttrShieldCapacity).get_float());
+void StationEntity::MakeDamageState(DoDestinyDamageState &into) const
+{
+    double shields = 1, armor = 1, hull = 1;
+    if (!m_self->fetchAttribute(AttrShieldCapacity, shields))
+    {
+        m_self->type()->fetchAttribute(AttrShieldCapacity, shields);
+    }
+    if (!m_self->fetchAttribute(AttrArmorHP, armor))
+    {
+        m_self->type()->fetchAttribute(AttrArmorHP, armor);
+    }
+    if (!m_self->fetchAttribute(AttrHp, hull))
+    {
+        m_self->type()->fetchAttribute(AttrHp, hull);
+    }
+    if (armor == 0)
+    {
+        armor = 1;
+    }
+    into.shield = (m_self->getAttribute(AttrShieldCharge).get_float() / shields);
     into.tau = 100000;    //no freaking clue.
     into.timestamp = Win32TimeNow();
 //    armor damage isn't working...
-    into.armor = 1.0 - (m_self->getAttribute(AttrArmorDamage).get_float() / m_self->getAttribute(AttrArmorHP).get_float());
-    into.structure = 1.0 - (m_self->getAttribute(AttrDamage).get_float() / m_self->getAttribute(AttrHp).get_float());
+    into.armor = 1.0 - (m_self->getAttribute(AttrArmorDamage).get_float() / armor);
+    into.structure = 1.0 - (m_self->getAttribute(AttrDamage).get_float() / hull);
 }
 
