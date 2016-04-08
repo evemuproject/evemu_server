@@ -78,10 +78,10 @@ ShipRef Ship::Spawn(ItemData &data) {
     sShipRef->setAttribute(AttrIsOnline, 1, true); // Is Online
     sShipRef->setAttribute(AttrShieldCharge, sShipRef->getAttribute(AttrShieldCapacity), true); // Shield Charge
     sShipRef->setAttribute(AttrArmorDamage, 0.0, true); // Armor Damage
-    sShipRef->setAttribute(AttrMass, sShipRef->type()->getAttr(AttrMass), true); // Mass
-    sShipRef->setAttribute(AttrRadius, sShipRef->type()->getAttr(AttrRadius), true); // Radius
-    sShipRef->setAttribute(AttrVolume, sShipRef->type()->getAttr(AttrVolume), true); // Volume
-    sShipRef->setAttribute(AttrCapacity, sShipRef->type()->getAttr(AttrCapacity), true); // Capacity
+    sShipRef->setAttribute(AttrMass, sShipRef->type()->mass, true); // Mass
+    sShipRef->setAttribute(AttrRadius, sShipRef->type()->radius, true); // Radius
+    sShipRef->setAttribute(AttrVolume, sShipRef->type()->volume, true); // Volume
+    sShipRef->setAttribute(AttrCapacity, sShipRef->type()->capacity, true); // Capacity
     sShipRef->setAttribute(AttrInertia, 1, true); // Inertia
     sShipRef->setAttribute(AttrCharge, sShipRef->getAttribute(AttrCapacitorCapacity), true); // Set Capacitor Charge to the Capacitor Capacity
 
