@@ -401,14 +401,15 @@ PyRep *MarketDB::GetMarketGroups() {
 
     if (!DBcore::RunQuery(res,
                           "SELECT parentGroupID, marketGroupID, marketGroupName, "
-                          "description, graphicID, hasTypes, iconID, dataID, marketGroupNameID, descriptionID "
+                          "description, graphicID, hType AS hasTypes, iconID, dataID, "
+                          "marketGroupNameID, descriptionID "
                           " FROM invMarketGroups LEFT JOIN extInvMarketGroups USING(marketGroupID)"))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
     }
 
-	DBRowDescriptor *header = new DBRowDescriptor(res);
+    DBRowDescriptor *header = new DBRowDescriptor(res);
     
     CFilterRowSet *filterRowset = new CFilterRowSet(&header);
     

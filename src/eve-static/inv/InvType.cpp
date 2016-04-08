@@ -149,7 +149,7 @@ bool EVEStatic::loadInvTypes(std::map<uint32, std::vector<uint32> >& groupTypeLi
     // switch order of iconID and soundID because that's the way it was in objCacheDB.
     columns = "typeID, groupID, typeName, description,"
             " graphicID, radius, mass, volume, capacity, portionSize,"
-            " raceID, basePrice, published, marketGroupID, chanceOfDuplicating,"
+            " raceID, cast(basePrice * 10000 as unsigned integer) as basePrice, published, marketGroupID, chanceOfDuplicating,"
             " soundID, iconID, dataID, typeNameID, descriptionID";
     qry = "SELECT " + columns + " FROM invTypes LEFT JOIN extInvTypes USING(typeID)";
     if (!DBcore::RunQuery(result, qry.c_str()))
@@ -175,7 +175,7 @@ bool EVEStatic::loadInvTypes(std::map<uint32, std::vector<uint32> >& groupTypeLi
         double capacity = row.GetDouble(8);
         uint32 portionSize = row.GetInt(9);
         uint32 raceID = row.getIntNC(10);
-        double basePrice = row.GetDouble(11);
+        double basePrice = row.GetUInt64(11) / 10000.0;
         bool published = row.GetBool(12);
         uint32 marketGroupID = row.getIntNC(13);
         double chanceOfDuplicating = row.GetDouble(14);
