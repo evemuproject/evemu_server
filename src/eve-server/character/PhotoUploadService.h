@@ -27,15 +27,21 @@
 #define __PHOTOUPLOADSERVICE__H__INCL__
 
 #include "PyService.h"
+#include <mutex>
 
 class PhotoUploadService : public PyService {
 public:
     PhotoUploadService();
     virtual ~PhotoUploadService();
 
+    static void reportNewCharacter(uint32 creatorAccountID, uint32 characterID);
 private:
     class Dispatcher;
-   
+
+    static void reportNewImage(uint32 accountID, std::shared_ptr<std::vector<char> > imageData);
+
+    static std::mutex s_limboLock;
+    static std::unordered_map<uint32 /*accountID*/, std::shared_ptr<std::vector<char> > /*imageData*/> s_limboImages;
 
     PyCallable_DECL_CALL(Upload)
 };

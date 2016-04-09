@@ -377,8 +377,8 @@ int main( int argc, char* argv[] )
     SysLog::Log("Server Init", "finished priming");
 
     // start up the image server
-    ImageServer::Run();
-  SysLog::Log("Server Init", "started image server");
+    ImageServer::run();
+    SysLog::Log("Server Init", "started image server");
 
     // start up the api server
     //    APIServer::CreateServices();
@@ -476,8 +476,8 @@ int main( int argc, char* argv[] )
     SysLog::Log("Server Shutdown", "API Server TCP listener stopped.");
 
     // Shutting down Image Server:
-    ImageServer::Stop();
-    SysLog::Log("Server Shutdown", "Image Server TCP listener stopped.");
+    ImageServer::stop();
+    SysLog::Log("Server Shutdown", "Image Server stopped.");
 
     ServiceDB::SetServerOnlineStatus(false);
     PyServiceMgr::Shutdown();

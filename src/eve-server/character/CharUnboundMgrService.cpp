@@ -31,6 +31,7 @@
 #include "character/CharUnboundMgrService.h"
 #include "imageserver/ImageServer.h"
 #include "PyServiceMgr.h"
+#include "character/PhotoUploadService.h"
 
 #include "chr/ChrBloodline.h"
 
@@ -395,7 +396,7 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     _log( CLIENT__MESSAGE, "Sending char create ID %u as reply", char_item->itemID() );
 
     // we need to report the charID to the ImageServer so it can correctly assign a previously received image
-    ImageServer::ReportNewCharacter(call.client->GetAccountID(), char_item->itemID());
+    PhotoUploadService::reportNewCharacter(call.client->GetAccountID(), char_item->itemID());
 
     // Release the item factory now that the character is finished being accessed:
     ItemFactory::UnsetUsingClient();

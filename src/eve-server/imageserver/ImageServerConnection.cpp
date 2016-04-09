@@ -101,7 +101,7 @@ void ImageServerConnection::ProcessHeaders()
     _id = atoi(idStr.c_str());
     _size = atoi(sizeStr.c_str());
 
-    _imageData = ImageServer::GetImage(_category, _id, _size);
+    _imageData = ImageServer::getImage(_category, _id, _size);
     if (!_imageData)
     {
         // If were have an id that is less than our starting entity ID forward the request to the official image server.

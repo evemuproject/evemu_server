@@ -44,18 +44,15 @@ class ImageServerListener;
 class ImageServer
 {
 private:
-    ImageServer();
+    ImageServer() = delete;
 public:
-    static void Run();
-    static void Stop();
+    static void run();
+    static void stop();
 
     static std::string getURL(EVEServerConfig::EVEConfigNet &network);
 
-    static void ReportNewImage(uint32 accountID, std::shared_ptr<std::vector<char> > imageData);
-    static void ReportNewCharacter(uint32 creatorAccountID, uint32 characterID);
-
-    static std::string GetFilePath(std::string& category, uint32 id, uint32 size);
-    static std::shared_ptr<std::vector<char> > GetImage(std::string& category, uint32 id, uint32 size);
+    static std::string getFilePath(std::string& category, uint32 id, uint32 size);
+    static std::shared_ptr<std::vector<char> > getImage(std::string& category, uint32 id, uint32 size);
 
     static const char *const Categories[];
     static const uint32 CategoryCount;
@@ -65,25 +62,15 @@ public:
     static const char *const FallbackURL;
 
 private:
-    static void RunInternal();
-    static bool ValidateCategory(std::string& category);
-    static bool ValidateSize(std::string& category, uint32 size);
+    static void runInternal();
+    static bool validateCategory(std::string& category);
+    static bool validateSize(std::string& category, uint32 size);
 
-    static std::unordered_map<uint32 /*accountID*/, std::shared_ptr<std::vector<char> > /*imageData*/> _limboImages;
     static std::shared_ptr<boost::asio::detail::thread> _ioThread;
     static std::shared_ptr<boost::asio::io_service> _io;
     static std::shared_ptr<ImageServerListener> _listener;
     static std::string _basePath;
-    static boost::asio::detail::mutex _limboLock;
 
-    class Lock
-    {
-    public:
-        Lock(boost::asio::detail::mutex& mutex);
-        ~Lock();
-    private:
-        boost::asio::detail::mutex& _mutex;
-    };
 };
 
 #endif // __IMAGESERVER__H__INCL__
