@@ -63,6 +63,7 @@ detect clients moving into agro radius
 
 #include "system/SystemEntity.h"
 #include "ship/ModuleManager.h"
+#include "EVEServerConfig.h"
 
 class CryptoChallengePacket;
 class EVENotificationStream;
@@ -86,7 +87,7 @@ class Client
   protected EVEPacketDispatcher
 {
 public:
-    Client( EVETCPConnection** con);
+    Client(EVETCPConnection** con, EVEServerConfig::EVEConfigNet &net);
     virtual ~Client();
 
     bool            ProcessNet();
@@ -316,6 +317,8 @@ protected:
     bool Handle_Notify( PyPacket* packet );
     bool Handle_PingReq( PyPacket* packet ) { _SendPingResponse( packet->dest, packet->source.callID ); return true; }
     bool Handle_PingRsp( PyPacket* packet ) { /* do nothing */ return true; }
+
+    EVEServerConfig::EVEConfigNet m_networkConfig;
 
 private:
     //queues for destiny updates:

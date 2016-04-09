@@ -32,7 +32,9 @@ EVEServerConfig::EVEConfigAccount EVEServerConfig::account;
 EVEServerConfig::EVEConfigCharacter EVEServerConfig::character;
 EVEServerConfig::EVEConfigDatabase EVEServerConfig::database;
 EVEServerConfig::EVEConfigFiles EVEServerConfig::files;
-EVEServerConfig::EVEConfigNet EVEServerConfig::net;
+//EVEServerConfig::EVEConfigNet EVEServerConfig::net;
+EVEServerConfig::EVEConfigImageServer EVEServerConfig::imageServer;
+std::vector<EVEServerConfig::EVEConfigNet> EVEServerConfig::networks;
 
 /*************************************************************************/
 /* EVEServerConfig                                                       */
@@ -73,11 +75,14 @@ EVEServerConfig::EVEServerConfig()
     files.imageDir = "../image_cache/";
 
     // net
-    net.port = 26000;
-    net.imageServer = "localhost";
-    net.imageServerPort = 26001;
-    net.apiServer = "localhost";
-    net.apiServerPort = 64;
+    //    net.port = 26000;
+    //    net.imageServer = "localhost";
+    //    net.imageServerPort = 26001;
+    //    net.apiServer = "localhost";
+    //    net.apiServerPort = 64;
+
+    // imageServer
+    imageServer.imageServerPort = 26001;
 }
 
 bool EVEServerConfig::ParseFile(const char *file)
@@ -113,7 +118,11 @@ bool EVEServerConfig::ParseFile(const char *file)
         {
             ProcessFiles(member);
         }
-        if (name == "net")
+        if(name == "image")
+        {
+            ProcessImage(member);
+        }
+        if(name == "net")
         {
             ProcessNet(member);
         }
@@ -245,30 +254,40 @@ bool EVEServerConfig::ProcessFiles(const std::shared_ptr<XMLElement> ele)
     return true;
 }
 
-bool EVEServerConfig::ProcessNet(const std::shared_ptr<XMLElement> ele)
+bool EVEServerConfig::ProcessImage(const std::shared_ptr<XMLElement> ele)
 {
     for (auto value : ele->getChildren())
     {
-        if (value->getName() == "port")
+        if(value->getName() == "imageServerPort")
         {
-            net.port = std::stoi(value->getValue());
-        }
-        if (value->getName() == "imageServerPort")
-        {
-            net.imageServerPort = std::stoi(value->getValue());
-        }
-        if (value->getName() == "imageServer")
-        {
-            net.imageServer = value->getValue();
-        }
-        if (value->getName() == "apiServerPort")
-        {
-            net.apiServerPort = std::stoi(value->getValue());
-        }
-        if (value->getName() == "apiServer")
-        {
-            net.apiServer = value->getValue();
+            imageServer.imageServerPort = std::stoi(value->getValue());
         }
     }
+    return true;
+}
+
+bool EVEServerConfig::ProcessNet(const std::shared_ptr<XMLElement> ele)
+{
+    EVEConfigNet _net;
+    for(auto value : ele->getChildren())
+    {
+        if(value->getName() == "bind")
+        {
+            _net.serverBind = value->getValue();
+        }
+        if(value->getName() == "port")
+        {
+            _net.port = std::stoi(value->getValue());
+        }
+        if(value->getName() == "imageServerPort")
+        {
+            _net.imageServerPort = std::stoi(value->getValue());
+        }
+        if(value->getName() == "imageServer")
+        {
+            _net.imageServer = value->getValue();
+        }
+    }
+    networks.push_back(_net);
     return true;
 }

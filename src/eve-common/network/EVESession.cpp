@@ -35,9 +35,9 @@
 #include "python/PyDumpVisitor.h"
 #include "EVEVersion.h"
 
-EVEClientSession::EVEClientSession( EVETCPConnection** n )
-: mNet( *n ),
-  mPacketHandler( NULL )
+EVEClientSession::EVEClientSession(EVETCPConnection** n)
+: m_tcpConnecton(*n),
+m_packetHandler(NULL)
 {
     *n = NULL;
 }
@@ -45,14 +45,14 @@ EVEClientSession::EVEClientSession( EVETCPConnection** n )
 EVEClientSession::~EVEClientSession()
 {
     // Destroy connection we used
-    delete mNet;
+    delete m_tcpConnecton;
 }
 
-void EVEClientSession::Reset()
+void EVEClientSession::reset()
 {
-    mPacketHandler = NULL;
+    m_packetHandler = NULL;
 
-    if( GetState() != TCPConnection::STATE_CONNECTED )
+    if(getState() != TCPConnection::STATE_CONNECTED)
         // Connection has been lost, there's no point in reset
         return;
 
@@ -60,13 +60,13 @@ void EVEClientSession::Reset()
     _GetVersion( version );
 
     PyRep* r = version.Encode();
-    mNet->QueueRep( r );
+    m_tcpConnecton->QueueRep(r);
     PyDecRef( r );
 
-    mPacketHandler = &EVEClientSession::_HandleVersion;
+    m_packetHandler = &EVEClientSession::_HandleVersion;
 }
 
-void EVEClientSession::QueuePacket( const PyPacket* p )
+void EVEClientSession::queuePacket(const PyPacket* p)
 {
     if (p == NULL)
         return;
@@ -78,10 +78,10 @@ void EVEClientSession::QueuePacket( const PyPacket* p )
         return;
     }
 
-    FastQueuePacket( &packet );
+    fastQueuePacket(&packet);
 }
 
-void EVEClientSession::FastQueuePacket( PyPacket** p )
+void EVEClientSession::fastQueuePacket(PyPacket** p)
 {
     if(p == NULL || *p == NULL)
         return;
@@ -91,40 +91,41 @@ void EVEClientSession::FastQueuePacket( PyPacket** p )
     SafeDelete( *p );
     if( r == NULL )
     {
-        SysLog::Error("Network", "%s: Failed to encode a Fast queue packet???", GetAddress().c_str());
+        SysLog::Error("Network", "%s: Failed to encode a Fast queue packet???", getAddress().c_str());
         return;
     }
 
-    mNet->QueueRep( r );
+    m_tcpConnecton->QueueRep(r);
     PyDecRef( r );
 }
 
-PyPacket* EVEClientSession::PopPacket()
+PyPacket* EVEClientSession::popPacket()
 {
-    PyRep* r = mNet->PopRep();
+    PyRep* r = m_tcpConnecton->PopRep();
     if( r == NULL )
         return NULL;
 
-    if(is_log_enabled(NET__PRES_REP)) {
-        _log(NET__PRES_REP, "%s: Raw Rep Dump:", GetAddress().c_str());
+    if(is_log_enabled(NET__PRES_REP))
+    {
+        _log(NET__PRES_REP, "%s: Raw Rep Dump:", getAddress().c_str());
         r->Dump(NET__PRES_REP, "    ");
     }
 
-    assert( mPacketHandler );
-    return ( this->*mPacketHandler )( r );
+    assert(m_packetHandler);
+    return ( this->*m_packetHandler)(r);
 }
 
 PyPacket* EVEClientSession::_HandleVersion( PyRep* rep )
 {
     //we are waiting for their version information...
     VersionExchangeClient ve;
-    if( !ve.Decode( &rep ) )
-        SysLog::Error("Network", "%s: Received invalid version exchange!", GetAddress().c_str());
-    else if( _VerifyVersion( ve ) )
-        mPacketHandler = &EVEClientSession::_HandleCommand;
+    if( !ve.Decode( &rep ))
+        SysLog::Error("Network", "%s: Received invalid version exchange!", getAddress().c_str());
+    else if( _VerifyVersion( ve ))
+        m_packetHandler = &EVEClientSession::_HandleCommand;
 
     // recurse
-    return PopPacket();
+    return popPacket();
 }
 
 PyPacket* EVEClientSession::_HandleCommand( PyRep* rep )
@@ -132,7 +133,7 @@ PyPacket* EVEClientSession::_HandleCommand( PyRep* rep )
     //check if it actually is tuple
     if( !rep->IsTuple() )
     {
-        SysLog::Error("Network", "%s: Invalid packet during waiting for command (tuple expected).", GetAddress().c_str());
+        SysLog::Error("Network", "%s: Invalid packet during waiting for command (tuple expected).", getAddress().c_str());
     }
     // decode
     else if( rep->AsTuple()->size() == 2 )
@@ -141,19 +142,19 @@ PyPacket* EVEClientSession::_HandleCommand( PyRep* rep )
         NetCommand_QC cmd;
         if( !cmd.Decode( &rep ) )
         {
-            SysLog::Error("Network", "%s: Failed to decode 2-arg command.", GetAddress().c_str());
+            SysLog::Error("Network", "%s: Failed to decode 2-arg command.", getAddress().c_str());
         }
         else
         {
-            SysLog::Debug("Network", "%s: Got Queue Check command.", GetAddress().c_str());
+            SysLog::Debug("Network", "%s: Got Queue Check command.", getAddress().c_str());
 
             //they return position in queue
             PyRep* rsp = new PyInt( _GetQueuePosition() );
-            mNet->QueueRep( rsp );
+            m_tcpConnecton->QueueRep(rsp);
             PyDecRef( rsp );
 
             //now reset connection
-            Reset();
+            reset();
         }
     }
     else if( rep->AsTuple()->size() == 3 )
@@ -162,60 +163,60 @@ PyPacket* EVEClientSession::_HandleCommand( PyRep* rep )
         NetCommand_VK cmd;
         if( !cmd.Decode( &rep ) )
         {
-            SysLog::Error("Network", "%s: Failed to decode 3-arg command.", GetAddress().c_str());
+            SysLog::Error("Network", "%s: Failed to decode 3-arg command.", getAddress().c_str());
         }
         else
         {
-            SysLog::Debug("Network", "%s: Got VK command, vipKey=%s.", GetAddress().c_str(), cmd.vipKey.c_str());
+            SysLog::Debug("Network", "%s: Got VK command, vipKey=%s.", getAddress().c_str(), cmd.vipKey.c_str());
 
-            if( _VerifyVIPKey( cmd.vipKey ) )
-                mPacketHandler = &EVEClientSession::_HandleCrypto;
+            if( _VerifyVIPKey( cmd.vipKey ))
+                m_packetHandler = &EVEClientSession::_HandleCrypto;
         }
     }
     else
     {
-        _log(NET__PRES_ERROR, "%s: Received invalid command packet:", GetAddress().c_str());
+        _log(NET__PRES_ERROR, "%s: Received invalid command packet:", getAddress().c_str());
         rep->Dump(NET__PRES_ERROR, "  ");
     }
 
     // recurse
-    return PopPacket();
+    return popPacket();
 }
 
 PyPacket* EVEClientSession::_HandleCrypto( PyRep* rep )
 {
     CryptoRequestPacket cr;
-    if( !cr.Decode( &rep ) )
-        SysLog::Error("Network", "%s: Received invalid crypto request!", GetAddress().c_str());
-    else if( _VerifyCrypto( cr ) )
-        mPacketHandler = &EVEClientSession::_HandleAuthentication;
+    if( !cr.Decode( &rep ))
+        SysLog::Error("Network", "%s: Received invalid crypto request!", getAddress().c_str());
+    else if( _VerifyCrypto( cr ))
+        m_packetHandler = &EVEClientSession::_HandleAuthentication;
 
     // recurse
-    return PopPacket();
+    return popPacket();
 }
 
 PyPacket* EVEClientSession::_HandleAuthentication( PyRep* rep )
 {
     //just to be sure
     CryptoChallengePacket ccp;
-    if( !ccp.Decode( &rep ) )
-        SysLog::Error("Network", "%s: Received invalid crypto challenge!", GetAddress().c_str());
-    else if( _VerifyLogin( ccp ) )
-        mPacketHandler = &EVEClientSession::_HandleFuncResult;
+    if( !ccp.Decode( &rep ))
+        SysLog::Error("Network", "%s: Received invalid crypto challenge!", getAddress().c_str());
+    else if( _VerifyLogin( ccp ))
+        m_packetHandler = &EVEClientSession::_HandleFuncResult;
 
-    return PopPacket();
+    return popPacket();
 }
 
 PyPacket* EVEClientSession::_HandleFuncResult( PyRep* rep )
 {
     CryptoHandshakeResult hr;
-    if( !hr.Decode( &rep ) )
-        SysLog::Error("Network", "%s: Received invalid crypto handshake result!", GetAddress().c_str());
-    else if( _VerifyFuncResult( hr ) )
-        mPacketHandler = &EVEClientSession::_HandlePacket;
+    if( !hr.Decode( &rep ))
+        SysLog::Error("Network", "%s: Received invalid crypto handshake result!", getAddress().c_str());
+    else if( _VerifyFuncResult( hr ))
+        m_packetHandler = &EVEClientSession::_HandlePacket;
 
     // recurse
-    return PopPacket();
+    return popPacket();
 }
 
 PyPacket* EVEClientSession::_HandlePacket( PyRep* rep )
@@ -224,12 +225,12 @@ PyPacket* EVEClientSession::_HandlePacket( PyRep* rep )
     PyPacket* p = new PyPacket;
     if( !p->Decode( &rep ) ) //rep is consumed here
     {
-        SysLog::Error("Network", "%s: Failed to decode packet rep", GetAddress().c_str());
+        SysLog::Error("Network", "%s: Failed to decode packet rep", getAddress().c_str());
         SafeDelete( p );
     }
     else
         return p;
 
     // recurse
-    return PopPacket();
+    return popPacket();
 }

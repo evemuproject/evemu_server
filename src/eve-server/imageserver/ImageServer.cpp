@@ -44,7 +44,6 @@ std::unordered_map<uint32 /*accountID*/, std::shared_ptr<std::vector<char> > /*i
 std::shared_ptr<boost::asio::detail::thread> ImageServer::_ioThread;
 std::shared_ptr<boost::asio::io_service> ImageServer::_io;
 std::shared_ptr<ImageServerListener> ImageServer::_listener;
-std::string ImageServer::_url;
 std::string ImageServer::_basePath;
 boost::asio::detail::mutex ImageServer::_limboLock;
 
@@ -161,9 +160,11 @@ bool ImageServer::ValidateCategory(std::string& category)
     return false;
 }
 
-std::string& ImageServer::url()
+std::string ImageServer::getURL(EVEServerConfig::EVEConfigNet &network)
 {
-    return _url;
+    std::stringstream urlBuilder;
+    urlBuilder << "http://" << network.imageServer << ":" << (network.imageServerPort) << "/";
+    return urlBuilder.str();
 }
 
 void ImageServer::Run()
@@ -173,9 +174,6 @@ void ImageServer::Run()
         return;
     }
     // Initialize the server.
-    std::stringstream urlBuilder;
-    urlBuilder << "http://" << EVEServerConfig::net.imageServer << ":" << (EVEServerConfig::net.imageServerPort) << "/";
-    _url = urlBuilder.str();
 
     _basePath = EVEServerConfig::files.imageDir;
     if (_basePath[_basePath.size() - 1] != '/')
@@ -191,7 +189,6 @@ void ImageServer::Run()
         CreateDirectory(subdir.c_str(), NULL);
     }
 
-    SysLog::Log("Image Server Init", "our URL: %s", _url.c_str());
     SysLog::Log("Image Server Init", "our base: %s", _basePath.c_str());
 
     // Start thread.

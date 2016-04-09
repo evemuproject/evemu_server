@@ -55,48 +55,59 @@ public:
     /**
      * @param[in] n Connection of this session.
      */
-    EVEClientSession( EVETCPConnection** n );
+    EVEClientSession(EVETCPConnection** n);
     /**
      * @brief Destroys contained connection.
      */
     virtual ~EVEClientSession();
 
-    /** Wrapper of TCPConnection::GetState(). */
-    state_t GetState() const { return mNet->GetState(); }
-    /** Wrapper of TCPConnection::GetAddress(). */
-    std::string GetAddress() const { return mNet->GetAddress(); }
+    /**
+     * Get the TCPConnection state.
+     * @return The connection state.
+     */
+    state_t getState() const
+    {
+        return m_tcpConnecton->GetState();
+    }
 
     /**
-     * @brief Resets session.
-     *
+     * Get the TCPConnection address.
+     * @return The address of the tcp connection.
+     */
+    std::string getAddress() const
+    {
+        return m_tcpConnecton->GetAddress();
+    }
+
+    /**
      * Reset session so we act like client just connected.
      */
-    void Reset();
+    void reset();
 
     /**
      * @brief Queues new packet.
-     *
      * @param[in] p Packed to be queued.
      */
-    void QueuePacket( const PyPacket* p );
+    void queuePacket(const PyPacket* p);
     /**
      * @brief Queues new packet, retaking ownership.
-     *
      * @param[in] p Packed to be queued.
      */
-    void FastQueuePacket( PyPacket** p );
+    void fastQueuePacket(PyPacket** p);
 
     /**
      * @brief Pops new packet from queue.
-     *
      * @return Popped packet.
      */
-    PyPacket* PopPacket();
+    PyPacket* popPacket();
 
     /**
      * @brief Disconnects client from the server
      */
-    void CloseClientConnection() { mNet->Disconnect(); }
+    void closeClientConnection()
+    {
+        m_tcpConnecton->Disconnect();
+    }
 
 
 protected:
@@ -158,11 +169,11 @@ protected:
     virtual bool _VerifyFuncResult( CryptoHandshakeResult& result ) = 0;
 
     /** Connection of this session. */
-    EVETCPConnection* const mNet;
+    EVETCPConnection * const m_tcpConnecton;
 
 private:
     // State machine facility:
-    PyPacket* ( EVEClientSession::*mPacketHandler )( PyRep* rep );
+    PyPacket* (EVEClientSession::*m_packetHandler)(PyRep* rep);
 
     PyPacket* _HandleVersion( PyRep* rep );
     PyPacket* _HandleCommand( PyRep* rep );

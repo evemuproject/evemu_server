@@ -54,12 +54,47 @@ a likely exception to this goal).
         <imageDir>../image_cache/</imageDir>
     </files>
 
+    <!-- The image server will listen on this port. -->
+    <imageServer>
+        <imageServerPort>26001</imageServerPort>
+    </imageServer>
+    <!--
+    The server may listen for connections on multiple ports and networks.
+    Each binding may need to report it's own result for the image server.
+    If multiple network cards in the server connect from different addresses
+    then multiple network definitions are needed to provide the appropriate image server addresses.
+    This may also be used for IP forwarding issues.
+    The following would include localhost, 2 network cards and a forwarded connection from an outside network.
     <net>
+        <bind>localhost</bind>
         <port>26000</port>
         <imageServer>localhost</imageServer>
         <imageServerPort>26001</imageServerPort>
-        <apiServer>localhost</apiServer>
-        <apiServerPort>64</apiServerPort>
+    </net>
+    <net>
+        <bind>192.168.1.10</bind>
+        <port>26000</port>
+        <imageServer>192.168.1.10</imageServer>
+        <imageServerPort>26001</imageServerPort>
+    </net>
+    <net>
+        <bind>192.168.4.50</bind>
+        <port>26000</port>
+        <imageServer>192.168.4.50</imageServer>
+        <imageServerPort>26001</imageServerPort>
+    </net>
+    <net>
+        <bind>192.168.1.10/bind>
+        <port>26010</port>
+        <imageServer>10.20.30.40</imageServer>
+        <imageServerPort>26001</imageServerPort>
+    </net>
+    -->
+    <net>
+        <bind>localhost</bind>
+        <port>26000</port>
+        <imageServer>localhost</imageServer>
+        <imageServerPort>26001</imageServerPort>
     </net>
 
 </eve-server>

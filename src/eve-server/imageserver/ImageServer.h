@@ -26,6 +26,8 @@
 #ifndef __IMAGESERVER__H__INCL__
 #define __IMAGESERVER__H__INCL__
 
+#include "../EVEServerConfig.h"
+
 class ImageServerListener;
 
 /**
@@ -47,7 +49,7 @@ public:
     static void Run();
     static void Stop();
 
-    static std::string& url();
+    static std::string getURL(EVEServerConfig::EVEConfigNet &network);
 
     static void ReportNewImage(uint32 accountID, std::shared_ptr<std::vector<char> > imageData);
     static void ReportNewCharacter(uint32 creatorAccountID, uint32 characterID);
@@ -71,7 +73,6 @@ private:
     static std::shared_ptr<boost::asio::detail::thread> _ioThread;
     static std::shared_ptr<boost::asio::io_service> _io;
     static std::shared_ptr<ImageServerListener> _listener;
-    static std::string _url;
     static std::string _basePath;
     static boost::asio::detail::mutex _limboLock;
 

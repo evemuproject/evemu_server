@@ -113,14 +113,20 @@ public:
     {
         /// Port at which the server should listen.
         uint16 port;
+        /// The ip address or name this configuration is bound to.
+        std::string serverBind;
         /// Port at which the imageServer should listen.
         uint16 imageServerPort;
         /// the imageServer for char images. should be the evemu server external ip/host
         std::string imageServer;
-        /// Port at which the apiServer should listen.
-        uint16 apiServerPort;
-        /// the apiServer for API functions. should be the evemu server external ip/host
-        std::string apiServer;
+    };
+
+    /// From <net/>
+
+    struct EVEConfigImageServer
+    {
+        /// Port at which the imageServer should listen.
+        uint16 imageServerPort;
     };
 
     static EVEConfigRates rates;
@@ -128,7 +134,8 @@ public:
     static EVEConfigCharacter character;
     static EVEConfigDatabase database;
     static EVEConfigFiles files;
-    static EVEConfigNet net;
+    static EVEConfigImageServer imageServer;
+    static std::vector<EVEConfigNet> networks;
 
 protected:
     bool ProcessRates(const std::shared_ptr<XMLElement> ele);
@@ -136,6 +143,7 @@ protected:
     bool ProcessCharacter(const std::shared_ptr<XMLElement> ele);
     bool ProcessDatabase(const std::shared_ptr<XMLElement> ele);
     bool ProcessFiles(const std::shared_ptr<XMLElement> ele);
+    bool ProcessImage(const std::shared_ptr<XMLElement> ele);
     bool ProcessNet(const std::shared_ptr<XMLElement> ele);
 };
 

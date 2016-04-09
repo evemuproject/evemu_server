@@ -104,6 +104,14 @@ void ImageServerConnection::ProcessHeaders()
     _imageData = ImageServer::GetImage(_category, _id, _size);
     if (!_imageData)
     {
+        // If were have an id that is less than our starting entity ID forward the request to the official image server.
+        // TO-DO: get the image and cache it locally to prevent using the official server as much as possible.
+        if(_id >= 140000000)
+        {
+            SysLog::Warning("ImageServer", "Unable to find image for %s ID: %u Size: %u", _category.c_str(), _id, _size);
+            NotFound();
+            return;
+        }
         Redirect();
         return;
     }

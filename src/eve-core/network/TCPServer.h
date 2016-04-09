@@ -99,7 +99,7 @@ public:
      *
      * @return True if listening has been started successfully, false if not.
      */
-    bool open(uint16 port, char* errbuf = 0)
+    bool open(uint16 port, const std::string &bindAddress, char* errbuf = 0)
     {
         if (errbuf != nullptr)
         {
@@ -141,13 +141,21 @@ public:
 
         address.sin_family = AF_INET;
         address.sin_port = htons(port);
-        address.sin_addr.s_addr = htonl(INADDR_ANY);
+        if (bindAddress.empty())
+        {
+            address.sin_addr.s_addr = htonl(INADDR_ANY);
+        }
+        else
+        {
+            address.sin_addr.s_addr = inet_addr(bindAddress.c_str());
+        }
 
-        if (m_socket->bind((sockaddr*) & address, sizeof ( address)) < 0)
+        int bRes = m_socket->bind((sockaddr*) & address, sizeof ( address));
+        if (bRes < 0)
         {
             if (errbuf != nullptr)
             {
-                snprintf(errbuf, TCPSRV_ERRBUF_SIZE, "bind(): < 0");
+                snprintf(errbuf, TCPSRV_ERRBUF_SIZE, "Failed to bind socket to port: %u address: %s", port, bindAddress.c_str());
             }
 
             SafeDelete(m_socket);

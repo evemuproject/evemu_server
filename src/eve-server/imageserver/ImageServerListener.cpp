@@ -30,8 +30,8 @@
 
 ImageServerListener::ImageServerListener(boost::asio::io_service& io)
 {
-    _acceptor = new boost::asio::ip::tcp::acceptor(io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), EVEServerConfig::net.imageServerPort));
-    SysLog::Log("Image Server Init", "listening on port %i", (EVEServerConfig::net.imageServerPort));
+    _acceptor = new boost::asio::ip::tcp::acceptor(io, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), EVEServerConfig::imageServer.imageServerPort));
+    SysLog::Log("Image Server Init", "listening on port %i", (EVEServerConfig::imageServer.imageServerPort));
     StartAccept();
 }
 

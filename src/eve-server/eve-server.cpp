@@ -244,16 +244,31 @@ int main( int argc, char* argv[] )
     _sDgmTypeAttrMgr = new dgmtypeattributemgr(); // needs to be after db init as its using it
 
     //Start up the TCP server
-    TCPServer<EVETCPConnection> tcps;
+    std::map<std::shared_ptr<TCPServer < EVETCPConnection>>, EVEServerConfig::EVEConfigNet> tcps;
 
     char errbuf[ TCPCONN_ERRBUF_SIZE ];
-    if( tcps.open( EVEServerConfig::net.port, errbuf ) )
+    if(EVEServerConfig::networks.empty())
     {
-        SysLog::Success( "Server Init", "TCP listener started on port %u.", EVEServerConfig::net.port );
+        SysLog::Error("Server Init", "Failed to start TCP listener: no networks defined.");
+        std::cout << std::endl << "Exiting";
+        return 1;
     }
-    else
+    for(auto net : EVEServerConfig::networks)
     {
-        SysLog::Error( "Server Init", "Failed to start TCP listener on port %u: %s.", EVEServerConfig::net.port, errbuf );
+        std::shared_ptr<TCPServer < EVETCPConnection>> tcp = std::shared_ptr<TCPServer < EVETCPConnection >> (new TCPServer<EVETCPConnection>());
+        if(tcp->open(net.port, net.serverBind, errbuf))
+        {
+            SysLog::Success("Server Init", "TCP listener started on port %u bound to %s.", net.port, net.serverBind.c_str());
+            tcps[tcp] = net;
+        }
+        else
+        {
+            SysLog::Error("Server Init", "Failed to start TCP listener on port %u: %s.", net.port, errbuf);
+        }
+    }
+    if(tcps.empty())
+    {
+        SysLog::Error("Server Init", "Failed to start TCP listener: no networks created.");
         std::cout << std::endl << "Exiting";
         return 1;
     }
@@ -426,11 +441,13 @@ int main( int argc, char* argv[] )
 
         //check for timeouts in other threads
         //timeout_manager.CheckTimeouts();
-        while( ( tcpc = tcps.popConnection() ) )
+        for(auto tcp : tcps)
         {
-            Client* c = new Client( &tcpc );
-
-            EntityList::Add( &c );
+            while((tcpc = tcp.first->popConnection()))
+            {
+                Client* c = new Client(&tcpc, tcp.second);
+                EntityList::Add(&c);
+            }
         }
 
         EntityList::Process();
@@ -448,7 +465,10 @@ int main( int argc, char* argv[] )
     SysLog::Log("Server Shutdown", "Main loop stopped" );
 
     // Shutting down EVE Client TCP listener
-    tcps.close();
+    for(auto tcp : tcps)
+    {
+        tcp.first->close();
+    }
     SysLog::Log("Server Shutdown", "TCP listener stopped." );
 
     // Shutting down API Server:
