@@ -524,9 +524,10 @@ void ServiceDB::SetAccountOnlineStatus(uint32 accountID, bool onoff_status) {
 
     if(!DBcore::RunQuery(err,
                          "UPDATE srvAccount "
-                         " SET srvAccount.online = %d "
-        " WHERE accountID = %u ",
-        onoff_status, accountID))
+                         " SET loginSeconds = loginSeconds + (ABS(now() - lastLogin) * online),"
+                         " online = %d "
+                         " WHERE accountID = %u ",
+                         onoff_status, accountID))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
     }
