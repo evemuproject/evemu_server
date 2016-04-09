@@ -61,7 +61,7 @@ published(_published)
         types.insert(types.end(), groupTypes.begin(), groupTypes.end());
         // Get the published types from the group and add them to the list.
         groupTypes = group->getTypeIDs(true);
-        typesPublished.insert(types.end(), groupTypes.begin(), groupTypes.end());
+        typesPublished.insert(typesPublished.end(), groupTypes.begin(), groupTypes.end());
         // Get the typesIN string and append it if not empty.
         std::string tIN = group->getTypesIN();
         if (!tIN.empty())
