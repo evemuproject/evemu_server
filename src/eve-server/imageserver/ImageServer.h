@@ -51,7 +51,7 @@ public:
 
     static std::string getURL(EVEServerConfig::EVEConfigNet &network);
 
-    static std::string getFilePath(std::string& category, uint32 id, uint32 size);
+    static std::string getFilePath(std::string& category, uint32 id, uint32 size, bool basePath = true);
     static std::shared_ptr<std::vector<char> > getImage(std::string& category, uint32 id, uint32 size);
 
     static const char *const Categories[];

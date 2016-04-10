@@ -21,12 +21,13 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:        caytchen
-*/
+ */
 
 #include "eve-server.h"
 
 #include "imageserver/ImageServer.h"
 #include "imageserver/ImageServerConnection.h"
+#include "network/URLPageReader.h"
 
 boost::asio::const_buffers_1 ImageServerConnection::_responseOK = boost::asio::buffer("HTTP/1.0 200 OK\r\nContent-Type: image/jpeg\r\n\r\n", 45);
 boost::asio::const_buffers_1 ImageServerConnection::_responseNotFound = boost::asio::buffer("HTTP/1.0 404 Not Found\r\n\r\n", 26);
@@ -34,9 +35,7 @@ boost::asio::const_buffers_1 ImageServerConnection::_responseRedirectBegin = boo
 boost::asio::const_buffers_1 ImageServerConnection::_responseRedirectEnd = boost::asio::buffer("\r\n\r\n", 4);
 
 ImageServerConnection::ImageServerConnection(boost::asio::io_service& io)
-    : _socket(io)
-{
-}
+: _socket(io) { }
 
 boost::asio::ip::tcp::socket& ImageServerConnection::socket()
 {
@@ -57,7 +56,7 @@ void ImageServerConnection::ProcessHeaders()
     // every request line ends with \r\n
     std::getline(stream, request, '\r');
 
-    if (!starts_with(request, "GET /"))
+    if(!starts_with(request, "GET /"))
     {
         NotFound();
         return;
@@ -65,9 +64,9 @@ void ImageServerConnection::ProcessHeaders()
     request = request.substr(5);
 
     bool found = false;
-    for (uint32 i = 0; i < ImageServer::CategoryCount; i++)
+    for(uint32 i = 0; i < ImageServer::CategoryCount; i++)
     {
-        if (starts_with(request, ImageServer::Categories[i]))
+        if(starts_with(request, ImageServer::Categories[i]))
         {
             found = true;
             _category = ImageServer::Categories[i];
@@ -75,13 +74,13 @@ void ImageServerConnection::ProcessHeaders()
             break;
         }
     }
-    if (!found)
+    if(!found)
     {
         NotFound();
         return;
     }
 
-    if (!starts_with(request, "/"))
+    if(!starts_with(request, "/"))
     {
         NotFound();
         return;
@@ -89,7 +88,7 @@ void ImageServerConnection::ProcessHeaders()
     request = request.substr(1);
 
     int del = request.find_first_of('_');
-    if (del == std::string::npos)
+    if(del == std::string::npos)
     {
         NotFound();
         return;
@@ -102,18 +101,36 @@ void ImageServerConnection::ProcessHeaders()
     _size = atoi(sizeStr.c_str());
 
     _imageData = ImageServer::getImage(_category, _id, _size);
-    if (!_imageData)
+    if(!_imageData)
     {
         // If were have an id that is less than our starting entity ID forward the request to the official image server.
-        // TO-DO: get the image and cache it locally to prevent using the official server as much as possible.
-        if(_id >= 140000000)
+        if(_id < 80000000)
         {
-            SysLog::Warning("ImageServer", "Unable to find image for %s ID: %u Size: %u", _category.c_str(), _id, _size);
+            // Get the file to request.
+            std::string page = ImageServer::getFilePath(_category, _id, _size, false);
+            std::vector<std::string> header;
+            std::vector<char> *data = new std::vector<char>();
+            if(getPageFromURL("image.eveonline.com", 80, page, header, *data))
+            {
+                std::string path(ImageServer::getFilePath(_category, _id, _size));
+                FILE * fp = fopen(path.c_str(), "wb");
+                fwrite(&((*data)[0]), 1, data->size(), fp);
+                fclose(fp);
+                _imageData.reset(data);
+            }
+            else
+            {
+                SysLog::Warning("ImageServer", "Unable to find image for %s ID: %u Size: %u", _category.c_str(), _id, _size);
+                NotFound();
+                return;
+            }
+        }
+        else
+        {
+            // ID is greater than static data allowed.
             NotFound();
             return;
         }
-        Redirect();
-        return;
     }
 
     // first we have to send the responseOK, then our actual result
@@ -128,25 +145,6 @@ void ImageServerConnection::SendImage()
 void ImageServerConnection::NotFound()
 {
     boost::asio::async_write(_socket, _responseNotFound, boost::asio::transfer_all(), std::bind(&ImageServerConnection::Close, shared_from_this()));
-}
-
-void ImageServerConnection::Redirect()
-{
-    boost::asio::async_write(_socket, _responseRedirectBegin, boost::asio::transfer_all(), std::bind(&ImageServerConnection::RedirectLocation, shared_from_this()));
-}
-
-void ImageServerConnection::RedirectLocation()
-{
-    std::string extension = _category == "Character" ? "jpg" : "png";
-    std::stringstream url;
-    url << ImageServer::FallbackURL << _category << "/" << _id << "_" << _size << "." << extension;
-    _redirectUrl = url.str();
-    boost::asio::async_write(_socket, boost::asio::buffer(_redirectUrl), boost::asio::transfer_all(), std::bind(&ImageServerConnection::RedirectFinalize, shared_from_this()));
-}
-
-void ImageServerConnection::RedirectFinalize()
-{
-    boost::asio::async_write(_socket, _responseRedirectEnd, boost::asio::transfer_all(), std::bind(&ImageServerConnection::Close, shared_from_this()));
 }
 
 void ImageServerConnection::Close()

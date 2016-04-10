@@ -49,9 +49,6 @@ private:
     void SendImage();
     void NotFound();
     void Close();
-    void Redirect();
-    void RedirectLocation();
-    void RedirectFinalize();
 
     static bool starts_with(std::string& haystack, const char *const needle);
 
@@ -59,7 +56,6 @@ private:
     std::string _category;
     uint32 _id;
     uint32 _size;
-    std::string _redirectUrl;
 
     boost::asio::streambuf _buffer;
     boost::asio::ip::tcp::socket _socket;

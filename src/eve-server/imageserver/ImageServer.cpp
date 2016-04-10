@@ -35,7 +35,7 @@ const char *const ImageServer::Categories[] = {
     "Alliance",
     "Corporation",
     "Character",
-    "InventoryType",
+    "Type",
     "Render" };
 
 const uint32 ImageServer::CategoryCount = 5;
@@ -76,18 +76,22 @@ std::shared_ptr<std::vector<char> > ImageServer::getImage(std::string& category,
     return ret;
 }
 
-std::string ImageServer::getFilePath(std::string& category, uint32 id, uint32 size)
+std::string ImageServer::getFilePath(std::string& category, uint32 id, uint32 size, bool basePath)
 {
     std::string extension = category == "Character" ? "jpg" : "png";
 
-    if(category == "Character")
+    if(category == "Character" && id >= 140000000)
     {
         // HACK: We don't have any other
         size = 512;
     }
 
     std::stringstream builder;
-    builder << _basePath << category << "/" << id << "_" << size << "." << extension;
+    if(basePath)
+    {
+        builder << _basePath;
+    }
+    builder << category << "/" << id << "_" << size << "." << extension;
     return builder.str();
 }
 
