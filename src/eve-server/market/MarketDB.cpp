@@ -442,7 +442,7 @@ PyRep *MarketDB::GetMarketGroups() {
         pyrow->SetField(3, new PyString(row.GetText( 3 ) ) ); //description
         pyrow->SetField(4, row.IsNull( 4 ) ? 
             (PyRep*)(new PyNone()) : new PyInt(row.GetUInt( 4 ))  ); //graphicID
-        pyrow->SetField(5, new PyBool(row.GetBool( 5 ) ) ); //hasTypes
+        pyrow->SetField(5, new PyBool((row.GetText(5))[0] == 1)); //hasTypes
         pyrow->SetField(6, row.IsNull( 6 ) ? 
             (PyRep*)(new PyNone()) : new PyInt(row.GetUInt( 6 ))  ); // iconID 
         pyrow->SetField(7, new PyInt( row.GetUInt(7) )  ); //dataID
