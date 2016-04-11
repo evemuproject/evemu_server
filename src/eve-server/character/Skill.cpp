@@ -91,6 +91,10 @@ uint32 Skill::_Spawn(ItemData &data)
 
 double Skill::GetSPForLevel(int level)
 {
+    if(level <= 0)
+    {
+        return 0;
+    }
     double timeConst = getAttribute(AttrSkillTimeConstant).get_float();
     return (uint32) (SKILL_BASE_POINTS * timeConst * std::pow(2, (2.5 * (level - 1))));
 }

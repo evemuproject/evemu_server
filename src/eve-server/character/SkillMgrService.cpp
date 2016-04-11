@@ -155,26 +155,39 @@ PyResult SkillMgrBound::Handle_GetSkillHistory( PyCallArgs& call )
     // 53 - SkillTrainingComplete
     // 307 - SkillPointsApplied
 
-	// NOTE:  Screenshots from DaVinci show that this call sends back only 20 most recent entries in this history
-
-	// TODO: get most recent 20 entries for skill history from DB table via character object
-	CharacterRef ch = call.client->GetChar();
-	//ch->GetSkillHistory();
-
 	rowset.lines = new PyList;
 
-    uint32 i = 0;
-    PyList* fieldData = new PyList;
-    //for( i = 0; i < ?; i++ )
-    //{
-        fieldData->AddItemLong( 130386773819853860 );
-        fieldData->AddItemInt( 37 );
-        fieldData->AddItemInt( 28667 );
-        fieldData->AddItemInt( 6532 );
-        fieldData->AddItemInt( 12000 );
+    CharacterRef ch = call.client->GetChar();
+    uint32 characterID = ch->itemID();
+    DBQueryResult res;
+    if(!DBcore::RunQuery(res,
+                         "SELECT typeID, level, points, eventTime FROM srvChrSkillHistory "
+                         " WHERE characterID=%u AND eventID=37 ORDER BY eventTime LIMIT 20",
+                         characterID))
+    {
+        _log(DATABASE__ERROR, "Failed to get skill history for character %u: %s", characterID, res.error.c_str());
+    }
+
+    DBResultRow row;
+    while(res.GetRow(row))
+    {
+        PyList* fieldData = new PyList;
+        fieldData->AddItemLong(row.GetInt64(3));
+        fieldData->AddItemInt(37);
+        uint32 typeID = row.GetUInt(0);
+        uint32 points = row.GetUInt(2);
+        uint32 level = row.GetUInt(1);
+        uint32 rel = points;
+        SkillRef skill = ch->GetSkill(typeID);
+        if(skill.get() != nullptr)
+        {
+            rel -= skill->GetSPForLevel(level - 1);
+        }
+        fieldData->AddItemInt(typeID);
+        fieldData->AddItemInt(rel);
+        fieldData->AddItemInt(points + 1);
         rowset.lines->AddItem( fieldData );
-        fieldData = new PyList;
-    //}
+    }
 
     return rowset.Encode();
 }
