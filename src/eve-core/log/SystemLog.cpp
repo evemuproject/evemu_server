@@ -29,6 +29,8 @@
 #include "log/logtypes.h"
 #include "log/logsys.h"
 
+#include <sys/stat.h>
+
 /*************************************************************************/
 /* NewLog                                                                */
 /*************************************************************************/
@@ -173,14 +175,16 @@ bool SysLog::SetLogfile(const char* filename)
     if( NULL != filename )
     {
         file = fopen( filename, "w" );
+        if( NULL == file )
+        {
+            return false;
+        }
 #ifdef HAVE_UNISTD_H
 		// Change file owner to nobody:nobody to prevent possible permissions problems.
         // Used if the server is started with root permissions on a Linux host.
         fchown(fileno(file), 99, 99);   // nobody:nobody
         fchmod(fileno(file), S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);    // -rw-rw-rw-
 #endif
-        if( NULL == file )
-            return false;
     }
 
     return SetLogfile( file );
@@ -290,6 +294,12 @@ void SysLog::SetLogfileDefault(std::string logPath)
 {
     MutexLock l( mMutex );
 
+    // TO-DO: make this more platform independent.
+    struct stat dirInfo;
+    if(stat(logPath.c_str(), &dirInfo) != 0)
+    {
+        mkdir(logPath.c_str(), S_IRWXU);
+    }
     // set initial log system time
     SetTime( time( NULL ) );
 
