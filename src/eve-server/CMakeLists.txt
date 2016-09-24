@@ -520,9 +520,6 @@ ${standing_SOURCE}
 ${station_SOURCE}
 ${system_SOURCE} )
 
-TARGET_BUILD_PCH( "${TARGET_NAME}"
-                  "${TARGET_INCLUDE_DIR}/eve-server.h"
-                  "${TARGET_SOURCE_DIR}/eve-server.cpp" )
 TARGET_INCLUDE_DIRECTORIES( "${TARGET_NAME}"
                             ${eve-common_INCLUDE_DIRS}
                             ${eve-static_INCLUDE_DIRS}
@@ -531,6 +528,9 @@ TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
                        "eve-common" 
                        "eve-static"
 )
+TARGET_BUILD_PCH( "${TARGET_NAME}"
+                  "${TARGET_INCLUDE_DIR}/eve-server.h"
+                  "${TARGET_SOURCE_DIR}/eve-server.cpp" )
 
 INSTALL( TARGETS "${TARGET_NAME}"
          RUNTIME DESTINATION "bin" )

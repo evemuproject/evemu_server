@@ -160,34 +160,6 @@ typedef int SOCKET;
 #   define M_PI 3.14159265358979323846
 #endif /* !M_PI */
 
-#ifndef HAVE_ASINH
-#   define asinh boost::math::asinh
-#endif /* !HAVE_ASINH */
-
-#ifndef HAVE_FINITE
-#   if defined( HAVE_ISFINITE )
-#       define finite isfinite
-#   elif defined( HAVE_STD_FINITE )
-#       define finite std::finite
-#   elif defined( HAVE_STD_ISFINITE )
-#       define finite std::isfinite
-#   elif defined( HAVE__FINITE )
-#       define finite _finite
-#   elif defined( HAVE___FINITE )
-#       define finite __finite
-#   endif /* HAVE___FINITE */
-#endif /* !HAVE_FINITE */
-
-#ifndef HAVE_ISNAN
-#   if defined( HAVE_STD_ISNAN )
-#       define isnan std::isnan
-#   elif defined( HAVE__ISNAN )
-#       define isnan _isnan
-#   elif defined( HAVE___ISNAN )
-#       define isnan __isnan
-#   endif /* HAVE___ISNAN */
-#endif /* !HAVE_ISNAN */
-
 /*************************************************************************/
 /* cstdarg                                                               */
 /*************************************************************************/

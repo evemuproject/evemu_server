@@ -42,6 +42,8 @@ trapfpe()
 #endif /* !HAVE_WINDOWS_H */
 #endif
 
+#include <iostream>
+
 #include "eve-server.h"
 #include "eveStatic.h"
 
