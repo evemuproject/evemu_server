@@ -149,7 +149,6 @@
 /*************************************************************************/
 #include "eve-compat.h"
 // utils
-#include "utils/FastInt.h"
 #include "utils/SafeMem.h"
 
 #endif /* !__EVE_CORE_H__INCL__ */

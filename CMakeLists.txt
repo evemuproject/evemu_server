@@ -140,12 +140,6 @@ CHECK_INCLUDE_FILE_CXX( "windows.h"  HAVE_WINDOWS_H )
 CHECK_INCLUDE_FILE_CXX( "winsock2.h" HAVE_WINSOCK2_H )
 CHECK_INCLUDE_FILE_CXX( "unistd.h"   HAVE_UNISTD_H )
 
-
-# Keywords
-CHECK_CXX_SOURCE_COMPILES(
-  "int main() { __asm int 3 }\n"
-  HAVE___ASM )
-
 # cstdarg
 CHECK_CXX_SYMBOL_EXISTS( va_copy "cstdarg" HAVE_VA_COPY )
 

@@ -113,11 +113,6 @@ public:
 
     bool IsInt() const
     {
-#   ifdef HAVE___ASM
-        /* crash when we missed a convertion... lol */
-        if( mType == PyTypeLong )
-            __asm int 3;
-#   endif /* HAVE___ASM */
         return mType == PyTypeInt;
     }
 

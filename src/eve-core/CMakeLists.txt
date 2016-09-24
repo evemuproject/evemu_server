@@ -59,7 +59,6 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/crc32.h"
      "${TARGET_INCLUDE_DIR}/utils/Deflate.h"
      "${TARGET_INCLUDE_DIR}/utils/DirWalker.h"
-     "${TARGET_INCLUDE_DIR}/utils/FastInt.h"
      "${TARGET_INCLUDE_DIR}/utils/Lock.h"
      "${TARGET_INCLUDE_DIR}/utils/misc.h"
      "${TARGET_INCLUDE_DIR}/utils/RefPtr.h"

@@ -175,13 +175,11 @@ SET( tables_SOURCE
 SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/EVEUtils.h"
      "${TARGET_INCLUDE_DIR}/utils/EvilNumber.h"
-     "${TARGET_INCLUDE_DIR}/utils/Util.h"
      "${TARGET_INCLUDE_DIR}/utils/utfUtils.h"
  )
 SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/EVEUtils.cpp"
      "${TARGET_SOURCE_DIR}/utils/EvilNumber.cpp"
-     "${TARGET_SOURCE_DIR}/utils/util.cpp"
      "${TARGET_SOURCE_DIR}/utils/utfUtils.cpp"
  )
 

@@ -50,7 +50,6 @@
 #include "utils/timer.h"
 #include "utils/utils_time.h"
 #include "utils/utils_string.h"
-#include "utils/Util.h"
 
 /************************************************************************/
 /* eve-common includes                                                  */

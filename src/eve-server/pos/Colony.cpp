@@ -49,7 +49,7 @@ bool Colony::CreateCommandPin(uint32 pinID, uint32 typeID, float latitude, float
     cc.isLaunchable = true;
     cc.isCommandCenter = true;
     ccPin.level = 0;
-    ccPin.currentSimTime = CurrentBlueTime();
+    ccPin.currentSimTime = Win32TimeNow();
     ccPin.pins.push_back(cc);
     return true;    // if we get this far, assume it worked
 }
