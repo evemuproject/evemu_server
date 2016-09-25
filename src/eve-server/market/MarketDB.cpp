@@ -36,7 +36,9 @@ PyRep *MarketDB::GetStationAsks(uint32 stationID) {
         " FROM srvMarket_orders "
         //" WHERE stationID=%u AND bid=%d"
         " WHERE stationID=%u"
-        " GROUP BY typeID", stationID/*, TransactionTypeSell*/))
+        " GROUP BY typeID"
+        " ,price, volRemaining, stationID",
+            stationID/*, TransactionTypeSell*/))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -58,7 +60,9 @@ PyRep *MarketDB::GetSystemAsks(uint32 solarSystemID) {
         " FROM srvMarket_orders "
         //" WHERE solarSystemID=%u AND bid=0"
         " WHERE solarSystemID=%u"
-        " GROUP BY typeID", solarSystemID))
+        " GROUP BY typeID"
+        " ,price, volRemaining, stationID",
+        solarSystemID))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -80,7 +84,9 @@ PyRep *MarketDB::GetRegionBest(uint32 regionID) {
         " FROM srvMarket_orders "
         " WHERE regionID=%u AND bid=%d"
         //" WHERE regionID=%u"
-        " GROUP BY typeID", regionID, TransactionTypeSell))
+        " GROUP BY typeID"
+        " ,price, volRemaining, stationID",
+            regionID, TransactionTypeSell))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
@@ -290,7 +296,8 @@ PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
         " FROM srvMarket_transactions "
         " WHERE regionID=%u AND typeID=%u"
         "    AND transactionType=%d "    //both buy and sell transactions get recorded, only compound one set of data... choice was arbitrary.
-        " GROUP BY historyDate",
+        " GROUP BY historyDate"
+        " ,lowPrice, highPrice, avgPrice, volume, orders",
         Win32Time_Day, regionID, typeID, TransactionTypeBuy))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
@@ -325,7 +332,8 @@ bool MarketDB::BuildOldPriceHistory() {
         " WHERE"
         "    transactionType=%d AND "    //both buy and sell transactions get recorded, only compound one set of data... choice was arbitrary.
         "    ( transactionDateTime - ( transactionDateTime %% %" PRId64 " ) ) < %" PRId64
-        " GROUP BY regionID, typeID, historyDate",
+        " GROUP BY regionID, typeID, historyDate"
+        " ,lowPrice, highPrice, avgPrice, volume, orders",
             Win32Time_Day,
             TransactionTypeBuy,
             Win32Time_Day,

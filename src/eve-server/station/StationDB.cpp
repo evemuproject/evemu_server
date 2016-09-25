@@ -345,7 +345,7 @@ PyRep *StationDB::DoGetStation(uint32 sid)
                          "   staStations.operationID=staOperations.operationID "
                          " LEFT JOIN staOperationServices ON "
                          "   staStations.operationID=staOperationServices.operationID "
-                         " WHERE staStations.stationID = %u GROUP BY staStations.stationID", sid))
+                         " WHERE staStations.stationID = %u", sid))
     {
         //_log(SERVICE__ERROR, "Error in DoGetStation query: %s", res.error.c_str());
         SysLog::Error("StationDB", "Error in DoGetStation query: %s", res.error.c_str());
@@ -403,8 +403,7 @@ PyRep *StationDB::GetStationItemBits(uint32 sid) {
         " LEFT JOIN staStationTypes ON staStations.stationTypeID = staStationTypes.stationTypeID "
                          " LEFT JOIN extStaStationTypes ON staStations.stationTypeID = extStaStationTypes.stationTypeID "
         " LEFT JOIN staOperationServices ON staStations.operationID = staOperationServices.operationID "
-        " WHERE staStations.stationID = %u "
-        " GROUP BY staStations.stationID ", sid
+        " WHERE staStations.stationID = %u ", sid
     ))
     {
         _log(SERVICE__ERROR, "Error in GetStationItemBits query: %s", res.error.c_str());

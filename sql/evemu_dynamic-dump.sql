@@ -31,7 +31,7 @@ CREATE TABLE `srvAccount` (
   `online` tinyint(1) NOT NULL DEFAULT '0',
   `banned` tinyint(1) NOT NULL DEFAULT '0',
   `logonCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `lastLogin` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `lastLogin` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `loginSeconds` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`accountID`),
   UNIQUE KEY `accountName` (`accountName`)
@@ -805,7 +805,7 @@ CREATE TABLE `srvChrSkillQueue` (
 	`orderIndex` INT(10) UNSIGNED NOT NULL,
 	`typeID` INT(10) UNSIGNED NOT NULL,
 	`level` INT(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Mail subsystem
 DROP TABLE IF EXISTS `srvMailLabel`;
@@ -902,7 +902,7 @@ CREATE TABLE `srvChrSkillHistory` (
   `eventID` INT(10) UNSIGNED NOT NULL,
   `eventTime` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`characterID`, `typeID`, `level`, `eventTime`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Table structure for table `srvChannels` */
 

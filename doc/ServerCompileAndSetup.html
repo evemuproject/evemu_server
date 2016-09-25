@@ -61,8 +61,6 @@ Open a mysql client and execute the following commands in this order.<br>
   source %devRoot%/evemu_server/sql/prime_db.sql;
   source %devRoot%/evemu_server/sql/liveupdates.sql;
   source %devRoot%/evemu_server/sql/market_npc.sql;
-  ALTER TABLE srvAccountApi AUTO_INCREMENT=1000000;
-  ALTER TABLE srvAccount AUTO_INCREMENT=1;
   INSERT INTO srvAccount (accountID, accountName, role, password, online, banned) VALUES(NULL, 'your_account_name', 5003499186008621056, 'your_password', 0, 0);
   GRANT ALL ON evemu.* TO evemuUser@localhost IDENTIFIED BY 'evemuPass';
 </pre>

@@ -42,7 +42,8 @@ bool SpawnDB::LoadSpawnGroups(uint32 solarSystemID, std::map<uint32, SpawnGroup 
         " FROM blkSpawns "
         "   LEFT JOIN blkSpawnGroups ON blkSpawnGroups.spawnGroupID=blkSpawns.spawnGroupID"
         " WHERE blkSpawns.solarSystemID=%u"
-        " GROUP BY blkSpawnGroups.spawnGroupID",
+        " GROUP BY blkSpawnGroups.spawnGroupID"
+        " ,blkSpawnGroups.spawnGroupName, blkSpawnGroups.formation",
             solarSystemID))
     {
         codelog(SPAWN__ERROR, "Error in query: %s", res.error.c_str());

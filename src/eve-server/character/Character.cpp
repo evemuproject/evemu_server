@@ -311,10 +311,17 @@ CharacterRef Character::Spawn(
     if( characterID == 0 )
         return CharacterRef();
 
-    CharacterRef charRef = Character::Load( characterID );
+        CharacterRef charRef = Character::Load( characterID );
 
-    // Create default dynamic attributes in the AttributeMap:
-    charRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+    if(charRef.get() != nullptr)
+    {
+        // Create default dynamic attributes in the AttributeMap:
+        charRef.get()->setAttribute(AttrIsOnline, 1); // Is Online
+    }
+    else
+    {
+        _log(ITEM__ERROR, "Character (%u) %s created but failed to load during spawn.", characterID, data.name.c_str());
+    }
 
     return charRef;
 }
