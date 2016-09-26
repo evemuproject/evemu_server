@@ -58,7 +58,6 @@ SET( utils_INCLUDE
      "${TARGET_INCLUDE_DIR}/utils/Buffer.h"
      "${TARGET_INCLUDE_DIR}/utils/crc32.h"
      "${TARGET_INCLUDE_DIR}/utils/Deflate.h"
-     "${TARGET_INCLUDE_DIR}/utils/DirWalker.h"
      "${TARGET_INCLUDE_DIR}/utils/Lock.h"
      "${TARGET_INCLUDE_DIR}/utils/misc.h"
      "${TARGET_INCLUDE_DIR}/utils/RefPtr.h"
@@ -75,7 +74,6 @@ SET( utils_INCLUDE
 SET( utils_SOURCE
      "${TARGET_SOURCE_DIR}/utils/crc32.cpp"
      "${TARGET_SOURCE_DIR}/utils/Deflate.cpp"
-     "${TARGET_SOURCE_DIR}/utils/DirWalker.cpp"
      "${TARGET_SOURCE_DIR}/utils/misc.cpp"
      "${TARGET_SOURCE_DIR}/utils/Seperator.cpp"
      "${TARGET_SOURCE_DIR}/utils/str2conv.cpp"
