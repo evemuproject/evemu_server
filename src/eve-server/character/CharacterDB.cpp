@@ -454,34 +454,6 @@ bool CharacterDB::GetCharHomeStation(uint32 characterID, uint32 &stationID) {
 	return true;
 }
 
-bool CharacterDB::GetAttributesFromAncestry(uint32 ancestryID, uint8 &intelligence, uint8 &charisma, uint8 &perception, uint8 &memory, uint8 &willpower) {
-    DBQueryResult res;
-
-    if (!DBcore::RunQuery(res,
-        " SELECT "
-        "        intelligence, charisma, perception, memory, willpower "
-        " FROM chrAncestries "
-        " WHERE ancestryID = %u ", ancestryID))
-    {
-        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-        return (false);
-    }
-
-    DBResultRow row;
-    if(!res.GetRow(row)) {
-        codelog(SERVICE__ERROR, "Failed to find ancestry information for ancestry %u", ancestryID);
-        return false;
-    }
-
-    intelligence += row.GetUInt(0);
-    charisma += row.GetUInt(1);
-    perception += row.GetUInt(2);
-    memory += row.GetUInt(3);
-    willpower += row.GetUInt(4);
-
-    return (true);
-}
-
 bool CharacterDB::GetCareerBySchool(uint32 schoolID, uint32 &careerID) {
     DBQueryResult res;
     if (!DBcore::RunQuery(res,

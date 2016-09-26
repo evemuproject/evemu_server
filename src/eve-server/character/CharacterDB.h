@@ -96,19 +96,6 @@ public:
 
     static bool DoesCorporationExist(uint32 corpID);
 
-    /**
-     * Obtains attribute bonuses for given ancestry.
-     *
-     * @param[in] ancestryID ID of ancestry.
-     * @param[out] intelligence Bonus to intelligence.
-     * @param[out] charisma Bonus to charisma.
-     * @param[out] perception Bonus to perception.
-     * @param[out] memory Bonus to memory.
-     * @param[out] willpower Bonus to willpower.
-     * @return True if operation succeeded, false if failed.
-     */
-    static bool GetAttributesFromAncestry(uint32 ancestryID, uint8 &intelligence, uint8 &charisma, uint8 &perception, uint8 &memory, uint8 &willpower);
-
     static bool GetSkillsByRace(uint32 raceID, std::map<uint32, uint32> &into);
     static bool GetSkillsByCareer(uint32 careerID, std::map<uint32, uint32> &into);
     static bool GetSkillsByCareerSpeciality(uint32 careerSpecialityID, std::map<uint32, uint32> &into);

@@ -227,20 +227,9 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
     corpData.rolesAtHQ = 0;
     corpData.rolesAtOther = 0;
 
-    // Variables for storing attribute bonuses
-    uint8 intelligence = char_type->intelligence;
-    uint8 charisma = char_type->charisma;
-    uint8 perception = char_type->perception;
-    uint8 memory = char_type->memory;
-    uint8 willpower = char_type->willpower;
-
     // Setting character's starting position, and getting it's location...
-    // Also query attribute bonuses from ancestry
-    if (!CharacterDB::GetLocationCorporationByCareer(cdata)
-            || !CharacterDB::GetAttributesFromAncestry(cdata.ancestryID, intelligence, charisma, perception, memory, willpower)
-    ) {
-        codelog(CLIENT__ERROR, "Failed to load char create details. Bloodline %u, ancestry %u.",
-            char_type->bloodlineID, cdata.ancestryID);
+    if (!CharacterDB::GetLocationCorporationByCareer(cdata)) {
+        codelog(CLIENT__ERROR, "Failed to load char create details. Bloodline %u, ancestry %u.", char_type->bloodlineID, cdata.ancestryID);
         return NULL;
     }
 
@@ -325,11 +314,11 @@ PyResult CharUnboundMgrService::Handle_CreateCharacterWithDoll(PyCallArgs &call)
 	capp.Build(char_item->itemID(), arg.avatarInfo);
 
     // add attribute bonuses
-    char_item->setAttribute(AttrIntelligence, intelligence);
-    char_item->setAttribute(AttrCharisma, charisma);
-    char_item->setAttribute(AttrPerception, perception);
-    char_item->setAttribute(AttrMemory, memory);
-    char_item->setAttribute(AttrWillpower, willpower);
+    char_item->setAttribute(AttrIntelligence, 20);
+    char_item->setAttribute(AttrCharisma, 19);
+    char_item->setAttribute(AttrPerception, 20);
+    char_item->setAttribute(AttrMemory, 20);
+    char_item->setAttribute(AttrWillpower, 20);
 
     // register name
     CharacterDB::add_name_validation_set(char_item->itemName().c_str(), char_item->itemID());
