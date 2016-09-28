@@ -124,9 +124,12 @@ bool Client::ProcessNet()
     PyPacket *p;
     while((p = popPacket()))
     {
-        _log(CLIENT__IN_ALL, "Received packet:");
-        PyLogDumpVisitor dumper(CLIENT__IN_ALL, CLIENT__IN_ALL);
-        p->Dump(CLIENT__IN_ALL, dumper);
+        if(is_log_enabled(CLIENT__IN_ALL))
+        {
+            _log(CLIENT__IN_ALL, "Received packet:");
+            PyLogDumpVisitor dumper(CLIENT__IN_ALL, CLIENT__IN_ALL);
+            p->Dump(CLIENT__IN_ALL, dumper);
+        }
 
         try
         {
