@@ -154,8 +154,6 @@ public:
     PyTuple *Encode();
     EVENotificationStream *Clone() const;
 
-    std::string notifyType; //not encoded by Encode() since it is in the address part, mainly here for convenience.
-
     uint32 remoteObject;        //seen 1, hack: 0 means it was a string
     std::string remoteObjectStr;
 
