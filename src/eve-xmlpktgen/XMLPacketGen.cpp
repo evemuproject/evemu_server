@@ -91,7 +91,6 @@ bool XMLPacketGen::ParseElements( const TiXmlElement* field )
         "#ifndef %s\n"
         "#define %s\n"
         "\n"
-        "#include \"python/PyVisitor.h\"\n"
         "#include \"python/PyRep.h\"\n"
         "\n",
         smGenFileComment,

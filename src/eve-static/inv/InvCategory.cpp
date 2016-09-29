@@ -28,7 +28,6 @@
 
 #include "eveStatic.h"
 #include "python/classes/PyDatabase.h"
-#include "python/PyVisitor.h"
 #include "log/SystemLog.h"
 #include "database/EVEDBUtils.h"
 

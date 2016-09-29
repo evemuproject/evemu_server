@@ -26,7 +26,6 @@
 #include "eve-common.h"
 
 #include "python/classes/PyDatabase.h"
-#include "python/PyVisitor.h"
 #include "python/PyRep.h"
 
 #include "marshal/EVEUnmarshal.h"

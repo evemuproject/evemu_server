@@ -29,7 +29,6 @@
 #include "marshal/EVEMarshal.h"
 #include "marshal/EVEMarshalOpcodes.h"
 #include "packets/ObjectCaching.h"
-#include "python/PyVisitor.h"
 #include "python/PyRep.h"
 #include "python/PyDumpVisitor.h"
 #include "utils/crc32.h"
