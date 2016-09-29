@@ -128,7 +128,7 @@ bool Client::ProcessNet()
         {
             _log(CLIENT__IN_ALL, "Received packet:");
             PyLogDumpVisitor dumper(CLIENT__IN_ALL, CLIENT__IN_ALL);
-            p->Dump(CLIENT__IN_ALL, dumper);
+            p->Dump(CLIENT__IN_ALL);
         }
 
         try

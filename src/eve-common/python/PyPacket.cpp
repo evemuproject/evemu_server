@@ -29,6 +29,7 @@
 #include "python/PyVisitor.h"
 #include "python/PyRep.h"
 #include "python/PyDumpVisitor.h"
+#include "packets/General.h"
 
 const char* MACHONETMSG_TYPE_NAMES[MACHONETMSG_TYPE_COUNT] =
 {
@@ -83,23 +84,107 @@ PyPacket *PyPacket::Clone() const
     return res;
 }
 
-void PyPacket::Dump(LogType ltype, PyVisitor& dumper)
+void PyPacket::Dump(LogType ltype, const char* pfx)
 {
-    _log(ltype, "Packet:");
-    _log(ltype, "  Type: %s", type_string.c_str());
-    _log(ltype, "  Command: %s (%d)", MACHONETMSG_TYPE_NAMES[type], type);
-    _log(ltype, "  Source:");
-    source.Dump(ltype, "    ");
-    _log(ltype, "  Dest:");
-    dest.Dump(ltype, "    ");
-    _log(ltype, "  User ID: %u", userid);
-    _log(ltype, "  Payload:");
-    payload->visit( dumper );
-    if(named_payload == NULL) {
-        _log(ltype, "  Named Payload: None");
-    } else {
-        _log(ltype, "  Named Payload:");
-        named_payload->visit( dumper );
+    std::string pfx1(pfx);
+    pfx1 += "    ";
+    std::string pfx2(pfx1 + "    ");
+    std::string pfx3(pfx2 + "    ");
+    _log(ltype, "%sPyPacket:", pfx);
+    _log(ltype, "%sType: %s", pfx1.c_str(), type_string.c_str());
+    _log(ltype, "%sCommand: %s (%d)", pfx1.c_str(), MACHONETMSG_TYPE_NAMES[type], type);
+    _log(ltype, "%sSource:", pfx1.c_str());
+    source.Dump(ltype, "        ");
+    _log(ltype, "%sDest:", pfx1.c_str());
+    dest.Dump(ltype, pfx2.c_str());
+    _log(ltype, "%sUser ID: %u", pfx1.c_str(), userid);
+    _log(ltype, "%sPayload:", pfx1.c_str());
+    bool payloadDumped = false;
+    switch (type)
+    {
+    case NOTIFICATION:
+    {
+        EVENotificationStream note;
+        PyTuple *tup = (PyTuple *) payload->Clone();
+        if (note.Decode(type_string, tup))
+        {
+            note.Dump(ltype, pfx2.c_str());
+            payloadDumped = true;
+        }
+        else
+        {
+            payload->Dump(ltype, pfx2.c_str());
+        }
+        break;
+    }
+    case CALL_REQ:
+    {
+        PyCallStream req;
+        PyTuple *tup = (PyTuple *) payload->Clone();
+        if (req.Decode(type_string, tup))
+        {
+            req.Dump(ltype, pfx2.c_str());
+            payloadDumped = true;
+        }
+        else
+        {
+            payload->Dump(ltype, pfx2.c_str());
+        }
+        break;
+    }
+    case CALL_RSP:
+    {
+        if (payload->IsTuple())
+        {
+            PyTuple *tup1 = payload->AsTuple();
+            if (tup1->items.size() == 1)
+            {
+                if (tup1->items[0]->IsSubStream())
+                {
+                    PySubStream *stream = tup1->items[0]->AsSubStream();
+                    PySubStream *sub = (PySubStream *) stream->Clone();
+                    sub->DecodeData();
+                    if (sub->decoded() != nullptr)
+                    {
+                        PyRep *pack = sub->decoded();
+                        if (pack != nullptr)
+                        {
+                            _log(ltype, "%sResponse:", pfx2.c_str());
+                            pack->Dump(ltype, pfx3.c_str());
+                            payloadDumped = true;
+                        }
+                    }
+                }
+            }
+        }
+        break;
+    }
+    case AUTHENTICATION_REQ:
+    case AUTHENTICATION_RSP:
+    case IDENTIFICATION_REQ:
+    case IDENTIFICATION_RSP:
+    case TRANSPORTCLOSED:
+    case RESOLVE_REQ:
+    case RESOLVE_RSP:
+    case ERRORRESPONSE:
+    case SESSIONINITIALSTATENOTIFICATION:
+    case PING_REQ:
+    case PING_RSP:
+    default:
+        break;
+    }
+    if (!payloadDumped)
+    {
+        payload->Dump(ltype, pfx2.c_str());
+    }
+    if (named_payload == NULL)
+    {
+        _log(ltype, "%sNamed Payload: None", pfx1.c_str());
+    }
+    else
+    {
+        _log(ltype, "%sNamed Payload:", pfx1.c_str());
+        named_payload->Dump(ltype, pfx2.c_str());
     }
 }
 
@@ -621,21 +706,76 @@ PyCallStream *PyCallStream::Clone() const {
     return res;
 }
 
-void PyCallStream::Dump(LogType type, PyVisitor& dumper)
+void PyCallStream::Dump(LogType type, const char* pfx)
 {
-    _log(type, "Call Stream:");
-    if(remoteObject == 0) {
-        _log(type, "  Remote Object: '%s'", remoteObjectStr.c_str());
-    } else
-        _log(type, "  Remote Object: %d", remoteObject);
-    _log(type, "  Method: %s", method.c_str());
-    _log(type, "  Arguments:");
-    arg_tuple->visit( dumper );
-    if(arg_dict == NULL) {
-        _log(type, "  Named Arguments: None");
-    } else {
-        _log(type, "  Named Arguments:");
-        arg_dict->visit( dumper );
+    std::string pfx1(pfx);
+    pfx1 += "    ";
+    std::string pfx2(pfx1 + "    ");
+    std::string pfx3(pfx2 + "    ");
+    _log(type, "%sPyCallStream:", pfx);
+    if (remoteObject == 0)
+    {
+        _log(type, "%sRemote Object: '%s'", pfx1.c_str(), remoteObjectStr.c_str());
+    }
+    else
+    {
+        _log(type, "%sRemote Object: %d", pfx1.c_str(), remoteObject);
+    }
+    _log(type, "%sMethod: %s", pfx1.c_str(), method.c_str());
+    bool dumped = false;
+    if (method == "MachoBindObject")
+    {
+        CallMachoBindObject bind;
+        PyTuple *tup = (PyTuple *) arg_tuple->Clone();
+        if (bind.Decode(tup))
+        {
+            _log(type, "%sBindObject:", pfx1.c_str());
+            if (bind.bindParams != nullptr)
+            {
+                _log(type, "%sBindParams:", pfx2.c_str());
+                bind.bindParams->Dump(type, pfx3.c_str());
+            }
+            if (bind.call != nullptr)
+            {
+                if (bind.call->IsTuple())
+                {
+                    PyTuple *tup = (PyTuple *) bind.call->Clone();
+                    if (tup->items.size() == 3)
+                    {
+                        if (tup->items[0]->IsString() && tup->items[1]->IsTuple() && tup->items[2]->IsDict())
+                        {
+                            _log(type, "%sCall: %s", pfx2.c_str(), tup->items[0]->AsString()->content().c_str());
+                            _log(type, "%sArguments:", pfx2.c_str());
+                            tup->items[1]->Dump(type, pfx3.c_str());
+                            tup->items[2]->Dump(type, pfx3.c_str());
+                            dumped = true;
+                        }
+                    }
+                }
+                else if (bind.call->IsNone())
+                {
+                    dumped = true;
+                }
+            }
+            else
+            {
+                dumped = true;
+            }
+        }
+    }
+    if (!dumped)
+    {
+        _log(type, "%sArguments:", pfx1.c_str());
+        arg_tuple->Dump(type, pfx2.c_str());
+        if (arg_dict == NULL)
+        {
+            _log(type, "%sNamed Arguments: None", pfx1.c_str());
+        }
+        else
+        {
+            _log(type, "%sNamed Arguments:", pfx1.c_str());
+            arg_dict->Dump(type, pfx2.c_str());
+        }
     }
 }
 
@@ -816,19 +956,32 @@ EVENotificationStream *EVENotificationStream::Clone() const {
     return res;
 }
 
-void EVENotificationStream::Dump(LogType type, PyVisitor& dumper)
+void EVENotificationStream::Dump(LogType type, const char* pfx)
 {
-    _log(type, "Notification:");
-    if(remoteObject == 0) {
-        _log(type, "  Remote Object: %s", remoteObjectStr.c_str());
-    } else {
-        _log(type, "  Remote Object: %u", remoteObject);
+    std::string pfx1(pfx);
+    pfx1 += "    ";
+    std::string pfx2(pfx1 + "    ");
+    _log(type, "%sEVENotificationStream:", pfx);
+    if (remoteObject == 0)
+    {
+        if(remoteObjectStr.length() > 0)
+        {
+            _log(type, "%sRemote Object: %s", pfx1.c_str(), remoteObjectStr.c_str());
+        }
+        else
+        {
+            _log(type, "%sRemote Object: <empty string>", pfx1.c_str());
+        }
     }
-    _log(type, "  Arguments:");
-    args->visit( dumper );
+    else
+    {
+        _log(type, "%sRemote Object: %u", pfx1.c_str(), remoteObject);
+    }
+    _log(type, "%sArguments:", pfx1.c_str());
+    args->Dump(type, pfx2.c_str());
 }
 
-bool EVENotificationStream::Decode(const std::string &pkt_type, const std::string &notify_type, PyTuple *&in_payload) {
+bool EVENotificationStream::Decode(const std::string &pkt_type, PyTuple *&in_payload) {
     PyTuple *payload = in_payload;   //consume
     in_payload = NULL;
 

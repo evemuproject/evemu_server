@@ -85,6 +85,12 @@ void EVEClientSession::fastQueuePacket(PyPacket** p)
     if(p == NULL || *p == NULL)
         return;
 
+    if(is_log_enabled(CLIENT__OUT_ALL))
+    {
+        PyLogDumpVisitor dumper(CLIENT__OUT_ALL, CLIENT__OUT_ALL, "", true, true);
+        (*p)->Dump(CLIENT__OUT_ALL);
+    }
+
     PyRep* r = (*p)->Encode();
     // maybe change PyPacket to a object with a reference..
     SafeDelete( *p );
