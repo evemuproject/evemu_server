@@ -82,17 +82,4 @@ public:
     virtual bool VisitChecksumedStream( const PyChecksumedStream* rep );
 };
 
-class PyPfxVisitor : public PyVisitor
-{
-public:
-    PyPfxVisitor( const char* pfx = "" );
-
-protected:
-    const char* _pfx() const { return mPfxStack.top().c_str(); }
-    void _pfxExtend( const char* fmt, ... );
-    void _pfxWithdraw() { mPfxStack.pop(); }
-
-    std::stack<std::string> mPfxStack;
-};
-
 #endif /* !__PY_VISITOR_H__INCL__ */

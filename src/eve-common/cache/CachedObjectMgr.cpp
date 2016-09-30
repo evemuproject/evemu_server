@@ -30,7 +30,6 @@
 #include "marshal/EVEMarshalOpcodes.h"
 #include "packets/ObjectCaching.h"
 #include "python/PyRep.h"
-#include "python/PyDumpVisitor.h"
 #include "utils/crc32.h"
 #include "utils/EVEUtils.h"
 
@@ -70,6 +69,53 @@ PyObject *CachedObjectMgr::CacheRecord::EncodeHint() const
     return(spec.Encode());
 }
 
+
+//run through the rep, concatenating all the strings together and noting if
+//there are a no non-string types in the rep (lists and tuples are OK)
+class StringCollapseVisitor
+: public PyVisitor
+{
+public:
+    std::string result;
+
+    bool VisitInteger( const PyInt* rep )
+    {
+        if( !result.empty() )
+            result += ".";
+
+        std::stringstream ss;
+        ss << rep->value();
+        result += ss.str();
+
+        return true;
+    }
+    bool VisitLong( const PyLong* rep ) { return false; }
+    bool VisitReal( const PyFloat* rep ) { return false; }
+    bool VisitBoolean( const PyBool* rep ) { return false; }
+    bool VisitNone( const PyNone* rep ) { return false; }
+    bool VisitBuffer( const PyBuffer* rep ) { return false; }
+    bool VisitString( const PyString* rep )
+    {
+        if( !result.empty() )
+            result += ".";
+        result += rep->content();
+
+        return true;
+    }
+    bool VisitWString( const PyWString* rep ) { return false; }
+    bool VisitToken( const PyToken* rep ) { return false; }
+
+    bool VisitDict( const PyDict* rep ) { return false; }
+
+    bool VisitObject( const PyObject* rep ) { return false; }
+    bool VisitObjectEx( const PyObjectEx* rep ) { return false; }
+
+    bool VisitPackedRow( const PyPackedRow* rep ) { return false; }
+
+    bool VisitSubStruct( const PySubStruct* rep ) { return false; }
+    bool VisitSubStream( const PySubStream* rep ) { return false; }
+    bool VisitChecksumedStream( const PyChecksumedStream* rep ) { return false; }
+};
 
 
 //extract out the string contents of the object ID... if its a single string,

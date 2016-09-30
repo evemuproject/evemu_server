@@ -29,7 +29,6 @@
 #include "marshal/EVEUnmarshal.h"
 #include "marshal/EVEMarshalOpcodes.h"
 #include "python/classes/PyDatabase.h"
-#include "python/PyDumpVisitor.h"
 #include "python/PyVisitor.h"
 #include "python/PyRep.h"
 #include "utils/EVEUtils.h"
@@ -80,7 +79,7 @@ void PyRep::Dump( LogType type, const char* pfx ) const
     lpfx += pfx;
     std::ostringstream ss;
     Dump(ss, lpfx);
-    _log(type, ss.str().substr(lpfx.length()).c_str());
+    outputLogMsg(type, ss.str().c_str());
 }
 
 void PyRep::Dump(std::ostringstream &ss, const std::string &pfx) const
@@ -330,6 +329,7 @@ bool PyBuffer::visit( PyVisitor& v ) const
 
 void PyBuffer::Dump(std::ostringstream &ss, const std::string &pfx) const
 {
+    std::string pfx1(pfx +   "    ");
     ss << pfx << "[PyBuffer Length= ";
     if(mValue == nullptr)
     {
@@ -338,8 +338,8 @@ void PyBuffer::Dump(std::ostringstream &ss, const std::string &pfx) const
     }
     ss << mValue->size() << std::endl;
     const Buffer &buf = *mValue;
-    pfxHexDumpPreview( pfx, ss, &buf[0], buf.size() );
-    ss << "]" << std::endl;
+    pfxHexDumpPreview( pfx1, ss, &buf[0], buf.size() );
+    ss << pfx << "]" << std::endl;
 }
 
 int32 PyBuffer::hash() const
@@ -880,20 +880,20 @@ void PyObject::Dump(std::ostringstream &ss, const std::string &pfx) const
     std::string pfx1(pfx +   "    ");
     if(mType != nullptr)
     {
-        ss << pfx << "Type='" << mType->content() << "'" << std::endl;
+        ss << pfx1 << "Type='" << mType->content() << "'" << std::endl;
     }
     else
     {
-        ss << pfx << "Type=<nullptr>" << std::endl;
+        ss << pfx1 << "Type=<nullptr>" << std::endl;
     }
     if(mArguments != nullptr)
     {
-        ss << pfx << "Arguments:" << std::endl;
+        ss << pfx1 << "Arguments:" << std::endl;
         mArguments->Dump(ss, pfx1);
     }
     else
     {
-        ss << pfx << "Arguments: <nullptr>" << std::endl;
+        ss << pfx1 << "Arguments: <nullptr>" << std::endl;
     }
 }
 

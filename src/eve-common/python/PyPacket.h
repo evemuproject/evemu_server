@@ -43,7 +43,7 @@ public:
         lpfx += pfx;
         std::ostringstream ss;
         Dump(ss, lpfx);
-        _log(type, ss.str().c_str());
+        outputLogMsg(type, ss.str().c_str());
     }
 
     void Dump(std::ostringstream &ss, const std::string &pfx = "") const;

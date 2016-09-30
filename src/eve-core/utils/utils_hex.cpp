@@ -49,6 +49,10 @@ void build_hex_line( const uint8* buffer, size_t length, size_t offset, char* re
 
             ret += snprintf( ret, length, " %02X", c );
             printable[i] = ( IsPrintable( c ) ? (char)c : '.' );
+            if(c == '\n' || c == '\r' || c == '\t' || c == '\f' || c == 0x0b)
+            {
+                printable[i] = '.';
+            }
         }
         else
         {

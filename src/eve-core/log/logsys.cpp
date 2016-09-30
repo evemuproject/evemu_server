@@ -73,7 +73,6 @@ std::string getLogPrefix(LogType type)
 {
     /* allocate enough room for a large message */
     size_t log_msg_size = 0x1000;
-    size_t log_msg_index = 0;
     char* log_msg = (char*)malloc(log_msg_size);
 
     /* handle the time part.. cross platform */
@@ -81,7 +80,7 @@ std::string getLogPrefix(LogType type)
     time_t tTime;
     time(&tTime);
     localtime_r( &tTime, &t );
-    int va_size = snprintf(&log_msg[log_msg_index], log_msg_size, "%02u:%02u:%02u [%s] ", t.tm_hour, t.tm_min, t.tm_sec, log_type_info[type].display_name );
+    snprintf(&log_msg[0], log_msg_size, "%02u:%02u:%02u [%s] ", t.tm_hour, t.tm_min, t.tm_sec, log_type_info[type].display_name );
     
     return std::string(log_msg);
 }
@@ -133,6 +132,18 @@ extern void log_messageVA( LogType type, uint32 iden, const char *fmt, va_list a
     log_msg[log_msg_index++] = '\n';
     log_msg[log_msg_index++] = '\0';
 
+    outputLogMsg(type, log_msg);
+
+    free(log_msg);
+}
+
+void outputLogMsg(LogType type, const char *log_msg)
+{
+    if( !is_log_enabled( type ) )
+    {
+        return;
+    }
+
     MutexLock lock(mLogSys);
 
     fputs(log_msg, stdout);
@@ -146,8 +157,6 @@ extern void log_messageVA( LogType type, uint32 iden, const char *fmt, va_list a
     }
 
     lock.Unlock();
-
-    free(log_msg);
 }
 
 void log_enable( LogType t )

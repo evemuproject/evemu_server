@@ -160,28 +160,3 @@ bool PyVisitor::VisitChecksumedStream( const PyChecksumedStream* rep )
         return false;
     return true;
 }
-
-/************************************************************************/
-/* PyPfxVisitor                                                         */
-/************************************************************************/
-PyPfxVisitor::PyPfxVisitor( const char* pfx )
-{
-    mPfxStack.push( pfx );
-}
-
-void PyPfxVisitor::_pfxExtend( const char* fmt, ... )
-{
-    va_list ap;
-    va_start( ap, fmt );
-
-    char* res;
-    vasprintf( &res, fmt, ap );
-
-    va_end( ap );
-
-    std::string p( _pfx() );
-    p += res;
-    mPfxStack.push( p );
-
-    SafeFree( res );
-}

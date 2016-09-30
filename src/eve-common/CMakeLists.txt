@@ -142,20 +142,14 @@ SET( packets_XMLP
      "${TARGET_SOURCE_DIR}/packets/Wallet.xmlp" )
 
 SET( python_INCLUDE
-     "${TARGET_INCLUDE_DIR}/python/PyDumpVisitor.h"
-     "${TARGET_INCLUDE_DIR}/python/PyLookupDump.h"
      "${TARGET_INCLUDE_DIR}/python/PyPacket.h"
      "${TARGET_INCLUDE_DIR}/python/PyRep.h"
      "${TARGET_INCLUDE_DIR}/python/PyTraceLog.h"
-     "${TARGET_INCLUDE_DIR}/python/PyVisitor.h"
-     "${TARGET_INCLUDE_DIR}/python/PyXMLGenerator.h" )
+     "${TARGET_INCLUDE_DIR}/python/PyVisitor.h" )
 SET( python_SOURCE
-     "${TARGET_SOURCE_DIR}/python/PyDumpVisitor.cpp"
-     "${TARGET_SOURCE_DIR}/python/PyLookupDump.cpp"
      "${TARGET_SOURCE_DIR}/python/PyPacket.cpp"
      "${TARGET_SOURCE_DIR}/python/PyRep.cpp"
-     "${TARGET_SOURCE_DIR}/python/PyVisitor.cpp"
-     "${TARGET_SOURCE_DIR}/python/PyXMLGenerator.cpp" )
+     "${TARGET_SOURCE_DIR}/python/PyVisitor.cpp" )
 
 SET( python_classes_INCLUDE
      "${TARGET_INCLUDE_DIR}/python/classes/PyDatabase.h"

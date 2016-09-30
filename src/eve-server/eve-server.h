@@ -98,12 +98,8 @@
 #include "packets/Tutorial.h"
 #include "packets/Mail.h"
 // python
-#include "python/PyVisitor.h"
 #include "python/PyRep.h"
 #include "python/PyPacket.h"
-#include "python/PyDumpVisitor.h"
-#include "python/PyLookupDump.h"
-#include "python/PyXMLGenerator.h"
 #include "python/classes/PyDatabase.h"
 #include "python/classes/PyExceptions.h"
 #include "python/classes/PyUtils.h"

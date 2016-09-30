@@ -28,7 +28,6 @@
 #include "python/PyPacket.h"
 #include "python/PyVisitor.h"
 #include "python/PyRep.h"
-#include "python/PyDumpVisitor.h"
 #include "packets/General.h"
 
 const char* MACHONETMSG_TYPE_NAMES[MACHONETMSG_TYPE_COUNT] =
@@ -384,10 +383,10 @@ void PyAddress::Dump(std::ostringstream &ss, const std::string &pfx) const {
         ss << pfx << "Any: service='" << service << "' callID=" << callID << std::endl;
         break;
     case Node:
-        ss << pfx << "Node: node=" << typeID << "service='" << service << "' callID=" << callID << std::endl;
+        ss << pfx << "Node: node=" << typeID << " service='" << service << "' callID=" << callID << std::endl;
         break;
     case Client:
-        ss << pfx << "Client: node=" << typeID << "service='" << service << "' callID=" << callID << std::endl;
+        ss << pfx << "Client: node=" << typeID << " service='" << service << "' callID=" << callID << std::endl;
         break;
     case Broadcast:
         ss << pfx << "Broadcast: broadcastID='" << service << "' narrowcast=(not decoded yet) idtype='" << bcast_idtype << std::endl;
@@ -691,7 +690,7 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
     {
         ss << pfx1 << "Remote Object: " << remoteObject << std::endl;
     }
-    ss << pfx1 << "Method: " << method;
+    ss << pfx1 << "Method: " << method << std::endl;
     bool dumped = false;
     if (method == "MachoBindObject")
     {
@@ -714,7 +713,7 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
                     {
                         if (tup->items[0]->IsString() && tup->items[1]->IsTuple() && tup->items[2]->IsDict())
                         {
-                            ss << pfx2 << "Call: ", tup->items[0]->AsString()->content();
+                            ss << pfx2 << "Call: " << tup->items[0]->AsString()->content() << std::endl;
                             ss << pfx2 << "Arguments:" << std::endl;
                             tup->items[1]->Dump(ss, pfx3);
                             tup->items[2]->Dump(ss, pfx3);
