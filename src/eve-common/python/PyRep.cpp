@@ -35,6 +35,8 @@
 #include "utils/EVEUtils.h"
 #include "utils/utfUtils.h"
 
+#include <iomanip>
+
 /************************************************************************/
 /* PyRep base Class                                                     */
 /************************************************************************/
@@ -72,18 +74,18 @@ const char* PyRep::TypeString() const
     return s_mTypeString[ PyTypeError ];
 }
 
-void PyRep::Dump( FILE* into, const char* pfx ) const
-{
-    PyFileDumpVisitor dumper( into, pfx );
-
-    visit( dumper );
-}
-
 void PyRep::Dump( LogType type, const char* pfx ) const
 {
-    PyLogDumpVisitor dumper( type, type, pfx );
+    std::string lpfx = getLogPrefix(type);
+    lpfx += pfx;
+    std::ostringstream ss;
+    Dump(ss, lpfx);
+    _log(type, ss.str().substr(lpfx.length()).c_str());
+}
 
-    visit( dumper );
+void PyRep::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    ss << pfx << "[PyRep]" << std::endl;
 }
 
 int32 PyRep::hash() const
@@ -326,6 +328,20 @@ bool PyBuffer::visit( PyVisitor& v ) const
     return v.VisitBuffer( this );
 }
 
+void PyBuffer::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    ss << pfx << "[PyBuffer Length= ";
+    if(mValue == nullptr)
+    {
+        ss << "0 <empty>]" << std::endl;
+        return;
+    }
+    ss << mValue->size() << std::endl;
+    const Buffer &buf = *mValue;
+    pfxHexDumpPreview( pfx, ss, &buf[0], buf.size() );
+    ss << "]" << std::endl;
+}
+
 int32 PyBuffer::hash() const
 {
     if( mHashCache != -1 )
@@ -389,6 +405,18 @@ bool PyString::visit( PyVisitor& v ) const
     return v.VisitString( this );
 }
 
+void PyString::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    if( IsPrintable( mValue ) )
+    {
+        ss << pfx << "[PyString '" << mValue << "']" << std::endl;
+    }
+    else
+    {
+        ss << pfx << "[PyString '<binary, len=" << mValue.length() << ">']" << std::endl;
+    }
+}
+
 int32 PyString::hash() const
 {
     if( mHashCache != -1 )
@@ -428,6 +456,18 @@ PyRep* PyWString::Clone() const
 bool PyWString::visit( PyVisitor& v ) const
 {
     return v.VisitWString( this );
+}
+
+void PyWString::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    if( IsPrintable( mValue ) )
+    {
+        ss << pfx << "[PyWString '" << mValue << "']" << std::endl;
+    }
+    else
+    {
+        ss << pfx << "[PyWString '<binary, len=" << mValue.length() << ">']" << std::endl;
+    }
 }
 
 size_t PyWString::size() const
@@ -504,6 +544,23 @@ PyRep* PyTuple::Clone() const
 bool PyTuple::visit( PyVisitor& v ) const
 {
     return v.VisitTuple( this );
+}
+
+void PyTuple::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    ss << pfx << "[PyTuple length=" << items.size() << "]" << std::endl;
+    std::string pfx1(pfx + "    ");
+    for(PyRep *rep : items)
+    {
+        if(rep != nullptr)
+        {
+            rep->Dump(ss, pfx1);
+        }
+        else
+        {
+            ss << pfx1 << "<nullptr>" << std::endl;
+        }
+    }
 }
 
 void PyTuple::clear()
@@ -586,6 +643,23 @@ bool PyList::visit( PyVisitor& v ) const
     return v.VisitList( this );
 }
 
+void PyList::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    ss << pfx << "[PyList length=" << items.size() << "]" << std::endl;
+    std::string pfx1(pfx + "    ");
+    for(PyRep *rep : items)
+    {
+        if(rep != nullptr)
+        {
+            rep->Dump(ss, pfx1);
+        }
+        else
+        {
+            ss << pfx1 << "<nullptr>" << std::endl;
+        }
+    }
+}
+
 void PyList::clear()
 {
     iterator cur, end;
@@ -644,6 +718,34 @@ PyRep* PyDict::Clone() const
 bool PyDict::visit( PyVisitor& v ) const
 {
     return v.VisitDict( this );
+}
+
+void PyDict::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    ss << pfx << "[PyDict length=" << items.size() << "]" << std::endl;
+    std::string pfx_key(pfx +   "    Key: ");
+    std::string pfx_value(pfx + "    ==Value: ");
+    for(auto entry : items)
+    {
+        PyRep *key = entry.first;
+        PyRep *value = entry.second;
+        if(key != nullptr)
+        {
+            key->Dump(ss, pfx_key);
+        }
+        else
+        {
+            ss << pfx_key << "<nullptr>" << std::endl;
+        }
+        if(value != nullptr)
+        {
+            value->Dump(ss, pfx_value);
+        }
+        else
+        {
+            ss << pfx_key << "<nullptr>" << std::endl;
+        }
+    }
 }
 
 void PyDict::clear()
@@ -772,6 +874,29 @@ bool PyObject::visit( PyVisitor& v ) const
     return v.VisitObject( this );
 }
 
+void PyObject::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    ss << pfx << "[PyObject]" << std::endl;
+    std::string pfx1(pfx +   "    ");
+    if(mType != nullptr)
+    {
+        ss << pfx << "Type='" << mType->content() << "'" << std::endl;
+    }
+    else
+    {
+        ss << pfx << "Type=<nullptr>" << std::endl;
+    }
+    if(mArguments != nullptr)
+    {
+        ss << pfx << "Arguments:" << std::endl;
+        mArguments->Dump(ss, pfx1);
+    }
+    else
+    {
+        ss << pfx << "Arguments: <nullptr>" << std::endl;
+    }
+}
+
 /************************************************************************/
 /* PyObjectEx                                                           */
 /************************************************************************/
@@ -802,6 +927,79 @@ PyRep* PyObjectEx::Clone() const
 bool PyObjectEx::visit( PyVisitor& v ) const
 {
     return v.VisitObjectEx( this );
+}
+
+void PyObjectEx::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx +   "    ");
+    std::string pfx2(pfx1 +   "    ");
+    if(isType2())
+    {
+        ss << pfx << "[PyObjectEx Type2]" << std::endl;
+    }
+    else
+    {
+        ss << pfx << "[PyObjectEx Normal]" << std::endl;
+    }
+    if(mHeader == nullptr)
+    {
+        ss << pfx1 << "Header: <nullptr>" << std::endl;
+    }
+    else
+    {
+        ss << pfx1 << "Header:" << std::endl;
+        mHeader->Dump(ss, pfx2);
+    }
+    if(mList != nullptr)
+    {
+        ss << pfx1 << "List Data:" << std::endl;
+        for(PyRep *rep : mList->items)
+        {
+            if(rep != nullptr)
+            {
+                rep->Dump(ss, pfx1);
+            }
+            else
+            {
+                ss << pfx2 << "<nullptr>" << std::endl;
+            }
+        }
+    }
+    else
+    {
+        ss << pfx1 << "List Data: <nullptr>" << std::endl;
+    }
+    if(mDict != nullptr)
+    {
+        ss << pfx1 << "Dictionary:" << std::endl;
+        std::string pfx_key(pfx1 +   "    Key: ");
+        std::string pfx_value(pfx1 + "    ==Value: ");
+        for(auto entry : mDict->items)
+        {
+            PyRep *key = entry.first;
+            PyRep *value = entry.second;
+            if(key != nullptr)
+            {
+                key->Dump(ss, pfx_key);
+            }
+            else
+            {
+                ss << pfx_key << "<nullptr>" << std::endl;
+            }
+            if(value != nullptr)
+            {
+                value->Dump(ss, pfx_value);
+            }
+            else
+            {
+                ss << pfx_key << "<nullptr>" << std::endl;
+            }
+        }
+    }
+    else
+    {
+        ss << pfx1 << "Dictonary: <nullptr>" << std::endl;
+    }
 }
 
 PyObjectEx& PyObjectEx::operator=( const PyObjectEx& oth )
@@ -976,6 +1174,52 @@ bool PyPackedRow::visit( PyVisitor& v ) const
     return v.VisitPackedRow( this );
 }
 
+void PyPackedRow::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx +   "    ");
+    std::string pfx2(pfx1 +   "    ");
+    if(mHeader == nullptr)
+    {
+        ss << pfx << "[PyPackedRow columns=<nullptr>]" << std::endl;
+        if(mFields == nullptr)
+        {
+            ss << pfx1 << "Rows: <nullptr>" << std::endl;
+        }
+        else
+        {
+            ss << pfx1 << "Rows:" << std::endl;
+            mFields->Dump(ss, pfx2);
+        }
+    }
+    else
+    {
+        ss << pfx << "[PyPackedRow columns=" << mHeader->ColumnCount() << "]" << std::endl;
+        if(mFields == nullptr)
+        {
+            ss << pfx1 << "Rows: <nullptr>" << std::endl;
+        }
+        else
+        {
+            int i = 0;
+            for(PyRep *rep : mFields->items)
+            {
+                ss << pfx1 << "Row=" << i;
+                ss << " DB_Type=0x" << std::hex << std::setw(4) << std::setfill('0') << mHeader->GetColumnType(i);
+                ss << " Name='" << mHeader->GetColumnName(i) << "' Value=";
+                if(rep != nullptr)
+                {
+                    rep->Dump(ss, "");
+                }
+                else
+                {
+                    ss << "<nullptr>" << std::endl;
+                }
+                i++;
+            }
+        }
+    }
+}
+
 bool PyPackedRow::SetField( uint32 index, PyRep* value )
 {
     if( !header()->VerifyValue( index, value ) )
@@ -1026,6 +1270,20 @@ bool PySubStruct::visit( PyVisitor& v ) const
     return v.VisitSubStruct( this );
 }
 
+void PySubStruct::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    ss << pfx << "[PySubStruct]" << std::endl;
+    if(mSub == nullptr)
+    {
+        ss << pfx1 << "<nullptr>" << std::endl;
+    }
+    else
+    {
+        mSub->Dump(ss, pfx1);
+    }
+}
+
 /************************************************************************/
 /* PyRep SubStream Class                                                */
 /************************************************************************/
@@ -1048,6 +1306,25 @@ PyRep* PySubStream::Clone() const
 bool PySubStream::visit( PyVisitor& v ) const
 {
     return v.VisitSubStream( this );
+}
+
+void PySubStream::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    if(mDecoded != nullptr)
+    {
+        ss << pfx << "[PySubStream from rep]" << std::endl;
+        mDecoded->Dump(ss, pfx1);
+    }
+    else if(mData != nullptr)
+    {
+        ss << pfx << "[PySubStream from data]" << std::endl;
+        mData->Dump(ss, pfx1);
+    }
+    else
+    {
+        ss << pfx << "[PySubStream <empty]" << std::endl;
+    }
 }
 
 void PySubStream::EncodeData() const
@@ -1096,6 +1373,21 @@ bool PyChecksumedStream::visit( PyVisitor& v ) const
     return v.VisitChecksumedStream( this );
 }
 
+void PyChecksumedStream::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    ss << pfx << "[PyChecksumedStream checksum=0x]";
+    ss << "0x" << std::hex << std::setw(8) << std::setfill('0') << mChecksum;
+    ss << std::endl;
+    if(mStream != nullptr)
+    {
+        mStream->Dump(ss, pfx1);
+    }
+    else
+    {
+        ss << pfx1 << "<nullptr>" << std::endl;
+    }
+}
 
 /************************************************************************/
 /* tuple large integer helper functions                                 */

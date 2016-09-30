@@ -37,8 +37,16 @@ class PyAddress {
 public:
     PyAddress();
 
-    void Dump(FILE *into, const char *pfx) const;
-    void Dump(LogType type, const char *pfx) const;
+    void Dump( LogType type, const char* pfx ) const
+    {
+        std::string lpfx = getLogPrefix(type);
+        lpfx += pfx;
+        std::ostringstream ss;
+        Dump(ss, lpfx);
+        _log(type, ss.str().c_str());
+    }
+
+    void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
     bool Decode(PyRep *&object);    //consumes object
     PyRep *Encode();
     void operator=(const PyAddress &right);
@@ -89,7 +97,7 @@ public:
     PyPacket();
     ~PyPacket();
 
-    void Dump(LogType type, const char* pfx = "");
+    void Dump(std::ostringstream &ss, const std::string &pfx = "");
     bool Decode(PyRep **packet);    //consumes packet
     PyRep *Encode();
     PyPacket *Clone() const;
@@ -131,7 +139,7 @@ public:
     PyCallStream();
     ~PyCallStream();
 
-    void Dump(LogType type, const char* pfx);
+    void Dump(std::ostringstream &ss, const std::string &pfx = "");
     bool Decode(const std::string &type, PyTuple *&payload); //consumes substream
     PyTuple *Encode();
     PyCallStream *Clone() const;
@@ -149,7 +157,7 @@ public:
     EVENotificationStream();
     ~EVENotificationStream();
 
-    void Dump(LogType type, const char* pfx);
+    void Dump(std::ostringstream &ss, const std::string &pfx = "");
     bool Decode(const std::string &pkt_type, PyTuple *&payload); //consumes substream
     PyTuple *Encode();
     EVENotificationStream *Clone() const;

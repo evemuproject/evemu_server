@@ -281,28 +281,28 @@ PyResult PlanetMgrBound::Handle_GMRunDepletionSim(PyCallArgs &call) {
 
 PyResult PlanetMgrBound::Handle_UserAbandonPlanet(PyCallArgs &call) {
     SysLog::Debug("PlanetMgrBound", "Called UserAbandonPlanet stub.");
-    call.tuple->Dump(stdout, "[DEBUG] UAP: ");
+    call.tuple->Dump(DEBUG__DEBUG, "[DEBUG] UAP: ");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserLaunchCommodities(PyCallArgs &call) {
     SysLog::Debug("PlanetMgrBound", "Called UserLaunchCommodities stub.");
-    call.tuple->Dump(stdout, "[DEBUG] ULC: ");
+    call.tuple->Dump(DEBUG__DEBUG, "[DEBUG] ULC: ");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserTransferCommodities(PyCallArgs &call) {
     SysLog::Debug("PlanetMgrBound", "Called UserTransferCommodities stub.");
-    call.tuple->Dump(stdout, "[DEBUG] UTC: ");
+    call.tuple->Dump(DEBUG__DEBUG, "[DEBUG] UTC: ");
 
     return NULL;
 }
 
 PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
     SysLog::Debug("PlanetMgrBound", "Called UserUpdateNetwork incomplete.");
-    call.tuple->Dump(stdout, "[DEBUG] UUN: ");
+    call.tuple->Dump(DEBUG__DEBUG, "[DEBUG] UUN: ");
 
     UUNCommandList uuncl;
     if(!uuncl.Decode(&call.tuple)) {

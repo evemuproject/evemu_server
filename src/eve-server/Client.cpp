@@ -126,9 +126,10 @@ bool Client::ProcessNet()
     {
         if(is_log_enabled(CLIENT__IN_ALL))
         {
-            _log(CLIENT__IN_ALL, "Received packet:");
-            PyLogDumpVisitor dumper(CLIENT__IN_ALL, CLIENT__IN_ALL);
-            p->Dump(CLIENT__IN_ALL);
+            std::string pfx = getLogPrefix(CLIENT__IN_ALL);
+            std::ostringstream ss;
+            p->Dump(ss, pfx);
+            _log(CLIENT__IN_ALL, "Received packet:\n%s", ss.str());
         }
 
         try

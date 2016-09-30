@@ -561,7 +561,9 @@ void PyCachedObjectDecoder::Dump(FILE *into, const char *pfx, bool contents_too)
     s += "    ";
     fprintf(into, "%sCached Object:\n", pfx);
     fprintf(into, "%s  ObjectID:\n", pfx);
-    objectID->Dump(into, s.c_str());
+    std::ostringstream ss1;
+    objectID->Dump(ss1, s);
+    fprintf(into, "%s", ss1.str().c_str());
     fprintf(into, "%s  Version Time: %" PRIu64 "\n", pfx, timestamp);
     fprintf(into, "%s  Version: %u\n", pfx, version);
     fprintf(into, "%s  NodeID: %u\n", pfx, nodeID);
@@ -569,7 +571,9 @@ void PyCachedObjectDecoder::Dump(FILE *into, const char *pfx, bool contents_too)
     fprintf(into, "%s  Compressed: %s\n", pfx, compressed?"yes":"no");
     if(contents_too) {
         fprintf(into, "%s  Contents:\n", pfx);
-            cache->Dump(into, s.c_str());
+        std::ostringstream ss;
+        cache->Dump(ss, s);
+        fprintf(into, "%s", ss.str().c_str());
     }
 }
 
@@ -579,7 +583,9 @@ void PyCachedObject::Dump(FILE *into, const char *pfx, bool contents_too)
     s += "    ";
     fprintf(into, "%sCached Object:\n", pfx);
     fprintf(into, "%s  ObjectID:\n", pfx);
-        objectID->Dump(into, s.c_str());
+    std::ostringstream ss1;
+    objectID->Dump(ss1, s);
+    fprintf(into, "%s", ss1.str().c_str());
     fprintf(into, "%s  Version Time: %" PRIu64 "\n", pfx, timestamp);
     fprintf(into, "%s  Version: %u\n", pfx, version);
     fprintf(into, "%s  NodeID: %u\n", pfx, nodeID);
@@ -587,7 +593,9 @@ void PyCachedObject::Dump(FILE *into, const char *pfx, bool contents_too)
     fprintf(into, "%s  Compressed: %s\n", pfx, compressed?"yes":"no");
     if(contents_too) {
         fprintf(into, "%s  Contents:\n", pfx);
-            cache->Dump(into, s.c_str());
+        std::ostringstream ss;
+        cache->Dump(ss, s);
+        fprintf(into, "%s", ss.str().c_str());
     }
 }
 
@@ -795,7 +803,9 @@ void PyCachedCall::Dump(FILE *into, const char *pfx, bool contents_too)
     fprintf(into, "%sCached Call: (empty right now) \n", pfx);
     if(contents_too) {
         fprintf(into, "%s  Contents:\n", pfx);
-            result->Dump(into, s.c_str());
+        std::ostringstream ss;
+        result->Dump(ss, s);
+        fprintf(into, "%s", ss.str().c_str());
     }
 }
 

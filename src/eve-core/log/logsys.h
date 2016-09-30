@@ -106,6 +106,8 @@ extern bool log_close_logfile();
 
 extern bool load_log_settings( const char* filename );
 
+extern std::string getLogPrefix(LogType type);
+
 extern void log_message(LogType type, const char *fmt, ...);
 extern void log_messageVA(LogType type, const char *fmt, va_list args);
 extern void log_messageVA(LogType type, uint32 iden, const char *fmt, va_list args);

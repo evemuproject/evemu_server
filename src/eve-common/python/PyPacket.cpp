@@ -84,21 +84,20 @@ PyPacket *PyPacket::Clone() const
     return res;
 }
 
-void PyPacket::Dump(LogType ltype, const char* pfx)
+void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
 {
-    std::string pfx1(pfx);
-    pfx1 += "    ";
+    std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
     std::string pfx3(pfx2 + "    ");
-    _log(ltype, "%sPyPacket:", pfx);
-    _log(ltype, "%sType: %s", pfx1.c_str(), type_string.c_str());
-    _log(ltype, "%sCommand: %s (%d)", pfx1.c_str(), MACHONETMSG_TYPE_NAMES[type], type);
-    _log(ltype, "%sSource:", pfx1.c_str());
-    source.Dump(ltype, "        ");
-    _log(ltype, "%sDest:", pfx1.c_str());
-    dest.Dump(ltype, pfx2.c_str());
-    _log(ltype, "%sUser ID: %u", pfx1.c_str(), userid);
-    _log(ltype, "%sPayload:", pfx1.c_str());
+    ss << pfx << "PyPacket:" << std::endl;
+    ss << pfx1 << "Type: " <<  type_string.c_str() << std::endl;
+    ss << pfx1 << "Command: " << MACHONETMSG_TYPE_NAMES[type] << "(" << type << ")" << std::endl;
+    ss << pfx1 << "Source:" << std::endl;
+    source.Dump(ss, pfx2);
+    ss << pfx1 << "Destination:" << std::endl;
+    dest.Dump(ss, pfx2);
+    ss << pfx1 << "User ID: " << userid << std::endl;
+    ss << pfx1 << "Payload:" << std::endl;
     bool payloadDumped = false;
     switch (type)
     {
@@ -108,12 +107,8 @@ void PyPacket::Dump(LogType ltype, const char* pfx)
         PyTuple *tup = (PyTuple *) payload->Clone();
         if (note.Decode(type_string, tup))
         {
-            note.Dump(ltype, pfx2.c_str());
+            note.Dump(ss, pfx2);
             payloadDumped = true;
-        }
-        else
-        {
-            payload->Dump(ltype, pfx2.c_str());
         }
         break;
     }
@@ -123,12 +118,8 @@ void PyPacket::Dump(LogType ltype, const char* pfx)
         PyTuple *tup = (PyTuple *) payload->Clone();
         if (req.Decode(type_string, tup))
         {
-            req.Dump(ltype, pfx2.c_str());
+            req.Dump(ss, pfx2);
             payloadDumped = true;
-        }
-        else
-        {
-            payload->Dump(ltype, pfx2.c_str());
         }
         break;
     }
@@ -149,8 +140,8 @@ void PyPacket::Dump(LogType ltype, const char* pfx)
                         PyRep *pack = sub->decoded();
                         if (pack != nullptr)
                         {
-                            _log(ltype, "%sResponse:", pfx2.c_str());
-                            pack->Dump(ltype, pfx3.c_str());
+                            ss << pfx2 << "Response:" << std::endl;
+                            pack->Dump(ss, pfx3);
                             payloadDumped = true;
                         }
                     }
@@ -175,16 +166,16 @@ void PyPacket::Dump(LogType ltype, const char* pfx)
     }
     if (!payloadDumped)
     {
-        payload->Dump(ltype, pfx2.c_str());
+        payload->Dump(ss, pfx2);
     }
-    if (named_payload == NULL)
+    if (named_payload == nullptr)
     {
-        _log(ltype, "%sNamed Payload: None", pfx1.c_str());
+        ss << pfx1 << "Named Payload: None" << std::endl;
     }
     else
     {
-        _log(ltype, "%sNamed Payload:", pfx1.c_str());
-        named_payload->Dump(ltype, pfx2.c_str());
+        ss << pfx1 << "Named Payload:" << std::endl;
+        named_payload->Dump(ss, pfx2);
     }
 }
 
@@ -387,39 +378,19 @@ PyRep *PyPacket::Encode() {
 
 PyAddress::PyAddress() : type(Invalid), typeID(0), callID(0), service("") {}
 
-void PyAddress::Dump(FILE *into, const char *pfx) const {
+void PyAddress::Dump(std::ostringstream &ss, const std::string &pfx) const {
     switch(type) {
     case Any:
-        fprintf(into, "%sAny: service='%s' callID=%" PRIu64, pfx, service.c_str(), callID);
+        ss << pfx << "Any: service='" << service << "' callID=" << callID << std::endl;
         break;
     case Node:
-        fprintf(into, "%sNode: node=0x%" PRIx64 " service='%s' callID=%" PRIu64, pfx, typeID, service.c_str(), callID);
+        ss << pfx << "Node: node=" << typeID << "service='" << service << "' callID=" << callID << std::endl;
         break;
     case Client:
-        fprintf(into, "%sClient: node=0x%" PRIx64 " service='%s' callID=%" PRIu64, pfx, typeID, service.c_str(), callID);
+        ss << pfx << "Client: node=" << typeID << "service='" << service << "' callID=" << callID << std::endl;
         break;
     case Broadcast:
-        fprintf(into, "%sBroadcast: broadcastID='%s' narrowcast=(not decoded yet) idtype='%s'", pfx, service.c_str(), bcast_idtype.c_str());
-        break;
-    case Invalid:
-        break;
-    //no default on purpose
-    }
-}
-
-void PyAddress::Dump(LogType ltype, const char *pfx) const {
-    switch(type) {
-    case Any:
-        _log(ltype, "%sAny: service='%s' callID=%" PRIu64, pfx, service.c_str(), callID);
-        break;
-    case Node:
-        _log(ltype, "%sNode: node=0x%" PRIx64 " service='%s' callID=%" PRIu64, pfx, typeID, service.c_str(), callID);
-        break;
-    case Client:
-        _log(ltype, "%sClient: node=0x%" PRIx64 " service='%s' callID=%" PRIu64, pfx, typeID, service.c_str(), callID);
-        break;
-    case Broadcast:
-        _log(ltype, "%sBroadcast: broadcastID='%s' narrowcast=(not decoded yet) idtype='%s'", pfx, service.c_str(), bcast_idtype.c_str());
+        ss << pfx << "Broadcast: broadcastID='" << service << "' narrowcast=(not decoded yet) idtype='" << bcast_idtype << std::endl;
         break;
     case Invalid:
         break;
@@ -706,22 +677,21 @@ PyCallStream *PyCallStream::Clone() const {
     return res;
 }
 
-void PyCallStream::Dump(LogType type, const char* pfx)
+void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
 {
-    std::string pfx1(pfx);
-    pfx1 += "    ";
+    std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
     std::string pfx3(pfx2 + "    ");
-    _log(type, "%sPyCallStream:", pfx);
+    ss << pfx << "PyCallStream:" << std::endl;
     if (remoteObject == 0)
     {
-        _log(type, "%sRemote Object: '%s'", pfx1.c_str(), remoteObjectStr.c_str());
+        ss << pfx1 << "Remote Object: '" << remoteObjectStr << "'" << std::endl;
     }
     else
     {
-        _log(type, "%sRemote Object: %d", pfx1.c_str(), remoteObject);
+        ss << pfx1 << "Remote Object: " << remoteObject << std::endl;
     }
-    _log(type, "%sMethod: %s", pfx1.c_str(), method.c_str());
+    ss << pfx1 << "Method: " << method;
     bool dumped = false;
     if (method == "MachoBindObject")
     {
@@ -729,11 +699,11 @@ void PyCallStream::Dump(LogType type, const char* pfx)
         PyTuple *tup = (PyTuple *) arg_tuple->Clone();
         if (bind.Decode(tup))
         {
-            _log(type, "%sBindObject:", pfx1.c_str());
+            ss << pfx1 << "BindObject:" << std::endl;;
             if (bind.bindParams != nullptr)
             {
-                _log(type, "%sBindParams:", pfx2.c_str());
-                bind.bindParams->Dump(type, pfx3.c_str());
+                ss << pfx2 << "BindParams:" << std::endl;
+                bind.bindParams->Dump(ss, pfx3);
             }
             if (bind.call != nullptr)
             {
@@ -744,10 +714,10 @@ void PyCallStream::Dump(LogType type, const char* pfx)
                     {
                         if (tup->items[0]->IsString() && tup->items[1]->IsTuple() && tup->items[2]->IsDict())
                         {
-                            _log(type, "%sCall: %s", pfx2.c_str(), tup->items[0]->AsString()->content().c_str());
-                            _log(type, "%sArguments:", pfx2.c_str());
-                            tup->items[1]->Dump(type, pfx3.c_str());
-                            tup->items[2]->Dump(type, pfx3.c_str());
+                            ss << pfx2 << "Call: ", tup->items[0]->AsString()->content();
+                            ss << pfx2 << "Arguments:" << std::endl;
+                            tup->items[1]->Dump(ss, pfx3);
+                            tup->items[2]->Dump(ss, pfx3);
                             dumped = true;
                         }
                     }
@@ -765,16 +735,16 @@ void PyCallStream::Dump(LogType type, const char* pfx)
     }
     if (!dumped)
     {
-        _log(type, "%sArguments:", pfx1.c_str());
-        arg_tuple->Dump(type, pfx2.c_str());
+        ss << pfx1 << "Arguments:" << std::endl;
+        arg_tuple->Dump(ss, pfx2);
         if (arg_dict == NULL)
         {
-            _log(type, "%sNamed Arguments: None", pfx1.c_str());
+            ss << pfx1 << "Named Arguments: None" << std::endl;
         }
         else
         {
-            _log(type, "%sNamed Arguments:", pfx1.c_str());
-            arg_dict->Dump(type, pfx2.c_str());
+            ss << pfx1 << "Named Arguments:" << std::endl;
+            arg_dict->Dump(ss, pfx2);
         }
     }
 }
@@ -956,29 +926,28 @@ EVENotificationStream *EVENotificationStream::Clone() const {
     return res;
 }
 
-void EVENotificationStream::Dump(LogType type, const char* pfx)
+void EVENotificationStream::Dump(std::ostringstream &ss, const std::string &pfx)
 {
-    std::string pfx1(pfx);
-    pfx1 += "    ";
+    std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
-    _log(type, "%sEVENotificationStream:", pfx);
+    ss << pfx << "EVENotificationStream:" << std::endl;
     if (remoteObject == 0)
     {
         if(remoteObjectStr.length() > 0)
         {
-            _log(type, "%sRemote Object: %s", pfx1.c_str(), remoteObjectStr.c_str());
+            ss << pfx1 << "Remote Object: " << remoteObjectStr << std::endl;
         }
         else
         {
-            _log(type, "%sRemote Object: <empty string>", pfx1.c_str());
+            ss << pfx1 << "Remote Object: <empty string>" << std::endl;;
         }
     }
     else
     {
-        _log(type, "%sRemote Object: %u", pfx1.c_str(), remoteObject);
+        ss << pfx1 << "Remote Object: " << remoteObject << std::endl;;
     }
-    _log(type, "%sArguments:", pfx1.c_str());
-    args->Dump(type, pfx2.c_str());
+    ss << pfx1 << "Arguments:" << std::endl;
+    args->Dump(ss, pfx2);
 }
 
 bool EVENotificationStream::Decode(const std::string &pkt_type, PyTuple *&in_payload) {

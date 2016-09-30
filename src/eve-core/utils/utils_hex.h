@@ -42,7 +42,9 @@ void build_hex_line( const uint8* buffer, size_t length, size_t offset, char* re
 
 void pfxHexDump( const char* pfx, FILE* into, const uint8* data, uint32 length );
 void pfxHexDump( const char* pfx, LogType type, const uint8* data, uint32 length );
+void pfxHexDump( const std::string &pfx, std::ostringstream &ss, const uint8* data, uint32 length );
 void pfxHexDumpPreview( const char* pfx, FILE* into, const uint8* data, uint32 length );
 void pfxHexDumpPreview( const char* pfx, LogType type, const uint8* data, uint32 length );
+void pfxHexDumpPreview( const std::string &pfx, std::ostringstream &ss, const uint8* data, uint32 length );
 
 #endif // UTILS_HEX_H

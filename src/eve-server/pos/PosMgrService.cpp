@@ -97,7 +97,7 @@ PyBoundObject *PosMgrService::_CreateBoundObject(Client *c, const PyRep *bind_ar
         codelog(SERVICE__ERROR, "%s Service: invalid bind argument type %s", GetName(), bind_args->TypeString());
         return NULL;
     }
-    bind_args->Dump(stdout, "PosMgrService:CBO:    ");
+    bind_args->Dump(DEBUG__DEBUG, "PosMgrService:CBO:    ");
     return new PosMgrServiceBound();
 }
 
@@ -108,7 +108,7 @@ PyResult PosMgrService::Handle_GetControlTowerFuelRequirements(PyCallArgs &args)
 
 PyResult PosMgrServiceBound::Handle_SetShipPassword(PyCallArgs &call) {
     SysLog::Debug("PosMgrServiceBound","Called SetShipPassword Stub.");
-    call.tuple->Dump(stdout, "PMSB:SSP:    ");
+    call.tuple->Dump(DEBUG__DEBUG, "PMSB:SSP:    ");
 
     return  NULL;
 }

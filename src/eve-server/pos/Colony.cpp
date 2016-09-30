@@ -222,6 +222,6 @@ PyResult Colony::GetColony() {
     args->SetItem("links", links);
     args->SetItem("routes", routes);
 
-    rtn->Dump(stdout, "[DEBUG] GC:  ");
+    rtn->Dump(DEBUG__DEBUG, "[DEBUG] GC:  ");
     return rtn;
 }

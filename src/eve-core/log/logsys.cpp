@@ -69,6 +69,23 @@ void log_phex(LogType type, const void *data, unsigned long length, unsigned cha
     }
 }
 
+std::string getLogPrefix(LogType type)
+{
+    /* allocate enough room for a large message */
+    size_t log_msg_size = 0x1000;
+    size_t log_msg_index = 0;
+    char* log_msg = (char*)malloc(log_msg_size);
+
+    /* handle the time part.. cross platform */
+    tm t;
+    time_t tTime;
+    time(&tTime);
+    localtime_r( &tTime, &t );
+    int va_size = snprintf(&log_msg[log_msg_index], log_msg_size, "%02u:%02u:%02u [%s] ", t.tm_hour, t.tm_min, t.tm_sec, log_type_info[type].display_name );
+    
+    return std::string(log_msg);
+}
+
 void log_message(LogType type, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);

@@ -84,6 +84,18 @@ void pfxHexDump( const char* pfx, LogType type, const uint8* data, uint32 length
     }
 }
 
+void pfxHexDump( const std::string &pfx, std::ostringstream &ss, const uint8* data, uint32 length )
+{
+    char buffer[80];
+
+    for( uint32 offset = 0; offset < length; offset += 16 )
+    {
+        build_hex_line( data, length, offset, buffer, 4 );
+
+        ss << pfx << buffer << std::endl;
+    }
+}
+
 void pfxHexDumpPreview( const char* pfx, FILE* into, const uint8* data, uint32 length )
 {
     char buffer[80];
@@ -114,4 +126,22 @@ void pfxHexDumpPreview( const char* pfx, LogType type, const uint8* data, uint32
     }
     else
         pfxHexDump( pfx, type, data, length );
+}
+
+void pfxHexDumpPreview( const std::string &pfx, std::ostringstream &ss, const uint8* data, uint32 length )
+{
+    char buffer[80];
+
+    if( length > HEX_DUMP_PREVIEW_LIMIT )
+    {
+        pfxHexDump( pfx, ss, data, HEX_DUMP_PREVIEW_LIMIT - 32 );
+        ss << pfx << " ... truncated ..." << std::endl;
+
+        build_hex_line( data, length, length - 16, buffer, 4 );
+        ss << pfx << buffer << std::endl;
+    }
+    else
+    {
+        pfxHexDump( pfx, ss, data, length );
+    }
 }
