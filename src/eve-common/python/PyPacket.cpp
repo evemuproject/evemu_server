@@ -149,6 +149,32 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
         }
         break;
     }
+    case SESSIONCHANGENOTIFICATION:
+    {
+        SessionChangeNotification sessionChange;
+        if( sessionChange.Decode( payload ) )
+        {
+            ss << pfx << "[SessionChangeNotification]" << std::endl;
+            ss << pfx1 << "sessionID=" << sessionChange.sessionID << std::endl;
+            ss << pfx1 << "clueless=" << sessionChange.clueless << std::endl;
+            ss << pfx1 << "Nodes:" << std::endl;
+            for(int32 node : sessionChange.nodesOfInterest)
+            {
+                ss << pfx2 << node << std::endl;
+            }
+            ss << pfx1 << "Changes:" << std::endl;
+            if(sessionChange.changes == nullptr)
+            {
+                ss << pfx2 << "<nullptr>" << std::endl;
+            }
+            else
+            {
+                sessionChange.changes->Dump(ss, pfx2);
+            }
+            payloadDumped = true;
+        }
+        break;
+    }
     case AUTHENTICATION_REQ:
     case AUTHENTICATION_RSP:
     case IDENTIFICATION_REQ:
@@ -736,15 +762,15 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
     {
         ss << pfx1 << "Arguments:" << std::endl;
         arg_tuple->Dump(ss, pfx2);
-        if (arg_dict == NULL)
-        {
-            ss << pfx1 << "Named Arguments: None" << std::endl;
-        }
-        else
-        {
-            ss << pfx1 << "Named Arguments:" << std::endl;
-            arg_dict->Dump(ss, pfx2);
-        }
+    }
+    if (arg_dict == NULL)
+    {
+        ss << pfx1 << "Named Arguments: None" << std::endl;
+    }
+    else
+    {
+        ss << pfx1 << "Named Arguments:" << std::endl;
+        arg_dict->Dump(ss, pfx2);
     }
 }
 
