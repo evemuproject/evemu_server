@@ -70,7 +70,7 @@ enum DBTYPE
     DBTYPE_UI2            = 0x12,
     DBTYPE_UI4            = 0x13,
     DBTYPE_I8             = 0x14,
-    DBTYPE_UI8              = 0x15,
+    DBTYPE_UI8            = 0x15,
     DBTYPE_FILETIME       = 0x40, // 64-bit timestamp
     //DBTYPE_GUID         = 0x48, // not supported
     DBTYPE_BYTES          = 0x80,
@@ -85,6 +85,8 @@ enum DBTYPE
     //DBTYPE_PROPVARIANT  = 0x8A, // not supported
     //DBTYPE_VARNUMERIC   = 0x8B  // not supported
 };
+
+extern std::map<DBTYPE, std::string> DBTYPE_NAME;
 
 /** DBTYPE type flags
  *  DBTYPE_ARRAY        = 0x2000

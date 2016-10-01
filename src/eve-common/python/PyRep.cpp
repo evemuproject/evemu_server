@@ -1203,9 +1203,21 @@ void PyPackedRow::Dump(std::ostringstream &ss, const std::string &pfx) const
             int i = 0;
             for(PyRep *rep : mFields->items)
             {
-                ss << pfx1 << "Row=" << i;
-                ss << " DB_Type=0x" << std::hex << std::setw(4) << std::setfill('0') << mHeader->GetColumnType(i);
-                ss << " Name='" << mHeader->GetColumnName(i) << "' Value=";
+                ss << pfx1 << "Row=" << i << ": ";
+                DBTYPE dbType = mHeader->GetColumnType(i);
+                auto dbFind = DBTYPE_NAME.find(dbType);
+                if(dbFind != DBTYPE_NAME.end())
+                {
+                    // Output the type string.
+                    std::string dbTypeName = dbFind->second;
+                    ss << " DB_Type='" << dbTypeName << "'";
+                }
+                else
+                {
+                    // No type string found output hex value.
+                    ss << " DB_Type=0x" << std::hex << std::setw(2) << std::setfill('0') << mHeader->GetColumnType(i);
+                }
+                ss << " Name='" << mHeader->GetColumnName(i)->content() << "' Value=";
                 if(rep != nullptr)
                 {
                     rep->Dump(ss, "");

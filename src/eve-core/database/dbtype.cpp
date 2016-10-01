@@ -27,6 +27,27 @@
 
 #include "database/dbtype.h"
 
+std::map<DBTYPE, std::string> DBTYPE_NAME = 
+{
+    {DBTYPE_I2, "I2" },
+    {DBTYPE_I4, "I4" },
+    {DBTYPE_R4, "R4" },
+    {DBTYPE_R8, "R8" },
+    {DBTYPE_CY, "CY" },
+    {DBTYPE_ERROR, "ERROR" },
+    {DBTYPE_BOOL, "BOOL" },
+    {DBTYPE_I1, "I1" },
+    {DBTYPE_UI1, "UI1" },
+    {DBTYPE_UI2, "UI2" },
+    {DBTYPE_UI4, "UI4" },
+    {DBTYPE_I8, "I8" },
+    {DBTYPE_UI8, "UI8" },
+    {DBTYPE_FILETIME, "FILETIME" },
+    {DBTYPE_BYTES, "BYTES" },
+    {DBTYPE_STR, "STR" },
+    {DBTYPE_WSTR, "WSTR" }
+};
+
 uint8 DBTYPE_GetSizeBits( DBTYPE type )
 {
     switch( type )
