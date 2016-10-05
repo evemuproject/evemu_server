@@ -1426,24 +1426,9 @@ PyRep* BuiltinSet::Clone() const
     return new BuiltinSet(values->Clone()->AsList());
 }
 
-void BuiltinSet::addValue(int32 value)
+void BuiltinSet::addValue(PyRep *obj)
 {
-    values->items.push_back(new PyInt(value));
-}
-
-void BuiltinSet::addValue(uint32 value)
-{
-    values->items.push_back(new PyInt(value));
-}
-
-void BuiltinSet::addValue(int64 value)
-{
-    values->items.push_back(new PyLong(value));
-}
-
-void BuiltinSet::addValue(uint64 value)
-{
-    values->items.push_back(new PyLong(value));
+    values->items.push_back(obj);
 }
 
 void BuiltinSet::Dump(std::ostringstream &ss, const std::string &pfx) const
@@ -1452,16 +1437,7 @@ void BuiltinSet::Dump(std::ostringstream &ss, const std::string &pfx) const
     ss << "[BuiltinSet]" << std::endl;
     for(auto obj : values->items)
     {
-        PyInt *iVal = obj->AsInt();
-        if(iVal != nullptr)
-        {
-            ss << pfx1 << iVal->value() << std::endl;
-        }
-        PyLong *lVal = obj->AsLong();
-        if(lVal != nullptr)
-        {
-            ss << pfx1 << lVal->value() << std::endl;
-        }
+        obj->Dump(ss, pfx1);
     }
 }
 
