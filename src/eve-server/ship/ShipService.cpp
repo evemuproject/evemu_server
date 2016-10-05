@@ -1123,12 +1123,6 @@ PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
     return NULL;
 }
 
-class BuiltinSet : public PyObjectEx_Type1
-{
-public:
-    BuiltinSet() : PyObjectEx_Type1( new PyToken("collections.defaultdict"), new_tuple(new PyToken("__builtin__.set")) ) {}
-};
-
 PyResult ShipBound::Handle_ActivateShip(PyCallArgs &call)
 {
     //uint32 oldShip;
@@ -1160,7 +1154,7 @@ PyResult ShipBound::Handle_ActivateShip(PyCallArgs &call)
     PyTuple* rsp = new PyTuple(3);
     rsp->SetItem(0, new PyDict);
     rsp->SetItem(1, new PyDict);
-    rsp->items[2] = new BuiltinSet();
+    rsp->items[2] = new PyObjectEx_Type1( new PyToken("collections.defaultdict"), new_tuple(new PyToken("__builtin__.set")) );
 
     return rsp;
 }

@@ -473,13 +473,6 @@ PyResult DogmaIMBound::Handle_GetWeaponBankInfoForShip( PyCallArgs& call )
     return new PyDict;
 }
 
-
-class BuiltinSet : public PyObjectEx_Type1
-{
-public:
-    BuiltinSet() : PyObjectEx_Type1( new PyToken("collections.defaultdict"), new_tuple(new PyToken("__builtin__.set")) ) {}
-};
-
 PyResult DogmaIMBound::Handle_GetAllInfo( PyCallArgs& call )
 {
     //arg1: getCharInfo, arg2: getShipInfo

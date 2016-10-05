@@ -695,6 +695,16 @@ PyList& PyList::operator=( const PyList& oth )
     return *this;
 }
 
+PyList *PyList::createIntList(std::vector<int32> vals)
+{
+    PyList *list = new PyList();
+    for(int32 val : vals)
+    {
+        list->AddItem(new PyInt(val));
+    }
+    return list;
+}
+
 /************************************************************************/
 /* PyRep Dict Class                                                     */
 /************************************************************************/
@@ -1398,6 +1408,60 @@ void PyChecksumedStream::Dump(std::ostringstream &ss, const std::string &pfx) co
     else
     {
         ss << pfx1 << "<nullptr>" << std::endl;
+    }
+}
+
+BuiltinSet::BuiltinSet(std::vector<int32> list)
+: PyObjectEx_Type1( new PyToken("__builtin__.set"), new_tuple(values = PyList::createIntList(list)) )
+{
+}
+
+BuiltinSet::BuiltinSet(PyList *list)
+: PyObjectEx_Type1( new PyToken("__builtin__.set"), new_tuple(values = list) )
+{
+}
+
+PyRep* BuiltinSet::Clone() const
+{
+    return new BuiltinSet(values->Clone()->AsList());
+}
+
+void BuiltinSet::addValue(int32 value)
+{
+    values->items.push_back(new PyInt(value));
+}
+
+void BuiltinSet::addValue(uint32 value)
+{
+    values->items.push_back(new PyInt(value));
+}
+
+void BuiltinSet::addValue(int64 value)
+{
+    values->items.push_back(new PyLong(value));
+}
+
+void BuiltinSet::addValue(uint64 value)
+{
+    values->items.push_back(new PyLong(value));
+}
+
+void BuiltinSet::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    ss << "[BuiltinSet]" << std::endl;
+    for(auto obj : values->items)
+    {
+        PyInt *iVal = obj->AsInt();
+        if(iVal != nullptr)
+        {
+            ss << pfx1 << iVal->value() << std::endl;
+        }
+        PyLong *lVal = obj->AsLong();
+        if(lVal != nullptr)
+        {
+            ss << pfx1 << lVal->value() << std::endl;
+        }
     }
 }
 
