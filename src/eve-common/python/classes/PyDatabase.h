@@ -98,6 +98,8 @@ public:
      */
     void AddColumn( const char* name, DBTYPE type );
 
+    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
+
 protected:
     // Helper functions:
     PyTuple* _GetColumnList() const;
@@ -145,6 +147,8 @@ public:
      */
     PyPackedRow* NewRow();
 
+    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
+
 protected:
     DBRowDescriptor* _GetRowDesc() const;
     //PyList* _GetColumnList() const;
@@ -191,6 +195,8 @@ public:
      * @return New row which user may fill.
      */
     PyPackedRow* NewRow( PyRep* key );
+
+    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
 protected:
     DBRowDescriptor* _GetRowDesc() const;

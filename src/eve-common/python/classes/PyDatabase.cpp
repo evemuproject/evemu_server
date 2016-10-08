@@ -108,6 +108,28 @@ void DBRowDescriptor::AddColumn( const char* name, DBTYPE type )
     _GetColumnList()->items.push_back( col );
 }
 
+void DBRowDescriptor::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    std::string pfx2(pfx1 + "    ");
+    ss << pfx << "[DBRowDescriptor]" << std::endl;
+    for(int i = 0; i < ColumnCount(); i++)
+    {
+        ss << pfx1 << GetColumnName(i) << "[" << DBTYPE_NAME[GetColumnType(i)] <<"]" << std::endl;
+    }
+    PyRep *keywords = nullptr;
+    PyTuple* t = header()->AsTuple();
+    if( t->size() >= 3 )
+    {
+        keywords = t->GetItem( 2 );
+    }
+    if(keywords != nullptr)
+    {
+        ss << pfx1 << "Keywords:" << std::endl;
+        keywords->Dump(ss, pfx2);
+    }
+}
+
 PyTuple* DBRowDescriptor::_GetColumnList() const
 {
     return GetArgs()->GetItem( 0 )->AsTuple();
@@ -146,6 +168,40 @@ PyPackedRow* CRowSet::NewRow()
 
     list().AddItem( row );
     return row;
+}
+
+void CRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    std::string pfx2(pfx1 + "    ");
+    ss << pfx << "[CRowSet]" << std::endl;
+    DBRowDescriptor* desc = _GetRowDesc();
+    if(desc == nullptr)
+    {
+        ss << pfx1 << "No Descriptor." << std::endl;
+        return;
+    }
+    desc->Dump(ss, pfx1);
+    ss << pfx1 << "Rows:" << std::endl;
+    for(int i = 0; i < GetRowCount(); i++)
+    {
+        PyPackedRow *row = GetRow(i);
+        if(row != nullptr)
+        {
+            row->Dump(ss, pfx2);
+        }
+    }
+    PyRep *keywords = nullptr;
+    PyTuple* t = header()->AsTuple();
+    if( t->size() >= 3 )
+    {
+        keywords = t->GetItem( 2 );
+    }
+    if(keywords != nullptr)
+    {
+        ss << pfx1 << "Keywords:" << std::endl;
+        keywords->Dump(ss, pfx2);
+    }
 }
 
 DBRowDescriptor* CRowSet::_GetRowDesc() const
@@ -207,6 +263,55 @@ PyPackedRow* CIndexedRowSet::NewRow( PyRep* key )
 
     dict().SetItem( key , row );
     return row;
+}
+
+void CIndexedRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    std::string pfx2(pfx1 + "    ");
+    ss << pfx << "[CIndexedRowSet]" << std::endl;
+    PyDict *keywords = nullptr;
+    PyTuple* t = header()->AsTuple();
+    if( t->size() >= 3 )
+    {
+        PyRep *obj = t->GetItem( 2 );
+        if(obj->IsDict())
+        {
+            keywords = obj->AsDict();
+        }
+    }
+    if(keywords != nullptr)
+    {
+        PyRep *idx = keywords->GetItemString("columnName");
+        if(idx != nullptr && idx->IsString())
+        {
+            ss << pfx1 << "index: " << idx->AsString()->content() << std::endl;
+        }
+        else
+        {
+            ss << pfx1 << "No index." << std::endl;
+        }
+    }
+    DBRowDescriptor* desc = _GetRowDesc();
+    if(desc == nullptr)
+    {
+        ss << pfx1 << "No Descriptor." << std::endl;
+        return;
+    }
+    desc->Dump(ss, pfx1);
+    ss << pfx1 << "Rows:" << std::endl;
+    for(auto entry : dict().items)
+    {
+        PyRep *key = entry.first;
+        key->Dump(ss, pfx1 + "Key:");
+        PyRep *value = entry.second;
+        value->Dump(ss, pfx2);
+    }
+    if(keywords != nullptr)
+    {
+        ss << pfx1 << "Keywords:" << std::endl;
+        keywords->Dump(ss, pfx2);
+    }
 }
 
 DBRowDescriptor* CIndexedRowSet::_GetRowDesc() const
