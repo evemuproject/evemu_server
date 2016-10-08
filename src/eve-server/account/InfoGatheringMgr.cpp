@@ -41,82 +41,21 @@ InfoGatheringMgr::InfoGatheringMgr()
 InfoGatheringMgr::~InfoGatheringMgr() {
 }
 
-PyResult InfoGatheringMgr::Handle_GetStateAndConfig(PyCallArgs &call) {
-
+PyResult InfoGatheringMgr::Handle_GetStateAndConfig(PyCallArgs &call)
+{
     PyDict *rsp = new PyDict;
 
     rsp->SetItemString("clientWorkerInterval", new PyInt(600000)); //Default From packetlogs is 600000
     rsp->SetItemString("isEnabled", new PyInt(0)); //0 = Disabled, 1 = Enabled. Set to 0 becuase jsut gettting rid of exception.
 
-    PyDict *aggregates = new PyDict();
-    aggregates->SetItem(new PyInt(2), new BuiltinSet({1, 2, 3}));
-    aggregates->SetItem(new PyInt(3), new BuiltinSet({1, 2, 6}));
-    aggregates->SetItem(new PyInt(4), new BuiltinSet({1, 2, 6}));
-    aggregates->SetItem(new PyInt(5), new BuiltinSet({1, 2, 6}));
-    aggregates->SetItem(new PyInt(6), new BuiltinSet({1, 2, 3, 4}));
-    aggregates->SetItem(new PyInt(7), new BuiltinSet({1}));
-    aggregates->SetItem(new PyInt(8), new BuiltinSet({1, 4}));
-    aggregates->SetItem(new PyInt(9), new BuiltinSet({1, 4}));
-    aggregates->SetItem(new PyInt(12), new BuiltinSet({1, 2, 3}));
-    aggregates->SetItem(new PyInt(13), new BuiltinSet({1, 2, 3}));
-    aggregates->SetItem(new PyInt(14), new BuiltinSet({1, 2, 3}));
-    aggregates->SetItem(new PyInt(17), new BuiltinSet({1}));
-    aggregates->SetItem(new PyInt(18), new BuiltinSet({1, 3}));
-    aggregates->SetItem(new PyInt(19), new BuiltinSet({1, 2}));
-    aggregates->SetItem(new PyInt(20), new BuiltinSet({1, 3}));
-    aggregates->SetItem(new PyInt(21), new BuiltinSet({1, 3}));
-    aggregates->SetItem(new PyInt(22), new BuiltinSet({1, 2, 3, 4, 5}));
-    aggregates->SetItem(new PyInt(25), new BuiltinSet({1, 6}));
-    aggregates->SetItem(new PyInt(26), new BuiltinSet({1}));
-    aggregates->SetItem(new PyInt(27), new BuiltinSet({1, 2, 6, 7}));
-    aggregates->SetItem(new PyInt(28), new BuiltinSet({1, 4}));
-    aggregates->SetItem(new PyInt(29), new BuiltinSet({1, 3, 6}));
-    aggregates->SetItem(new PyInt(30), new BuiltinSet({1}));
-    aggregates->SetItem(new PyInt(32), new BuiltinSet({1, 2, 6, 7}));
-    aggregates->SetItem(new PyInt(33), new BuiltinSet({1, 2, 6}));
-    aggregates->SetItem(new PyInt(34), new BuiltinSet({1, 2, 6}));
-    rsp->SetItemString("infoTypeAggregates", aggregates);
-    rsp->SetItemString("infoTypesOncePerRun", new BuiltinSet(new PyList()));
-    PyDict *params = new PyDict();
-    params->SetItem(new PyInt(2), new BuiltinSet({0, 1, 2, 3, 4}));
-    params->SetItem(new PyInt(3), new BuiltinSet({0, 1, 2, 3, 6}));
-    params->SetItem(new PyInt(4), new BuiltinSet({0, 1, 2, 3, 6}));
-    params->SetItem(new PyInt(5), new BuiltinSet({0, 1, 2, 3, 6}));
-    params->SetItem(new PyInt(6), new BuiltinSet({0, 1, 2, 3, 4, 5}));
-    params->SetItem(new PyInt(7), new BuiltinSet({0, 1, 3}));
-    params->SetItem(new PyInt(8), new BuiltinSet({0, 1, 3, 4}));
-    params->SetItem(new PyInt(9), new BuiltinSet({0, 1, 3, 4}));
-    params->SetItem(new PyInt(12), new BuiltinSet({0, 1, 2, 3, 4}));
-    params->SetItem(new PyInt(13), new BuiltinSet({0, 1, 2, 3, 9}));
-    params->SetItem(new PyInt(14), new BuiltinSet({0, 1, 2, 3, 9}));
-    params->SetItem(new PyInt(15), new BuiltinSet({0, 1, 2, 3, 4, 5}));
-    params->SetItem(new PyInt(16), new BuiltinSet({0, 1, 2, 3, 4, 5, 9, 10}));
-    params->SetItem(new PyInt(17), new BuiltinSet({0, 1, 3, 4, 5}));
-    params->SetItem(new PyInt(18), new BuiltinSet({0, 1, 3, 4}));
-    params->SetItem(new PyInt(19), new BuiltinSet({0, 1, 2, 3, 4, 5}));
-    params->SetItem(new PyInt(20), new BuiltinSet({0, 1, 3, 4}));
-    params->SetItem(new PyInt(21), new BuiltinSet({0, 1, 3, 4}));
-    params->SetItem(new PyInt(22), new BuiltinSet({0, 1, 2, 3, 4, 5, 9}));
-    params->SetItem(new PyInt(24), new BuiltinSet({0, 1, 2, 3}));
-    params->SetItem(new PyInt(25), new BuiltinSet({0, 1, 3, 6, 9}));
-    params->SetItem(new PyInt(26), new BuiltinSet({0, 1, 3}));
-    params->SetItem(new PyInt(27), new BuiltinSet({0, 1, 2, 3, 6, 7, 9}));
-    params->SetItem(new PyInt(28), new BuiltinSet({0, 1, 3, 4}));
-    params->SetItem(new PyInt(29), new BuiltinSet({0, 1, 3, 4, 6}));
-    params->SetItem(new PyInt(30), new BuiltinSet({0, 1, 3, 4, 5, 9}));
-    params->SetItem(new PyInt(32), new BuiltinSet({0, 1, 2, 3, 6, 7}));
-    params->SetItem(new PyInt(33), new BuiltinSet({0, 1, 2, 3, 6}));
-    params->SetItem(new PyInt(34), new BuiltinSet({0, 1, 2, 3, 6}));
-    params->SetItem(new PyInt(35), new BuiltinSet({0, 1, 2, 3, 4, 5, 9, 10, 11}));
-    params->SetItem(new PyInt(36), new BuiltinSet({0, 1, 2, 3, 4, 5, 9}));
-    params->SetItem(new PyInt(37), new BuiltinSet({0, 1, 2, 3, 4, 5, 9, 10}));
-    params->SetItem(new PyInt(38), new BuiltinSet({0, 1, 2, 3, 6}));
-    rsp->SetItemString("infoTypeParameters", params);
+    rsp->SetItemString("infoTypeAggregates", new PyNone());
+    rsp->SetItemString("infoTypesOncePerRun", new PyNone());
+    rsp->SetItemString("infoTypeParameters", new PyNone());
 
     PyList *infoTypes = new PyList;
     infoTypes->AddItemInt(999); //Adding a value that was not in live so when its checks list it will always return false for now.
 
-    rsp->SetItemString("infoTypes", new BuiltinSet(infoTypesVals));
+    rsp->SetItemString("infoTypes", new PyObjectEx_Type1( new PyToken("__builtin__.set"), new_tuple(infoTypes)));
 
     return new PyObject( "util.KeyVal", rsp );
 }

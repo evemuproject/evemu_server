@@ -1154,7 +1154,7 @@ PyResult ShipBound::Handle_ActivateShip(PyCallArgs &call)
     PyTuple* rsp = new PyTuple(3);
     rsp->SetItem(0, new PyDict);
     rsp->SetItem(1, new PyDict);
-    rsp->items[2] = new PyObjectEx_Type1( new PyToken("collections.defaultdict"), new_tuple(new PyToken("__builtin__.set")) );
+    rsp->items[2] = new DefaultDict();
 
     return rsp;
 }

@@ -930,8 +930,7 @@ class PyObjectEx_Type1 : public PyObjectEx
 {
 public:
     PyObjectEx_Type1( PyToken* type, PyTuple* args );
-    PyObjectEx_Type1( PyToken* type, PyTuple* args, PyDict* keywords );
-    PyObjectEx_Type1( PyToken* type, PyTuple* args, PyList* keywords );
+    PyObjectEx_Type1( PyToken* type, PyTuple* args, PyRep* keywords );
 
     PyToken* GetType() const;
     PyTuple* GetArgs() const;
@@ -941,8 +940,7 @@ public:
 
 protected:
     static PyTuple* _CreateHeader( PyToken* type, PyTuple* args );
-    static PyTuple* _CreateHeader( PyToken* type, PyTuple* args, PyDict* keywords );
-    static PyTuple* _CreateHeader( PyToken* type, PyTuple* args, PyList* keywords );
+    static PyTuple* _CreateHeader( PyToken* type, PyTuple* args, PyRep* keywords );
 };
 
 /**
@@ -1113,6 +1111,18 @@ private:
     PyList *values;
 };
 
+class DefaultDict : public PyObjectEx_Type1
+{
+public:
+    DefaultDict();
+    DefaultDict( const DefaultDict& oth );
+
+    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
+
+    PyRep* Clone() const;
+
+private:
+};
 
 /* note: this will decrease memory use with 50% but increase load time with 50%
  * enabling this would have to wait until references work properly.

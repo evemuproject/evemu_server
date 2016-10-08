@@ -555,11 +555,10 @@ PyResult DogmaIMBound::Handle_GetAllInfo( PyCallArgs& call )
     rspShipState->items[1] = shipStateItem2;
 
     //Some PyObjectEx
-    rspShipState->items[2] = new BuiltinSet();
+    rspShipState->items[2] = new BuiltinSet(new PyList());
 
     rsp->SetItemString("shipState", rspShipState);
 
-
-	return new PyObject( "util.KeyVal", rsp );
+    return new PyObject( "util.KeyVal", rsp );
 }
 

@@ -1024,8 +1024,7 @@ PyObjectEx& PyObjectEx::operator=( const PyObjectEx& oth )
 /* PyObjectEx_Type1                                                     */
 /************************************************************************/
 PyObjectEx_Type1::PyObjectEx_Type1( PyToken* type, PyTuple* args ) : PyObjectEx( false, _CreateHeader( type, args ) ) {}
-PyObjectEx_Type1::PyObjectEx_Type1( PyToken* type, PyTuple* args, PyDict* keywords ) : PyObjectEx( false, _CreateHeader( type, args, keywords ) ) {}
-PyObjectEx_Type1::PyObjectEx_Type1( PyToken* type, PyTuple* args, PyList* keywords ) : PyObjectEx( false, _CreateHeader( type, args, keywords ) ) {}
+PyObjectEx_Type1::PyObjectEx_Type1( PyToken* type, PyTuple* args, PyRep* keywords ) : PyObjectEx( false, _CreateHeader( type, args, keywords ) ) {}
 
 PyToken* PyObjectEx_Type1::GetType() const
 {
@@ -1081,21 +1080,7 @@ PyTuple* PyObjectEx_Type1::_CreateHeader( PyToken* type, PyTuple* args )
     return head;
 }
 
-PyTuple* PyObjectEx_Type1::_CreateHeader( PyToken* type, PyTuple* args, PyDict* keywords )
-{
-    if( args == NULL )
-        args = new PyTuple( 0 );
-
-    PyTuple* head = new PyTuple( keywords == NULL ? 2 : 3 );
-    head->SetItem( 0, type );
-    head->SetItem( 1, args );
-    if( head->size() > 2 )
-        head->SetItem( 2, keywords );
-
-    return head;
-}
-
-PyTuple* PyObjectEx_Type1::_CreateHeader( PyToken* type, PyTuple* args, PyList* keywords )
+PyTuple* PyObjectEx_Type1::_CreateHeader( PyToken* type, PyTuple* args, PyRep* keywords )
 {
     if( args == NULL )
         args = new PyTuple( 0 );
@@ -1411,6 +1396,9 @@ void PyChecksumedStream::Dump(std::ostringstream &ss, const std::string &pfx) co
     }
 }
 
+/************************************************************************/
+/* BuiltinSet                                                           */
+/************************************************************************/
 BuiltinSet::BuiltinSet(std::vector<int32> list)
 : PyObjectEx_Type1( new PyToken("__builtin__.set"), new_tuple(values = PyList::createIntList(list)) )
 {
@@ -1439,6 +1427,36 @@ void BuiltinSet::Dump(std::ostringstream &ss, const std::string &pfx) const
     {
         obj->Dump(ss, pfx1);
     }
+}
+
+/************************************************************************/
+/* DefaultDict                                                          */
+/************************************************************************/
+DefaultDict::DefaultDict()
+: PyObjectEx_Type1(new PyToken("collections.defaultdict"), new_tuple(new PyToken("__builtin__.set")))
+{
+}
+
+DefaultDict::DefaultDict( const DefaultDict& oth )
+: PyObjectEx_Type1(
+(oth.GetType() == nullptr) ? nullptr : oth.GetType()->Clone()->AsToken(),
+(oth.GetArgs() == nullptr) ? nullptr : oth.GetArgs()->Clone()->AsTuple(),
+(oth.GetKeywords() == nullptr) ? nullptr : oth.GetKeywords()->Clone()
+)
+{
+    // Use assigment operator
+    *this = oth;
+}
+
+PyRep* DefaultDict::Clone() const
+{
+    return new DefaultDict();
+}
+
+void DefaultDict::Dump(std::ostringstream &ss, const std::string &pfx) const
+{
+    std::string pfx1(pfx + "    ");
+    ss << "[DefaultDict]" << std::endl;
 }
 
 /************************************************************************/

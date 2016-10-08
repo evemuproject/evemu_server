@@ -384,7 +384,7 @@
 
   <elementDef name="SessionChangeNotification">
     <tupleInline>
-      <string name="anotherClueless" default="" />
+      <string name="sessionID" default="" />
       <!-- 0 -->
       <tupleInline>
         <!-- 0 -->

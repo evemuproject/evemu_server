@@ -1002,11 +1002,6 @@ void Client::SendNotification(const PyAddress &dest, EVENotificationStream &noti
     }
 
     SysLog::Log("Client","Sending notify of type %s with ID type %s", dest.service.c_str(), dest.bcast_idtype.c_str());
-    if(is_log_enabled(CLIENT__NOTIFY_REP))
-    {
-        PyLogDumpVisitor dumper(CLIENT__NOTIFY_REP, CLIENT__NOTIFY_REP, "", true, true);
-        p->Dump(CLIENT__NOTIFY_REP, dumper);
-    }
 
     fastQueuePacket(&p);
 }
