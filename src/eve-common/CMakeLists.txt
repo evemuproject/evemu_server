@@ -149,6 +149,7 @@ SET( python_INCLUDE
 SET( python_SOURCE
      "${TARGET_SOURCE_DIR}/python/PyPacket.cpp"
      "${TARGET_SOURCE_DIR}/python/PyRep.cpp"
+     "${TARGET_SOURCE_DIR}/python/PyRepDump.cpp"
      "${TARGET_SOURCE_DIR}/python/PyVisitor.cpp" )
 
 SET( python_classes_INCLUDE

@@ -129,7 +129,7 @@ bool Client::ProcessNet()
             _log(CLIENT__IN_ALL, "Received packet:");
             std::string pfx = getLogPrefix(CLIENT__IN_ALL);
             std::ostringstream ss;
-            p->Dump(ss, pfx);
+            p->dump(ss, pfx);
             outputLogMsg(CLIENT__IN_ALL, ss.str().c_str());
         }
 

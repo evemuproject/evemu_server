@@ -88,7 +88,7 @@ void EVEClientSession::fastQueuePacket(PyPacket** p)
     {
         std::string pfx = getLogPrefix(CLIENT__OUT_ALL);
         std::ostringstream ss;
-        (*p)->Dump(ss, pfx);
+        (*p)->dump(ss, pfx);
         outputLogMsg(CLIENT__OUT_ALL, ss.str().c_str());
     }
 

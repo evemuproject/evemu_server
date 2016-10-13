@@ -83,20 +83,21 @@ PyPacket *PyPacket::Clone() const
     return res;
 }
 
-void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
+void PyPacket::dump(std::ostringstream &ss, const std::string &pfx)
 {
     std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
     std::string pfx3(pfx2 + "    ");
+    std::string pfx4(pfx3 + "    ");
     ss << pfx << "PyPacket:" << std::endl;
     ss << pfx1 << "Type: " <<  type_string.c_str() << std::endl;
     ss << pfx1 << "Command: " << MACHONETMSG_TYPE_NAMES[type] << "(" << type << ")" << std::endl;
     ss << pfx1 << "Source:" << std::endl;
-    source.Dump(ss, pfx2);
+    source.dump(ss, pfx2);
     ss << pfx1 << "Destination:" << std::endl;
-    dest.Dump(ss, pfx2);
+    dest.dump(ss, pfx2);
     ss << pfx1 << "User ID: " << userid << std::endl;
-    ss << pfx1 << "Payload:" << std::endl;
+    ss << pfx1 << "[Payload]" << std::endl;
     bool payloadDumped = false;
     switch (type)
     {
@@ -106,7 +107,7 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
         PyTuple *tup = (PyTuple *) payload->Clone();
         if (note.Decode(type_string, tup))
         {
-            note.Dump(ss, pfx2);
+            note.dump(ss, pfx2);
             payloadDumped = true;
         }
         break;
@@ -117,7 +118,7 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
         PyTuple *tup = (PyTuple *) payload->Clone();
         if (req.Decode(type_string, tup))
         {
-            req.Dump(ss, pfx2);
+            req.dump(ss, pfx2);
             payloadDumped = true;
         }
         break;
@@ -140,7 +141,7 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
                         if (pack != nullptr)
                         {
                             ss << pfx2 << "Response:" << std::endl;
-                            pack->Dump(ss, pfx3);
+                            pack->dump(ss, pfx3);
                             payloadDumped = true;
                         }
                     }
@@ -154,22 +155,22 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
         SessionChangeNotification sessionChange;
         if( sessionChange.Decode( payload ) )
         {
-            ss << pfx << "[SessionChangeNotification]" << std::endl;
-            ss << pfx1 << "sessionID=" << sessionChange.sessionID << std::endl;
-            ss << pfx1 << "clueless=" << sessionChange.clueless << std::endl;
-            ss << pfx1 << "Nodes:" << std::endl;
+            ss << pfx2 << "[SessionChangeNotification]" << std::endl;
+            ss << pfx3 << "sessionID=" << sessionChange.sessionID << std::endl;
+            ss << pfx3 << "clueless=" << sessionChange.clueless << std::endl;
+            ss << pfx3 << "Nodes:" << std::endl;
             for(int32 node : sessionChange.nodesOfInterest)
             {
-                ss << pfx2 << node << std::endl;
+                ss << pfx4 << node << std::endl;
             }
-            ss << pfx1 << "Changes:" << std::endl;
+            ss << pfx3 << "Changes:" << std::endl;
             if(sessionChange.changes == nullptr)
             {
-                ss << pfx2 << "<nullptr>" << std::endl;
+                ss << pfx4 << "<nullptr>" << std::endl;
             }
             else
             {
-                sessionChange.changes->Dump(ss, pfx2);
+                sessionChange.changes->dump(ss, pfx3);
             }
             payloadDumped = true;
         }
@@ -191,7 +192,7 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
     }
     if (!payloadDumped)
     {
-        payload->Dump(ss, pfx2);
+        payload->dump(ss, pfx2);
     }
     if (named_payload == nullptr)
     {
@@ -200,7 +201,7 @@ void PyPacket::Dump(std::ostringstream &ss, const std::string &pfx)
     else
     {
         ss << pfx1 << "Named Payload:" << std::endl;
-        named_payload->Dump(ss, pfx2);
+        named_payload->dump(ss, pfx2);
     }
 }
 
@@ -403,7 +404,7 @@ PyRep *PyPacket::Encode() {
 
 PyAddress::PyAddress() : type(Invalid), typeID(0), callID(0), service("") {}
 
-void PyAddress::Dump(std::ostringstream &ss, const std::string &pfx) const {
+void PyAddress::dump(std::ostringstream &ss, const std::string &pfx) const {
     switch(type) {
     case Any:
         ss << pfx << "Any: service='" << service << "' callID=" << callID << std::endl;
@@ -702,12 +703,12 @@ PyCallStream *PyCallStream::Clone() const {
     return res;
 }
 
-void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
+void PyCallStream::dump(std::ostringstream &ss, const std::string &pfx)
 {
     std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
     std::string pfx3(pfx2 + "    ");
-    ss << pfx << "PyCallStream:" << std::endl;
+    ss << pfx << "[PyCallStream]" << std::endl;
     if (remoteObject == 0)
     {
         ss << pfx1 << "Remote Object: '" << remoteObjectStr << "'" << std::endl;
@@ -728,7 +729,7 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
             if (bind.bindParams != nullptr)
             {
                 ss << pfx2 << "BindParams:" << std::endl;
-                bind.bindParams->Dump(ss, pfx3);
+                bind.bindParams->dump(ss, pfx3);
             }
             if (bind.call != nullptr)
             {
@@ -741,8 +742,9 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
                         {
                             ss << pfx2 << "Call: " << tup->items[0]->AsString()->content() << std::endl;
                             ss << pfx2 << "Arguments:" << std::endl;
-                            tup->items[1]->Dump(ss, pfx3);
-                            tup->items[2]->Dump(ss, pfx3);
+                            tup->items[1]->dump(ss, pfx3);
+                            ss << pfx2 << "Named Arguments:" << std::endl;
+                            tup->items[2]->dump(ss, pfx3);
                             dumped = true;
                         }
                     }
@@ -761,7 +763,7 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
     if (!dumped)
     {
         ss << pfx1 << "Arguments:" << std::endl;
-        arg_tuple->Dump(ss, pfx2);
+        arg_tuple->dump(ss, pfx2);
     }
     if (arg_dict == NULL)
     {
@@ -770,7 +772,7 @@ void PyCallStream::Dump(std::ostringstream &ss, const std::string &pfx)
     else
     {
         ss << pfx1 << "Named Arguments:" << std::endl;
-        arg_dict->Dump(ss, pfx2);
+        arg_dict->dump(ss, pfx2);
     }
 }
 
@@ -951,7 +953,7 @@ EVENotificationStream *EVENotificationStream::Clone() const {
     return res;
 }
 
-void EVENotificationStream::Dump(std::ostringstream &ss, const std::string &pfx)
+void EVENotificationStream::dump(std::ostringstream &ss, const std::string &pfx)
 {
     std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
@@ -972,7 +974,7 @@ void EVENotificationStream::Dump(std::ostringstream &ss, const std::string &pfx)
         ss << pfx1 << "Remote Object: " << remoteObject << std::endl;;
     }
     ss << pfx1 << "Arguments:" << std::endl;
-    args->Dump(ss, pfx2);
+    args->dump(ss, pfx2);
 }
 
 bool EVENotificationStream::Decode(const std::string &pkt_type, PyTuple *&in_payload) {
@@ -1060,8 +1062,6 @@ bool EVENotificationStream::Decode(const std::string &pkt_type, PyTuple *&in_pay
         return false;
     }
 
-
-
     PyTuple *subt = (PyTuple *) robjt->items[1];
     if(subt->items.size() != 2) {
         codelog(NET__PACKET_ERROR, "packet body has %lu elements, expected %d", subt->items.size(), 2);
@@ -1080,8 +1080,6 @@ bool EVENotificationStream::Decode(const std::string &pkt_type, PyTuple *&in_pay
         PyDecRef(payload);
         return false;
     }
-
-
 
     if(!subt->items[1]->IsTuple()) {
         codelog(NET__PACKET_ERROR, "subt tuple[1] has non-tuple type %s", robjt->items[0]->TypeString());

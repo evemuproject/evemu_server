@@ -126,7 +126,7 @@ void DBRowDescriptor::Dump(std::ostringstream &ss, const std::string &pfx) const
     if(keywords != nullptr)
     {
         ss << pfx1 << "Keywords:" << std::endl;
-        keywords->Dump(ss, pfx2);
+        keywords->dump(ss, pfx2);
     }
 }
 
@@ -181,14 +181,14 @@ void CRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
         ss << pfx1 << "No Descriptor." << std::endl;
         return;
     }
-    desc->Dump(ss, pfx1);
+    desc->dump(ss, pfx1);
     ss << pfx1 << "Rows:" << std::endl;
     for(int i = 0; i < GetRowCount(); i++)
     {
         PyPackedRow *row = GetRow(i);
         if(row != nullptr)
         {
-            row->Dump(ss, pfx2);
+            row->dump(ss, pfx2);
         }
     }
     PyRep *keywords = nullptr;
@@ -200,7 +200,7 @@ void CRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
     if(keywords != nullptr)
     {
         ss << pfx1 << "Keywords:" << std::endl;
-        keywords->Dump(ss, pfx2);
+        keywords->dump(ss, pfx2);
     }
 }
 
@@ -298,19 +298,19 @@ void CIndexedRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
         ss << pfx1 << "No Descriptor." << std::endl;
         return;
     }
-    desc->Dump(ss, pfx1);
+    desc->dump(ss, pfx1);
     ss << pfx1 << "Rows:" << std::endl;
     for(auto entry : dict().items)
     {
         PyRep *key = entry.first;
-        key->Dump(ss, pfx1 + "Key:");
+        key->dump(ss, pfx1 + "Key:");
         PyRep *value = entry.second;
-        value->Dump(ss, pfx2);
+        value->dump(ss, pfx2);
     }
     if(keywords != nullptr)
     {
         ss << pfx1 << "Keywords:" << std::endl;
-        keywords->Dump(ss, pfx2);
+        keywords->dump(ss, pfx2);
     }
 }
 

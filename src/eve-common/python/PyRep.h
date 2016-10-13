@@ -185,9 +185,9 @@ public:
      * @param[in] type Log type to use for dump.
      * @param[in] pfx  Prefix which is put in front of each line.
      */
-    virtual void Dump( LogType type, const char* pfx ) const;
+    void Dump( const LogType &type, const char* pfx ) const;
     
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const = 0;
 
     /**
      * @brief Clones object.
@@ -237,14 +237,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const
-    {
-        ss << pfx << "[PyInt " << mValue << "]" << std::endl;
-    }
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     int32 value() const { return mValue; }
 
@@ -267,14 +260,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const
-    {
-        ss << pfx << "[PyLong " << mValue << "]" << std::endl;
-    }
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     int64 value() const { return mValue; }
 
@@ -297,14 +283,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const
-    {
-        ss << pfx << "[PyFloat " << mValue << "]" << std::endl;
-    }
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     double value() const { return mValue; }
 
@@ -327,14 +306,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const
-    {
-        ss << pfx << "[PyBool " << (mValue ? "True" : "False") << "]" << std::endl;
-    }
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     bool value() const { return mValue; }
 
@@ -355,14 +327,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const
-    {
-        ss << pfx << "[PyNone]" << std::endl;
-    }
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     int32 hash() const;
 };
@@ -394,11 +359,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     /**
      * @brief Get the const PyBuffer content
@@ -450,11 +411,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     /**
      * @brief Get the PyString content
@@ -494,11 +451,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     /**
      * @brief Get the PyWString content.
@@ -546,14 +499,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const
-    {
-        ss << pfx << "[PyToken '" << mValue << "']" << std::endl;
-    }
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     /**
      * @brief Obtain token.
@@ -583,11 +529,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     const_iterator begin() const { return items.begin(); }
     const_iterator end() const { return items.end(); }
@@ -653,11 +595,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     const_iterator begin() const { return items.begin(); }
     const_iterator end() const { return items.end(); }
@@ -764,11 +702,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     const_iterator begin() const { return items.begin(); }
     const_iterator end() const { return items.end(); }
@@ -849,11 +783,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyString* type() const { return mType; }
     PyRep* arguments() const { return mArguments; }
@@ -888,11 +818,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyRep* header() const { return mHeader; }
     bool isType2() const { return mIsType2; }
@@ -980,11 +906,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     // Header:
     DBRowDescriptor* header() const { return mHeader; }
@@ -1024,11 +946,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyRep* sub() const { return mSub; }
 
@@ -1047,11 +965,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyBuffer* data() const { return mData; }
     PyRep* decoded() const { return mDecoded; }
@@ -1078,11 +992,7 @@ public:
 
     PyRep* Clone() const;
     bool visit( PyVisitor& v ) const;
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
-    virtual void Dump( LogType type, const char* pfx ) const
-    {
-        PyRep::Dump(type, pfx);
-    }
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyRep* stream() const { return mStream; }
     uint32 checksum() const { return mChecksum; }
@@ -1101,7 +1011,7 @@ public:
     BuiltinSet(std::vector<int32> list);
     BuiltinSet(PyList *list);
 
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyRep* Clone() const;
 
@@ -1117,7 +1027,7 @@ public:
     DefaultDict();
     DefaultDict( const DefaultDict& oth );
 
-    virtual void Dump(std::ostringstream &ss, const std::string &pfx = "") const;
+    virtual void dump(std::ostringstream &ss, const std::string &pfx = "") const;
 
     PyRep* Clone() const;
 

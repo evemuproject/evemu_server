@@ -608,7 +608,7 @@ void PyCachedObjectDecoder::Dump(FILE *into, const char *pfx, bool contents_too)
     fprintf(into, "%sCached Object:\n", pfx);
     fprintf(into, "%s  ObjectID:\n", pfx);
     std::ostringstream ss1;
-    objectID->Dump(ss1, s);
+    objectID->dump(ss1, s);
     fprintf(into, "%s", ss1.str().c_str());
     fprintf(into, "%s  Version Time: %" PRIu64 "\n", pfx, timestamp);
     fprintf(into, "%s  Version: %u\n", pfx, version);
@@ -618,7 +618,7 @@ void PyCachedObjectDecoder::Dump(FILE *into, const char *pfx, bool contents_too)
     if(contents_too) {
         fprintf(into, "%s  Contents:\n", pfx);
         std::ostringstream ss;
-        cache->Dump(ss, s);
+        cache->dump(ss, s);
         fprintf(into, "%s", ss.str().c_str());
     }
 }
@@ -630,7 +630,7 @@ void PyCachedObject::Dump(FILE *into, const char *pfx, bool contents_too)
     fprintf(into, "%sCached Object:\n", pfx);
     fprintf(into, "%s  ObjectID:\n", pfx);
     std::ostringstream ss1;
-    objectID->Dump(ss1, s);
+    objectID->dump(ss1, s);
     fprintf(into, "%s", ss1.str().c_str());
     fprintf(into, "%s  Version Time: %" PRIu64 "\n", pfx, timestamp);
     fprintf(into, "%s  Version: %u\n", pfx, version);
@@ -640,7 +640,7 @@ void PyCachedObject::Dump(FILE *into, const char *pfx, bool contents_too)
     if(contents_too) {
         fprintf(into, "%s  Contents:\n", pfx);
         std::ostringstream ss;
-        cache->Dump(ss, s);
+        cache->dump(ss, s);
         fprintf(into, "%s", ss.str().c_str());
     }
 }
@@ -850,7 +850,7 @@ void PyCachedCall::Dump(FILE *into, const char *pfx, bool contents_too)
     if(contents_too) {
         fprintf(into, "%s  Contents:\n", pfx);
         std::ostringstream ss;
-        result->Dump(ss, s);
+        result->dump(ss, s);
         fprintf(into, "%s", ss.str().c_str());
     }
 }
