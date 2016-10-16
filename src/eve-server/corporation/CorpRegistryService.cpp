@@ -225,7 +225,7 @@ PyResult CorpRegistryBound::Handle_AddCorporation(PyCallArgs &call) {
 
     // Register new corp
     uint32 corpID;
-    if (!CorporationDB::AddCorporation(args, call.client->GetCharacterID(), call.client->GetStationID(), corpID))
+    if (!CorporationDB::AddCorporation(args, call.client, corpID))
     {
         codelog(SERVICE__ERROR, "New corporation creation failed...");
         return (new PyInt(0));

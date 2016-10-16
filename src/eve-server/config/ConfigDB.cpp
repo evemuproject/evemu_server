@@ -28,72 +28,27 @@
 #include "config/ConfigDB.h"
 
 PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
-    //TODO: we need to deal with corporations!
-
-    //im not sure how this query is supposed to work, as far as what table
-    //we use to get the fields from.
-    //we only get called for items which are not already sent in the
-    // eveStaticOwners cachable object.
-
     std::string ids;
     ListToINString(entityIDs, ids, "-1");
 
     DBQueryResult res;
     DBResultRow row;
 
-	//first we check to see if there is such ids in the srvEntity tables
     if(!DBcore::RunQuery(res,
         "SELECT "
-        " srvEntity.itemID as ownerID,"
-        " srvEntity.itemName as ownerName,"
-        " srvEntity.typeID,"
-		" 1 as gender,"
+        " itemID as ownerID,"
+        " itemName as ownerName,"
+        " typeID,"
+	" gender,"
         " NULL as ownerNameID"
         " FROM srvEntity "
-        " WHERE itemID in (%s)", ids.c_str()))
+        " LEFT JOIN srvCharacter ON itemID = characterID"
+        " WHERE itemID in (%s)"
+        , ids.c_str()
+            ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;
-    }
-
-    //this is pretty hackish... will NOT work if they mix things...
-    //this was only put in to deal with "new" statics, like corporations.
-
-	//second: we check to see if the id points to a static srvEntity (Agents, NPC Corps, etc.)
-    if(!res.GetRow(row)) {
-        if(!DBcore::RunQuery(res,
-            "SELECT "
-            " ownerID,ownerName,typeID,"
-			" 1 as gender,"
-            " NULL as ownerNameID"
-            " FROM blkEveStaticOwners "
-            " WHERE ownerID in (%s)", ids.c_str()))
-        {
-            codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-            return NULL;
-        }
-    } else {
-        res.Reset();
-    }
-
-	//third: we check to see it the id points to a player's character
-    if(!res.GetRow(row)) {
-        if(!DBcore::RunQuery(res,
-            "SELECT "
-            " characterID as ownerID,"
-            " itemName as ownerName,"
-            " typeID,"
-			" 1 as gender,"
-            " NULL as ownerNameID"
-            " FROM srvCharacter "
-            " LEFT JOIN srvEntity ON characterID = itemID"
-            " WHERE characterID in (%s)", ids.c_str()))
-        {
-            codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-            return NULL;
-        }
-    } else {
-        res.Reset();
     }
 
     return(DBResultToTupleSet(res));

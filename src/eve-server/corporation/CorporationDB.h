@@ -63,7 +63,7 @@ public:
     static bool ListAllFactionSolarSystems(std::map<int32, PyRep *> &into);
     static bool ListAllFactionRaces(std::map<int32, PyRep *> &into);
 
-    static bool AddCorporation(Call_AddCorporation & corpInfo, uint32 charID, uint32 stationID, uint32 & corpID);
+    static bool AddCorporation(Call_AddCorporation & corpInfo, Client *client, uint32 & corpID);
     static bool JoinCorporation(uint32 charID, uint32 corpID, uint32 oldCorpID, const CorpMemberInfo &roles);
     static bool CreateCorporationChangePacket(Notify_OnCorporaionChanged & cc, uint32 oldCorpID, uint32 newCorpID);
     static bool CreateCorporationCreatePacket(Notify_OnCorporaionChanged & cc, uint32 oldCorpID, uint32 newCorpID);

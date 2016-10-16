@@ -27,6 +27,7 @@
 
 #include "character/Character.h"
 #include "corporation/CorporationDB.h"
+#include "Client.h"
 
 PyObject *CorporationDB::ListCorpStations(uint32 corp_id) {
     DBQueryResult res;
@@ -328,7 +329,10 @@ static std::string _IoN( PyRep* r )
     return itoa( r->AsInt()->value() );
 }
 
-bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID, uint32 stationID, uint32 & corpID) {
+bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, Client *client, uint32 & corpID) {
+    uint32 charID = client->GetCharacterID();
+    uint32 stationID = client->GetStationID();
+    uint32 raceID = client->GetChar()->race();
     DBerror err;
     corpID = 0;
 
@@ -338,50 +342,42 @@ bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, uint32 charID
     DBcore::DoEscapeString(cTick, corpInfo.corpTicker);
     DBcore::DoEscapeString(cURL, corpInfo.url);
 
-    //TODO: we should be able to get our race ID directly from our Client
-    //object eventually, instead of pulling it from this join.
+    // First create the entity item.
     if (!DBcore::RunQueryLID(err, corpID,
+            "INSERT INTO srvEntity (itemName, typeID)"
+            " VALUES ('%s', 2)",
+            cName.c_str()
+            ))
+    {
+        codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
+        return false;
+    }
+
+    if (!DBcore::RunQuery(err,
         " INSERT INTO srvCorporation ( "
-        "   corporationName, description, tickerName, url, "
+        "   corporationID, corporationName, description, tickerName, url, "
         "   taxRate, minimumJoinStanding, corporationType, hasPlayerPersonnelManager, sendCharTerminationMessage, "
         "   creatorID, ceoID, stationID, raceID, allianceID, shares, memberCount, memberLimit, "
         "   allowedMemberRaceIDs, graphicID, color1, color2, color3, shape1, shape2, shape3, "
         "   typeface, isRecruiting "
         "   ) "
-        " SELECT "
-        "       '%s', '%s', '%s', '%s', "
+        " VALUES ( "
+        "       %u, '%s', '%s', '%s', '%s', "
         "       %lf, 0, 2, 0, 1, "
-        "       %u, %u, %u, chrBloodlines.raceID, 0, 1000, 0, 10, "
-        "       chrBloodlines.raceID, 0, %s, %s, %s, %s, %s, %s, "
-        "       NULL, %u "
-        "    FROM srvEntity "
-        "       LEFT JOIN blkBloodlineTypes USING (typeID) "
-        "       LEFT JOIN chrBloodlines USING (bloodlineID) "
-        "    WHERE srvEntity.itemID = %u ",
-        cName.c_str(), cDesc.c_str(), cTick.c_str(), cURL.c_str(),
+        "       %u, %u, %u, %u, 0, 1000, 0, 10, "
+        "       %u, 0, %s, %s, %s, %s, %s, %s, "
+        "       NULL, %u )",
+        corpID, cName.c_str(), cDesc.c_str(), cTick.c_str(), cURL.c_str(),
         corpInfo.taxRate,
-        charID, charID, stationID,
+        charID, charID, stationID, raceID, raceID,
 	_IoN(corpInfo.color1).c_str(),
 	_IoN(corpInfo.color2).c_str(),
 	_IoN(corpInfo.color3).c_str(),
 	_IoN(corpInfo.shape1).c_str(),
 	_IoN(corpInfo.shape2).c_str(),
 	_IoN(corpInfo.shape3).c_str(),
-	corpInfo.applicationEnabled,
-        charID))
-    {
-        codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
-        return false;
-    }
-
-    // It has to go into the eveStaticOwners too
-    // (well, not exactly there, but it has to be cached, and i don't know how
-    // that works clientside...)
-    // This is a temp hack to make my life easier
-    if (!DBcore::RunQuery(err,
-        " REPLACE INTO blkEveStaticOwners (ownerID,ownerName,typeID) "
-        "   VALUES (%u, '%s', 2)",
-        corpID, cName.c_str()))
+	corpInfo.applicationEnabled
+            ))
     {
         codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
         return false;

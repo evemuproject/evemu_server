@@ -758,7 +758,13 @@ PyRep *ObjCacheDB::Generate_cacheOwners()
 PyRep *ObjCacheDB::Generate_eveStaticOwners()
 {
     DBQueryResult res;
-    const char *q = "SELECT ownerID, ownerName, typeID FROM blkEveStaticOwners";
+    const char *q = "SELECT itemID AS ownerID, itemName AS ownerName, typeID FROM srvEntity"
+            " WHERE typeID in ("
+            " SELECT typeID FROM invTypes"
+            " WHERE groupID in ("
+            " SELECT groupID FROM invGroups"
+            " WHERE categoryID=1))"
+            " OR itemID=1";
     if(DBcore::RunQuery(res, q)==false)
     {
         _log(SERVICE__ERROR, "Error in query for cached object 'config.StaticOwners': %s", res.error.c_str());

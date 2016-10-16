@@ -374,7 +374,7 @@ CREATE TABLE `srvChrStandings` (
 DROP TABLE IF EXISTS `srvCorporation`;
 
 CREATE TABLE `srvCorporation` (
-  `corporationID` int(10) unsigned NOT NULL auto_increment,
+  `corporationID` int(10) unsigned NOT NULL,
   `corporationName` varchar(100) NOT NULL default '',
   `description` mediumtext NOT NULL,
   `tickerName` varchar(8) NOT NULL default '',
