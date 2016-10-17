@@ -64,11 +64,8 @@ PyTuple *SystemEntity::MakeDamageState() const {
 
 ItemSystemEntity::ItemSystemEntity(InventoryItemRef self)
 : SystemEntity(),
-  m_self()
+  m_self(self)
 {
-    if( self )
-        _SetSelf( self );
-    //setup some default attributes which normally do not initialize.
 }
 
 ItemSystemEntity::~ItemSystemEntity()

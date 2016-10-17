@@ -712,7 +712,7 @@ void Client::_UpdateSession2( uint32 characterID )
         mSession.SetInt( "shipid", shipID );
 }
 
-void Client::_SendCallReturn( const PyAddress& source, uint64 callID, PyRep** return_value, const char* channel )
+void Client::_SendCallReturn( const PyAddress& source, uint64 callID, PyResult &return_value )
 {
     //build the packet:
     PyPacket* p = new PyPacket;
@@ -728,16 +728,13 @@ void Client::_SendCallReturn( const PyAddress& source, uint64 callID, PyRep** re
     p->userid = GetAccountID();
 
     p->payload = new PyTuple(1);
-    p->payload->SetItem( 0, new PySubStream( *return_value ) );
-    *return_value = NULL;   //consumed
+    p->payload->SetItem( 0, new PySubStream( return_value.ssResult ) );
+    return_value.ssResult = nullptr;   //consumed
 
-    if(channel)
-    {
-        p->named_payload = new PyDict();
-        p->named_payload->SetItemString( "channel", new PyString( channel ) );
-    }
+    p->named_payload = return_value.ssNamedResult;
+    return_value.ssNamedResult = nullptr;
 
-    fastQueuePacket(&p);
+    fastQueuePacket(&p, true);
 }
 
 void Client::_SendException( const PyAddress& source, uint64 callID, MACHONETMSG_TYPE in_response_to, MACHONETERR_TYPE exception_type, PyRep** payload )
@@ -1806,7 +1803,7 @@ bool Client::Handle_CallReq( PyPacket* packet, PyCallStream& req )
     PyResult result = dest->Call( req.method, args );
 
     _SendSessionChange();  //send out the session change before the return.
-    _SendCallReturn( packet->dest, packet->source.callID, &result.ssResult );
+    _SendCallReturn( packet->dest, packet->source.callID, result );
 
     return true;
 }
