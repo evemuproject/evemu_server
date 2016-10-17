@@ -260,6 +260,26 @@ void PyObjectEx::dump(std::ostringstream &ss, const std::string &pfx) const
 {
     std::string pfx1(pfx +   "    ");
     std::string pfx2(pfx1 +   "    ");
+//    PyToken *token = nullptr;
+//    if(mHeader != nullptr && mHeader->IsTuple())
+//    {
+//        PyTuple *headerTuple = mHeader->AsTuple();
+//        if(headerTuple->items.size() > 0)
+//        {
+//            PyRep *t = headerTuple->items[0];
+//            if(t != nullptr && t->IsTuple())
+//            {
+//                if(t->AsTuple()->items.size() > 0)
+//                {
+//                    t = t->AsTuple()->items[0];
+//                }
+//            }
+//            if(t != nullptr && t->IsToken())
+//            {
+//                token = t->AsToken();
+//            }
+//        }
+//    }
     if(isType2())
     {
         ss << pfx << "[PyObjectEx Type2]" << std::endl;
@@ -358,21 +378,21 @@ void PyPackedRow::dump(std::ostringstream &ss, const std::string &pfx) const
             int i = 0;
             for(PyRep *rep : mFields->items)
             {
-                ss << pfx1 << "Row=" << i << ": ";
+                ss << pfx1;
+                ss << "['" << mHeader->GetColumnName(i)->content() << "' =>";
                 DBTYPE dbType = mHeader->GetColumnType(i);
                 auto dbFind = DBTYPE_NAME.find(dbType);
                 if(dbFind != DBTYPE_NAME.end())
                 {
                     // Output the type string.
                     std::string dbTypeName = dbFind->second;
-                    ss << " DB_Type='" << dbTypeName << "'";
+                    ss << " [" << dbTypeName << "] ";
                 }
                 else
                 {
                     // No type string found output hex value.
-                    ss << " DB_Type=0x" << std::hex << std::setw(2) << std::setfill('0') << mHeader->GetColumnType(i);
+                    ss << " [0x" << std::hex << std::setw(2) << std::setfill('0') << mHeader->GetColumnType(i) << "] ";
                 }
-                ss << " Name='" << mHeader->GetColumnName(i)->content() << "' Value=";
                 if(rep != nullptr)
                 {
                     rep->dump(ss, "");

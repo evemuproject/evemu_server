@@ -108,14 +108,14 @@ void DBRowDescriptor::AddColumn( const char* name, DBTYPE type )
     _GetColumnList()->items.push_back( col );
 }
 
-void DBRowDescriptor::Dump(std::ostringstream &ss, const std::string &pfx) const
+void DBRowDescriptor::dump(std::ostringstream &ss, const std::string &pfx) const
 {
     std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
     ss << pfx << "[DBRowDescriptor]" << std::endl;
     for(int i = 0; i < ColumnCount(); i++)
     {
-        ss << pfx1 << GetColumnName(i) << "[" << DBTYPE_NAME[GetColumnType(i)] <<"]" << std::endl;
+        ss << pfx1 << "['" << GetColumnName(i) << "' [" << DBTYPE_NAME[GetColumnType(i)] <<"] ]" << std::endl;
     }
     PyRep *keywords = nullptr;
     PyTuple* t = header()->AsTuple();
@@ -170,7 +170,7 @@ PyPackedRow* CRowSet::NewRow()
     return row;
 }
 
-void CRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
+void CRowSet::dump(std::ostringstream &ss, const std::string &pfx) const
 {
     std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
@@ -265,7 +265,7 @@ PyPackedRow* CIndexedRowSet::NewRow( PyRep* key )
     return row;
 }
 
-void CIndexedRowSet::Dump(std::ostringstream &ss, const std::string &pfx) const
+void CIndexedRowSet::dump(std::ostringstream &ss, const std::string &pfx) const
 {
     std::string pfx1(pfx + "    ");
     std::string pfx2(pfx1 + "    ");
