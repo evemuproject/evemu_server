@@ -104,17 +104,30 @@ void PyCallArgs::Dump(LogType type) const {
 }
 
 /* PyResult */
-PyResult::PyResult( PyRep* result ) : ssResult( NULL == result ? new PyNone : result ) {}
-PyResult::PyResult( const PyResult& oth ) : ssResult( NULL ) { *this = oth; }
-PyResult::~PyResult() { PySafeDecRef( ssResult ); }
+PyResult::PyResult( PyRep* result ) : ssResult( NULL == result ? new PyNone : result ), ssNamedResult(nullptr) {}
+PyResult::PyResult( PyRep* result, PyDict *namedResult ) : ssResult( NULL == result ? new PyNone : result ), ssNamedResult(namedResult) {}
+PyResult::PyResult( const PyResult& oth ) : ssResult( NULL ), ssNamedResult(nullptr) { *this = oth; }
+PyResult::~PyResult()
+{
+    PySafeDecRef( ssResult );
+    PySafeDecRef( ssNamedResult );
+}
 
 PyResult& PyResult::operator=( const PyResult& oth )
 {
     PySafeDecRef( ssResult );
     ssResult = oth.ssResult;
+    PySafeDecRef( ssNamedResult );
+    ssNamedResult = oth.ssNamedResult;
 
-    if( NULL != ssResult )
+    if( ssResult != nullptr)
+    {
         PyIncRef( ssResult );
+    }
+    if( ssNamedResult != nullptr)
+    {
+        PyIncRef( ssNamedResult );
+    }
 
     return *this;
 }

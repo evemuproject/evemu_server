@@ -54,12 +54,14 @@ class PyResult
 {
 public:
     PyResult( PyRep* result );
+    PyResult( PyRep* result, PyDict *namedResult );
     PyResult( const PyResult& oth );
     ~PyResult();
 
     PyResult& operator=( const PyResult& oth );
 
     PyRep* ssResult;
+    PyDict* ssNamedResult;
 };
 
 class PyException
