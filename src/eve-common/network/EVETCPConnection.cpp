@@ -47,7 +47,7 @@ EVETCPConnection::EVETCPConnection( Socket* sock, uint32 rIP, uint16 rPort )
 {
 }
 
-void EVETCPConnection::QueueRep( const PyRep* rep )
+void EVETCPConnection::QueueRep( const PyRep* rep, bool front )
 {
     Buffer* buf = new Buffer;
 
@@ -65,7 +65,7 @@ void EVETCPConnection::QueueRep( const PyRep* rep )
         // write length
         *bufLen = ( buf->size() - sizeof( uint32 ) );
 
-        Send( &buf );
+        Send( &buf, front );
 
     }
 

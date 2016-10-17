@@ -192,11 +192,11 @@ void TCPConnection::Disconnect()
     mSockState = STATE_DISCONNECTING;
 }
 
-bool TCPConnection::Send( Buffer** data )
+bool TCPConnection::Send( Buffer** data, bool front )
 {
     // Invalidate pointer
     Buffer* buf = *data;
-    *data = NULL;
+    *data = nullptr;
 
     // Check we are in STATE_CONNECTED
     MutexLock sockLock( mMSock );
@@ -205,15 +205,21 @@ bool TCPConnection::Send( Buffer** data )
     if( state != STATE_CONNECTED )
     {
         SafeDelete( buf );
-
         return false;
     }
 
     // Push buffer to the send queue
     MutexLock queueLock( mMSendQueue );
 
-    mSendQueue.push_back( buf );
-    buf = NULL;
+    if(front)
+    {
+        mSendQueue.push_front( buf );
+    }
+    else
+    {
+        mSendQueue.push_back( buf );
+    }
+    buf = nullptr;
 
     return true;
 }

@@ -55,8 +55,9 @@ public:
      * @brief Queues given PyRep into send queue.
      *
      * @param[in] rep PyRep to be queued.
+     * @param[in] front should the packet be queued to be sent first?
      */
-    void QueueRep( const PyRep* rep );
+    void QueueRep( const PyRep* rep, bool front = false);
 
     /**
      * @brief Pops PyRep from receive queue.

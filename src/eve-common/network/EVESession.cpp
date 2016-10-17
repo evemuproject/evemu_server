@@ -64,25 +64,12 @@ void EVEClientSession::reset()
     m_packetHandler = &EVEClientSession::_HandleVersion;
 }
 
-void EVEClientSession::queuePacket(const PyPacket* p)
-{
-    if (p == NULL)
-        return;
-    PyPacket* packet = p->Clone();
-
-    if (packet == NULL)
-    {
-        SysLog::Error("Network", "QueuePacket was unable to clone a PyPacket");
-        return;
-    }
-
-    fastQueuePacket(&packet);
-}
-
-void EVEClientSession::fastQueuePacket(PyPacket** p)
+void EVEClientSession::fastQueuePacket(PyPacket** p, bool front)
 {
     if(p == NULL || *p == NULL)
+    {
         return;
+    }
 
     if(is_log_enabled(CLIENT__OUT_ALL))
     {
@@ -101,7 +88,7 @@ void EVEClientSession::fastQueuePacket(PyPacket** p)
         return;
     }
 
-    m_tcpConnecton->QueueRep(r);
+    m_tcpConnecton->QueueRep(r, front);
     PyDecRef( r );
 }
 

@@ -114,10 +114,11 @@ public:
      * @brief Enqueues data to be sent.
      *
      * @param[in] data Buffer with data; pointer is invalidated by the function.
+     * @param[in] front should the packet be queued to be sent first?
      *
      * @return True if data has been accepted, false if not.
      */
-    bool Send( Buffer** data );
+    bool Send( Buffer** data, bool front = false );
 
 protected:
     /**

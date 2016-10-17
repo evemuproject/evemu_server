@@ -85,15 +85,11 @@ public:
     void reset();
 
     /**
-     * @brief Queues new packet.
-     * @param[in] p Packed to be queued.
-     */
-    void queuePacket(const PyPacket* p);
-    /**
      * @brief Queues new packet, retaking ownership.
      * @param[in] p Packed to be queued.
+     * @param[in] front should the packet be queued to be sent first?
      */
-    void fastQueuePacket(PyPacket** p);
+    void fastQueuePacket(PyPacket** p, bool front = false);
 
     /**
      * @brief Pops new packet from queue.
