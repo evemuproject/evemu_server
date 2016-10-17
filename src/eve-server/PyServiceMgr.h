@@ -56,7 +56,7 @@ public:
     }
 
     //object binding, not fully understood yet.
-    static PySubStruct *BindObject(Client *who, PyBoundObject *obj, PyDict **dict = NULL);
+    static PySubStruct *BindObject(Client *who, PyBoundObject *obj, PyDict **dict = nullptr, PyDict *oid = nullptr);
     static PyBoundObject *FindBoundObject(uint32 bindID);
     static void ClearBoundObject(uint32 bindID);
     static void ClearBoundObjects(Client *who);

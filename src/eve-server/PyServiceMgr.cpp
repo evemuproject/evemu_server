@@ -92,7 +92,7 @@ PyService *PyServiceMgr::LookupService(const std::string &name) {
     return NULL;
 }
 
-PySubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyDict **dict) {
+PySubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyDict **dict, PyDict *oid) {
     if(cb == NULL)
     {
         SysLog::Error("Service Mgr", "Tried to bind a NULL object!");
@@ -128,6 +128,12 @@ PySubStruct *PyServiceMgr::BindObject(Client *c, PyBoundObject *cb, PyDict **dic
         objt->items[0] = new PyString(bind_str);
         objt->items[1] = *dict; *dict = NULL;            //consumed
         objt->items[2] = new PyLong(expiration);    //expiration?
+    }
+    if(oid != nullptr)
+    {
+        PyDict *oidDict = new PyDict();
+        oidDict->SetItem(new PyString(bind_str), new PyLong(expiration));
+        oid->SetItem(new PyString("OID+"), oidDict);
     }
 
     return new PySubStruct(new PySubStream(objt));

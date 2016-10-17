@@ -97,12 +97,15 @@ PyResult PyService::Handle_MachoBindObject( PyCallArgs& call )
     }
 
     PyTuple* robjs = new PyTuple( 2 );
+    PyDict *oid = new PyDict();
     //now we register
-    robjs->SetItem(0, PyServiceMgr::BindObject(call.client, our_obj));
+    robjs->SetItem(0, PyServiceMgr::BindObject(call.client, our_obj, nullptr, oid));
 
     if( args.call->IsNone() )
+    {
         //no call was specified...
         robjs->SetItem( 1, new PyNone );
+    }
     else
     {
         CallMachoBindObject_call boundcall;
@@ -127,7 +130,7 @@ PyResult PyService::Handle_MachoBindObject( PyCallArgs& call )
 
     //ok, we have created and bound the object requested, as well as made any sub-call we needed to do.
     //we are done.
-    return robjs;
+    return PyResult(robjs, oid);
 }
 
 const char *const PyService::s_checkTimeStrings[_checkCount] = {
