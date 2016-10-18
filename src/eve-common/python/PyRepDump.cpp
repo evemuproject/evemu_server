@@ -401,19 +401,31 @@ void PyPackedRow::dump(std::ostringstream &ss, const std::string &pfx) const
                 {
                     ss << "<nullptr>" << std::endl;
                 }
-                PyTuple *tup = mHeader->header()->AsTuple();
-                if(tup != nullptr && tup->items.size() > 2)
+                i++;
+            }
+            PyTuple *tup = mHeader->header()->AsTuple();
+            if(tup != nullptr && tup->items.size() > 2)
+            {
+                PyList *keys = tup->items[2]->AsList();
+                if(keys != nullptr)
                 {
-                    PyList *keys = tup->items[2]->AsList();
-                    if(keys != nullptr)
+                    for(PyRep *key : keys->items)
                     {
-                        for(PyRep *key : keys->items)
+                        PyTuple *keyTupple = key->AsTuple();
+                        if(keyTupple != nullptr && keyTupple->items.size() == 2)
                         {
-                            key->dump(ss, pfx1);
+                            if(keyTupple->items[0] != nullptr && keyTupple->items[1] != nullptr)
+                            {
+                                PyString *name = keyTupple->items[0]->AsString();
+                                PyToken *token = keyTupple->items[1]->AsToken();
+                                if(name != nullptr && token != nullptr)
+                                {
+                                    ss << pfx1 << "['" << name->content() << "' => [Token] <" << token->content() << ">]" << std::endl;
+                                }
+                            }
                         }
                     }
                 }
-                i++;
             }
         }
     }
