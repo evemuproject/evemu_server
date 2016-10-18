@@ -401,6 +401,18 @@ void PyPackedRow::dump(std::ostringstream &ss, const std::string &pfx) const
                 {
                     ss << "<nullptr>" << std::endl;
                 }
+                PyTuple *tup = mHeader->header()->AsTuple();
+                if(tup != nullptr && tup->items.size() > 2)
+                {
+                    PyList *keys = tup->items[2]->AsList();
+                    if(keys != nullptr)
+                    {
+                        for(PyRep *key : keys->items)
+                        {
+                            key->dump(ss, pfx1);
+                        }
+                    }
+                }
                 i++;
             }
         }
