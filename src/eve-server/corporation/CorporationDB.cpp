@@ -720,29 +720,20 @@ PyObject *CorporationDB::GetCorporation(uint32 corpID) {
     //return DBResultToRowset(res);
 }
 
-PyObject *CorporationDB::GetEveOwners() {
+PyObject *CorporationDB::GetEveOwners(uint32 corpID) {
     DBQueryResult res;
 
-    /*if (!DBcore::RunQuery(res,
-        " SELECT * FROM blkEveStaticOwners "))
-    {
-        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-        return NULL;
-    }*/
     if( !DBcore::RunQuery( res,
         "(SELECT"
         " itemID AS ownerID,"
         " itemName AS ownerName,"
-    " 0 AS ownerNameID,"
+        " 0 AS ownerNameID,"
         " typeID"
         " FROM srvEntity"
-        " WHERE itemID < %u"
-        " AND itemID NOT IN ( SELECT ownerID from blkEveStaticOwners ) )"
-        " UNION ALL "
-        "(SELECT"
-        " ownerID, ownerName, 0 AS ownerNameID, typeID"
-        " FROM blkEveStaticOwners)"
-        " ORDER BY ownerID", EVEMU_MINIMUM_ID ) )
+        " WHERE itemID IN"
+        " (SELECT characterID FROM srvCharacter WHERE corporationID=%u)"
+        " AND (itemID<%u OR %u>=%u)"
+        " ORDER BY ownerID", corpID, EVEMU_MINIMUM_ID, corpID, EVEMU_MINIMUM_ID ) )
     {
         codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
         return NULL;

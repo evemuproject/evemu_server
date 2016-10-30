@@ -170,7 +170,7 @@ PyBoundObject* CorpRegistryService::_CreateBoundObject( Client* c, const PyRep* 
 
 PyResult CorpRegistryBound::Handle_GetEveOwners(PyCallArgs &call)
 {
-    return (CorporationDB::GetEveOwners());
+    return (CorporationDB::GetEveOwners(call.client->GetCorporationID()));
 }
 
 PyResult CorpRegistryBound::Handle_GetInfoWindowDataForChar( PyCallArgs& call )
