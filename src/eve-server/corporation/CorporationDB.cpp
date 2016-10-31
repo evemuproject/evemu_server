@@ -724,7 +724,7 @@ PyObject *CorporationDB::GetEveOwners(uint32 corpID) {
     DBQueryResult res;
 
     if( !DBcore::RunQuery( res,
-        "(SELECT"
+        "SELECT"
         " itemID AS ownerID,"
         " itemName AS ownerName,"
         " 0 AS ownerNameID,"
