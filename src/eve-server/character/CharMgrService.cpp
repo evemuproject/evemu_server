@@ -209,23 +209,39 @@ PyResult CharMgrService::Handle_SetActivityStatus( PyCallArgs& call )
 
 PyResult CharMgrService::Handle_GetSettingsInfo( PyCallArgs& call )
 {
- PyTuple* res = new PyTuple( 2 );
-    // type code? unknown what the value should be!
-    // Value should be a string according to client exception in function UpdateSettingsStatistics
-    res->items[ 0 ] = new PyString(" ");
+    // Called in file "carbon/client/script/ui/services/settingsSvc.py"
+    // This should return a marshaled python function.
+    // It returns a tuple containing a dict that is then sent to
+    // charMgr::LogSettings if the tuple has a length greater than zero.
+    PyTuple* res = new PyTuple( 2 );
+    // This returns an empty tuple
+    unsigned char code[] = {
+            0x63,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x01,0x00,0x00,0x00,0x43,0x00,0x00,
+            0x00,0x73,0x0a,0x00,0x00,0x00,0x64,0x01,0x00,0x7d,0x00,0x00,0x7c,0x00,0x00,0x53,
+            0x28,0x02,0x00,0x00,0x00,0x4e,0x28,0x00,0x00,0x00,0x00,0x28,0x00,0x00,0x00,0x00,
+            0x28,0x01,0x00,0x00,0x00,0x74,0x03,0x00,0x00,0x00,0x74,0x75,0x70,0x28,0x00,0x00,
+            0x00,0x00,0x28,0x00,0x00,0x00,0x00,0x73,0x10,0x00,0x00,0x00,0x2e,0x2f,0x6d,0x61,
+            0x6b,0x65,0x5a,0x65,0x72,0x6f,0x52,0x65,0x74,0x2e,0x70,0x79,0x74,0x08,0x00,0x00,
+            0x00,0x72,0x65,0x74,0x54,0x75,0x70,0x6c,0x65,0x0c,0x00,0x00,0x00,0x73,0x04,0x00,
+            0x00,0x00,0x00,0x01,0x06,0x02
+    };
+    int codeLen = sizeof(code) / sizeof(*code);
+    std::string codeString(code, code + codeLen);
+    res->items[ 0 ] = new PyString(codeString);
 
- // error code? 0 = no error
- // if called with any value other than zero the exception output will show 'Verified = False'
- // if called with zero 'Verified = True'
- res->items[ 1 ] = new PyInt( 0 );
- return res;
+    // error code? 0 = no error
+    // if called with any value other than zero the exception output will show 'Verified = False'
+    // if called with zero 'Verified = True'
+    res->items[ 1 ] = new PyInt( 0 );
+    return res;
 }
 
 //  this is a return call from client after GetSettingsInfo
 PyResult CharMgrService::Handle_LogSettings( PyCallArgs& call ) {
-  /*
-    */
- return NULL;
+    // call.tuple contains the value return from the function sent to GetSettingsInfo.
+    // In production this would be a tuple containing a dict.
+    // The dict would contain client settings and option values.
+    return NULL;
 }
 
 PyResult CharMgrService::Handle_GetCharacterDescription(PyCallArgs &call)
