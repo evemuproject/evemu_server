@@ -122,7 +122,7 @@ PyBoundObject *InvBrokerService::_CreateBoundObject(Client *c, const PyRep *bind
 
 PyResult InvBrokerBound::Handle_GetContainerContents(PyCallArgs &call)
 {
-	uint32 itemID = call.tuple->GetItem(0)->AsInt()->value();
+	uint32 itemID = pyAs(Int, call.tuple->GetItem(0))->value();
 
 	// TODO: check if container is allowed to be examined
 

@@ -654,86 +654,95 @@ bool PyCachedObjectDecoder::Decode(PySubStream **in_ss)
     PySafeDecRef( objectID );
 
     ss->DecodeData();
-    if(ss->decoded() == NULL) {
+    if(ss->decoded() == NULL)
+    {
         SysLog::Error("PyCachedObjectDecoder","Unable to decode initial stream for PycachedObject");
 
         PyDecRef( ss );
         return false;
     }
 
-    if(!ss->decoded()->IsObject()) {
+    PyObject *po;
+    if(!pyIsAs(Object, ss->decoded(), po))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache substream does not contain an object: %s", ss->decoded()->TypeString());
 
         PyDecRef( ss );
         return false;
     }
-    PyObject *po = (PyObject *) ss->decoded();
     //TODO: could check type string, dont care... (should be objectCaching.CachedObject)
 
-    if(!po->arguments()->IsTuple()) {
+    PyTuple *args;
+    if(!pyIsAs(Tuple, po->arguments(), args))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's args is not a tuple: %s", po->arguments()->TypeString());
 
         PyDecRef( ss );
         return false;
     }
-    PyTuple *args = (PyTuple *) po->arguments();
 
-    if(args->items.size() != 7) {
+    if(args->items.size() != 7)
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's args tuple has %lu elements instead of 7", args->items.size());
 
         PyDecRef( ss );
         return false;
     }
 
-    if(!args->items[0]->IsTuple()) {
+    if(!pyIs(Tuple, args->items[0]))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's arg %d is not a Tuple: %s", 0, args->items[0]->TypeString());
 
         PyDecRef( ss );
         return false;
     }
+    PyInt *nodeidr;
+    PyInt *sharedr;
+    PyInt *compressedr;
+    PyInt *timer;
+    PyInt *versionr;
     //ignore unknown [1]
-    /*if(!args->items[1]->IsInt()) {
+    /*if(!pyIs(Int, args->items[1])) {
         _log(CLIENT__ERROR, "Cache object's arg %d is not a None: %s", 1, args->items[1]->TypeString());
 
         PyDecRef( ss );
         return false;
     }*/
-    if(!args->items[2]->IsInt()) {
+    if(!pyIsAs(Int, args->items[2], nodeidr))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's arg %d is not an Integer: %s", 2, args->items[2]->TypeString());
         PyDecRef( ss );
         return false;
     }
 
-    if(!args->items[3]->IsInt()) {
+    if(!pyIsAs(Int, args->items[3], sharedr))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's arg %d is not an Integer: %s", 3, args->items[3]->TypeString());
         PyDecRef( ss );
         return false;
     }
 
-    if(!args->items[5]->IsInt()) {
+    if(!pyIsAs(Int, args->items[5], compressedr))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's arg %d is not a : %s", 5, args->items[5]->TypeString());
         PyDecRef( ss );
         return false;
     }
 
     PyTuple *objVt = (PyTuple *) args->items[0];
-    if(!objVt->items[0]->IsInt()) {
+    if(!pyIsAs(Int, objVt->items[0], timer))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's version tuple %d is not an Integer: %s", 0, objVt->items[0]->TypeString());
         PyDecRef( ss );
         return false;
     }
 
-    if(!objVt->items[1]->IsInt()) {
+    if(!pyIsAs(Int, objVt->items[1], versionr))
+    {
         SysLog::Error("PyCachedObjectDecoder","Cache object's version tuple %d is not an Integer: %s", 1, objVt->items[1]->TypeString());
         PyDecRef( ss );
         return false;
     }
-
-    PyInt *nodeidr = (PyInt *) args->items[2];
-    PyInt *sharedr = (PyInt *) args->items[3];
-    PyInt *compressedr = (PyInt *) args->items[5];
-    PyInt *timer = (PyInt *) objVt->items[0];
-    PyInt *versionr = (PyInt *) objVt->items[1];
 
     timestamp = timer->value();
     version = versionr->value();
@@ -741,23 +750,27 @@ bool PyCachedObjectDecoder::Decode(PySubStream **in_ss)
     shared = ( sharedr->value() != 0 );
     compressed = ( compressedr->value() != 0 );
 
+    PyBuffer* buf;
+    PyString* str;
     //content (do this as the last thing, since its the heavy lifting):
-    if(args->items[4]->IsSubStream()) {
-        cache = (PySubStream *) args->items[4];
+    if(pyIsAs(SubStream, args->items[4], cache))
+    {
         //take it
         args->items[4] = NULL;
-    } else if(args->items[4]->IsBuffer()) {
+    }
+    else if(pyIsAs(Buffer, args->items[4], buf))
+    {
         //this is a data buffer, likely compressed.
-        PyBuffer* buf = args->items[4]->AsBuffer();
-
         PyIncRef( buf );
         cache = new PySubStream( buf );
-    } else if(args->items[4]->IsString()) {
+    }
+    else if(pyIsAs(String, args->items[4], str))
+    {
         //this is a data buffer, likely compressed, not sure why it comes through as a string...
-        PyString* str = args->items[4]->AsString();
-
         cache = new PySubStream( new PyBuffer( *str ) );
-    } else {
+    }
+    else
+    {
         SysLog::Error("PyCachedObjectMgr", "Cache object's arg %d is not a substream or buffer: %s", 4, args->items[4]->TypeString());
         PyDecRef( ss );
         return false;
@@ -812,7 +825,8 @@ PyObject *PyCachedObject::Encode()
     return new PyObject( "objectCaching.CachedObject", arg_tuple );
 }
 
-PyObject *PyCachedObjectDecoder::EncodeHint() {
+PyObject *PyCachedObjectDecoder::EncodeHint()
+{
     PyTuple *arg_tuple = new PyTuple(3);
 
     PyTuple *versiont = new PyTuple(2);
@@ -836,7 +850,8 @@ PyCachedCall::~PyCachedCall()
     PySafeDecRef( result );
 }
 
-PyCachedCall *PyCachedCall::Clone() const {
+PyCachedCall *PyCachedCall::Clone() const
+{
     PyCachedCall *res = new PyCachedCall();
     res->result = result->Clone();
     return res;
@@ -847,7 +862,8 @@ void PyCachedCall::Dump(FILE *into, const char *pfx, bool contents_too)
     std::string s(pfx);
     s += "    ";
     fprintf(into, "%sCached Call: (empty right now) \n", pfx);
-    if(contents_too) {
+    if(contents_too)
+    {
         fprintf(into, "%s  Contents:\n", pfx);
         std::ostringstream ss;
         result->dump(ss, s);
@@ -863,28 +879,35 @@ bool PyCachedCall::Decode(PySubStream **in_ss)
     PySafeDecRef( result );
 
     ss->DecodeData();
-    if(ss->decoded() == NULL) {
+    if(ss->decoded() == NULL)
+    {
         SysLog::Error("PyCachedCall","Unable to decode initial stream for PyCachedCall");
         PyDecRef( ss );
         return false;
     }
 
-    if(!ss->decoded()->IsDict()) {
+    PyDict *po;
+    if(!pyIsAs(Dict, ss->decoded(), po))
+    {
         SysLog::Error("PyCachedCall","Cached call substream does not contain a dict: %s", ss->decoded()->TypeString());
         PyDecRef( ss );
         return false;
     }
-    PyDict *po = (PyDict *) ss->decoded();
 
     PyDict::const_iterator cur, end;
     cur = po->begin();
     end = po->end();
-    for(; cur != end; cur++) {
-        if(!cur->first->IsString())
+    PyString *key;
+    for(; cur != end; cur++)
+    {
+        if(!pyIsAs(String, cur->first, key))
+        {
             continue;
-        PyString *key = (PyString *) cur->first;
+        }
         if( key->content() == "lret" )
+        {
             result = cur->second->Clone();
+        }
     }
 
     PyDecRef( ss );

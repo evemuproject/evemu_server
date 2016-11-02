@@ -75,11 +75,11 @@ bool DBTYPE_IsCompatible( DBTYPE type, const PyRep* rep )
 {
 // Helper macro, checks type and range
 #define CheckTypeRangeUnsigned( type, lower_bound, upper_bound ) \
-    ( rep->Is##type() && (uint64)rep->As##type()->value() >= lower_bound && (uint64)rep->As##type()->value() <= upper_bound )
+    ( pyIs(type, rep) && (uint64)pyAs(type, rep)->value() >= lower_bound && (uint64)pyAs(type, rep)->value() <= upper_bound )
 #define CheckTypeRange( type, lower_bound, upper_bound ) \
-    ( rep->Is##type() && rep->As##type()->value() >= lower_bound && rep->As##type()->value() <= upper_bound )
+    ( pyIs(type, rep) && pyAs(type, rep)->value() >= lower_bound && pyAs(type, rep)->value() <= upper_bound )
 
-    if( rep->IsNone() )
+    if( pyIs(None, rep) )
         // represents NULL
         return true;
 
@@ -133,19 +133,19 @@ bool DBTYPE_IsCompatible( DBTYPE type, const PyRep* rep )
                     || CheckTypeRange( Float, -FLT_MAX, FLT_MAX ) );
 
         case DBTYPE_BOOL:
-            return rep->IsBool();
+            return pyIs(Bool, rep);
 
         case DBTYPE_BYTES:
-            return rep->IsBuffer();
+            return pyIs(Buffer, rep);
 
             // this looks like a horrible hack, and it is - but one that is used on live!
             // this works because STR type stuff is just tacked on to the marshal object
         case DBTYPE_STR:
             return true;
-            //return rep->IsString();
+            //return pyIs(String, rep);
 
         case DBTYPE_WSTR:
-            return rep->IsWString();
+            return pyIs(WString, rep);
     }
 
     return false;

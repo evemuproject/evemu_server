@@ -422,43 +422,43 @@ bool MarshalStream::VisitPackedRow( const PyPackedRow* rep )
             case DBTYPE_CY:
             case DBTYPE_FILETIME:
             {
-                unpacked.Append<int64>( r->IsNone() ? 0 : r->AsLong()->value() );
+                unpacked.Append<int64>( pyIs(None, r) ? 0 : pyAs(Long, r)->value() );
             } break;
 
             case DBTYPE_I4:
             case DBTYPE_UI4:
             {
-                unpacked.Append<int32>( r->IsNone() ? 0 : r->AsInt()->value() );
+                unpacked.Append<int32>( pyIs(None, r) ? 0 : pyAs(Int, r)->value() );
             } break;
 
             case DBTYPE_I2:
             case DBTYPE_UI2:
             {
-                unpacked.Append<int16>( r->IsNone() ? 0 : r->AsInt()->value() );
+                unpacked.Append<int16>( pyIs(None, r) ? 0 : pyAs(Int, r)->value() );
             } break;
 
             case DBTYPE_I1:
             case DBTYPE_UI1:
             {
-                if (r->IsBool())
+                if (pyIs(Bool, r))
                 {
-                    unpacked.Append<int8>(r->AsBool()->value() ? 1 : 0);
+                    unpacked.Append<int8>(pyAs(Bool, r)->value() ? 1 : 0);
                 }
                 else
                 {
-                    unpacked.Append<int8>(r->IsNone() ? 0 : r->AsInt()->value());
+                    unpacked.Append<int8>(pyIs(None, r) ? 0 : pyAs(Int, r)->value());
                 }
             }
             break;
 
             case DBTYPE_R8:
             {
-                unpacked.Append<double>( r->IsNone() ? 0.0 : r->AsFloat()->value() );
+                unpacked.Append<double>( pyIs(None, r) ? 0.0 : pyAs(Float, r)->value() );
             } break;
 
             case DBTYPE_R4:
             {
-                unpacked.Append<float>(static_cast<float>(r->IsNone() ? 0.0 : r->AsFloat()->value()));
+                unpacked.Append<float>(static_cast<float>(pyIs(None, r) ? 0.0 : pyAs(Float, r)->value()));
             } break;
 
             case DBTYPE_BOOL:
@@ -480,7 +480,7 @@ bool MarshalStream::VisitPackedRow( const PyPackedRow* rep )
     for(; cur != end; ++cur)
     {
         const uint32 index = cur->second;
-        const PyBool* r = rep->GetField( index )->AsBool();
+        const PyBool* r = pyAs(Bool, rep->GetField( index ));
 
         if( 7 < bitOffset )
             bitOffset = 0;

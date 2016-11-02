@@ -72,25 +72,30 @@ ReprocessingService::~ReprocessingService() {
 }
 
 PyBoundObject *ReprocessingService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
-    if(!bind_args->IsInt()) {
+    if(!pyIs(Int, bind_args))
+    {
         codelog(CLIENT__ERROR, "%s: Non-integer bind argument '%s'", c->GetName(), bind_args->TypeString());
         return NULL;
     }
 
-    uint32 stationID = bind_args->AsInt()->value();
+    uint32 stationID = pyAs(Int, bind_args)->value();
 
-    if(!IsStation(stationID)) {
+    if(!IsStation(stationID))
+    {
         codelog(CLIENT__ERROR, "%s: Expected stationID, but hasn't got any.", c->GetName());
         return NULL;
     }
 
     ReprocessingServiceBound *obj = new ReprocessingServiceBound(stationID);
-    if(!obj->Load()) {
+    if(!obj->Load())
+    {
         _log(SERVICE__ERROR, "Failed to load static info for station %u.", stationID);
         delete obj;
         return NULL;
     } else
+    {
         return(obj);
+    }
 }
 
 //******************************************************************************

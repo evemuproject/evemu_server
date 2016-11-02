@@ -57,7 +57,7 @@ PyResult AccountService::Handle_GetCashBalance(PyCallArgs &call) {
     if (call.byname.find("accountKey") != call.byname.end())
     {
         hasAccountKey = true;
-        accountKey = call.byname.find("accountKey")->second->AsInt()->value();
+        accountKey = pyAs(Int, call.byname.find("accountKey")->second)->value();
     }
 
     if (call.tuple->size() >= 1)
@@ -70,10 +70,10 @@ PyResult AccountService::Handle_GetCashBalance(PyCallArgs &call) {
         //we can get an integer or a boolean right now...
         bool corporate_wallet = false;
 
-        if( args.arg->IsInt() )
-            corporate_wallet = ( args.arg->AsInt()->value() != 0 );
-        else if( args.arg->IsBool() )
-            corporate_wallet = args.arg->AsBool()->value();
+        if( pyIs(Int, args.arg) )
+            corporate_wallet = ( pyAs(Int, args.arg)->value() != 0 );
+        else if( pyIs(Bool, args.arg) )
+            corporate_wallet = pyAs(Bool, args.arg)->value();
         else
         {
             codelog(CLIENT__ERROR, "Invalid arguments");
@@ -199,7 +199,8 @@ PyResult AccountService::Handle_GiveCash(PyCallArgs &call) {
     }
 }
 
-PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, double amount, const char *reason, JournalRefType refTypeID) {
+PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, double amount, const char *reason, JournalRefType refTypeID)
+{
     if(!client->AddBalance(-amount)) {
         _log(CLIENT__ERROR, "%s: Failed to remove %.2f ISK from %u for donation to %u",
             client->GetName(),
@@ -280,8 +281,10 @@ PyTuple * AccountService::GiveCashToCorp(Client * const client, uint32 corpID, d
     return ans;
 }
 
-PyTuple * AccountService::GiveCashToChar(Client * const client, Client * const other, double amount, const char *reason, JournalRefType refTypeID) {
-    if(!client->AddBalance(-amount)) {
+PyTuple * AccountService::GiveCashToChar(Client * const client, Client * const other, double amount, const char *reason, JournalRefType refTypeID)
+{
+    if(!client->AddBalance(-amount))
+    {
         _log(CLIENT__ERROR, "%s: Failed to remove %.2f ISK from %u for donation to %u",
             client->GetName(),
             amount,
@@ -350,18 +353,24 @@ PyTuple * AccountService::GiveCashToChar(Client * const client, Client * const o
     return ans;
 }
 
-PyResult AccountService::Handle_GetJournal(PyCallArgs &call) {
+PyResult AccountService::Handle_GetJournal(PyCallArgs &call)
+{
     Call_GetJournal args;
-    if(!args.Decode(&call.tuple)) {
+    if(!args.Decode(&call.tuple))
+    {
         codelog(CLIENT__ERROR, "Invalid arguments");
         return NULL;
     }
 
     bool ca = false;
-    if( args.corpAccount->IsBool() )
-        ca = args.corpAccount->AsBool()->value();
-    else if( args.corpAccount->IsInt() )
-        ca = ( args.corpAccount->AsInt()->value() != 0 );
+    if( pyIs(Bool, args.corpAccount) )
+    {
+        ca = pyAs(Bool, args.corpAccount)->value();
+    }
+    else if( pyIs(Int, args.corpAccount) )
+    {
+        ca = ( pyAs(Int, args.corpAccount)->value() != 0 );
+    }
     else
     {
         // problem

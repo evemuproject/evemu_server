@@ -136,7 +136,7 @@ public:
         assert(mInitialized && "PyTraceLog isn't initialized");
 
         // base object should be a tuple
-        if(tuple.IsTuple() == false)
+        if(pyIs(Tuple, (&tuple)) == false)
         {
             _logInternMessage("trace error because the base object isn't a tuple");
             return false;
@@ -145,7 +145,7 @@ public:
         /* the next part is commented out because the payload of the error message contains similar data */
 
         // the first object should be a tuple
-        /*if (tuple[0]->IsTuple() == false)
+        /*if (pyIs(List, tuple[0]) == false)
         {
             _logInternMessage("trace error because the first object within the tuple isn't a tuple");
             return false;
@@ -157,7 +157,7 @@ public:
         // tuple 0 should contain the error message or something binary
         PyRepTuple& tuple0_0 = tuple[0]->AsTuple();
         //tuple0_0[0] some integer... which I don't care about
-        if( tuple0_0[1]->IsString() == true )
+        if( pyIs(String, tuple0_0[1]) == true )
         {
             _logInternStringMessage(tuple0_0[1]);
         }
@@ -178,7 +178,7 @@ public:
         }*/
 
         /* python stack trace payload */
-        //if (tuple.GetItem(1)->IsString() == true)
+        //if (pyIs(String, tuple.GetItem(1)) == true)
         {
             _logInternBufferPacket(tuple.GetItem(1));
         }
@@ -199,7 +199,7 @@ protected:
 
     void _logInternStringMessage(PyRep* packet)
     {
-        PyString & msg = *packet->AsString();
+        PyString & msg = *pyAs(String, packet);
         if (mLogToConsole == true)
         {
             fprintf(stdout, "%s\n", msg.content().c_str());
@@ -213,7 +213,7 @@ protected:
 
     void _logInternBufferMessage(PyRep* packet)
     {
-        PyBuffer & msg = *packet->AsBuffer();
+        PyBuffer & msg = *pyAs(Buffer, packet);
         if (mLogToConsole == true)
         {
             fwrite(&msg.content()[0], msg.size(), 1, stdout);
@@ -231,7 +231,7 @@ protected:
     void _logInternBufferPacket(PyRep* packet)
     {
         // just placement code atm...
-        /*PyBuffer & msg = *packet->AsBuffer();
+        /*PyBuffer & msg = *as(Buffer, packet);
         if (mLogToConsole == true)
         {
             fwrite(&msg.content()[0], msg.size(), 1, stdout);
@@ -247,7 +247,7 @@ protected:
         if (packet->GetType() != PyRep::PyTypeString)
             return;
 
-        PyString & msg = *packet->AsString();
+        PyString & msg = *pyAs(String, packet);
         if (mLogToConsole == true)
         {
             //fwrite(msg.content().c_str(), msg.content().size(), 1, stdout);

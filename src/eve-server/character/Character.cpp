@@ -102,10 +102,10 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 	PyObjectEx* appearance;
 	PyList* sculpts = new PyList();
 
-	colors = data->GetItemString("colors")->AsList();
-	modifiers = data->GetItemString("modifiers")->AsList();
-	appearance = data->GetItemString("appearance")->AsObjectEx();
-	sculpts = data->GetItemString("sculpts")->AsList();
+	colors = pyAs(List, data->GetItemString("colors"));
+	modifiers = pyAs(List, data->GetItemString("modifiers"));
+	appearance = pyAs(ObjectEx, data->GetItemString("appearance"));
+	sculpts = pyAs(List, data->GetItemString("sculpts"));
 
 	PyList::const_iterator color_cur, color_end;
 	color_cur = colors->begin();
@@ -113,10 +113,10 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 
 	for(; color_cur != color_end; color_cur++)
 	{
-		if((*color_cur)->IsObjectEx())
+		if(pyIs(ObjectEx, (*color_cur)))
 		{
-			PyObjectEx_Type2* color_obj = (PyObjectEx_Type2*)(*color_cur)->AsObjectEx();
-			PyTuple* color_tuple = color_obj->GetArgs()->AsTuple();
+			PyObjectEx_Type2* color_obj = (PyObjectEx_Type2*)pyAs(ObjectEx, (*color_cur));
+			PyTuple* color_tuple = pyAs(Tuple, color_obj->GetArgs());
 
 			//color tuple data structure
 			//[0] PyToken
@@ -127,17 +127,17 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 			//[5] gloss
 
             CharacterDB::SetAvatarColors(ownerID,
-								color_tuple->GetItem(1)->AsInt()->value(),
-								color_tuple->GetItem(2)->AsInt()->value(),
-								color_tuple->GetItem(3)->AsInt()->value(),
-								color_tuple->GetItem(4)->AsFloat()->value(),
-								color_tuple->GetItem(5)->AsFloat()->value());
+								pyAs(Int, color_tuple->GetItem(1))->value(),
+								pyAs(Int, color_tuple->GetItem(2))->value(),
+								pyAs(Int, color_tuple->GetItem(3))->value(),
+								pyAs(Float, color_tuple->GetItem(4))->value(),
+								pyAs(Float, color_tuple->GetItem(5))->value());
 
 		}
 	}
 
 	PyObjectEx_Type2* app_obj = (PyObjectEx_Type2*)appearance;
-	PyTuple* app_tuple = app_obj->GetArgs()->AsTuple();
+	PyTuple* app_tuple = pyAs(Tuple, app_obj->GetArgs());
 
     CharacterDB::SetAvatar(ownerID, app_tuple->GetItem(1));
 
@@ -147,10 +147,10 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 
 	for(; modif_cur != modif_end; modif_cur++)
 	{
-		if((*modif_cur)->IsObjectEx())
+		if(pyIs(ObjectEx, (*modif_cur)))
 		{
-			PyObjectEx_Type2* modif_obj = (PyObjectEx_Type2*)(*modif_cur)->AsObjectEx();
-			PyTuple* modif_tuple = modif_obj->GetArgs()->AsTuple();
+			PyObjectEx_Type2* modif_obj = (PyObjectEx_Type2*)pyAs(ObjectEx, (*modif_cur));
+			PyTuple* modif_tuple = pyAs(Tuple, modif_obj->GetArgs());
 
 			//color tuple data structure
 			//[0] PyToken
@@ -170,10 +170,10 @@ void CharacterAppearance::Build(uint32 ownerID, PyDict* data)
 
 	for(; sculpt_cur != sculpt_end; sculpt_cur++)
 	{
-		if((*sculpt_cur)->IsObjectEx())
+		if(pyIs(ObjectEx, (*sculpt_cur)))
 		{
-			PyObjectEx_Type2* sculpt_obj = (PyObjectEx_Type2*)(*sculpt_cur)->AsObjectEx();
-			PyTuple* sculpt_tuple = sculpt_obj->GetArgs()->AsTuple();
+			PyObjectEx_Type2* sculpt_obj = (PyObjectEx_Type2*)pyAs(ObjectEx, (*sculpt_cur));
+			PyTuple* sculpt_tuple = pyAs(Tuple, sculpt_obj->GetArgs());
 
 			//sculpts tuple data structure
 			//[0] PyToken
@@ -571,7 +571,9 @@ EvilNumber Character::GetEndOfTraining() const
 {
     SkillRef skill = GetSkillInTraining();
     if( !skill )
+    {
         return 0;
+    }
 
     return skill->getAttribute(AttrExpiryTime);
 }

@@ -139,32 +139,32 @@ bool PyRowsetReader::iterator::IsNone( size_t index ) const
 
 bool PyRowsetReader::iterator::GetBool( size_t index ) const
 {
-    return GetRep( index )->AsBool()->value();
+    return pyAs(Bool, GetRep( index ))->value();
 }
 
 uint32 PyRowsetReader::iterator::GetInt( size_t index ) const
 {
-    return GetRep( index )->AsInt()->value();
+    return pyAs(Int, GetRep( index ))->value();
 }
 
 uint64 PyRowsetReader::iterator::GetLong( size_t index ) const
 {
-    return GetRep( index )->AsLong()->value();
+    return pyAs(Long, GetRep( index ))->value();
 }
 
 double PyRowsetReader::iterator::GetFloat( size_t index ) const
 {
-    return GetRep( index )->AsFloat()->value();
+    return pyAs(Float, GetRep( index ))->value();
 }
 
 const char* PyRowsetReader::iterator::GetString( size_t index ) const
 {
-    return GetRep( index )->AsString()->content().c_str();
+    return pyAs(String, GetRep( index ))->content().c_str();
 }
 
 const char* PyRowsetReader::iterator::GetWString( size_t index ) const
 {
-    return GetRep( index )->AsWString()->content().c_str();
+    return pyAs(WString, GetRep( index ))->content().c_str();
 }
 
 /************************************************************************/
@@ -255,11 +255,11 @@ bool SetSQLDumper::VisitTuple( const PyTuple* rep )
 {
     //first we want to check to see if this could possibly even be a tupleset.
     if(    2 == rep->size()
-        && rep->GetItem( 0 )->IsList()
-        && rep->GetItem( 1 )->IsList() )
+        && pyIs(List, rep->GetItem( 0 ))
+        && pyIs(List, rep->GetItem( 1 )) )
     {
-        const PyList* possible_header = rep->GetItem( 0 )->AsList();
-        const PyList* possible_items = rep->GetItem( 1 )->AsList();
+        const PyList* possible_header = pyAs(List, rep->GetItem( 0 ));
+        const PyList* possible_items = pyAs(List, rep->GetItem( 1 ));
 
         //check each element of the lists to make sure they line up.
         bool valid = true;
@@ -269,16 +269,20 @@ bool SetSQLDumper::VisitTuple( const PyTuple* rep )
         end = possible_header->end();
         for(; valid && cur != end; ++cur)
         {
-            if( !(*cur)->IsString() )
+            if( !pyIs(String, (*cur)) )
+            {
                 valid = false;
+            }
         }
 
         cur = possible_items->begin();
         end = possible_items->end();
         for(; valid && cur != end; ++cur)
         {
-            if( !(*cur)->IsList() )
+            if( !pyIs(List, (*cur)) )
+            {
                 valid = false;
+            }
 
             //it would be possible I guess to check each element of each item to make sure
             //it is a terminal type (non-container), but I dont care right now.
@@ -292,12 +296,16 @@ bool SetSQLDumper::VisitTuple( const PyTuple* rep )
             //must be duplicated in order to be decoded ...
             PyTuple* dup = new PyTuple( *rep );
             if( !rowset.Decode( &dup ) )
+            {
                 SysLog::Error( "SetSQLDumper", "Unable to interpret tuple as a tupleset, it may not even be one." );
+            }
             else
             {
                 TuplesetReader reader( rowset );
                 if( ReaderToSQL<TuplesetReader>( mTable.c_str(), mKeyField.c_str(), mOut, reader ) )
+                {
                     return true;
+                }
 
                 SysLog::Error( "SetSQLDumper", "Failed to convert tupleset to SQL." );
             }
@@ -318,12 +326,16 @@ bool SetSQLDumper::VisitObject( const PyObject* rep )
         //must be duplicated in order to be decoded ...
         PyObject* dup = new PyObject( *rep );
         if( !rowset.Decode( &dup ) )
+        {
             SysLog::Error( "SetSQLDumper", "Unable to load a rowset from the object body!" );
+        }
         else
         {
             RowsetReader reader( rowset );
             if( ReaderToSQL<RowsetReader>( mTable.c_str(), mKeyField.c_str(), mOut, reader ) )
+            {
                 return true;
+            }
 
             SysLog::Error( "SetSQLDumper", "Failed to convert rowset to SQL." );
         }

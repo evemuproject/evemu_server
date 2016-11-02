@@ -136,7 +136,7 @@ public:
     iterator end() { return iterator( this, rowCount() ); }
 
 protected:
-    PyList* _GetRow( size_t index ) const { return mSet.lines->GetItem( index )->AsList(); }
+    PyList* _GetRow( size_t index ) const { return pyAs(List, mSet.lines->GetItem( index )); }
 
     const util_Rowset& mSet;
 };
@@ -174,7 +174,7 @@ public:
     iterator end() { return iterator( this, rowCount() ); }
 
 protected:
-    PyList* _GetRow( size_t index ) const { return mSet.lines->GetItem( index )->AsList(); }
+    PyList* _GetRow( size_t index ) const { return pyAs(List, mSet.lines->GetItem( index )); }
 
     const util_Tupleset& mSet;       //we do NOT own this pointer
 };

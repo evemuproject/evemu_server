@@ -261,22 +261,22 @@ void PyObjectEx::dump(std::ostringstream &ss, const std::string &pfx) const
     std::string pfx1(pfx +   "    ");
     std::string pfx2(pfx1 +   "    ");
 //    PyToken *token = nullptr;
-//    if(mHeader != nullptr && mHeader->IsTuple())
+//    if(mHeader != nullptr && pyIs(List, mHeader))
 //    {
-//        PyTuple *headerTuple = mHeader->AsTuple();
+//        PyTuple *headerTuple = pyAs(Tuple, mHeader);
 //        if(headerTuple->items.size() > 0)
 //        {
 //            PyRep *t = headerTuple->items[0];
-//            if(t != nullptr && t->IsTuple())
+//            if(t != nullptr && pyIs(List, t))
 //            {
-//                if(t->AsTuple()->items.size() > 0)
+//                if(pyAs(Tuple, t)->items.size() > 0)
 //                {
-//                    t = t->AsTuple()->items[0];
+//                    t = pyAs(Tuple, t)->items[0];
 //                }
 //            }
-//            if(t != nullptr && t->IsToken())
+//            if(t != nullptr && pyIs(Token, t))
 //            {
-//                token = t->AsToken();
+//                token = pyAs(Token, t);
 //            }
 //        }
 //    }
@@ -403,21 +403,21 @@ void PyPackedRow::dump(std::ostringstream &ss, const std::string &pfx) const
                 }
                 i++;
             }
-            PyTuple *tup = mHeader->header()->AsTuple();
+            PyTuple *tup = pyAs(Tuple, mHeader->header());
             if(tup != nullptr && tup->items.size() > 2)
             {
-                PyList *keys = tup->items[2]->AsList();
+                PyList *keys = pyAs(List, tup->items[2]);
                 if(keys != nullptr)
                 {
                     for(PyRep *key : keys->items)
                     {
-                        PyTuple *keyTupple = key->AsTuple();
+                        PyTuple *keyTupple = pyAs(Tuple, key);
                         if(keyTupple != nullptr && keyTupple->items.size() == 2)
                         {
                             if(keyTupple->items[0] != nullptr && keyTupple->items[1] != nullptr)
                             {
-                                PyString *name = keyTupple->items[0]->AsString();
-                                PyToken *token = keyTupple->items[1]->AsToken();
+                                PyString *name = pyAs(String, keyTupple->items[0]);
+                                PyToken *token = pyAs(Token, keyTupple->items[1]);
                                 if(name != nullptr && token != nullptr)
                                 {
                                     ss << pfx1 << "['" << name->content() << "' => [Token] <" << token->content() << ">]" << std::endl;

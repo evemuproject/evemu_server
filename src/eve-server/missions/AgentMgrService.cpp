@@ -119,12 +119,12 @@ PyBoundObject *AgentMgrService::_CreateBoundObject(Client *c, const PyRep *bind_
     _log(CLIENT__MESSAGE, "%s bind request for:", GetName());
     bind_args->Dump(CLIENT__MESSAGE, "    ");
 
-    if(!bind_args->IsInt()) {
+    if(!pyIs(Int, bind_args)) {
         codelog(CLIENT__ERROR, "%s: Non-integer bind argument '%s'", c->GetName(), bind_args->TypeString());
         return NULL;
     }
 
-    uint32 agentID = bind_args->AsInt()->value();
+    uint32 agentID = pyAs(Int, bind_args)->value();
 
     Agent *agent = _GetAgent(agentID);
     if(agent == NULL) {
@@ -213,12 +213,14 @@ PyResult AgentMgrBound::Handle_DoAction(PyCallArgs &call) {
     res.dialogue = new PyList;
 
     std::map<uint32, std::string> choices;
-    if( !(args.arg->IsInt()) )
+    if( !(pyIs(Int, args.arg)) )
     {
-        SysLog::Error( "AgentMgrBound::Handle_DoAction()", "args.arg->IsInt() failed.  Expected type Int, got type %s", args.arg->TypeString() );
+        SysLog::Error( "AgentMgrBound::Handle_DoAction()", "pyIs(Int, args.arg) failed.  Expected type Int, got type %s", args.arg->TypeString() );
     }
     else
-        m_agent->DoAction( call.client, args.arg->AsInt()->value(), res.agentSays, choices );
+    {
+        m_agent->DoAction( call.client, pyAs(Int, args.arg)->value(), res.agentSays, choices );
+    }
 
     DoAction_Dialogue_Item choice;
 

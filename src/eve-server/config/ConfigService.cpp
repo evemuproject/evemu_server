@@ -184,7 +184,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
     if( t->size() > 4 )
     {
         PyRep* v = t->GetItem( 4 );
-        if( !v->IsInt() )
+        if( !pyIs(Int, v) )
         {
             _log( NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 4 is not an int: %s", v->TypeString() );
 
@@ -192,13 +192,13 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
             return NULL;
         }
 
-        wantStations = ( 0 != v->AsInt()->value() );
+        wantStations = ( 0 != pyAs(Int, v)->value() );
     }
 
     if( t->size() > 3 )
     {
         PyRep* v = t->GetItem( 3 );
-        if( !v->IsInt() )
+        if( !pyIs(Int, v) )
         {
             _log( NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 3 is not an int: %s", v->TypeString() );
 
@@ -206,13 +206,13 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
             return NULL;
         }
 
-        wantSystems = ( 0 != v->AsInt()->value() );
+        wantSystems = ( 0 != pyAs(Int, v)->value() );
     }
 
     if( t->size() > 2 )
     {
         PyRep* v = t->GetItem( 2 );
-        if( !v->IsInt() )
+        if( !pyIs(Int, v) )
         {
             _log( NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 2 is not an int: %s", v->TypeString() );
 
@@ -220,13 +220,13 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
             return NULL;
         }
 
-        wantConstellations = ( 0 != v->AsInt()->value() );
+        wantConstellations = ( 0 != pyAs(Int, v)->value() );
     }
 
     if( t->size() > 1 )
     {
         PyRep* v = t->GetItem( 1 );
-        if( !v->IsInt() )
+        if( !pyIs(Int, v) )
         {
             _log( NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 1 is not an int: %s", v->TypeString() );
 
@@ -234,13 +234,13 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
             return NULL;
         }
 
-        wantRegions = ( 0 != v->AsInt()->value() );
+        wantRegions = ( 0 != pyAs(Int, v)->value() );
     }
 
     if( t->size() > 0 )
     {
         PyRep* v = t->GetItem( 0 );
-        if( !v->IsInt() )
+        if( !pyIs(Int, v) )
         {
             _log( NET__PACKET_ERROR, "Decode Handle_GetMapObjects failed: arg 0 is not an int: %s", v->TypeString() );
 
@@ -248,7 +248,7 @@ PyResult ConfigService::Handle_GetMapObjects(PyCallArgs &call) {
             return NULL;
         }
 
-        arg = v->AsInt()->value();
+        arg = pyAs(Int, v)->value();
     }
 
     PyDecRef( t );

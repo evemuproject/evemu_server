@@ -51,24 +51,32 @@ int32 ClientSession::GetLastInt( const char* name ) const
 {
     PyRep* v = _GetLast( name );
     if( v == NULL )
+    {
         return 0;
+    }
 
-    if( !v->IsInt() )
+    if( !pyIs(Int, v) )
+    {
         return 0;
+    }
 
-    return v->AsInt()->value();
+    return pyAs(Int, v)->value();
 }
 
 int32 ClientSession::GetCurrentInt( const char* name ) const
 {
     PyRep* v = _GetCurrent( name );
     if( v == NULL )
+    {
         return 0;
+    }
 
-    if( !v->IsInt() )
+    if( !pyIs(Int, v) )
+    {
         return 0;
+    }
 
-    return v->AsInt()->value();
+    return pyAs(Int, v)->value();
 }
 
 void ClientSession::SetInt( const char* name, int32 value )
@@ -80,24 +88,32 @@ int64 ClientSession::GetLastLong( const char* name ) const
 {
     PyRep* v = _GetLast( name );
     if( v == NULL )
+    {
         return 0;
+    }
 
-    if( !v->IsLong() )
+    if( !pyIs(Long, v) )
+    {
         return 0;
+    }
 
-    return v->AsLong()->value();
+    return pyAs(Long, v)->value();
 }
 
 int64 ClientSession::GetCurrentLong( const char* name ) const
 {
     PyRep* v = _GetCurrent( name );
     if( v == NULL )
+    {
         return 0;
+    }
 
-    if( !v->IsLong() )
+    if( !pyIs(Long, v) )
+    {
         return 0;
+    }
 
-    return v->AsLong()->value();
+    return pyAs(Long, v)->value();
 }
 
 void ClientSession::SetLong( const char* name, int64 value )
@@ -109,24 +125,32 @@ std::string ClientSession::GetLastString( const char* name ) const
 {
     PyRep* v = _GetLast( name );
     if( v == NULL )
+    {
         return std::string();
+    }
 
-    if( !v->IsString() )
+    if( !pyIs(String, v) )
+    {
         return std::string();
+    }
 
-    return v->AsString()->content();
+    return pyAs(String, v)->content();
 }
 
 std::string ClientSession::GetCurrentString( const char* name ) const
 {
     PyRep* v = _GetCurrent( name );
     if( v == NULL )
+    {
         return std::string();
+    }
 
-    if( !v->IsString() )
+    if( !pyIs(String, v) )
+    {
         return std::string();
+    }
 
-    return v->AsString()->content();
+    return pyAs(String, v)->content();
 }
 
 void ClientSession::SetString( const char* name, const char* value )
@@ -146,8 +170,8 @@ void ClientSession::EncodeChanges( PyDict* into )
     end = mSession->end();
     for(; cur != end; cur++)
     {
-        PyString* str = cur->first->AsString();
-        PyTuple* value = cur->second->AsTuple();
+        PyString* str = pyAs(String, cur->first);
+        PyTuple* value = pyAs(Tuple, cur->second);
 
         PyRep* last = value->GetItem( 0 );
         PyRep* current = value->GetItem( 1 );
@@ -172,15 +196,19 @@ PyTuple* ClientSession::_GetValueTuple( const char* name ) const
 {
     PyRep* v = mSession->GetItemString( name );
     if( v == NULL )
+    {
         return NULL;
-    return v->AsTuple();
+    }
+    return pyAs(Tuple, v);
 }
 
 PyRep* ClientSession::_GetLast( const char* name ) const
 {
     PyTuple* v = _GetValueTuple( name );
     if( v == NULL )
+    {
         return NULL;
+    }
     return v->GetItem( 0 );
 }
 
@@ -188,7 +216,9 @@ PyRep* ClientSession::_GetCurrent( const char* name ) const
 {
     PyTuple* v = _GetValueTuple( name );
     if( v == NULL )
+    {
         return NULL;
+    }
     return v->GetItem( 1 );
 }
 

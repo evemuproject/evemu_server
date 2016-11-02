@@ -64,13 +64,15 @@ PyCallArgs::PyCallArgs(Client *c, PyTuple* tup, PyDict* dict)
     PyDict::const_iterator cur, end;
     cur = dict->begin();
     end = dict->end();
-    for(; cur != end; cur++) {
-        if(!cur->first->IsString()) {
+    for(; cur != end; cur++)
+    {
+        if(!pyIs(String, cur->first))
+        {
             _log(SERVICE__ERROR, "Non-string key in call named arguments. Skipping.");
             cur->first->Dump(SERVICE__ERROR, "    ");
             continue;
         }
-        byname[ cur->first->AsString()->content() ] = cur->second;
+        byname[ pyAs(String, cur->first)->content() ] = cur->second;
         PyIncRef( cur->second );
     }
 }

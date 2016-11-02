@@ -146,10 +146,14 @@ PyResult BeyonceBound::Handle_CmdFollowBall(PyCallArgs &call) {
     }
 
     double distance;
-    if( args.distance->IsInt() )
-        distance = args.distance->AsInt()->value();
-    else if( args.distance->IsFloat() )
-        distance = args.distance->AsFloat()->value();
+    if( pyIs(Int, args.distance) )
+    {
+        distance = pyAs(Int, args.distance)->value();
+    }
+    else if( pyIs(Float, args.distance) )
+    {
+        distance = pyAs(Float, args.distance)->value();
+    }
     else
     {
         codelog(CLIENT__ERROR, "%s: Invalid type %s for distance argument received.", call.client->GetName(), args.distance->TypeString());
@@ -252,12 +256,12 @@ PyResult BeyonceBound::Handle_CmdGotoDirection(PyCallArgs &call) {
 
 PyResult BeyonceBound::Handle_CmdGotoBookmark(PyCallArgs &call) {
 
-    if( !(call.tuple->GetItem( 0 )->IsInt()) )
+    if( !(pyIs(Int, call.tuple->GetItem( 0 ))) )
     {
         SysLog::Error( "BeyonceService::Handle_GotoBookmark()", "%s: Invalid type %s for bookmarkID received.", call.client->GetName(), call.tuple->GetItem( 0 )->TypeString() );
         return NULL;
     }
-    uint32 bookmarkID = call.tuple->GetItem( 0 )->AsInt()->value();
+    uint32 bookmarkID = pyAs(Int, call.tuple->GetItem( 0 ))->value();
 
     DestinyManager *destiny = call.client->Destiny();
     if( destiny == NULL )
@@ -320,10 +324,14 @@ PyResult BeyonceBound::Handle_CmdOrbit(PyCallArgs &call) {
     }
 
     double distance;
-    if( arg.distance->IsInt() )
-        distance = arg.distance->AsInt()->value();
-    else if( arg.distance->IsFloat() )
-        distance = arg.distance->AsFloat()->value();
+    if( pyIs(Int, arg.distance) )
+    {
+        distance = pyAs(Int, arg.distance)->value();
+    }
+    else if( pyIs(Float, arg.distance) )
+    {
+        distance = pyAs(Float, arg.distance)->value();
+    }
     else
     {
         codelog(CLIENT__ERROR, "%s: Invalid type %s for distance argument received.", call.client->GetName(), arg.distance->TypeString());
@@ -331,18 +339,21 @@ PyResult BeyonceBound::Handle_CmdOrbit(PyCallArgs &call) {
     }
 
     DestinyManager *destiny = call.client->Destiny();
-    if(destiny == NULL) {
+    if(destiny == NULL)
+    {
         codelog(CLIENT__ERROR, "%s: Client has no destiny manager!", call.client->GetName());
         return NULL;
     }
 
     SystemManager *system = call.client->System();
-    if(system == NULL) {
+    if(system == NULL)
+    {
         codelog(CLIENT__ERROR, "%s: Client has no system manager!", call.client->GetName());
         return NULL;
     }
     SystemEntity *entity = system->get(arg.entityID);
-    if(entity == NULL) {
+    if(entity == NULL)
+    {
         _log(CLIENT__ERROR, "%s: Unable to find entity %u to Orbit.", call.client->GetName(), arg.entityID);
         return NULL;
     }
@@ -367,14 +378,13 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
             //Not needed, this is the correct behavior
             //codelog(CLIENT__ERROR, "%s: range not found, using 15 km.", call.client->GetName());
             distance = 0.0;
-        } else if(!res->second->IsInt() && !res->second->IsFloat()) {
+        } else if(!pyIs(Int, res->second) && !pyIs(Float, res->second)) {
             codelog(CLIENT__ERROR, "%s: range of invalid type %s, expected Integer or Real; using 15 km.", call.client->GetName(), res->second->TypeString());
             distance = 0.0;
-        } else {
-            distance =
-                res->second->IsInt()
-                ? res->second->AsInt()->value()
-                : res->second->AsFloat()->value();
+        }
+        else
+        {
+            distance = pyIs(Int, res->second) ? pyAs(Int, res->second)->value() : pyAs(Float, res->second)->value();
         }
 
         //we need to delay the destiny updates until after we return
@@ -450,10 +460,7 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
 
             // Calculate the warp-to distance specified by the client and add this to the final warp-to distance
             std::map<std::string, PyRep *>::const_iterator res = call.byname.find("minRange");
-            distance +=
-                res->second->IsInt()
-                ? res->second->AsInt()->value()
-                : res->second->AsFloat()->value();
+            distance += pyIs(Int, res->second) ? pyAs(Int, res->second)->value() : pyAs(Float, res->second)->value();
 
             if( typeID == 5 )
             {

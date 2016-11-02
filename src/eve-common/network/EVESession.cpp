@@ -124,12 +124,12 @@ PyPacket* EVEClientSession::_HandleVersion( PyRep* rep )
 PyPacket* EVEClientSession::_HandleCommand( PyRep* rep )
 {
     //check if it actually is tuple
-    if( !rep->IsTuple() )
+    if( !pyIs(Tuple, rep) )
     {
         SysLog::Error("Network", "%s: Invalid packet during waiting for command (tuple expected).", getAddress().c_str());
     }
     // decode
-    else if( rep->AsTuple()->size() == 2 )
+    else if( pyAs(Tuple, rep)->size() == 2 )
     {
         //QC = Queue Check
         NetCommand_QC cmd;
@@ -150,7 +150,7 @@ PyPacket* EVEClientSession::_HandleCommand( PyRep* rep )
             reset();
         }
     }
-    else if( rep->AsTuple()->size() == 3 )
+    else if( pyAs(Tuple, rep)->size() == 3 )
     {
         //this is sent when client is logging in
         NetCommand_VK cmd;

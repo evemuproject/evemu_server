@@ -67,12 +67,12 @@ uint32 DBRowDescriptor::ColumnCount() const
 
 PyString* DBRowDescriptor::GetColumnName( uint32 index ) const
 {
-    return _GetColumn( index )->GetItem( 0 )->AsString();
+    return pyAs(String, _GetColumn( index )->GetItem( 0 ));
 }
 
 DBTYPE DBRowDescriptor::GetColumnType( uint32 index ) const
 {
-    return (DBTYPE)_GetColumn( index )->GetItem( 1 )->AsInt()->value();
+    return (DBTYPE)pyAs(Int, _GetColumn( index )->GetItem( 1 ))->value();
 }
 
 uint32 DBRowDescriptor::FindColumn( const char* name ) const
@@ -118,7 +118,7 @@ void DBRowDescriptor::dump(std::ostringstream &ss, const std::string &pfx) const
         ss << pfx1 << "['" << GetColumnName(i) << "' [" << DBTYPE_NAME[GetColumnType(i)] <<"] ]" << std::endl;
     }
     PyRep *keywords = nullptr;
-    PyTuple* t = header()->AsTuple();
+    PyTuple* t = pyAs(Tuple, header());
     if( t->size() >= 3 )
     {
         keywords = t->GetItem( 2 );
@@ -132,12 +132,12 @@ void DBRowDescriptor::dump(std::ostringstream &ss, const std::string &pfx) const
 
 PyTuple* DBRowDescriptor::_GetColumnList() const
 {
-    return GetArgs()->GetItem( 0 )->AsTuple();
+    return pyAs(Tuple, GetArgs()->GetItem( 0 ));
 }
 
 PyTuple* DBRowDescriptor::_GetColumn( size_t index ) const
 {
-    return _GetColumnList()->GetItem( index )->AsTuple();
+    return pyAs(Tuple, _GetColumnList()->GetItem( index ));
 }
 
 PyTuple* DBRowDescriptor::_CreateArgs()
@@ -192,7 +192,7 @@ void CRowSet::dump(std::ostringstream &ss, const std::string &pfx) const
         }
     }
     PyRep *keywords = nullptr;
-    PyTuple* t = header()->AsTuple();
+    PyTuple* t = pyAs(Tuple, header());
     if( t->size() >= 3 )
     {
         keywords = t->GetItem( 2 );
@@ -209,7 +209,7 @@ DBRowDescriptor* CRowSet::_GetRowDesc() const
     PyRep* r = FindKeyword( "header" );
     assert( r );
 
-    return (DBRowDescriptor*)r->AsObjectEx();
+    return (DBRowDescriptor*)pyAs(ObjectEx, r);
 }
 
 /*PyList* CRowSet::_GetColumnList() const
@@ -217,7 +217,7 @@ DBRowDescriptor* CRowSet::_GetRowDesc() const
     PyRep* r = FindKeyword( "columns" );
     assert( r );
 
-    return r->AsList();
+    return as(List, r);
 }
 */
 
@@ -271,21 +271,19 @@ void CIndexedRowSet::dump(std::ostringstream &ss, const std::string &pfx) const
     std::string pfx2(pfx1 + "    ");
     ss << pfx << "[CIndexedRowSet]" << std::endl;
     PyDict *keywords = nullptr;
-    PyTuple* t = header()->AsTuple();
+    PyTuple* t = pyAs(Tuple, header());
     if( t->size() >= 3 )
     {
         PyRep *obj = t->GetItem( 2 );
-        if(obj->IsDict())
-        {
-            keywords = obj->AsDict();
-        }
+        pyIsAs(Dict, obj, keywords);
     }
     if(keywords != nullptr)
     {
         PyRep *idx = keywords->GetItemString("columnName");
-        if(idx != nullptr && idx->IsString())
+        PyString *str;
+        if(idx != nullptr && pyIsAs(String, idx, str))
         {
-            ss << pfx1 << "index: " << idx->AsString()->content() << std::endl;
+            ss << pfx1 << "index: " << str->content() << std::endl;
         }
         else
         {
@@ -319,7 +317,7 @@ DBRowDescriptor* CIndexedRowSet::_GetRowDesc() const
     PyRep* r = FindKeyword( "header" );
     assert( r );
 
-    return (DBRowDescriptor*)r->AsObjectEx();
+    return (DBRowDescriptor*)pyAs(ObjectEx, r);
 }
 
 PyTuple* CIndexedRowSet::_CreateArgs()
@@ -370,7 +368,7 @@ DBRowDescriptor* CFilterRowSet::_GetRowDesc() const
     PyRep* r = FindKeyword( "header" );
     assert( r );
 
-    return (DBRowDescriptor*)r->AsObjectEx();
+    return (DBRowDescriptor*)pyAs(ObjectEx, r);
 }
 
 PyTuple* CFilterRowSet::_CreateArgs()

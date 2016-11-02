@@ -584,10 +584,10 @@ PyResult MarketProxyService::Handle_CharGetNewTransactions(PyCallArgs &call)
     }
 
     double minPrice;
-    if(args.minPrice->IsInt())
-        minPrice = args.minPrice->AsInt()->value();
-    else if(args.minPrice->IsFloat())
-        minPrice = args.minPrice->AsFloat()->value();
+    if(pyIs(Int, args.minPrice))
+        minPrice = pyAs(Int, args.minPrice)->value();
+    else if(pyIs(Float, args.minPrice))
+        minPrice = pyAs(Float, args.minPrice)->value();
     else
     {
         codelog(CLIENT__ERROR, "%s: Invalid type %s for minPrice argument received.", call.client->GetName(), args.minPrice->TypeString());

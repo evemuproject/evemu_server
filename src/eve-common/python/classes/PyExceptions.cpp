@@ -48,7 +48,7 @@ PyDict* GPSTransportClosed::GetReasonArgs() const
     PyRep* r = FindKeyword( "reasonArgs" );
     assert( r );
 
-    return r->AsDict();
+    return pyAs(Dict, r);
 }
 
 PyTuple* GPSTransportClosed::_CreateArgs( const char* reason )
@@ -95,7 +95,7 @@ void UserError::AddKeyword( const char* name, PyRep* value )
 
 PyDict* UserError::_GetTupleKeywords() const
 {
-    return GetArgs()->GetItem( 1 )->AsDict();
+    return pyAs(Dict, GetArgs()->GetItem( 1 ));
 }
 
 PyDict* UserError::_GetDictKeywords() const
@@ -103,7 +103,7 @@ PyDict* UserError::_GetDictKeywords() const
     PyRep* r = FindKeyword( "dict" );
     assert( r );
 
-    return r->AsDict();
+    return pyAs(Dict, r);
 }
 
 PyTuple* UserError::_CreateArgs( const char* msg )

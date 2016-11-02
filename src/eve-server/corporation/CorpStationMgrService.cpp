@@ -95,11 +95,11 @@ CorpStationMgrService::~CorpStationMgrService() {
 
 
 PyBoundObject *CorpStationMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
-    if(!bind_args->IsInt()) {
+    if(!pyIs(Int, bind_args)) {
         codelog(SERVICE__ERROR, "%s Service: invalid bind argument type %s", GetName(), bind_args->TypeString());
         return NULL;
     }
-    return new CorpStationMgrIMBound( bind_args->AsInt()->value() );
+    return new CorpStationMgrIMBound( pyAs(Int, bind_args)->value() );
 }
 
 

@@ -46,14 +46,14 @@ PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {
     {
         bool repackDamaged = false;
         // Call contains dictionary and empty list, get the dictionary.
-        PyDict *dict = call.tuple->GetItem(0)->AsDict();
+        PyDict *dict = pyAs(Dict, call.tuple->GetItem(0));
         PyDict::const_iterator cur = dict->begin();
         for (; cur != dict->end(); cur++)
         {
             // Dictionary is of Int as a locationID and list of item entries.
-            //PyInt *pInt = cur->first->AsInt();
+            //PyInt *pInt = as(Int, cur->first);
             // Location is irrelevant so get list.
-            PyList *pList = cur->second->AsList();
+            PyList *pList = pyAs(List, cur->second);
             if (pList != nullptr)
             {
                 //uint32 locationID = pInt->value();
@@ -62,12 +62,12 @@ PyResult RepairService::Handle_UnasembleItems(PyCallArgs &call) {
                 for (; itemItr != pList->end(); itemItr++)
                 {
                     // List is tuples of itemID, LocationID pairs.
-                    PyTuple *tuple = (*itemItr)->AsTuple();
+                    PyTuple *tuple = pyAs(Tuple, (*itemItr));
                     if (tuple != nullptr)
                     {
                         // Get the itemID.
-                        PyInt *itemInt = tuple->GetItem(0)->AsInt();
-                        //PyInt *itemLocation = tuple->GetItem(1)->AsInt();
+                        PyInt *itemInt = pyAs(Int, tuple->GetItem(0));
+                        //PyInt *itemLocation = as(Int, tuple->GetItem(1));
                         if (itemInt != nullptr)
                         {
                             // Get the item itself.

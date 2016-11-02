@@ -34,7 +34,7 @@ PasswordString::PasswordString( PyWString* password )
 
 PyWString* PasswordString::GetPassword() const
 {
-    return GetArgs()->GetItem( 1 )->AsWString();
+    return pyAs(WString, GetArgs()->GetItem( 1 ));
 }
 
 PyTuple* PasswordString::_CreateArgs( PyWString* password )

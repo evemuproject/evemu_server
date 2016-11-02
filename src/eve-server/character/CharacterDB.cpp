@@ -622,7 +622,7 @@ void CharacterDB::SetAvatar(uint32 charID, PyRep* hairDarkness) {
 		"INSERT INTO srvAvatars ("
 		"charID, hairDarkness)"
 		"VALUES (%u, %f)",
-		charID, hairDarkness->AsFloat()->value()))
+		charID, pyAs(Float, hairDarkness)->value()))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}
@@ -649,9 +649,9 @@ void CharacterDB::SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  
 		"charID, modifierLocationID, paperdollResourceID, paperdollResourceVariation)"
 		"VALUES (%u, %u, %u, %u)",
 		charID,
-		modifierLocationID->AsInt()->value(),
-		paperdollResourceID->AsInt()->value(),
-		paperdollResourceVariation->IsInt() ? paperdollResourceVariation->AsInt()->value() : 0 ))
+		pyAs(Int, modifierLocationID)->value(),
+		pyAs(Int, paperdollResourceID)->value(),
+		pyIs(Int, paperdollResourceVariation) ? pyAs(Int, paperdollResourceVariation)->value() : 0 ))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}
@@ -665,10 +665,10 @@ void CharacterDB::SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep
 		"charID, sculptLocationID, weightUpDown, weightLeftRight, weightForwardBack)"
 		"VALUES (%u, %u, %f, %f, %f)",
 		charID,
-		sculptLocationID->AsInt()->value(),
-		weightUpDown->IsFloat() ? weightUpDown->AsFloat()->value() : 0.0f,
-		weightLeftRight->IsFloat() ? weightLeftRight->AsFloat()->value() : 0.0f,
-		weightForwardBack->IsFloat() ? weightForwardBack->AsFloat()->value() : 0.0f))
+		pyAs(Int, sculptLocationID)->value(),
+		pyIs(Float, weightUpDown) ? pyAs(Float, weightUpDown)->value() : 0.0f,
+		pyIs(Float, weightLeftRight) ? pyAs(Float, weightLeftRight)->value() : 0.0f,
+		pyIs(Float, weightForwardBack) ? pyAs(Float, weightForwardBack)->value() : 0.0f))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}

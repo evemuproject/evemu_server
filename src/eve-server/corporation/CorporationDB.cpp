@@ -324,9 +324,11 @@ PyObject* CorporationDB::GetMedalsReceived( uint32 charID )
 
 static std::string _IoN( PyRep* r )
 {
-    if( !r->IsInt() )
+    if( !pyIs(Int, r) )
+    {
         return "NULL";
-    return itoa( r->AsInt()->value() );
+    }
+    return itoa( pyAs(Int, r)->value() );
 }
 
 bool CorporationDB::AddCorporation(Call_AddCorporation & corpInfo, Client *client, uint32 & corpID) {

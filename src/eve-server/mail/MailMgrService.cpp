@@ -97,7 +97,7 @@ PyResult MailMgrService::Handle_SyncMail(PyCallArgs &call)
 {
     int firstId = 0, secondId = 0;
 
-    if (call.tuple->size() == 2 && !call.tuple->GetItem(0)->IsNone() && !call.tuple->GetItem(1)->IsNone())
+    if (call.tuple->size() == 2 && !pyIs(None, call.tuple->GetItem(0)) && !pyIs(None, call.tuple->GetItem(1)))
     {
         Call_TwoIntegerArgs args;
         if (!args.Decode(&call.tuple))

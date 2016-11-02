@@ -104,7 +104,7 @@ bool ClassDecodeGenerator::ProcessElement( const TiXmlElement* field )
         "    }\n"
         "\n",
         name, v,
-            mName, name
+        mName, name
     );
 
     pop();
@@ -141,9 +141,8 @@ bool ClassDecodeGenerator::ProcessElementPtr( const TiXmlElement* field )
         "\n",
         name,
         name, type,
-
         name, v,
-            mName, name
+        mName, name
     );
 
     pop();
@@ -189,7 +188,7 @@ bool ClassDecodeGenerator::ProcessInt( const TiXmlElement* field )
     const char* v = top();
     if( none_marker != NULL )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = %s;\n"
             "    else\n",
             v,
@@ -197,8 +196,8 @@ bool ClassDecodeGenerator::ProcessInt( const TiXmlElement* field )
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsInt() )\n"
-        "        %s = %s->AsInt()->value();\n"
+        "    if( pyIs(Int, %s) )\n"
+        "        %s = pyAs(Int, %s)->value();\n"
         "    else\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not an int: %%s\", %s->TypeString() );\n"
@@ -207,9 +206,8 @@ bool ClassDecodeGenerator::ProcessInt( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-
-            mName, name, v
+        name, v,
+        mName, name, v
     );
 
     pop();
@@ -231,7 +229,7 @@ bool ClassDecodeGenerator::ProcessLong( const TiXmlElement* field )
     const char* v = top();
     if( none_marker != NULL )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = %s;\n"
             "    else\n",
             v,
@@ -239,10 +237,10 @@ bool ClassDecodeGenerator::ProcessLong( const TiXmlElement* field )
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsLong() )\n"
-        "        %s = %s->AsLong()->value();\n"
-        "    else if( %s->IsInt() )\n"
-        "        %s = %s->AsInt()->value();\n"
+        "    if( pyIs(Long, %s) )\n"
+        "        %s = pyAs(Long, %s)->value();\n"
+        "    else if( pyIs(Int, %s) )\n"
+        "        %s = pyAs(Int, %s)->value();\n"
         "    else\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a long int: %%s\", %s->TypeString() );\n"
@@ -251,11 +249,10 @@ bool ClassDecodeGenerator::ProcessLong( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
+        name, v,
         v,
-            name, v,
-
-            mName, name, v
+        name, v,
+        mName, name, v
     );
 
     pop();
@@ -277,16 +274,16 @@ bool ClassDecodeGenerator::ProcessReal( const TiXmlElement* field )
     const char* v = top();
     if( none_marker != NULL )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = %s;\n"
             "    else\n",
             v,
-                name, none_marker
+            name, none_marker
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsFloat())\n"
-        "        %s = %s->AsFloat()->value();\n"
+        "    if( pyIs(Float, %s))\n"
+        "        %s = pyAs(Float, %s)->value();\n"
         "    else\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a real: %%s\", %s->TypeString() );\n"
@@ -295,9 +292,8 @@ bool ClassDecodeGenerator::ProcessReal( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-
-            mName, name, v
+        name, v,
+        mName, name, v
     );
 
     pop();
@@ -323,25 +319,25 @@ bool ClassDecodeGenerator::ProcessBool( const TiXmlElement* field )
     const char* v = top();
     if( none_marker != NULL )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = %s;\n"
             "    else\n",
             v,
-                name, none_marker
+            name, none_marker
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsBool() )\n"
-        "        %s = %s->AsBool()->value();\n"
+        "    if( pyIs(Bool, %s) )\n"
+        "        %s = pyAs(Bool, %s)->value();\n"
         "    else\n",
         v,
-            name, v
+        name, v
     );
 
     if( soft )
         fprintf(mOutputFile,
-            "    if( %s->IsInt() )\n"
-            "        %s = ( %s->AsInt()->value() != 0 );\n"
+            "    if( pyIs(Int, %s) )\n"
+            "        %s = ( pyAs(Int, %s)->value() != 0 );\n"
             "    else\n",
             v,
                 name, v
@@ -365,7 +361,7 @@ bool ClassDecodeGenerator::ProcessNone( const TiXmlElement* field )
 {
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsNone() )\n"
+        "    if( !pyIs(None, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: expecting a None but got a %%s\", %s->TypeString() );\n"
         "\n"
@@ -373,7 +369,7 @@ bool ClassDecodeGenerator::ProcessNone( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, v
+        mName, v
     );
 
     pop();
@@ -392,13 +388,13 @@ bool ClassDecodeGenerator::ProcessBuffer( const TiXmlElement* field )
     const char* v = top();
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n"
-        "    if( %s->IsBuffer() )\n"
+        "    if( pyIs(Buffer, %s) )\n"
         "    {\n"
-        "        %s = %s->AsBuffer();\n"
+        "        %s = pyAs(Buffer, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
-        "    else if( %s->IsString() )\n"
-        "        %s = new PyBuffer( *%s->AsString() );\n"
+        "    else if( pyIs(String, %s) )\n"
+        "        %s = new PyBuffer( *pyAs(String, %s) );\n"
         "    else\n"
         "    {\n"
         "        _log(NET__PACKET_ERROR, \"Decode %s failed: %s is not a buffer: %%s\", %s->TypeString());\n"
@@ -408,12 +404,11 @@ bool ClassDecodeGenerator::ProcessBuffer( const TiXmlElement* field )
         "\n",
         name,
         v,
-            name, v,
-            name,
+        name, v,
+        name,
         v,
-            name, v,
-
-            mName, name, v
+        name, v,
+        mName, name, v
     );
 
     pop();
@@ -435,16 +430,16 @@ bool ClassDecodeGenerator::ProcessString( const TiXmlElement* field )
     const char* v = top();
     if( none_marker != NULL )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = \"%s\";\n"
             "    else\n",
             v,
-                name, none_marker
+            name, none_marker
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsString() )\n"
-        "        %s = %s->AsString()->content();\n"
+        "    if( pyIs(String, %s) )\n"
+        "        %s = pyAs(String, %s)->content();\n"
         "    else\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a string: %%s\", %s->TypeString() );\n"
@@ -453,9 +448,8 @@ bool ClassDecodeGenerator::ProcessString( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-
-            mName, name, v
+        name, v,
+        mName, name, v
     );
 
     pop();
@@ -476,13 +470,13 @@ bool ClassDecodeGenerator::ProcessStringInline( const TiXmlElement* field )
 
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsString() )\n"
+        "    if( !pyIs(String, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a string: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyString* %s = %s->AsString();\n"
+        "    PyString* %s = pyAs(String, %s);\n"
         "\n"
         "    if( \"%s\" != %s->content() )\n"
         "    {\n"
@@ -492,11 +486,10 @@ bool ClassDecodeGenerator::ProcessStringInline( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v,
-
         value, iname,
-            mName, iname, value, iname
+        mName, iname, value, iname
     );
 
     pop();
@@ -522,28 +515,28 @@ bool ClassDecodeGenerator::ProcessWString( const TiXmlElement* field )
     const char* v = top();
     if( none_marker != NULL )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = \"%s\";\n"
             "    else\n",
             v,
-                name, none_marker
+            name, none_marker
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsWString() )\n"
-        "        %s = %s->AsWString()->content();\n"
+        "    if( pyIs(WString, %s) )\n"
+        "        %s = pyAs(WString, %s)->content();\n"
         "    else\n",
         v,
-            name, v
+        name, v
     );
 
     if( soft )
         fprintf( mOutputFile,
-            "    if( %s->IsString() )\n"
-            "        %s = %s->AsString()->content();\n"
+            "    if( pyIs(String, %s) )\n"
+            "        %s = pyAs(String, %s)->content();\n"
             "    else\n",
             v,
-                name, v
+            name, v
         );
 
     fprintf( mOutputFile,
@@ -553,7 +546,7 @@ bool ClassDecodeGenerator::ProcessWString( const TiXmlElement* field )
         "        return false;\n"
         "    }\n"
         "\n",
-            mName, name, v
+        mName, name, v
     );
 
     pop();
@@ -574,13 +567,13 @@ bool ClassDecodeGenerator::ProcessWStringInline( const TiXmlElement* field )
 
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsWString() )\n"
+        "    if( !pyIs(WString, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a wstring: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyWString* %s = %s->AsWString();\n"
+        "    PyWString* %s = pyAs(WString, %s);\n"
         "\n"
         "    if( \"%s\" != %s->content() )\n"
         "    {\n"
@@ -590,11 +583,10 @@ bool ClassDecodeGenerator::ProcessWStringInline( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v,
-
         value, iname,
-            mName, iname, value, iname
+        mName, iname, value, iname
     );
 
     pop();
@@ -623,17 +615,17 @@ bool ClassDecodeGenerator::ProcessToken( const TiXmlElement* field )
     const char* v = top();
     if( optional )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = NULL;\n"
             "    else\n",
             v,
-                name
+            name
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsToken() )\n"
+        "    if( pyIs(Token, %s) )\n"
         "    {\n"
-        "        %s = %s->AsToken();\n"
+        "        %s = pyAs(Token, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
         "    else\n"
@@ -644,10 +636,9 @@ bool ClassDecodeGenerator::ProcessToken( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-            name,
-
-            mName, name, v
+        name, v,
+        name,
+        mName, name, v
     );
 
     pop();
@@ -668,13 +659,13 @@ bool ClassDecodeGenerator::ProcessTokenInline( const TiXmlElement* field )
 
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsToken() )\n"
+        "    if( !pyIs(Token, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a token: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyToken* %s = %s->AsToken();\n"
+        "    PyToken* %s = pyAs(Token, %s);\n"
         "\n"
         "    if( %s->content() != \"%s\" )\n"
         "    {\n"
@@ -684,11 +675,10 @@ bool ClassDecodeGenerator::ProcessTokenInline( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v,
-
         iname, value,
-            mName, iname, value, iname
+        mName, iname, value, iname
     );
 
     pop();
@@ -718,19 +708,19 @@ bool ClassDecodeGenerator::ProcessObject( const TiXmlElement* field )
     if( optional )
     {
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = NULL;\n"
             "    else\n",
             v,
-                name
+            name
         );
     }
 
     //make sure its an object
     fprintf( mOutputFile,
-        "    if( %s->IsObject() )\n"
+        "    if( pyIs(Object, %s) )\n"
         "    {\n"
-        "        %s = %s->AsObject();\n"
+        "        %s = pyAs(Object, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
         "    else\n"
@@ -741,10 +731,9 @@ bool ClassDecodeGenerator::ProcessObject( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-            name,
-
-            mName, name, v
+        name, v,
+        name,
+        mName, name, v
     );
 
     pop();
@@ -759,16 +748,16 @@ bool ClassDecodeGenerator::ProcessObjectInline( const TiXmlElement* field )
     //make sure its an object
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsObject() )\n"
+        "    if( !pyIs(Object, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is the wrong type: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyObject* %s = %s->AsObject();\n"
+        "    PyObject* %s = pyAs(Object, %s);\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v
     );
 
@@ -816,7 +805,7 @@ bool ClassDecodeGenerator::ProcessObjectEx( const TiXmlElement* field )
     if( optional )
     {
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = NULL;\n"
             "    else\n",
             v,
@@ -825,9 +814,9 @@ bool ClassDecodeGenerator::ProcessObjectEx( const TiXmlElement* field )
     }
 
     fprintf( mOutputFile,
-        "    if( %s->IsObjectEx() )\n"
+        "    if( pyIs(ObjectEx, %s) )\n"
         "    {\n"
-        "        %s = (%s*)%s->AsObjectEx();\n"
+        "        %s = (%s*)pyAs(ObjectEx, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
         "    else\n"
@@ -838,10 +827,9 @@ bool ClassDecodeGenerator::ProcessObjectEx( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, type, v,
-            name,
-
-            mName, name, v
+        name, type, v,
+        name,
+        mName, name, v
     );
 
     pop();
@@ -860,7 +848,9 @@ bool ClassDecodeGenerator::ProcessTuple( const TiXmlElement* field )
     bool optional = false;
     const char* optional_str = field->Attribute( "optional" );
     if( optional_str != NULL )
+    {
         optional = str2<bool>( optional_str );
+    }
 
     fprintf( mOutputFile,
         "    PySafeDecRef( %s );\n",
@@ -869,18 +859,20 @@ bool ClassDecodeGenerator::ProcessTuple( const TiXmlElement* field )
 
     const char* v = top();
     if( optional )
+    {
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = NULL;\n"
             "    else\n",
             v,
                 name
         );
+    }
 
     fprintf( mOutputFile,
-        "    if( %s->IsTuple() )\n"
+        "    if( pyIs(Tuple, %s) )\n"
         "    {\n"
-        "        %s = %s->AsTuple();\n"
+        "        %s = pyAs(Tuple, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
         "    else\n"
@@ -891,10 +883,9 @@ bool ClassDecodeGenerator::ProcessTuple( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-            name,
-
-            mName, name, v
+        name, v,
+        name,
+        mName, name, v
     );
 
     pop();
@@ -919,13 +910,13 @@ bool ClassDecodeGenerator::ProcessTupleInline( const TiXmlElement* field )
     const char* v = top();
     //now we can generate the tuple decl
     fprintf( mOutputFile,
-        "    if( !%s->IsTuple() )\n"
+        "    if( !pyIs(Tuple, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is the wrong type: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyTuple* %s = %s->AsTuple();\n"
+        "    PyTuple* %s = pyAs(Tuple, %s);\n"
         "\n"
         "    if( %s->size() != %u )\n"
         "    {\n"
@@ -935,10 +926,10 @@ bool ClassDecodeGenerator::ProcessTupleInline( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v,
         iname, count,
-            mName, iname, count, iname
+        mName, iname, count, iname
     );
 
     //now we need to queue up all the storage locations for the fields
@@ -980,17 +971,17 @@ bool ClassDecodeGenerator::ProcessList( const TiXmlElement* field )
     const char* v = top();
     if( optional )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = NULL;\n"
             "    else\n",
             v,
-                name
+            name
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsList() )\n"
+        "    if( pyIs(List, %s) )\n"
         "    {\n"
-        "        %s = %s->AsList();\n"
+        "        %s = pyAs(List, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
         "    else\n"
@@ -1001,10 +992,9 @@ bool ClassDecodeGenerator::ProcessList( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            name, v,
-            name,
-
-            mName, name, v
+        name, v,
+        name,
+        mName, name, v
     );
 
     pop();
@@ -1029,13 +1019,13 @@ bool ClassDecodeGenerator::ProcessListInline( const TiXmlElement* field )
     const char* v = top();
     //now we can generate the tuple decl
     fprintf( mOutputFile,
-        "    if( !%s->IsList() )\n"
+        "    if( !pyIs(List, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a list: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyList* %s = %s->AsList();\n"
+        "    PyList* %s = pyAs(List, %s);\n"
         "\n"
         "    if( %s->size() != %u )\n"
         "    {\n"
@@ -1045,10 +1035,10 @@ bool ClassDecodeGenerator::ProcessListInline( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v,
         iname, count,
-            mName, iname, count, iname
+        mName, iname, count, iname
     );
 
     //now we need to queue up all the storage locations for the fields
@@ -1082,13 +1072,13 @@ bool ClassDecodeGenerator::ProcessListInt( const TiXmlElement* field )
     const char* v = top();
     //make sure its a list
     fprintf( mOutputFile,
-        "    if( !%s->IsList() )\n"
+        "    if( !pyIs(List, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a list: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyList* %s = %s->AsList();\n"
+        "    PyList* %s = pyAs(List, %s);\n"
         "\n"
         "    %s.clear();\n"
         "    PyList::const_iterator %s_cur, %s_end;\n"
@@ -1096,29 +1086,29 @@ bool ClassDecodeGenerator::ProcessListInt( const TiXmlElement* field )
         "    %s_end = %s->end();\n"
         "    for( uint32 %s_index = 0; %s_cur != %s_end; %s_cur++, %s_index++ )\n"
         "    {\n"
-        "        if( !(*%s_cur)->IsInt() )\n"
+        "        if( !pyIs(Int, (*%s_cur)) )\n"
         "        {\n"
         "            _log(NET__PACKET_ERROR, \"Decode %s failed: Element %%u in list %s is not an integer: %%s\", %s_index, (*%s_cur)->TypeString());\n"
         "\n"
         "            return false;\n"
         "        }\n"
-        "        const PyInt* t = (*%s_cur)->AsInt();\n"
+        "        const PyInt* t = pyAs(Int, (*%s_cur));\n"
         "\n"
         "        %s.push_back( t->value() );\n"
         "    }\n"
         "\n",
         v,
-            mName, name, v,
+        mName, name, v,
         iname, v,
         name,
         iname, iname,
         iname, iname,
         iname, iname,
         iname, iname, iname, iname, iname,
-            iname,
-                mName, iname, iname, iname,
-            iname,
-            name
+        iname,
+        mName, iname, iname, iname,
+        iname,
+        name
     );
 
     pop();
@@ -1140,13 +1130,13 @@ bool ClassDecodeGenerator::ProcessListLong( const TiXmlElement* field )
     const char* v = top();
     //make sure its a list
     fprintf( mOutputFile,
-        "    if( !%s->IsList() )\n"
+        "    if( !pyIs(List, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a list: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyList* %s = %s->AsList();\n"
+        "    PyList* %s = pyAs(List, %s);\n"
         "\n"
         "    %s.clear();\n"
         "    PyList::const_iterator %s_cur, %s_end;\n"
@@ -1154,15 +1144,15 @@ bool ClassDecodeGenerator::ProcessListLong( const TiXmlElement* field )
         "    %s_end = %s->end();\n"
         "    for( uint32 %s_index = 0; %s_cur != %s_end; %s_cur++, %s_index++ )\n"
         "    {\n"
-        "        if( (*%s_cur)->IsLong() )\n"
+        "        if( pyIs(Long, (*%s_cur)) )\n"
         "        {\n"
-        "            PyLong* t = (*%s_cur)->AsLong();\n"
+        "            PyLong* t = pyAs(Long, (*%s_cur));\n"
         "\n"
         "            %s.push_back( t->value() );\n"
         "        }\n"
-        "        else if( (*%s_cur)->IsInt() )\n"
+        "        else if( pyIs(Int, (*%s_cur)) )\n"
         "        {\n"
-        "            PyInt* t = (*%s_cur)->AsInt();\n"
+        "            PyInt* t = pyAs(Int, (*%s_cur));\n"
         "\n"
         "            %s.push_back( t->value() );\n"
         "        }\n"
@@ -1175,7 +1165,7 @@ bool ClassDecodeGenerator::ProcessListLong( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, name, v,
+        mName, name, v,
         iname, v,
         name,
         iname, iname,
@@ -1183,13 +1173,12 @@ bool ClassDecodeGenerator::ProcessListLong( const TiXmlElement* field )
         iname, iname,
         iname, iname, iname, iname, iname,
         iname,
-            iname,
-            name,
         iname,
-            iname,
-            name,
-
-            mName, iname, iname, iname
+        name,
+        iname,
+        iname,
+        name,
+        mName, iname, iname, iname
     );
 
     pop();
@@ -1211,13 +1200,13 @@ bool ClassDecodeGenerator::ProcessListStr( const TiXmlElement* field )
     const char* v = top();
     //make sure its a list
     fprintf( mOutputFile,
-        "    if( !%s->IsList() )\n"
+        "    if( !pyIs(List, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a list: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyList* %s = %s->AsList();\n"
+        "    PyList* %s = pyAs(List, %s);\n"
         "\n"
         "    %s.clear();\n"
         "    PyList::const_iterator %s_cur, %s_end;\n"
@@ -1225,29 +1214,29 @@ bool ClassDecodeGenerator::ProcessListStr( const TiXmlElement* field )
         "    %s_end = %s->end();\n"
         "    for( uint32 %s_index = 0; %s_cur != %s_end; %s_cur++, %s_index++ )\n"
         "    {\n"
-        "        if( !(*%s_cur)->IsString() )\n"
+        "        if( !pyIs(String, (*%s_cur)) )\n"
         "        {\n"
         "            _log( NET__PACKET_ERROR, \"Decode %s failed: Element %%u in list %s is not a string: %%s\", %s_index, (*%s_cur)->TypeString() );\n"
         "\n"
         "            return false;\n"
         "        }\n"
-        "        const PyString* t = (*%s_cur)->AsString();\n"
+        "        const PyString* t = pyAs(String, (*%s_cur));\n"
         "\n"
         "        %s.push_back( t->content() );\n"
         "    }\n"
         "\n",
         v,
-            mName, name, v,
+        mName, name, v,
         iname, v,
         name,
         iname, iname,
         iname, iname,
         iname, iname,
         iname, iname, iname, iname, iname,
-            iname,
-                mName, iname, iname, iname,
-            iname,
-            name
+        iname,
+        mName, iname, iname, iname,
+        iname,
+        name
     );
 
     pop();
@@ -1277,7 +1266,7 @@ bool ClassDecodeGenerator::ProcessDict( const TiXmlElement* field )
     const char* v = top();
     if( optional )
         fprintf( mOutputFile,
-            "    if( %s->IsNone() )\n"
+            "    if( pyIs(None, %s) )\n"
             "        %s = NULL;\n"
             "    else\n",
             v,
@@ -1285,9 +1274,9 @@ bool ClassDecodeGenerator::ProcessDict( const TiXmlElement* field )
         );
 
     fprintf( mOutputFile,
-        "    if( %s->IsDict() )\n"
+        "    if( pyIs(Dict, %s) )\n"
         "    {\n"
-        "        %s = %s->AsDict();\n"
+        "        %s = pyAs(Dict, %s);\n"
         "        PyIncRef( %s );\n"
         "    }\n"
         "    else\n"
@@ -1325,13 +1314,13 @@ bool ClassDecodeGenerator::ProcessDictInline( const TiXmlElement* field )
     const char* v = top();
     //make sure its a dict
     fprintf( mOutputFile,
-        "    if( !%s->IsDict() )\n"
+        "    if( !pyIs(Dict, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is the wrong type: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyDict* %s = %s->AsDict();\n"
+        "    PyDict* %s = pyAs(Dict, %s);\n"
         "\n",
         v,
             mName, iname, v,
@@ -1384,13 +1373,13 @@ bool ClassDecodeGenerator::ProcessDictInline( const TiXmlElement* field )
             "    %s_end = %s->end();\n"
             "    for(; %s_cur != %s_end; %s_cur++)\n"
             "    {\n"
-            "        if( !%s_cur->first->IsString() )\n"
+            "        if( !pyIs(String, %s_cur->first) )\n"
             "        {\n"
             "            _log( NET__PACKET_ERROR, \"Decode %s failed: a key in %s is the wrong type: %%s\", %s_cur->first->TypeString() );\n"
             "\n"
             "            return false;\n"
             "        }\n"
-            "        const PyString* key_string__ = %s_cur->first->AsString();\n"
+            "        const PyString* key_string__ = pyAs(String, %s_cur->first);\n"
             "\n",
             iname, iname,
             iname, iname,
@@ -1549,13 +1538,13 @@ bool ClassDecodeGenerator::ProcessDictRaw( const TiXmlElement* field )
 
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsDict() )\n"
+        "    if( !pyIs(Dict, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a dict: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyDict* %s = %s->AsDict();\n"
+        "    PyDict* %s = pyAs(Dict, %s);\n"
         "\n"
         "    %s.clear();\n"
         "    PyDict::const_iterator %s_cur, %s_end;\n"
@@ -1563,40 +1552,40 @@ bool ClassDecodeGenerator::ProcessDictRaw( const TiXmlElement* field )
         "    %s_end = %s->end();\n"
         "    for( uint32 %s_index = 0; %s_cur != %s_end; %s_cur++, %s_index++ )\n"
         "    {\n"
-        "        if( !%s_cur->first->Is%s() )\n"
+        "        if( !pyIs(%s, %s_cur->first) )\n"
         "        {\n"
         "            _log( NET__PACKET_ERROR, \"Decode %s failed: Key %%u in dict %s is not %s: %%s\", %s_index, %s_cur->first->TypeString() );\n"
         "\n"
         "            return false;\n"
         "        }\n"
-        "        const Py%s* k = %s_cur->first->As%s();\n"
+        "        const Py%s* k = pyAs(%s, %s_cur->first);\n"
         "\n"
-        "        if( !%s_cur->second->Is%s() )\n"
+        "        if( !pyIs(%s, %s_cur->second) )\n"
         "        {\n"
         "            _log( NET__PACKET_ERROR, \"Decode %s failed: Value %%d in dict %s is not %s: %%s\", %s_index, %s_cur->second->TypeString() );\n"
         "\n"
         "            return false;\n"
         "        }\n"
-        "        const Py%s *v = %s_cur->second->As%s();\n"
+        "        const Py%s *v = pyAs(%s, %s_cur->second);\n"
         "\n"
         "        %s[ k->value() ] = v->value();\n"
         "    }\n"
         "\n",
         v,
-            mName, name, v,
+        mName, name, v,
         iname, v,
         name,
         iname, iname,
         iname, iname,
         iname, iname,
         iname, iname, iname, iname, iname,
-            iname, pykey,
-                mName, iname, pykey, iname, iname,
-            pykey, iname, pykey,
-            iname, pyvalue,
-                mName, iname, pyvalue, iname, iname,
-            pyvalue, iname, pyvalue,
-            name
+        pykey, iname,
+        mName, iname, pykey, iname, iname,
+        pykey, pykey, iname,
+        pyvalue, iname,
+        mName, iname, pyvalue, iname, iname,
+        pyvalue, pyvalue, iname,
+        name
     );
 
     pop();
@@ -1617,13 +1606,13 @@ bool ClassDecodeGenerator::ProcessDictInt( const TiXmlElement* field )
 
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsDict() )\n"
+        "    if( !pyIs(Dict, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a dict: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyDict* %s = %s->AsDict();\n"
+        "    PyDict* %s = pyAs(Dict, %s);\n"
         "\n"
         "    %s.clear();\n"
         "    PyDict::const_iterator %s_cur, %s_end;\n"
@@ -1631,29 +1620,29 @@ bool ClassDecodeGenerator::ProcessDictInt( const TiXmlElement* field )
         "    %s_end = %s->end();\n"
         "    for( uint32 %s_index = 0; %s_cur != %s_end; %s_cur++, %s_index++ )\n"
         "    {\n"
-        "        if( !%s_cur->first->IsInt() )\n"
+        "        if( !pyIs(Int, %s_cur->first) )\n"
         "        {\n"
         "            _log( NET__PACKET_ERROR, \"Decode %s failed: Key %%u in dict %s is not an integer: %%s\", %s_index, %s_cur->first->TypeString() );\n"
         "\n"
         "            return false;\n"
         "        }\n"
-        "        const PyInt* k = %s_cur->first->AsInt();\n"
+        "        const PyInt* k = pyAs(Int, %s_cur->first);\n"
         "\n"
         "        %s[ k->value() ] = %s_cur->second->Clone();\n"
         "    }\n"
         "\n",
         v,
-            mName, name, v,
+        mName, name, v,
         iname, v,
         name,
         iname, iname,
         iname, iname,
         iname, iname,
         iname, iname, iname, iname, iname,
-            iname,
-                mName, iname, iname, iname,
-            iname,
-            name, iname
+        iname,
+        mName, iname, iname, iname,
+        iname,
+        name, iname
     );
 
     pop();
@@ -1674,13 +1663,13 @@ bool ClassDecodeGenerator::ProcessDictStr( const TiXmlElement* field )
 
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsDict() )\n"
+        "    if( !pyIs(Dict, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a dict: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PyDict* %s = %s->AsDict();\n"
+        "    PyDict* %s = pyAs(Dict, %s);\n"
         "\n"
         "    %s.clear();\n"
         "    PyDict::const_iterator %s_cur, %s_end;\n"
@@ -1688,30 +1677,29 @@ bool ClassDecodeGenerator::ProcessDictStr( const TiXmlElement* field )
         "    %s_end = %s->end();\n"
         "    for( uint32 %s_index = 0; %s_cur != %s_end; %s_cur++, %s_index++ )\n"
         "    {\n"
-        "        if( !%s_cur->first->IsString() )\n"
+        "        if( !pyIs(String, %s_cur->first) )\n"
         "        {\n"
         "            _log( NET__PACKET_ERROR, \"Decode %s failed: Key %%u in dict %s is not a string: %%s\", %s_index, %s_cur->first->TypeString() );\n"
         "\n"
         "            return false;\n"
         "        }\n"
-        "        const PyString* k = %s_cur->first->AsString();\n"
+        "        const PyString* k = pyAs(String, %s_cur->first);\n"
         "\n"
         "        %s[ k->content() ] = %s_cur->second->Clone();\n"
         "    }\n"
         "\n",
         v,
-            mName, name, v,
+        mName, name, v,
         iname, v,
-
         name,
         iname, iname,
         iname, iname,
         iname, iname,
         iname, iname, iname, iname, iname,
-            iname,
-                mName, iname, iname, iname,
-            iname,
-            name, iname
+        iname,
+        mName, iname, iname, iname,
+        iname,
+        name, iname
     );
 
     pop();
@@ -1726,13 +1714,13 @@ bool ClassDecodeGenerator::ProcessSubStreamInline( const TiXmlElement* field )
     //make sure its a substream
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsSubStream() )\n"
+        "    if( !pyIs(SubStream, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a substream: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PySubStream* %s = %s->AsSubStream();\n"
+        "    PySubStream* %s = pyAs(SubStream, %s);\n"
         "\n"
         "    //make sure its decoded\n"
         "    %s->DecodeData();\n"
@@ -1744,11 +1732,11 @@ bool ClassDecodeGenerator::ProcessSubStreamInline( const TiXmlElement* field )
         "    }\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v,
         iname,
         iname,
-            mName, iname
+        mName, iname
     );
 
     char ssname[32];
@@ -1771,16 +1759,16 @@ bool ClassDecodeGenerator::ProcessSubStructInline( const TiXmlElement* field )
     //make sure its a substruct
     const char* v = top();
     fprintf( mOutputFile,
-        "    if( !%s->IsSubStruct() )\n"
+        "    if( !pyIs(SubStruct, %s) )\n"
         "    {\n"
         "        _log( NET__PACKET_ERROR, \"Decode %s failed: %s is not a substruct: %%s\", %s->TypeString() );\n"
         "\n"
         "        return false;\n"
         "    }\n"
-        "    PySubStruct* %s = %s->AsSubStruct();\n"
+        "    PySubStruct* %s = pyAs(SubStruct, %s);\n"
         "\n",
         v,
-            mName, iname, v,
+        mName, iname, v,
         iname, v
     );
 

@@ -101,7 +101,7 @@ PyResult PyService::Handle_MachoBindObject( PyCallArgs& call )
     //now we register
     robjs->SetItem(0, PyServiceMgr::BindObject(call.client, our_obj, nullptr, oid));
 
-    if( args.call->IsNone() )
+    if( pyIs(None, args.call) )
     {
         //no call was specified...
         robjs->SetItem( 1, new PyNone );

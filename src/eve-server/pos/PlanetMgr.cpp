@@ -103,19 +103,23 @@ PlanetMgrService::PlanetMgrService()
 PlanetMgrService::~PlanetMgrService() {
 }
 
-PyBoundObject *PlanetMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args) {
-    if(!bind_args->IsInt()) {
+PyBoundObject *PlanetMgrService::_CreateBoundObject(Client *c, const PyRep *bind_args)
+{
+    if(!pyIs(Int, bind_args))
+    {
         codelog(SERVICE__ERROR, "%s Service: invalid bind argument type %s", GetName(), bind_args->TypeString());
         return NULL;
     }
-    return new PlanetMgrBound(bind_args->AsInt()->value(), c->GetCharacterID());
+    return new PlanetMgrBound(pyAs(Int, bind_args)->value(), c->GetCharacterID());
 }
 
-PyResult PlanetMgrService::Handle_GetPlanetsForChar(PyCallArgs &call) {
+PyResult PlanetMgrService::Handle_GetPlanetsForChar(PyCallArgs &call)
+{
     /* Used by the client to populate the industry:planets tab
      */
     DBQueryResult res;
-    if(!DBcore::RunQuery(res, "SELECT `solarSystemID`, `planetID`, `typeID`, `numberOfPins` FROM `planetsforchar` WHERE `characterID` = %u", call.client->GetCharacterID())) {
+    if(!DBcore::RunQuery(res, "SELECT `solarSystemID`, `planetID`, `typeID`, `numberOfPins` FROM `planetsforchar` WHERE `characterID` = %u", call.client->GetCharacterID()))
+    {
         codelog(SERVICE__ERROR, "Error in GetPlanetsForChar Query: %s", res.error.c_str());
         return NULL;
     }
@@ -205,9 +209,9 @@ PyResult PlanetMgrBound::Handle_GetResourceData(PyCallArgs &call) {
      *         and figure out the client buffer structure, etc.
      * TODO, optimise this function maybe?
      */
-    PyDict *input = call.tuple->AsTuple()->GetItem(0)->AsObject()->arguments()->AsDict();
-    int proximity = input->GetItemString("proximity")->AsInt()->value();
-    int resourceTypeID = input->GetItemString("resourceTypeID")->AsInt()->value();
+    PyDict *input = pyAs(Dict, pyAs(Object, pyAs(Tuple, call.tuple)->GetItem(0))->arguments());
+    int proximity = pyAs(Int, input->GetItemString("proximity"))->value();
+    int resourceTypeID = pyAs(Int, input->GetItemString("resourceTypeID"))->value();
     int offset = 0;
 
     DBQueryResult res;
@@ -312,43 +316,56 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
 
     for(int i = 0; i < uuncl.commandList->size(); i++) {
         UUNCommand uunc;
-        if(!uunc.Decode(uuncl.commandList->GetItem(i)->AsTuple())) {
+        if(!uunc.Decode(pyAs(Tuple, uuncl.commandList->GetItem(i))))
+        {
             codelog(CLIENT__ERROR, "Failed to decode args for UUNCommand");
             return NULL;
         }
         SysLog::Debug("PlanetMgrBound", "UserUpdateNetwork: loop: %u, command: %u", i, uunc.command);
-        switch(uunc.command) {
+        switch(uunc.command)
+        {
             case 1: //COMMAND_CREATEPIN
             {
-                uint32 typeID = uunc.command_data->GetItem(1)->AsInt()->value();
+                uint32 typeID = pyAs(Int, uunc.command_data->GetItem(1))->value();
                 uint32 groupID = InvType::getType(typeID)->groupID;
-                if(groupID == 1027) {
+                if(groupID == 1027)
+                {
                     /* Command Pin
                      */
                     UUNCCommandCenter uunccc;
-                    if(!uunccc.Decode(uunc.command_data)) {
+                    if(!uunccc.Decode(uunc.command_data))
+                    {
                         codelog(SERVICE__ERROR, "Failed to decode args for UUNCCommandCenter!");
                     }
 
-                    if(!m_colony->CreateCommandPin(uunccc.pinID, uunccc.typeID, uunccc.latitude, uunccc.longitude)) {
+                    if(!m_colony->CreateCommandPin(uunccc.pinID, uunccc.typeID, uunccc.latitude, uunccc.longitude))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create command center");
-                    }else {
+                    }else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating command center");
                     }
-                } else if(groupID == 1029 || groupID == 1030) {
+                }
+                else if(groupID == 1029 || groupID == 1030)
+                {
                     /* Storage / Spaceport Pin
                      */
                     UUNCStandardPin uuncsp;
-                    if(!uuncsp.Decode(uunc.command_data)) {
+                    if(!uuncsp.Decode(uunc.command_data))
+                    {
                         codelog(SERVICE__ERROR, "Failed to decode args for UUNCStandardPin!");
                     }
 
-                    if(!m_colony->CreateSpaceportPin(uuncsp.pinID2, uuncsp.typeID, uuncsp.latitude, uuncsp.longitude)) {
+                    if(!m_colony->CreateSpaceportPin(uuncsp.pinID2, uuncsp.typeID, uuncsp.latitude, uuncsp.longitude))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create storage/spaceport");
-                    }else {
+                    }else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating storage/spaceport");
                     }
-                } else if(groupID == 1028) {
+                }
+                else if(groupID == 1028)
+                {
                     /* Process Pin
                      */
                     UUNCStandardPin uuncsp;
@@ -384,39 +401,54 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             case 2: //COMMAND_REMOVEPIN
             {
                 //                                command_data           pinID2
-                uint32 pinID = uunc.command_data->GetItem(0)->AsTuple()->GetItem(1)->AsInt()->value();
-                if(!m_colony->RemovePin(pinID)){
+                uint32 pinID = pyAs(Int, pyAs(Tuple, uunc.command_data->GetItem(0))->GetItem(1))->value();
+                if(!m_colony->RemovePin(pinID))
+                {
                     SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove pin");
-                }else {
+                }
+                else
+                {
                     SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success removing pin");
                 }
                 break;
             }
             case 3: //COMMAND_CREATELINK
             {
-                if(uunc.command_data->GetItem(0)->IsInt()) {
+                if(pyIs(Int, uunc.command_data->GetItem(0)))
+                {
                     UUNCLinkCommand uunclc;
-                    if(!uunclc.Decode(uunc.command_data)) {
+                    if(!uunclc.Decode(uunc.command_data))
+                    {
                         codelog(SERVICE__ERROR, "Failed to decode args for UUNCLinkCommand!");
                     }
 
-                    if(!m_colony->CreateLink(uunclc.src, uunclc.dest2, uunclc.level, true)) {
+                    if(!m_colony->CreateLink(uunclc.src, uunclc.dest2, uunclc.level, true))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create link");
-                    }else {
+                    }
+                    else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating link");
                     }
-                }else if(uunc.command_data->GetItem(0)->IsTuple()) {
+                }
+                else if(pyIs(Tuple, uunc.command_data->GetItem(0)))
+                {
                     UUNCLinkStandard uuncls;
-                    if(!uuncls.Decode(uunc.command_data)) {
+                    if(!uuncls.Decode(uunc.command_data))
+                    {
                         codelog(SERVICE__ERROR, "Failed to decode args for UUNCLinkStandard!");
                     }
 
-                    if(!m_colony->CreateLink(uuncls.src2, uuncls.dest2, uuncls.level, false)) {
+                    if(!m_colony->CreateLink(uuncls.src2, uuncls.dest2, uuncls.level, false))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to create link");
-                    }else {
+                    }else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success creating link");
                     }
-                }else {
+                }
+                else
+                {
                     //Invalid...
                     SysLog::Debug("PlanetMgrBound", "UserUpdateNetwork: INVALID CREATELINK");
                 }
@@ -424,20 +456,29 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             }
             case 4: //COMMAND_REMOVELINK
             {
-                if(uunc.command_data->GetItem(0)->IsInt()) {
-                    uint32 src = uunc.command_data->GetItem(0)->AsInt()->value();
-                    uint32 dest2 = uunc.command_data->GetItem(1)->AsTuple()->GetItem(1)->AsInt()->value();
-                    if(!m_colony->RemoveLink(src, dest2, true)) {
+                if(pyIs(Int, uunc.command_data->GetItem(0)))
+                {
+                    uint32 src = pyAs(Int, uunc.command_data->GetItem(0))->value();
+                    uint32 dest2 = pyAs(Int, pyAs(Tuple, uunc.command_data->GetItem(1))->GetItem(1))->value();
+                    if(!m_colony->RemoveLink(src, dest2, true))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove link");
-                    }else {
+                    }
+                    else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success removing link");
                     }
-                }else if(uunc.command_data->GetItem(0)->IsTuple()) {
-                    uint32 src = uunc.command_data->GetItem(0)->AsTuple()->GetItem(1)->AsInt()->value();
-                    uint32 dest2 = uunc.command_data->GetItem(1)->AsTuple()->GetItem(1)->AsInt()->value();
-                    if(!m_colony->RemoveLink(src, dest2, false)) {
+                }
+                else if(pyIs(Tuple, uunc.command_data->GetItem(0)))
+                {
+                    uint32 src = pyAs(Int, pyAs(Tuple, uunc.command_data->GetItem(0))->GetItem(1))->value();
+                    uint32 dest2 = pyAs(Int, pyAs(Tuple, uunc.command_data->GetItem(1))->GetItem(1))->value();
+                    if(!m_colony->RemoveLink(src, dest2, false))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to remove link");
-                    }else {
+                    }
+                    else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success removing link");
                     }
                 }
@@ -445,26 +486,37 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             }
             case 5: //COMMAND_SETLINKLEVEL
             {
-                if(uunc.command_data->GetItem(0)->IsInt()) {
+                if(pyIs(Int, uunc.command_data->GetItem(0)))
+                {
                     UUNCLinkCommand uunclc;
-                    if(!uunclc.Decode(uunc.command_data)) {
+                    if(!uunclc.Decode(uunc.command_data))
+                    {
                         codelog(SERVICE__ERROR, "Failed to decode args for UUNCLinkCommand!");
                     }
 
-                    if(!m_colony->UpgradeLink(uunclc.src, uunclc.dest2, uunclc.level, true)) {
+                    if(!m_colony->UpgradeLink(uunclc.src, uunclc.dest2, uunclc.level, true))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to upgrade link");
-                    }else {
+                    }
+                    else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success upgrading link");
                     }
-                }else if(uunc.command_data->GetItem(0)->IsTuple()) {
+                }
+                else if(pyIs(Tuple, uunc.command_data->GetItem(0)))
+                {
                     UUNCLinkStandard uuncls;
-                    if (!uuncls.Decode(uunc.command_data)) {
+                    if (!uuncls.Decode(uunc.command_data))
+                    {
                         codelog(SERVICE__ERROR, "Failed to decode args for UUNCLinkStandard!");
                     }
 
-                    if (!m_colony->UpgradeLink(uuncls.src2, uuncls.dest2, uuncls.level, false)) {
+                    if (!m_colony->UpgradeLink(uuncls.src2, uuncls.dest2, uuncls.level, false))
+                    {
                         SysLog::Error("PlanetMgrBound", "UserUpdateNetwork: Failed to upgrade link");
-                    } else {
+                    }
+                    else
+                    {
                         SysLog::Success("PlanetMgrBound", "UserUpdateNetwork: Success upgrading link");
                     }
                 }
@@ -484,8 +536,8 @@ PyResult PlanetMgrBound::Handle_UserUpdateNetwork(PyCallArgs &call) {
             }
             case 9: //COMMAND_UPGRADECOMMANDCENTER
             {
-                uint32 pinID = uunc.command_data->GetItem(0)->AsInt()->value();
-                uint32 level = uunc.command_data->GetItem(1)->AsInt()->value();
+                uint32 pinID = pyAs(Int, uunc.command_data->GetItem(0))->value();
+                uint32 level = pyAs(Int, uunc.command_data->GetItem(1))->value();
                 m_colony->UpgradeCommandCenter(pinID, level);
                 break;
             }

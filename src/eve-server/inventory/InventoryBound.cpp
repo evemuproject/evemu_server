@@ -156,13 +156,19 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
         if( call.byname.find("flag") == call.byname.end() )
         {
             SysLog::Debug( "InventoryBound::Handle_Add()", "Cannot find key 'flag' from call.byname dictionary." );
-			if( IsStation(call.client->GetLocationID()) )
-				flag = flagHangar;
-			else
-				flag = flagCargoHold;    // hard-code this since ship cargo to cargo container move flag since key 'flag' in client.byname does not exist
+                if( IsStation(call.client->GetLocationID()) )
+                {
+                        flag = flagHangar;
+                }
+                else
+                {
+                        flag = flagCargoHold;    // hard-code this since ship cargo to cargo container move flag since key 'flag' in client.byname does not exist
+                }
         }
         else
-            flag = call.byname.find("flag")->second->AsInt()->value();
+        {
+            flag = pyAs(Int, call.byname.find("flag")->second)->value();
+        }
 
         uint32 quantity = 0;
         if( call.byname.find("qty") == call.byname.end() )
@@ -171,10 +177,14 @@ PyResult InventoryBound::Handle_Add(PyCallArgs &call) {
         }
         else
         {
-            if( call.byname.find("qty")->second->IsNone() )
+            if( pyIs(None, call.byname.find("qty")->second) )
+            {
                 quantity = 0;
+            }
             else
-                quantity = call.byname.find("qty")->second->AsInt()->value();
+            {
+                quantity = pyAs(Int, call.byname.find("qty")->second)->value();
+            }
         }
 
         std::vector<int32> items;
@@ -261,11 +271,13 @@ PyResult InventoryBound::Handle_MultiAdd(PyCallArgs &call) {
 		uint32 flag = 0;
 		if( call.byname.find("flag") == call.byname.end() )
 		{
-			SysLog::Debug( "InventoryBound::Handle_MultiAdd()", "Cannot find key 'flag' from call.byname dictionary." );
-			flag = flagCargoHold;    // hard-code this since ship cargo to cargo container move flag since key 'flag' in client.byname does not exist
+                    SysLog::Debug( "InventoryBound::Handle_MultiAdd()", "Cannot find key 'flag' from call.byname dictionary." );
+                    flag = flagCargoHold;    // hard-code this since ship cargo to cargo container move flag since key 'flag' in client.byname does not exist
 		}
 		else
-			flag = call.byname.find("flag")->second->AsInt()->value();
+                {
+                    flag = pyAs(Int, call.byname.find("flag")->second)->value();
+                }
 
         // no quantity given, set to zero so _ExecAdd() checks quantity:
         return _ExecAdd( call.client, args.itemIDs, 0, (EVEItemFlags)flag );
@@ -416,7 +428,7 @@ PyResult InventoryBound::Handle_SetPassword(PyCallArgs &call) {
 
 PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
 {
-    PyList *list = call.tuple->GetItem( 0 )->AsList();
+    PyList *list = pyAs(List, call.tuple->GetItem( 0 ));
     uint8 i;
     uint32 bookmarkID;
     char ci[3];
@@ -424,14 +436,17 @@ PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
     DBQueryResult res;
     DBResultRow row;
 
-    if( list->size() > 0 ) {
-        for(i=0; i<(list->size()); i++) {
-            bookmarkID = call.tuple->GetItem( 0 )->AsList()->GetItem(i)->AsInt()->value();
-                            //ItemData ( typeID, ownerID, locationID, flag, quantity, customInfo, contraband)
+    if( list->size() > 0 )
+    {
+        for(i=0; i<(list->size()); i++)
+        {
+            bookmarkID = pyAs(Int, pyAs(List, call.tuple->GetItem( 0 ))->GetItem(i))->value();
+            //ItemData ( typeID, ownerID, locationID, flag, quantity, customInfo, contraband)
             ItemData itemBookmarkVoucher( 51, call.client->GetCharacterID(), call.client->GetLocationID(), flagHangar, 1 );
             InventoryItemRef i = ItemFactory::SpawnItem(itemBookmarkVoucher);
 
-            if( !i ) {
+            if( !i )
+            {
                 codelog(CLIENT__ERROR, "%s: Failed to spawn bookmark voucher for %u", call.client->GetName(), bookmarkID);
                 break;
             }
@@ -443,8 +458,10 @@ PyResult InventoryBound::Handle_CreateBookmarkVouchers(PyCallArgs &call)
         }
         SysLog::Log( "InventoryBound::Handle_CreateBookmarkVouchers()", "%u Vouchers created", list->size() );
         //  when bm is copied to another players places tab, copy data from db using bookmarkID stored in ItemData.customInfo
-     } else {
-        SysLog::Error( "InventoryBound::Handle_CreateBookmarkVouchers()", "%s: call.tuple->GetItem( 0 )->AsList()->size() == 0.  Expected size > 0.", call.client->GetName() );
+     }
+    else
+     {
+        SysLog::Error( "InventoryBound::Handle_CreateBookmarkVouchers()", "%s: as(List, call.tuple->GetItem( 0 ))->size() == 0.  Expected size > 0.", call.client->GetName() );
         return NULL;
      }
 
@@ -468,7 +485,8 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
     for(; cur != end; cur++)
     {
         InventoryItemRef sourceItem = ItemFactory::GetItem(*cur);
-        if( !sourceItem ) {
+        if( !sourceItem )
+        {
             SysLog::Error("_ExecAdd","Failed to load item %u. Skipping.", *cur);
             continue;
         }
@@ -478,14 +496,17 @@ PyRep *InventoryBound::_ExecAdd(Client *c, const std::vector<int32> &items, uint
 
         //NOTE: a multi add can come in with quantity 0 to indicate "all"
         if( quantity == 0 )
+        {
             quantity = sourceItem->quantity();
+        }
 
         /*Check if its a simple item move or an item split qty is diff if its a
         split also multiple items cannot be split so the size() should be 1*/
         if( quantity != sourceItem->quantity() && items.size() == 1 )
         {
             InventoryItemRef newItem = sourceItem->Split(quantity);
-            if( !newItem ) {
+            if( !newItem )
+            {
                 SysLog::Error("_ExecAdd", "Error splitting item %u. Skipping.", sourceItem->itemID() );
             }
             else

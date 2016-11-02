@@ -328,14 +328,16 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
     std::vector<uint32> subSystemList;
     bool completeTech3Assembly = false;
 
-    if( !(call.tuple->IsTuple()) )
-        return NULL;
-
-    if( !(call.tuple->GetItem(0)->IsList()) )
+    if( !pyIs(Tuple, call.tuple))
     {
-        if( !(call.tuple->GetItem(0)->IsInt()) )
+        return NULL;
+    }
+
+    if( !pyIs(List, call.tuple->GetItem(0)) )
+    {
+        if( !pyIs(Int, call.tuple->GetItem(0)) )
         {
-            SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: call.tuple->GetItem(0)->IsInt() == false");
+            SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: pyIs(Int, call.tuple->GetItem(0)) == false");
             //TODO: throw exception
             return NULL;
         }
@@ -352,15 +354,17 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
             if( call.byname.find("subSystems") != call.byname.end() )
             {
                 PyList * list;
-                if( call.byname.find("subSystems")->second->IsList() )
+                if( pyIs(List, call.byname.find("subSystems")->second) )
                 {
-                    list = call.byname.find("subSystems")->second->AsList();
+                    list = pyAs(List, call.byname.find("subSystems")->second);
                     for(uint32 index=0; index<list->size(); index++)
-                        subSystemList.push_back( list->GetItem( index )->AsInt()->value() );
+                    {
+                        subSystemList.push_back( pyAs(Int, list->GetItem( index ))->value() );
+                    }
                 }
                 else
                 {
-                    SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: !call.byname.find(\"subSystems\")->second->IsList() failed");
+                    SysLog::Error( "ShipBound::Handle_AssembleShip()", "Failed to decode arguments: !pyIs(List, call.byname.find(\"subSystems\")->second) failed");
                     //TODO: throw exception
                     return NULL;
                 }
@@ -461,7 +465,7 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
 
     if( d3 )
     {
-        if( !(drop3args.toDrop->IsList()) )
+        if( !pyIs(List, drop3args.toDrop)) 
         {
             SysLog::Error("ShipBound::Handle_Drop()", "toDrop argument type is wrong, expected PyList");
             //TODO: throw exception
@@ -483,8 +487,8 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
     uint32 itemQuantity;
     for( uint32 i=0; i<PyToDropList->size(); i++ )
     {
-        itemID = (uint32)(PyToDropList->items.at(i)->AsTuple()->items.at(0)->AsInt()->value());
-        itemQuantity = (uint32)(PyToDropList->items.at(i)->AsTuple()->items.at(1)->AsInt()->value());
+        itemID = (uint32)(pyAs(Int, pyAs(Tuple, PyToDropList->items.at(i))->items.at(0))->value());
+        itemQuantity = (uint32)(pyAs(Int, pyAs(Tuple, PyToDropList->items.at(i))->items.at(1))->value());
 
         cargoItem = ItemFactory::GetItem(itemID);
         if( !cargoItem )
@@ -691,17 +695,19 @@ PyResult ShipBound::Handle_Drop(PyCallArgs &call) {
 }
 
 PyResult ShipBound::Handle_Scoop(PyCallArgs &call) {
-    if( !(call.tuple->items.at( 0 )->IsInt()) ) {
+    if( !pyIs(Int, call.tuple->items.at( 0 )) )
+    {
         codelog(SERVICE__ERROR, "Failed to decode arguments");
         //TODO: throw exception
         return NULL;
     }
 
-    uint32 objectItemID = call.tuple->items.at( 0 )->AsInt()->value();
+    uint32 objectItemID = pyAs(Int, call.tuple->items.at( 0 ))->value();
 
     SystemManager *sm = call.client->System();
     SystemEntity *object = sm->get( objectItemID );
-    if(object == NULL) {
+    if(object == NULL)
+    {
         _log(SERVICE__ERROR, "%s: Unable to find object %u to scoop.", call.client->GetName(), objectItemID);
         return NULL;
     }
@@ -724,7 +730,9 @@ PyResult ShipBound::Handle_Scoop(PyCallArgs &call) {
     double capacity = call.client->GetShip()->GetCapacity( flagCargoHold );
     double volume = item->getAttribute(AttrVolume).get_float();
     if( capacity < volume )
+    {
         throw PyException( MakeCustomError( "%s is too large to fit in remaining Cargo bay capacity.", item->itemName().c_str() ) );
+    }
     else
     {
         // We have enough Cargo bay capacity to hold the item being scooped,
@@ -989,7 +997,8 @@ PyResult ShipBound::Handle_Jettison(PyCallArgs &call) {
 }
 
 
-PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
+PyResult ShipBound::Handle_Eject(PyCallArgs &call)
+{
     //no arguments.
 
     //get character name
@@ -1062,8 +1071,8 @@ PyResult ShipBound::Handle_Eject(PyCallArgs &call) {
     return NULL;
 }
 
-PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
-
+PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call)
+{
     //leave ship into capsule in station
 
     // TODO:  THIS HAS ISSUES AS THE VIEW IN STATION IS SUCH THAT WHEN A PLAYER LEAVES A SHIP
@@ -1099,7 +1108,9 @@ PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
     ShipRef capsuleRef = ItemFactory::SpawnShip(idata);
 
     if( !capsuleRef )
+    {
         throw PyException( MakeCustomError ( "Unable to generate escape pod" ) );
+    }
 
     //move capsule into the players hangar
     capsuleRef->Move(call.client->GetLocationID(), (EVEItemFlags)flagHangar, true);
@@ -1112,13 +1123,17 @@ PyResult ShipBound::Handle_LeaveShip(PyCallArgs &call){
     // Remove ball from bubble manager for this client's character's system for the old ship and then
     // board the capsule:
     if(call.client->IsInSpace())
+    {
         call.client->System()->bubbles.Remove( call.client, true );
+    }
 
     call.client->BoardShip( updatedCapsuleRef );
 
     // Add ball to bubble manager for this client's character's system for the new capsule object:
     if(call.client->IsInSpace())
+    {
         call.client->System()->bubbles.Add( call.client, true );
+    }
 
     return NULL;
 }
@@ -1128,7 +1143,8 @@ PyResult ShipBound::Handle_ActivateShip(PyCallArgs &call)
     //uint32 oldShip;
     uint32 newShip;
     Call_TwoIntegerArgs args;
-    if(!args.Decode(&call.tuple)) {
+    if(!args.Decode(&call.tuple))
+    {
         codelog(SERVICE__ERROR, "Failed to decode arguments");
         //TODO: throw exception
         return NULL;

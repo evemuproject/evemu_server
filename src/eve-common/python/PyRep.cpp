@@ -813,13 +813,13 @@ PyObjectEx_Type1::PyObjectEx_Type1( PyToken* type, PyTuple* args, PyRep* keyword
 PyToken* PyObjectEx_Type1::GetType() const
 {
     assert( header() );
-    return header()->AsTuple()->GetItem( 0 )->AsToken();
+    return pyAs(Token, pyAs(Tuple, header())->GetItem( 0 ));
 }
 
 PyTuple* PyObjectEx_Type1::GetArgs() const
 {
     assert( header() );
-    return header()->AsTuple()->GetItem( 1 )->AsTuple();
+    return pyAs(Tuple, pyAs(Tuple, header())->GetItem( 1 ));
 }
 
 PyDict* PyObjectEx_Type1::GetKeywords() const
@@ -827,12 +827,12 @@ PyDict* PyObjectEx_Type1::GetKeywords() const
     // This one is slightly more complicated since
     // keywords are optional.
     assert( header() );
-    PyTuple* t = header()->AsTuple();
+    PyTuple* t = pyAs(Tuple, header());
 
     if( t->size() < 3 )
         t->items.push_back( new PyDict );
 
-    return t->GetItem( 2 )->AsDict();
+    return pyAs(Dict, t->GetItem( 2 ));
 }
 
 PyRep* PyObjectEx_Type1::FindKeyword( const char* keyword ) const
@@ -844,8 +844,8 @@ PyRep* PyObjectEx_Type1::FindKeyword( const char* keyword ) const
     end = kw->end();
     for(; cur != end; cur++)
     {
-        if( cur->first->IsString() )
-            if( cur->first->AsString()->content() == keyword )
+        if( pyIs(String, cur->first) )
+            if( pyAs(String, cur->first)->content() == keyword )
                 return cur->second;
     }
 
@@ -886,13 +886,13 @@ PyObjectEx_Type2::PyObjectEx_Type2( PyTuple* args, PyDict* keywords ) : PyObject
 PyTuple* PyObjectEx_Type2::GetArgs() const
 {
     assert( header() );
-    return header()->AsTuple()->GetItem( 0 )->AsTuple();
+    return pyAs(Tuple, pyAs(Tuple, header())->GetItem( 0 ));
 }
 
 PyDict* PyObjectEx_Type2::GetKeywords() const
 {
     assert( header() );
-    return header()->AsTuple()->GetItem( 1 )->AsDict();
+    return pyAs(Dict, pyAs(Tuple, header())->GetItem( 1 ));
 }
 
 PyRep* PyObjectEx_Type2::FindKeyword( const char* keyword ) const
@@ -904,8 +904,8 @@ PyRep* PyObjectEx_Type2::FindKeyword( const char* keyword ) const
     end = kw->end();
     for(; cur != end; cur++)
     {
-        if( cur->first->IsString() )
-            if( cur->first->AsString()->content() == keyword )
+        if( pyIs(String, cur->first) )
+            if( pyAs(String, cur->first)->content() == keyword )
                 return cur->second;
     }
 
@@ -1093,7 +1093,7 @@ BuiltinSet::BuiltinSet(PyList *list)
 
 PyRep* BuiltinSet::Clone() const
 {
-    return new BuiltinSet(values->Clone()->AsList());
+    return new BuiltinSet(pyAs(List, values->Clone()));
 }
 
 void BuiltinSet::addValue(PyRep *obj)
@@ -1111,13 +1111,11 @@ DefaultDict::DefaultDict()
 
 DefaultDict::DefaultDict( const DefaultDict& oth )
 : PyObjectEx_Type1(
-(oth.GetType() == nullptr) ? nullptr : oth.GetType()->Clone()->AsToken(),
-(oth.GetArgs() == nullptr) ? nullptr : oth.GetArgs()->Clone()->AsTuple(),
+(oth.GetType() == nullptr) ? nullptr : pyAs(Token, oth.GetType()->Clone()),
+(oth.GetArgs() == nullptr) ? nullptr : pyAs(Tuple, oth.GetArgs()->Clone()),
 (oth.GetKeywords() == nullptr) ? nullptr : oth.GetKeywords()->Clone()
 )
 {
-    // Use assigment operator
-    *this = oth;
 }
 
 PyRep* DefaultDict::Clone() const

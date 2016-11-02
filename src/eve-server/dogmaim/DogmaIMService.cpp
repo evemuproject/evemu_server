@@ -297,13 +297,13 @@ PyResult DogmaIMBound::Handle_Activate( PyCallArgs& call )
     {
         // This call is for Anchor/Unanchor a POS structure or Cargo Container,
         // so get the new flag value and change the item referenced:
-        if( call.tuple->items.at( 0 )->IsInt() )
+        if( pyIs(Int, call.tuple->items.at( 0 )) )
         {
-            itemID = call.tuple->items.at( 0 )->AsInt()->value();
+            itemID = pyAs(Int, call.tuple->items.at( 0 ))->value();
 
-            if( call.tuple->items.at( 1 )->IsInt() )
+            if( pyIs(Int, call.tuple->items.at( 1 )) )
             {
-                effect = call.tuple->items.at( 1 )->AsInt()->value();
+                effect = pyAs(Int, call.tuple->items.at( 1 ))->value();
 
                 SystemEntity * se = call.client->System()->get( itemID );
 

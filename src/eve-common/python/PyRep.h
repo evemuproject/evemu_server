@@ -110,71 +110,16 @@ public:
 
     /** PyType check functions
       */
-    //using this method is discouraged, it generally means your doing something wrong... Is<type>() should cover almost all needs
     PyType GetType() const          { return mType; }
-
-    bool IsInt() const
-    {
-        return mType == PyTypeInt;
-    }
-
-    bool IsLong() const             { return mType == PyTypeLong; }
-    bool IsFloat() const            { return mType == PyTypeFloat; }
-    bool IsBool() const             { return mType == PyTypeBool; }
-    bool IsBuffer() const           { return mType == PyTypeBuffer; }
-    bool IsString() const           { return mType == PyTypeString; }
-    bool IsWString() const          { return mType == PyTypeWString; }
-    bool IsToken() const            { return mType == PyTypeToken; }
-    bool IsTuple() const            { return mType == PyTypeTuple; }
-    bool IsList() const             { return mType == PyTypeList; }
-    bool IsDict() const             { return mType == PyTypeDict; }
-    bool IsNone() const             { return mType == PyTypeNone; }
-    bool IsSubStruct() const        { return mType == PyTypeSubStruct; }
-    bool IsSubStream() const        { return mType == PyTypeSubStream; }
-    bool IsChecksumedStream() const { return mType == PyTypeChecksumedStream; }
-    bool IsObject() const           { return mType == PyTypeObject; }
-    bool IsObjectEx() const         { return mType == PyTypeObjectEx; }
-    bool IsPackedRow() const        { return mType == PyTypePackedRow; }
-
     const char* TypeString() const;
 
-    // tools for easy access, less typecasting...
-    PyInt* AsInt()                                       { assert( IsInt() ); return (PyInt*)this; }
-    const PyInt* AsInt() const                           { assert( IsInt() ); return (const PyInt*)this; }
-    PyLong* AsLong()                                     { assert( IsLong() ); return (PyLong*)this; }
-    const PyLong* AsLong() const                         { assert( IsLong() ); return (const PyLong*)this; }
-    PyFloat* AsFloat()                                   { assert( IsFloat() ); return (PyFloat*)this; }
-    const PyFloat* AsFloat() const                       { assert( IsFloat() ); return (const PyFloat*)this; }
-    PyBool* AsBool()                                     { assert( IsBool() ); return (PyBool*)this; }
-    const PyBool* AsBool() const                         { assert( IsBool() ); return (const PyBool*)this; }
-    PyBuffer* AsBuffer()                                 { assert( IsBuffer() ); return (PyBuffer*)this; }
-    const PyBuffer* AsBuffer() const                     { assert( IsBuffer() ); return (const PyBuffer*)this; }
-    PyString* AsString()                                 { assert( IsString() ); return (PyString*)this; }
-    const PyString* AsString() const                     { assert( IsString() ); return (const PyString*)this; }
-    PyWString* AsWString()                               { assert( IsWString() ); return (PyWString*)this; }
-    const PyWString* AsWString() const                   { assert( IsWString() ); return (const PyWString*)this; }
-    PyToken* AsToken()                                   { assert( IsToken() ); return (PyToken*)this; }
-    const PyToken* AsToken() const                       { assert( IsToken() ); return (const PyToken*)this; }
-    PyTuple* AsTuple()                                   { assert( IsTuple() ); return (PyTuple*)this; }
-    const PyTuple* AsTuple() const                       { assert( IsTuple() ); return (const PyTuple*)this; }
-    PyList* AsList()                                     { assert( IsList() ); return (PyList*)this; }
-    const PyList* AsList() const                         { assert( IsList() ); return (const PyList*)this; }
-    PyDict* AsDict()                                     { assert( IsDict() ); return (PyDict*)this; }
-    const PyDict* AsDict() const                         { assert( IsDict() ); return (const PyDict*)this; }
-    PyNone* AsNone()                                     { assert( IsNone() ); return (PyNone*)this; }
-    const PyNone* AsNone() const                         { assert( IsNone() ); return (const PyNone*)this; }
-    PySubStruct* AsSubStruct()                           { assert( IsSubStruct() ); return (PySubStruct*)this; }
-    const PySubStruct* AsSubStruct() const               { assert( IsSubStruct() ); return (const PySubStruct*)this; }
-    PySubStream* AsSubStream()                           { assert( IsSubStream() ); return (PySubStream*)this; }
-    const PySubStream* AsSubStream() const               { assert( IsSubStream() ); return (const PySubStream*)this; }
-    PyChecksumedStream* AsChecksumedStream()             { assert( IsChecksumedStream() ); return (PyChecksumedStream*)this; }
-    const PyChecksumedStream* AsChecksumedStream() const { assert( IsChecksumedStream() ); return (const PyChecksumedStream*)this; }
-    PyObject* AsObject()                                 { assert( IsObject() ); return (PyObject*)this; }
-    const PyObject* AsObject() const                     { assert( IsObject() ); return (const PyObject*)this; }
-    PyObjectEx* AsObjectEx()                             { assert( IsObjectEx() ); return (PyObjectEx*)this; }
-    const PyObjectEx* AsObjectEx() const                 { assert( IsObjectEx() ); return (const PyObjectEx*)this; }
-    PyPackedRow* AsPackedRow()                           { assert( IsPackedRow() ); return (PyPackedRow*)this; }
-    const PyPackedRow* AsPackedRow() const               { assert( IsPackedRow() ); return (const PyPackedRow*)this; }
+    #define pyIs(t, p) (p->GetType() == PyRep::PyType::PyType##t)
+    #define pyAs(t, p) (pyIs(t, p) ? (Py##t *)p : (Py##t *)nullptr)
+    /**
+     * Check to see if the pointer(p) is of type(t) and assign it to pointer(a)
+     * return true if assigned.
+     */
+    #define pyIsAs(t, p, a) ((pyIs(t, p) ? a=(Py##t *)p : a=(Py##t *)nullptr) != nullptr)
 
     using RefObject::IncRef;
     using RefObject::DecRef;

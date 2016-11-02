@@ -356,25 +356,25 @@ PyResult LSCService::Handle_JoinChannels(PyCallArgs &call) {
 
     for( ; cur != end; cur++ )
     {
-        if( (*cur)->IsInt() )
-            toJoin.insert( (*cur)->AsInt()->value() );
-        else if( (*cur)->IsTuple() )
+        if( pyIs(Int, (*cur)) )
+            toJoin.insert( pyAs(Int, (*cur))->value() );
+        else if( pyIs(Tuple, (*cur)) )
         {
-            PyTuple* prt = (*cur)->AsTuple();
+            PyTuple* prt = pyAs(Tuple, (*cur));
 
-            if( prt->items.size() != 1 || !prt->items[0]->IsTuple() )
+            if( prt->items.size() != 1 || !pyIs(Tuple, prt->items[0]) )
             {
                 codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
                 continue;
             }
-            prt = prt->items[0]->AsTuple();
+            prt = pyAs(Tuple, prt->items[0]);
 
-            if( prt->items.size() != 2 || /* !prt->items[0]->IsString() || unnessecary */ !prt->items[1]->IsInt() )
+            if( prt->items.size() != 2 || /* !pyIs(String, prt->items[0]) || unnessecary */ !pyIs(Int, prt->items[1]) )
             {
                 codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
                 continue;
             }
-            toJoin.insert( prt->items[1]->AsInt()->value() );
+            toJoin.insert( pyAs(Int, prt->items[1])->value() );
         }
         else
         {
@@ -460,25 +460,27 @@ PyResult LSCService::Handle_LeaveChannel(PyCallArgs &call) {
 
     uint32 toLeave;
 
-    if( arg.channel->IsInt() )
-        toLeave = arg.channel->AsInt()->value();
-    else if( arg.channel->IsTuple() )
+    if( pyIs(Int, arg.channel) )
     {
-        PyTuple* prt = arg.channel->AsTuple();
+        toLeave = pyAs(Int, arg.channel)->value();
+    }
+    else if( pyIs(Tuple, arg.channel) )
+    {
+        PyTuple* prt = pyAs(Tuple, arg.channel);
 
-        if( prt->GetItem( 0 )->IsInt() )
-            toLeave = prt->GetItem( 0 )->AsInt()->value();
-        else if( prt->GetItem( 0 )->IsTuple() )
+        if( pyIs(Int, prt->GetItem( 0 )) )
+            toLeave = pyAs(Int, prt->GetItem( 0 ))->value();
+        else if( pyIs(Tuple, prt->GetItem( 0 )) )
         {
-            prt = prt->GetItem( 0 )->AsTuple();
+            prt = pyAs(Tuple, prt->GetItem( 0 ));
 
-            if( prt->items.size() != 2 || !prt->GetItem( 1 )->IsInt() )
+            if( prt->items.size() != 2 || !pyIs(Int, prt->GetItem( 1 )) )
             {
                 codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
                 return NULL;
             }
 
-            toLeave = prt->GetItem( 1 )->AsInt()->value();
+            toLeave = pyAs(Int, prt->GetItem( 1 ))->value();
         }
         else
         {
@@ -531,35 +533,39 @@ PyResult LSCService::Handle_LeaveChannels(PyCallArgs &call) {
 
         for(; cur != end; cur++)
         {
-            if( (*cur)->IsInt() )
-                toLeave.insert( (*cur)->AsInt()->value() );
-            else if( (*cur)->IsTuple() )
+            if( pyIs(Int, (*cur)) )
             {
-                PyTuple* prt = (*cur)->AsTuple();
+                toLeave.insert( pyAs(Int, (*cur))->value() );
+            }
+            else if( pyIs(Tuple, (*cur)) )
+            {
+                PyTuple* prt = pyAs(Tuple, (*cur));
 
-                if( prt->GetItem( 0 )->IsInt() )
+                if( pyIs(Int, prt->GetItem( 0 )) )
                 {
-                    toLeave.insert( prt->GetItem( 0 )->AsInt()->value() );
+                    toLeave.insert( pyAs(Int, prt->GetItem( 0 ))->value() );
                     continue;
                 }
 
-                if( !prt->GetItem( 0 )->IsTuple() )
-                {
-                    codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
-                    continue;
-                }
-                prt = prt->GetItem( 0 )->AsTuple();
-
-                if( prt->GetItem( 0 )->IsTuple() )
-                    prt = prt->GetItem( 0 )->AsTuple();
-
-                if( prt->size() != 2 || !prt->GetItem( 1 )->IsInt() )
+                if( !pyIs(Tuple, prt->GetItem( 0 )) )
                 {
                     codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
                     continue;
                 }
+                prt = pyAs(Tuple, prt->GetItem( 0 ));
 
-                toLeave.insert( prt->GetItem( 1 )->AsInt()->value() );
+                if( pyIs(Tuple, prt->GetItem( 0 )) )
+                {
+                    prt = pyAs(Tuple, prt->GetItem( 0 ));
+                }
+
+                if( prt->size() != 2 || !pyIs(Int, prt->GetItem( 1 )) )
+                {
+                    codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
+                    continue;
+                }
+
+                toLeave.insert( pyAs(Int, prt->GetItem( 1 ))->value() );
             }
             else
             {
@@ -571,20 +577,25 @@ PyResult LSCService::Handle_LeaveChannels(PyCallArgs &call) {
 
     {
         std::set<uint32>::iterator cur = toLeave.begin(), end = toLeave.end();
-        for (;cur!=end;cur++) {
+        for (;cur!=end;cur++)
+        {
             if (m_channels.find(*cur) != m_channels.end())
             {
                 // Remove channel subscription from database if this character was subscribed to it.
                 // NOTE: channel subscriptions are NOT saved to the database for private convo chats
                 if (LSCDB::IsChannelSubscribedByThisChar(call.client->GetCharacterID(), *cur))
+                {
                     LSCDB::RemoveChannelSubscriptionFromDatabase(*cur, call.client->GetCharacterID());
+                }
 
                 // Remove channel from database if this character was the last one
                 // in the channel to leave and it was a private convo (temporary==1):
                 if( (m_channels.find( *cur )->second->GetMemberCount() == 1)
                     && (m_channels.find( *cur )->second->GetTemporary() != 0)
                     && (m_channels.find( *cur )->second->GetChannelID() >= LSCService::BASE_CHANNEL_ID))
+                {
                     LSCDB::RemoveChannelFromDatabase(*cur);
+                }
 
                 m_channels[*cur]->LeaveChannel(call.client);
             }
@@ -601,8 +612,12 @@ void LSCService::CharacterLogout(uint32 charID, OnLSC_SenderInfo* si)
     cur = m_channels.begin();
     end = m_channels.end();
     for(; cur != end; cur++)
+    {
         if( cur->second->IsJoined( charID ) )
+        {
             cur->second->LeaveChannel( charID, new OnLSC_SenderInfo( *si ) );
+        }
+    }
 
     SafeDelete( si );
 }
@@ -633,22 +648,28 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
     if (call.byname.find("create") != call.byname.end())
     {
         create_channel_exists = true;
-        if (call.byname.find("create")->second->AsBool()->value())
+        if (pyAs(Bool, call.byname.find("create")->second)->value())
+        {
             create_channel = true;
+        }
     }
 
     if (call.byname.find("temporary") != call.byname.end())
     {
         temporary_exists = true;
-        if (call.byname.find("temporary")->second->AsBool()->value())
+        if (pyAs(Bool, call.byname.find("temporary")->second)->value())
+        {
             temporary_channel = true;
+        }
     }
 
     if (call.byname.find("joinExisting") != call.byname.end())
     {
         joinExisting_exists = true;
-        if (call.byname.find("joinExisting")->second->AsBool()->value())
+        if (pyAs(Bool, call.byname.find("joinExisting")->second)->value())
+        {
             joinExisting_channel = true;
+        }
     }
 
 
@@ -657,7 +678,9 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
         // Query Database to see if a channel with this name does not exist and, if so, create the channel,
         // otherwise, set the channel pointer to NULL
         if (LSCDB::IsChannelNameAvailable(name.arg))
+        {
             channel = CreateChannel( name.arg.c_str() );
+        }
         else
         {
             SysLog::Error( "LSCService", "%s: Error creating new chat channel: channel name '%s' already exists.", call.client->GetName(), name.arg.c_str() );
@@ -690,7 +713,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
     if (joinExisting_exists && joinExisting_channel)
     {
-        std::string channel_name = call.tuple->items[0]->AsWString()->content();
+        std::string channel_name = pyAs(WString, call.tuple->items[0])->content();
 
         if (!(LSCDB::IsChannelNameAvailable(channel_name)))
         {
@@ -741,7 +764,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
         channel = CreateChannel
         (
             channel_id,
-            call.tuple->GetItem(0)->AsString()->content().c_str(),
+            pyAs(String, call.tuple->GetItem(0))->content().c_str(),
             "",
             LSCChannel::normal,
             "",
@@ -762,7 +785,7 @@ PyResult LSCService::Handle_CreateChannel( PyCallArgs& call )
 
         // Save this channel to the database with the 'temporary' field marked as 1 so that when the last character
         // leaves this channel, the server knows to remove it from the database:
-        LSCDB::WriteNewChannelToDatabase(channel_id, call.tuple->GetItem(0)->AsString()->content(), call.client->GetCharacterID(), 1, cmode);
+        LSCDB::WriteNewChannelToDatabase(channel_id, pyAs(String, call.tuple->GetItem(0))->content(), call.client->GetCharacterID(), 1, cmode);
     }
 
 
@@ -818,8 +841,8 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     //}
 
     // Get Tuple which contains channel number to modify:
-    if (call.tuple->AsTuple()->GetItem(0)->IsInt())
-        channel_id = call.tuple->AsTuple()->GetItem(0)->AsInt()->value();
+    if (pyIs(Int, pyAs(Tuple, call.tuple)->GetItem(0)))
+        channel_id = pyAs(Int, pyAs(Tuple, call.tuple)->GetItem(0))->value();
     else
     {
         SysLog::Error( "LSCService", "%s: Tuple contained wrong type: '%s'", call.client->GetName(), call.tuple->TypeString() );
@@ -853,9 +876,9 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     //        "displayName"
     if (!(call.byname.find("displayName") == call.byname.end()))
     {
-        if (call.byname.find("displayName")->second->IsWString())
+        if (pyIs(WString, call.byname.find("displayName")->second))
         {
-            str_NEW_displayName = call.byname.find("displayName")->second->AsWString()->content();
+            str_NEW_displayName = pyAs(WString, call.byname.find("displayName")->second)->content();
             channel->SetDisplayName(str_NEW_displayName);
         }
         else
@@ -868,9 +891,9 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     //        "memberless"
     if (!(call.byname.find("memberless") == call.byname.end()))
     {
-        if (call.byname.find("memberless")->second->IsInt())
+        if (pyIs(Int, call.byname.find("memberless")->second))
         {
-            int_NEW_memberless = call.byname.find("memberless")->second->AsInt()->value();
+            int_NEW_memberless = pyAs(Int, call.byname.find("memberless")->second)->value();
             channel->SetMemberless(int_NEW_memberless ? true : false);
         }
         else
@@ -883,9 +906,9 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     //        "motd"
     if (!(call.byname.find("motd") == call.byname.end()))
     {
-        if (call.byname.find("motd")->second->IsWString())
+        if (pyIs(WString, call.byname.find("motd")->second))
         {
-            str_NEW_motd = call.byname.find("motd")->second->AsWString()->content();
+            str_NEW_motd = pyAs(WString, call.byname.find("motd")->second)->content();
             channel->SetMOTD(str_NEW_motd);
         }
         else
@@ -898,17 +921,17 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
     //        "oldPassword"
     if (!(call.byname.find("oldPassword") == call.byname.end()))
     {
-        if (call.byname.find("oldPassword")->second->IsWString())
+        if (pyIs(WString, call.byname.find("oldPassword")->second))
         {
-            str_oldPassword = call.byname.find("oldPassword")->second->AsWString()->content();
+            str_oldPassword = pyAs(WString, call.byname.find("oldPassword")->second)->content();
             if (channel->GetPassword() == str_oldPassword)
             {
                 //        "newPassword"
                 if (!(call.byname.find("newPassword") == call.byname.end()))
                 {
-                    if (call.byname.find("newPassword")->second->IsWString())
+                    if (pyIs(WString, call.byname.find("newPassword")->second))
                     {
-                        str_newPassword = call.byname.find("newPassword")->second->AsWString()->content();
+                        str_newPassword = pyAs(WString, call.byname.find("newPassword")->second)->content();
                         channel->SetPassword(str_newPassword);
                     }
                     else
@@ -924,14 +947,14 @@ PyResult LSCService::Handle_Configure( PyCallArgs& call )
                 return NULL;
             }
         }
-        else if (call.byname.find("oldPassword")->second->IsNone())
+        else if (pyIs(None, call.byname.find("oldPassword")->second))
         {
             //        "newPassword"
             if (!(call.byname.find("newPassword") == call.byname.end()))
             {
-                if (call.byname.find("newPassword")->second->IsWString())
+                if (pyIs(WString, call.byname.find("newPassword")->second))
                 {
-                    str_newPassword = call.byname.find("newPassword")->second->AsWString()->content();
+                    str_newPassword = pyAs(WString, call.byname.find("newPassword")->second)->content();
                     channel->SetPassword(str_newPassword);
                 }
                 else
@@ -1015,16 +1038,16 @@ PyResult LSCService::Handle_SendMessage( PyCallArgs& call )
 
     Call_SendMessage args;
 
-    if( ( call.tuple->IsTuple() ) && (call.tuple->AsTuple()->items[0]->IsInt()) )
+    if( ( pyIs(Tuple, call.tuple) ) && pyIs(Int, pyAs(Tuple, call.tuple)->items[0]) )
     {
         // Decode All User-created chat channel messages here:
-        if( !call.tuple->IsTuple() )
+        if( !pyIs(Tuple, call.tuple) )
         {
             _log( NET__PACKET_ERROR, "LSCService::Handle_SendMessage failed: tuple0 is the wrong type: %s", call.tuple->TypeString() );
 
             return NULL;
         }
-        PyTuple* tuple0 = call.tuple->AsTuple();
+        PyTuple* tuple0 = pyAs(Tuple, call.tuple);
 
         if( tuple0->size() != 2 )
         {
@@ -1033,8 +1056,8 @@ PyResult LSCService::Handle_SendMessage( PyCallArgs& call )
             return NULL;
         }
 
-        channel_id = (call.tuple->AsTuple()->items[0]->AsInt())->value();
-        message = ((call.tuple->AsTuple()->items[1]->AsWString())->content());
+        channel_id = pyAs(Int, pyAs(Tuple, call.tuple)->items[0])->value();
+        message = pyAs(WString, (pyAs(Tuple, call.tuple)->items[1]))->content();
         SysLog::Log( "LSCService", "Handle_SendMessage: call is either User-created chat message or bad packet.");
     }
     else
@@ -1105,16 +1128,16 @@ PyResult LSCService::Handle_AccessControl( PyCallArgs& call )
     // in access mode.  Is this really needed though, since the owner will change the mode and the owner's client will know
     // immediately, and anyone wanting to join will get that mode value when the JoinChannel has been called.
 
-    // call.tuple->GetItem(0)->AsInt()->value() = channel ID
-    // call.tuple->GetItem(1)->IsNone() == true  <---- change made to "" field
-    // call.tuple->GetItem(2)->AsInt()->value() =
+    // pyAs(Int, call.tuple->GetItem(0))->value() = channel ID
+    // pyIs(None, call.tuple->GetItem(1)) == true  <---- change made to "" field
+    // pyAs(Int, call.tuple->GetItem(2))->value() =
     //     0 = ??
     //     1 = Moderated
     //     2 = ??
     //     3 = Allowed
 
-    // call.tuple->GetItem(1)->IsInt() == true  <---- character ID for character add to one of the lists specified by GetItem(2):
-    // call.tuple->GetItem(2)->AsInt()->value() =
+    // pyIs(Int, call.tuple->GetItem(1)) == true  <---- character ID for character add to one of the lists specified by GetItem(2):
+    // pyAs(Int call.tuple->GetItem(2))->value() =
     //     3 = Add to Allowed List
     //     -2 = Add to Blocked List
     //     7 = Add to Moderators List
@@ -1141,18 +1164,22 @@ PyResult LSCService::Handle_Invite(PyCallArgs &call)
     uint32 invited_char_ID;
 
     // Decode the call:
-    if (call.tuple->IsTuple())
+    if (pyIs(Tuple, call.tuple))
     {
-        if (call.tuple->GetItem(1)->IsInt())
-            channel_ID = call.tuple->GetItem(1)->AsInt()->value();
+        if (pyIs(Int, call.tuple->GetItem(1)))
+        {
+            channel_ID = pyAs(Int, call.tuple->GetItem(1))->value();
+        }
         else
         {
             SysLog::Error( "LSCService", "%s: call.tuple->GetItem(1) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->TypeString() );
             return NULL;
         }
 
-        if (call.tuple->GetItem(0)->IsInt())
-            invited_char_ID = call.tuple->GetItem(0)->AsInt()->value();
+        if (pyIs(Int, call.tuple->GetItem(0)))
+        {
+            invited_char_ID = pyAs(Int, call.tuple->GetItem(0))->value();
+        }
         else
         {
             SysLog::Error( "LSCService", "%s: call.tuple->GetItem(0) is of the wrong type: '%s'.  Expected PyInt type.", call.client->GetName(), call.tuple->TypeString() );
@@ -1373,25 +1400,25 @@ PyResult LSCService::Handle_GetMembers(PyCallArgs &call) {
     }
 
     uint32 channelID;
-    if( arg.channel->IsInt() )
-        channelID = arg.channel->AsInt()->value();
-    else if( arg.channel->IsTuple() )
+    if( pyIs(Int, arg.channel) )
+        channelID = pyAs(Int, arg.channel)->value();
+    else if( pyIs(Tuple, arg.channel) )
     {
-        PyTuple* prt = arg.channel->AsTuple();
+        PyTuple* prt = pyAs(Tuple, arg.channel);
 
-        if( prt->GetItem( 0 )->IsInt() )
-            channelID = prt->GetItem( 0 )->AsInt()->value();
-        else if( prt->GetItem( 0 )->IsTuple() )
+        if( pyIs(Int, prt->GetItem( 0 )) )
+            channelID = pyAs(Int, prt->GetItem( 0 ))->value();
+        else if( pyIs(Tuple, prt->GetItem( 0 )) )
         {
-            prt = prt->GetItem( 0 )->AsTuple();
+            prt = pyAs(Tuple, prt->GetItem( 0 ));
 
-            if( prt->items.size() != 2 || !prt->GetItem( 1 )->IsInt() )
+            if( prt->items.size() != 2 || !pyAs(Int, prt->GetItem( 1 )) )
             {
                 codelog(SERVICE__ERROR, "%s: Bad arguments", call.client->GetName());
                 return NULL;
             }
 
-            channelID = prt->GetItem( 1 )->AsInt()->value();
+            channelID = pyAs(Int, prt->GetItem( 1 ))->value();
         }
         else
         {

@@ -444,7 +444,7 @@ PyRep* UnmarshalStream::LoadObject()
     if( NULL == type )
         return NULL;
 
-    if( !type->IsString() )
+    if( !pyIs(String, type) )
     {
         SysLog::Error( "Unmarshal", "Object: Expected 'String' as type, got '%s'.", type->TypeString() );
 
@@ -459,7 +459,7 @@ PyRep* UnmarshalStream::LoadObject()
         return NULL;
     }
 
-    return new PyObject( type->AsString(), arguments );
+    return new PyObject( pyAs(String, type), arguments );
 }
 
 PyRep* UnmarshalStream::LoadObjectEx1()
