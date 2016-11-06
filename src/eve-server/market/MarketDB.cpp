@@ -296,8 +296,7 @@ PyRep *MarketDB::GetNewPriceHistory(uint32 regionID, uint32 typeID) {
         " FROM srvMarket_transactions "
         " WHERE regionID=%u AND typeID=%u"
         "    AND transactionType=%d "    //both buy and sell transactions get recorded, only compound one set of data... choice was arbitrary.
-        " GROUP BY historyDate"
-        " ,lowPrice, highPrice, avgPrice, volume, orders",
+        " GROUP BY historyDate",
         Win32Time_Day, regionID, typeID, TransactionTypeBuy))
     {
         codelog(MARKET__ERROR, "Error in query: %s", res.error.c_str());
@@ -331,9 +330,8 @@ bool MarketDB::BuildOldPriceHistory() {
         " FROM srvMarket_transactions "
         " WHERE"
         "    transactionType=%d AND "    //both buy and sell transactions get recorded, only compound one set of data... choice was arbitrary.
-        "    ( transactionDateTime - ( transactionDateTime %% %" PRId64 " ) ) < %" PRId64
-        " GROUP BY regionID, typeID, historyDate"
-        " ,lowPrice, highPrice, avgPrice, volume, orders",
+        "    ( transactionDateTime - ( transactionDateTime %% %" PRId64 " ) ) < %" PRId64 ""
+        " GROUP BY regionID, typeID, historyDate",
             Win32Time_Day,
             TransactionTypeBuy,
             Win32Time_Day,
