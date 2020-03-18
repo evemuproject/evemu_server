@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -21,6 +21,7 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:     Zhur
+    Updates:    Allan
 */
 
 #include "eve-server.h"
@@ -28,75 +29,80 @@
 #include "config/ConfigDB.h"
 
 PyRep *ConfigDB::GetMultiOwnersEx(const std::vector<int32> &entityIDs) {
-#   pragma message( "we need to deal with corporations!" )
+    // separate list of ids into respective groups
+    std::vector<int32> player, corp, ally;
+    player.clear();
+    corp.clear();
+    ally.clear();
 
-    //im not sure how this query is supposed to work, as far as what table
-    //we use to get the fields from.
-    //we only get called for items which are not already sent in the
-    // eveStaticOwners cachable object.
-
-    std::string ids;
-    ListToINString(entityIDs, ids, "-1");
+    for (auto cur : entityIDs) {
+        if (IsCorp(cur))
+            corp.push_back(cur);
+        else if (IsAlliance(cur))
+            ally.push_back(cur);
+        else
+            player.push_back(cur);
+    }
 
     DBQueryResult res;
-    DBResultRow row;
+    std::string ids = "";
 
-	//first we check to see if there is such ids in the entity tables
-    if(!sDatabase.RunQuery(res,
-        "SELECT "
-        " entity.itemID as ownerID,"
-        " entity.itemName as ownerName,"
-        " entity.typeID,"
-		" 1 as gender,"
-        " NULL as ownerNameID"
-        " FROM entity "
-        " WHERE itemID in (%s)", ids.c_str()))
-    {
-        codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-        return NULL;
-    }
+    if (corp.size()) {
+        ListToINString(corp, ids, "0");
 
-    //this is pretty hackish... will NOT work if they mix things...
-    //this was only put in to deal with "new" statics, like corporations.
-
-	//second: we check to see if the id points to a static entity (Agents, NPC Corps, etc.)
-    if(!res.GetRow(row)) {
-        if(!sDatabase.RunQuery(res,
+        if (!sDatabase.RunQuery(res,
             "SELECT "
-            " ownerID,ownerName,typeID,"
-			" 1 as gender,"
-            " NULL as ownerNameID"
-            " FROM evestaticowners "
-            " WHERE ownerID in (%s)", ids.c_str()))
+            "  corporationID as ownerID,"
+            "  corporationName as ownerName,"
+            "  2 AS typeID,"                    // corp typeID
+            "  NULL AS gender,"
+            "  NULL AS ownerNameID"
+            " FROM corporation"
+            " WHERE corporationID IN (%s)", ids.c_str()))
         {
-            codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-            return NULL;
+            codelog(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
+            // DONT return on error...may be more in list.
         }
-    } else {
-        res.Reset();
+        ids = "";
     }
+    /* wait on this one, as this table doesnt exist yet in this version...but neither do alliances.
+    if (ally.size()) {
+        ListToINString(ally, ids, "0");
 
-	//third: we check to see it the id points to a player's character
-    if(!res.GetRow(row)) {
-        if(!sDatabase.RunQuery(res,
+        if (!sDatabase.RunQuery(res,
             "SELECT "
-            " characterID as ownerID,"
-            " itemName as ownerName,"
-            " typeID,"
-			" 1 as gender,"
-            " NULL as ownerNameID"
-            " FROM character_ "
-            " LEFT JOIN entity ON characterID = itemID"
-            " WHERE characterID in (%s)", ids.c_str()))
+            "  allianceID as ownerID,"
+            "  allianceShortName as ownerName,"
+            "  16159 AS typeID,"                 // alliance typeID.
+            "  NULL AS gender,"
+            "  NULL AS ownerNameID"
+            " FROM crpAlliance"
+            " WHERE allianceID IN (%s)", ids.c_str()))
         {
-            codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-            return NULL;
+            codelog(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
         }
-    } else {
-        res.Reset();
+        ids = "";
+    } */
+
+    if (player.size()) {
+        ListToINString(player, ids, "0");
+
+        if (!sDatabase.RunQuery(res,
+            "SELECT "
+            "  c.characterID as ownerID,"
+            "  e.itemName as ownerName,"
+            "  e.typeID,"
+            "  c.gender,"
+            "  NULL AS ownerNameID"
+            " FROM character_ AS c"
+            "  LEFT JOIN entity AS e ON e.itemID = c.characterID"
+            " WHERE characterID IN (%s)", ids.c_str()))
+        {
+            codelog(DATABASE__ERROR, "Error in query: %s", res.error.c_str());
+        }
     }
 
-    return(DBResultToTupleSet(res));
+    return DBResultToTupleSet(res);
 }
 
 PyRep *ConfigDB::GetMultiAllianceShortNamesEx(const std::vector<int32> &entityIDs) {
@@ -129,57 +135,57 @@ PyRep *ConfigDB::GetMultiAllianceShortNamesEx(const std::vector<int32> &entityID
 
 
 PyRep *ConfigDB::GetMultiLocationsEx(const std::vector<int32> &entityIDs) {
+    // separate list of ids into respective groups
+    std::vector<int32> staticItem, dynamicItem;
+    staticItem.clear();
+    dynamicItem.clear();
 
-    //im not sure how this query is supposed to work, as far as what table
-    //we use to get the fields from.
-
-    bool use_map = false;
-    if(!entityIDs.empty()) {
-        //this is a big of a hack at this point... basically
-        //we are assuming that they only query locations for map items
-        // and non-map items disjointly....
-        use_map = IsStaticMapItem(entityIDs[0]);
+    for (auto cur : entityIDs) {
+        if (cur == 0) {
+            sLog.Error("GetMultiLocationsEx", "Client sent 0");
+            continue;
+        }
+        if (IsStaticMapItem(cur))
+            staticItem.push_back(cur);
+        else
+            dynamicItem.push_back(cur);
     }
-
-    std::string ids;
-    ListToINString(entityIDs, ids, "-1");
 
     DBQueryResult res;
+    std::string ids = "";
 
-    if(use_map) {
-        if(!sDatabase.RunQuery(res,
+    if (staticItem.size()) {
+        ListToINString(staticItem, ids, "0");
+        if (!sDatabase.RunQuery(res,
             "SELECT "
-            " mapDenormalize.itemID AS locationID,"
-            " mapDenormalize.itemName AS locationName,"
-            " mapDenormalize.x AS x,"
-            " mapDenormalize.y AS y,"
-            " mapDenormalize.z AS z,"
+            " itemID AS locationID,"
+            " itemName AS locationName,"
+            " x, y, z,"
             " NULL AS locationNameID"
-            " FROM mapDenormalize "
+            " FROM mapDenormalize"
             " WHERE itemID in (%s)", ids.c_str()))
         {
-            codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-            return NULL;
+            codelog(DATABASE__ERROR, "Error in GetMultiLocationsEx query: %s", res.error.c_str());
         }
-    } else {
-        if(!sDatabase.RunQuery(res,
+        ids = "";
+    }
+
+    if (dynamicItem.size()) {
+        ListToINString(dynamicItem, ids, "0");
+        if (!sDatabase.RunQuery(res,
             "SELECT "
-            " entity.itemID AS locationID,"
-            " entity.itemName AS locationName,"
-            " entity.x AS x,"
-            " entity.y AS y,"
-            " entity.z AS z,"
+            " itemID AS locationID,"
+            " itemName AS locationName,"
+            " x, y, z,"
             " NULL AS locationNameID"
-            " FROM entity "
+            " FROM entity"
             " WHERE itemID in (%s)", ids.c_str()))
         {
-            codelog(SERVICE__ERROR, "Error in query: %s", res.error.c_str());
-            return NULL;
+            codelog(DATABASE__ERROR, "Error in GetMultiLocationsEx query: %s", res.error.c_str());
         }
     }
 
-    //return(DBResultToRowset(res));
-    return(DBResultToTupleSet(res));
+    return DBResultToTupleSet(res);
 }
 
 
@@ -259,7 +265,7 @@ PyObjectEx *ConfigDB::GetMapObjects(uint32 entityID, bool wantRegions,
 
     DBQueryResult res;
 
-#   pragma message( "hacked 'connector' field in GetMapObjects" )
+    //TODO: hacked 'connector' field in GetMapObjects
 
     if(!sDatabase.RunQuery(res,
         "SELECT "
@@ -282,7 +288,7 @@ PyObjectEx *ConfigDB::GetMapObjects(uint32 entityID, bool wantRegions,
 PyObject *ConfigDB::GetMap(uint32 solarSystemID) {
     DBQueryResult res;
 
-#   pragma message( "a lot of missing data in GetMap" )
+    //TODO: a lot of missing data in GetMap
 
     //how in the world do they get a list in the freakin rowset for destinations???
     if(!sDatabase.RunQuery(res,

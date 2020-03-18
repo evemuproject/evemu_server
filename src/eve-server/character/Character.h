@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -278,7 +278,7 @@ public:
    double weightUpDown;
    double weightLeftRight;
    double weightForwardBack;
-   
+
    void Build(uint32 ownerID, PyDict* data);
 
 private:
@@ -306,6 +306,28 @@ public:
     uint64 rolesAtBase;
     uint64 rolesAtHQ;
     uint64 rolesAtOther;
+};
+
+/**
+ * Class representing fleet data    -allan 31Jul14
+ */
+class FleetMemberInfo {
+public:
+    FleetMemberInfo(
+        uint32 _fleetID = 0,
+        uint32 _wingID = 0,
+        uint32 _squadID = 0,
+        uint8 _fleetRole = 0,
+        uint8 _fleetBooster = 0,
+        uint8 _fleetJob = 0
+    );
+
+    uint32 fleetID;
+    uint32 wingID;
+    uint32 squadID;
+    uint8 fleetRole;
+    uint8 fleetBooster;
+    uint8 fleetJob;
 };
 
 /**
@@ -349,8 +371,10 @@ public:
     bool AlterBalance(double balanceChange);
     void SetLocation(uint32 stationID, uint32 solarSystemID, uint32 constellationID, uint32 regionID);
     void JoinCorporation(uint32 corporationID);
-	void JoinCorporation(uint32 corporationID, const CorpMemberInfo &roles);
+    void JoinCorporation(uint32 corporationID, const CorpMemberInfo &roles);
+    void SetAccountKey(int32 accountKey);   //not completed in this branch
     void SetDescription(const char *newDescription);
+    void SetFleetData(FleetMemberInfo& fleet);
 
     void Delete();
 
@@ -377,6 +401,8 @@ public:
      * @return Pointer to Skill object; NULL if skill was not found.
      */
     SkillRef GetSkill(uint32 skillTypeID) const;
+
+    uint8 GetSkillLevel(uint32 skillTypeID, bool zeroForNotInjected=true) const;
     /**
      * Returns skill currently in training.
      *
@@ -506,11 +532,20 @@ public:
     uint32                  logonMinutes() const { return m_logonMinutes; }
     void                    addSecurityRating( double secutiryAmount ) { m_securityRating += secutiryAmount; }
 
+    // Fleet:
+    uint32                  fleetID() const { return /*m_fleetID*/0; }  //TODO  fixme when fleets are implemented
+    uint32                  wingID() const { return m_wingID; }
+    uint32                  squadID() const { return m_squadID; }
+    uint8                   fleetRole() const { return m_fleetRole; }
+    uint8                   fleetBooster() const { return m_fleetBooster; }
+    uint8                   fleetJob() const { return m_fleetJob; }
+
     // Corporation:
     uint32                  corporationID() const { return m_corporationID; }
     uint32                  corporationHQ() const { return m_corpHQ; }
     uint32                  allianceID() const { return m_allianceID; }
     uint32                  warFactionID() const { return m_warFactionID; }
+    int32                   corpAccountKey() const { return m_corpAccountKey; }
 
     // Corporation role:
     uint64                  corpRole() const { return m_corpRole; }
@@ -626,6 +661,14 @@ protected:
     double m_securityRating;
     uint32 m_logonMinutes;
 
+    uint32 m_fleetID;
+    uint32 m_wingID;
+    uint32 m_squadID;
+    uint8 m_fleetRole;
+    uint8 m_fleetBooster;
+    uint8 m_fleetJob;
+
+    int32 m_corpAccountKey;
     uint32 m_corporationID;
     uint32 m_corpHQ;
     uint32 m_allianceID;

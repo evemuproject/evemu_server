@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur, Cometo
 */
 
 #ifndef __CHARACTERDB_H_INCL__
@@ -141,6 +141,9 @@ public:
 
     bool ReportRespec(uint32 characterId);
     bool GetRespecInfo(uint32 characterId, uint32& out_freeRespecs, uint64& out_lastRespec, uint64& out_nextRespec);
+    PyObject *GetTopBounties();
+    uint32 GetBounty(uint32 charID);
+    bool AddBounty(uint32 charID, uint32 ammount);
 
 private:
     /**

@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -577,6 +577,24 @@ PyResult BeyonceBound::Handle_CmdWarpToStuff(PyCallArgs &call) {
                 call.client->WarpTo( se->GetPosition(), distance );
             }
         }
+    }
+    else if( arg.type == "launch" )
+    {
+        DBQueryResult res;
+        if(!sDatabase.RunQuery(res, "SELECT `x`, `y`, `z` FROM `planetlaunches` WHERE `launchID` = %u", arg.ID)) {
+            codelog(SERVICE__ERROR, "Error in BeyonceService::CmdWarpToStuff:launch Query: %s", res.error.c_str());
+            return NULL;
+        }
+        DBResultRow row;
+        if(!res.GetRow(row)) {
+            codelog(SERVICE__ERROR, "Error in BeyonceService::CmdWarpToStuff:launch Query returned no rows");
+            return NULL;
+        }
+        GPoint warpToPoint;
+        warpToPoint.x = row.GetDouble(1);
+        warpToPoint.y = row.GetDouble(2);
+        warpToPoint.z = row.GetDouble(3);
+        call.client->WarpTo(warpToPoint, 0.0);
     }
     else
     {

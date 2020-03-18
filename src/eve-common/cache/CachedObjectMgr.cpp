@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -419,7 +419,7 @@ PySubStream* CachedObjectMgr::LoadCachedFile( const char* abs_fname, const char*
 
     if( f == NULL ) {
         sLog.Error("CachedObjMgr","Unable to open cache file '%s' for oname '%s': %s", abs_fname, oname, strerror( errno ) );
-        return false;
+        return new PySubStream( new PyNone() );
     }
 
     uint64 file_length = filesize( f );
@@ -427,7 +427,7 @@ PySubStream* CachedObjectMgr::LoadCachedFile( const char* abs_fname, const char*
     {
         sLog.Error("CachedObjMgr","Unable to stat cache file '%s' for oname '%s'", abs_fname, oname );
         fclose( f );
-        return false;
+        return new PySubStream( new PyNone() );
     }
 
     Buffer* buf = new Buffer(static_cast<size_t>(file_length));
@@ -437,7 +437,7 @@ PySubStream* CachedObjectMgr::LoadCachedFile( const char* abs_fname, const char*
 
         SafeDelete( buf );
         fclose( f );
-        return false;
+        return new PySubStream( new PyNone() );
     }
 
     fclose( f );

@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -69,9 +69,9 @@ private:
     bool ValidateSize(std::string& category, uint32 size);
 
     std::tr1::unordered_map<uint32 /*accountID*/, std::tr1::shared_ptr<std::vector<char> > /*imageData*/> _limboImages;
-    std::auto_ptr<boost::asio::detail::thread> _ioThread;
-    std::auto_ptr<boost::asio::io_service> _io;
-    std::auto_ptr<ImageServerListener> _listener;
+    std::shared_ptr<boost::asio::detail::thread> _ioThread;
+    std::shared_ptr<boost::asio::io_service> _io;
+    std::shared_ptr<ImageServerListener> _listener;
     std::string _url;
     std::string _basePath;
     boost::asio::detail::mutex _limboLock;

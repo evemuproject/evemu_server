@@ -214,6 +214,17 @@ SET( dogmaim_SOURCE
      "${TARGET_SOURCE_DIR}/dogmaim/DogmaDB.cpp"
      "${TARGET_SOURCE_DIR}/dogmaim/DogmaService.cpp" )
 
+SET( fleet_INCLUDE
+     "${TARGET_INCLUDE_DIR}/fleet/FleetManager.h"
+     "${TARGET_INCLUDE_DIR}/fleet/FleetObject.h"
+     "${TARGET_INCLUDE_DIR}/fleet/FleetProxy.h"
+     "${TARGET_INCLUDE_DIR}/fleet/FleetService.h")
+SET( fleet_SOURCE
+     "${TARGET_SOURCE_DIR}/fleet/FleetManager.cpp"
+     "${TARGET_SOURCE_DIR}/fleet/FleetObject.cpp"
+     "${TARGET_SOURCE_DIR}/fleet/FleetProxy.cpp"
+     "${TARGET_SOURCE_DIR}/fleet/FleetService.cpp")
+
 SET( imageserver_INCLUDE
      "${TARGET_INCLUDE_DIR}/imageserver/ImageServer.h"
      "${TARGET_INCLUDE_DIR}/imageserver/ImageServerConnection.h"
@@ -337,11 +348,13 @@ SET( npc_SOURCE
      "${TARGET_SOURCE_DIR}/npc/SpawnManager.cpp" )
 
 SET( pos_INCLUDE
+     "${TARGET_INCLUDE_DIR}/pos/Colony.h"
      "${TARGET_INCLUDE_DIR}/pos/PlanetMgr.h"
      "${TARGET_INCLUDE_DIR}/pos/PosMgrDB.h"
      "${TARGET_INCLUDE_DIR}/pos/PosMgrService.h"
      "${TARGET_INCLUDE_DIR}/pos/Structure.h" )
 SET( pos_SOURCE
+     "${TARGET_SOURCE_DIR}/pos/Colony.cpp"
      "${TARGET_SOURCE_DIR}/pos/PlanetMgr.cpp"
      "${TARGET_SOURCE_DIR}/pos/PosMgrDB.cpp"
      "${TARGET_SOURCE_DIR}/pos/PosMgrService.cpp"
@@ -360,7 +373,6 @@ SET( ship_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/DestinyManager.h"
      "${TARGET_INCLUDE_DIR}/ship/dgmtypeattributeinfo.h"
      "${TARGET_INCLUDE_DIR}/ship/Drone.h"
-     "${TARGET_INCLUDE_DIR}/ship/FleetProxy.h"
      "${TARGET_INCLUDE_DIR}/ship/InsuranceService.h"
      "${TARGET_INCLUDE_DIR}/ship/ModuleManager.h"
      "${TARGET_INCLUDE_DIR}/ship/RepairService.h"
@@ -374,7 +386,6 @@ SET( ship_SOURCE
      "${TARGET_SOURCE_DIR}/ship/DestinyManager.cpp"
      "${TARGET_SOURCE_DIR}/ship/dgmtypeattributeinfo.cpp"
      "${TARGET_SOURCE_DIR}/ship/Drone.cpp"
-     "${TARGET_SOURCE_DIR}/ship/FleetProxy.cpp"
      "${TARGET_SOURCE_DIR}/ship/InsuranceService.cpp"
      "${TARGET_SOURCE_DIR}/ship/ModuleManager.cpp"
      "${TARGET_SOURCE_DIR}/ship/RepairService.cpp"
@@ -511,6 +522,7 @@ SOURCE_GROUP( "src\\chat"          FILES ${chat_INCLUDE} )
 SOURCE_GROUP( "src\\config"        FILES ${config_INCLUDE} )
 SOURCE_GROUP( "src\\corporation"   FILES ${corporation_INCLUDE} )
 SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_INCLUDE} )
+SOURCE_GROUP( "src\\fleet"         FILES ${fleet_INCLUDE} )
 SOURCE_GROUP( "src\\imageserver"   FILES ${imageserver_INCLUDE} )
 SOURCE_GROUP( "src\\inventory"     FILES ${inventory_INCLUDE} )
 SOURCE_GROUP( "src\\mail"          FILES ${mail_INCLUDE} )
@@ -539,6 +551,7 @@ SOURCE_GROUP( "src\\chat"          FILES ${chat_SOURCE} )
 SOURCE_GROUP( "src\\config"        FILES ${config_SOURCE} )
 SOURCE_GROUP( "src\\corporation"   FILES ${corporation_SOURCE} )
 SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_SOURCE} )
+SOURCE_GROUP( "src\\fleet"         FILES ${fleet_SOURCE} )
 SOURCE_GROUP( "src\\imageserver"   FILES ${imageserver_SOURCE} )
 SOURCE_GROUP( "src\\inventory"     FILES ${inventory_SOURCE} )
 SOURCE_GROUP( "src\\mail"          FILES ${mail_SOURCE} )
@@ -568,6 +581,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${config_INCLUDE}         ${config_SOURCE}
                 ${corporation_INCLUDE}    ${corporation_SOURCE}
                 ${dogmaim_INCLUDE}        ${dogmaim_SOURCE}
+                ${fleet_INCLUDE}          ${fleet_SOURCE}
                 ${imageserver_INCLUDE}    ${imageserver_SOURCE}
                 ${inventory_INCLUDE}      ${inventory_SOURCE}
                 ${mail_INCLUDE}           ${mail_SOURCE}
@@ -578,7 +592,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${missions_INCLUDE}       ${missions_SOURCE}
                 ${npc_INCLUDE}            ${npc_SOURCE}
                 ${pos_INCLUDE}            ${pos_SOURCE}
-		${search_INCLUDE}         ${search_SOURCE}
+                ${search_INCLUDE}         ${search_SOURCE}
                 ${ship_INCLUDE}           ${ship_SOURCE}
                 ${ship_modules_INCLUDE}   ${ship_modules_SOURCE}
                 ${ship_modules_components_INCLUDE} ${ship_modules_components_SOURCE}

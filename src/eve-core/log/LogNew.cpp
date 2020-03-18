@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -59,6 +59,8 @@ const char* const NewLog::COLOR_TABLE[ COLOR_COUNT ] =
     "\033[" "37;01" "m"  // COLOR_WHITE
 };
 #endif /* !HAVE_WINDOWS_H */
+
+#define CONSOLE_LOG_PADDING 20
 
 NewLog::NewLog()
 : mLogfile( NULL ),
@@ -161,6 +163,12 @@ bool NewLog::SetLogfile( const char* filename )
     if( NULL != filename )
     {
         file = fopen( filename, "w" );
+#ifdef HAVE_UNISTD_H
+		// Change file owner to nobody:nobody to prevent possible permissions problems.
+        // Used if the server is started with root permissions on a Linux host.
+        fchown(fileno(file), 99, 99);   // nobody:nobody
+        fchmod(fileno(file), S_IWUSR | S_IRUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);    // -rw-rw-rw-
+#endif
         if( NULL == file )
             return false;
     }
@@ -191,10 +199,14 @@ void NewLog::PrintMsg( Color color, char pfx, const char* source, const char* fm
     SetColor( color );
     Print( " %c ", pfx );
 
+    std::string pad = "";
+    if(strlen(source) < CONSOLE_LOG_PADDING)
+        pad = std::string(CONSOLE_LOG_PADDING-strlen(source), ' ');
+
     if( source && *source )
     {
         SetColor( COLOR_WHITE );
-        Print( "%s: ", source );
+        Print( "%s%s: ", pad.c_str(), source );
 
         SetColor( color );
     }

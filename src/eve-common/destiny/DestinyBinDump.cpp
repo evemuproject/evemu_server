@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -196,7 +196,7 @@ uint32 DumpBall(LogType into, const uint8 *data, uint32 len) {
     }
 
     //not right:
-    if( ( ballhead->sub_type == 64 ) || ( ballhead->sub_type == 66 ) )
+    if( 0 /*( ballhead->sub_type == 64 ) || ( ballhead->sub_type == 66 )*/ )
     {
         const Destiny::MiniBallList* mbl = (const Destiny::MiniBallList*)data;
         data += sizeof( Destiny::MiniBallList );

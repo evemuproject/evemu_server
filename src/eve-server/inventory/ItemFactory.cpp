@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -49,9 +49,9 @@ ItemFactory::~ItemFactory() {
         end = m_items.end();
         for(; cur != end; cur++) {
             // save attributes of item
-			if( IsNonStaticItem(cur->second->itemID()) )
+            if( IsNotStaticItem(cur->second->itemID()) )
 				cur->second->SaveItem();
-			
+
 			items_saved++;
 			if( ((float)items_saved / (float)total_item_count) > (current_percent_items_saved + 0.05) )
 			{

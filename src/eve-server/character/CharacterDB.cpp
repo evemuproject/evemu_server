@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Zhur
+    Author:        Zhur, Cometo
 */
 
 #include "eve-server.h"
@@ -676,7 +676,7 @@ void CharacterDB::SetAvatarModifiers(uint32 charID, PyRep* modifierLocationID,  
 		charID,
 		modifierLocationID->AsInt()->value(),
 		paperdollResourceID->AsInt()->value(),
-		paperdollResourceVariation->IsInt() ? paperdollResourceVariation->AsInt()->value() : NULL ))
+		paperdollResourceVariation->IsInt() ? paperdollResourceVariation->AsInt()->value() : 0 ))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}
@@ -691,9 +691,9 @@ void CharacterDB::SetAvatarSculpts(uint32 charID, PyRep* sculptLocationID, PyRep
 		"VALUES (%u, %u, %f, %f, %f)",
 		charID,
 		sculptLocationID->AsInt()->value(),
-		weightUpDown->IsFloat() ? weightUpDown->AsFloat()->value() : NULL,
-		weightLeftRight->IsFloat() ? weightLeftRight->AsFloat()->value() : NULL,
-		weightForwardBack->IsFloat() ? weightForwardBack->AsFloat()->value() : NULL))
+		weightUpDown->IsFloat() ? weightUpDown->AsFloat()->value() : 0.0f,
+		weightLeftRight->IsFloat() ? weightLeftRight->AsFloat()->value() : 0.0f,
+		weightForwardBack->IsFloat() ? weightForwardBack->AsFloat()->value() : 0.0f))
 	{
 		codelog(SERVICE__ERROR, "Error in query: %s", err.c_str());
 	}
@@ -982,4 +982,35 @@ bool CharacterDB::del_name_validation_set( uint32 characterID )
         printf("CharacterDB::del_name_validation_set: unable to remove: %s as its not in the set", name);
         return false;
     }
+}
+
+PyObject *CharacterDB::GetTopBounties() {
+    DBQueryResult res;
+    if(!sDatabase.RunQuery(res, "SELECT `characterID`, `itemName` as `ownerName`, `bounty`, `online`  FROM character_  LEFT JOIN `entity` ON `characterID` = `itemID` WHERE `characterID` >= %u AND `bounty` > 0 ORDER BY `bounty` DESC LIMIT 0,100" , EVEMU_MINIMUM_ID)) {
+        sLog.Error("CharacterDB", "Error in GetTopBounties query: %s", res.error.c_str());
+        return NULL;
+    }
+    return DBResultToRowset(res);
+}
+
+uint32 CharacterDB::GetBounty(uint32 charID) {
+    DBQueryResult res;
+    if(!sDatabase.RunQuery(res, "SELECT `bounty` FROM character_ WHERE `characterID` = %u", charID)) {
+        sLog.Error("CharacterDB", "Error in GetBounty query: %s", res.error.c_str());
+        return 0;
+    }
+    DBResultRow row;
+    if(!res.GetRow(row))
+        return 0;
+    else
+        return row.GetUInt(0);
+}
+
+bool CharacterDB::AddBounty(uint32 charID, uint32 ammount) {
+    DBerror err;
+    uint32 total = GetBounty(charID) + ammount;
+    if(!sDatabase.RunQuery(err, "UPDATE character_ SET `bounty` = %u WHERE `characterID` = %u", total, charID))
+        return false;
+    else
+        return true;
 }

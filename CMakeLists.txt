@@ -14,7 +14,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.8 FATAL_ERROR )
 PROJECT( "evemu" )
 SET( PROJECT_DESCRIPTION_SUMMARY "A server emulator for EVE Online" )
 SET( PROJECT_VENDOR              "The EVEmu development team" )
-SET( PROJECT_VERSION             "this is not used anymore, CMake pulls version from Git Tree Info (cmake/GitTreeInfo.cmake)" )
+SET( PROJECT_VERSION             "0" )
 SET( PROJECT_REPOSITORY          "https://github.com/evemuproject/evemu_server" )
 
 # Append our module path
@@ -123,6 +123,8 @@ CHECK_INCLUDE_FILE_CXX( "tr1/tuple"  HAVE_TR1_PREFIX )
 CHECK_INCLUDE_FILE_CXX( "vld.h"      HAVE_VLD_H )
 CHECK_INCLUDE_FILE_CXX( "windows.h"  HAVE_WINDOWS_H )
 CHECK_INCLUDE_FILE_CXX( "winsock2.h" HAVE_WINSOCK2_H )
+CHECK_INCLUDE_FILE_CXX( "unistd.h"   HAVE_UNISTD_H )
+
 
 # Keywords
 CHECK_CXX_SOURCE_COMPILES(

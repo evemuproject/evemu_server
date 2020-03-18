@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -124,6 +124,12 @@ public:
 
     uint32 GetShipID() const                        { return m_shipId; }
     uint32 GetGangRole() const                      { return mSession.GetCurrentInt( "gangrole" ); }
+    uint8 GetFleetRole() const                      { return mSession.GetCurrentInt( "fleetrole" ); }
+
+    //  public functions to update client session when char's roles are changed
+    void UpdateCorpSession( const CharacterConstRef& character );
+    void UpdateFleetSession( const CharacterConstRef& character );
+    
 
     // character data
     CharacterRef GetChar() const                    { return m_char; }

@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -20,7 +20,7 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Reve
+    Author:        Reve, Allan
 */
 
 //work in progress
@@ -28,7 +28,7 @@
 #include "eve-server.h"
 
 #include "PyServiceCD.h"
-#include "ship/FleetProxy.h"
+#include "fleet/FleetProxy.h"
 
 PyCallable_Make_InnerDispatcher(FleetProxyService)
 
@@ -52,26 +52,52 @@ FleetProxyService::~FleetProxyService()
 }
 
 PyResult FleetProxyService::Handle_GetAvailableFleets(PyCallArgs &call) {
-    return NULL;
+//empty call
+
+    return m_Mgr.GetAvailableFleets();
 }
 
 PyResult FleetProxyService::Handle_ApplyToJoinFleet(PyCallArgs &call) {
+  /**
+        ret = sm.ProxySvc('fleetProxy').ApplyToJoinFleet(fleetID)
+        */
+
+    sLog.Log("FleetProxyService", "Handle_ApplyToJoinFleet() size=%u", call.tuple->size() );
+
     return NULL;
 }
 
 PyResult FleetProxyService::Handle_AddFleetFinderAdvert(PyCallArgs &call) {
+ /**
+        sm.ProxySvc('fleetProxy').AddFleetFinderAdvert(info)
+        */
+
+    sLog.Log("FleetProxyService", "Handle_AddFleetFinderAdvert() size=%u", call.tuple->size() );
+
     return NULL;
 }
 
 PyResult FleetProxyService::Handle_RemoveFleetFinderAdvert(PyCallArgs &call) {
+
+    sLog.Log("FleetProxyService", "Handle_RemoveFleetFinderAdvert() size=%u", call.tuple->size() );
+
     return NULL;
 }
 
 PyResult FleetProxyService::Handle_GetMyFleetFinderAdvert(PyCallArgs &call) {
+
+    sLog.Log("FleetProxyService", "Handle_GetMyFleetFinderAdvert() size=%u", call.tuple->size() );
+
     return NULL;
 }
 
 
 PyResult FleetProxyService::Handle_UpdateAdvertInfo(PyCallArgs &call) {
+  /**
+                sm.ProxySvc('fleetProxy').UpdateAdvertInfo(numMembers)
+                */
+
+    sLog.Log("FleetProxyService", "Handle_UpdateAdvertInfo() size=%u", call.tuple->size() );
+
     return NULL;
 }

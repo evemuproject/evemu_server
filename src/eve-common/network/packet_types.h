@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -334,29 +334,459 @@ static const uint8 MAX_ASSEMBLY_COUNT = flagSubSystem7 - flagSubSystem0 + 1;
 #define SlotToFlag(slot) \
     ((EVEItemFlags)(flagSlotFirst + slot))
 
-/* To complete the skill list this use this query:
-SELECT t.typeID, c.categoryID, g.groupName, t.typeName, t.description, t.basePrice
-FROM invTypes t, invGroups g, invCategories c
-WHERE g.groupID = t.groupID AND c.categoryID = g.categoryID AND c.categoryID = 16
-ORDER BY t.typeID, g.groupName, t.typeName
-*/
 typedef enum {
-       skillGunnery = 3300,
-       skillSmallHybridTurret = 3301,
-       skillSpaceshipCommand = 3327,
-       skillCaldariFrigate = 3330,
-       skillIndustry = 3380,
-       skillRefining = 3385,
-       skillMining = 3386,
-       skillRefineryEfficiency = 3389,
-       skillMechanic = 3392,
-       skillScience = 3402,
-       skillResearch = 3403,
-       skillEngineering = 3413,
-       skillDrones = 3436,
-       skillMiningDroneOperation = 3438,
-       skillScrapmetalProcessing = 12196
-} EVESkillID;
+    skillEventCharCreation = 33,
+    skillEventClonePenalty = 34,
+    skillEventTaskMaster = 35,
+    skillEventTrainingStarted = 36,
+    skillEventTrainingComplete = 37,
+    skillEventTrainingCancelled = 38,
+    skillEventGMGive = 39,
+    skillEventQueueTrainingCompleted = 53,
+    skillEventSkillInjected = 56,
+    skillEventHaltedAccountLapsed = 260,
+    skillEventSkillPointsApplied = 307,
+    skillEventGMReverseFreeSkillPointsUsed = 309
+} EVESkillEvent;
+
+ /** Created with MYSQL query:
+  * SELECT concat("\tskill", Replace(t.typeName, ' ', ''), "\t\t= ", t.typeID, ',\t\t// group = ', g.groupName)
+  * FROM invTypes t, invGroups g, invCategories c
+  * WHERE g.groupID = t.groupID AND c.categoryID = g.categoryID AND c.categoryID = 16
+  * ORDER BY g.groupName
+  */
+ //thanks positron96 for this query
+ //  -allan 21Mar14
+ typedef enum {
+     skillCorporationManagement      = 3363,     // group = Corporation Management
+     skillStationManagement      = 3364,     // group = Corporation Management
+     skillStarbaseManagement     = 3365,     // group = Corporation Management
+     skillFactoryManagement      = 3366,     // group = Corporation Management
+     skillRefineryManagement     = 3367,     // group = Corporation Management
+     skillEthnicRelations        = 3368,     // group = Corporation Management
+     skillCFOTraining        = 3369,     // group = Corporation Management
+     skillChiefScienceOfficer        = 3370,     // group = Corporation Management
+     skillPublicRelations        = 3371,     // group = Corporation Management
+     skillIntelligenceAnalyst        = 3372,     // group = Corporation Management
+     skillStarbaseDefenseManagement      = 3373,     // group = Corporation Management
+     skillMegacorpManagement     = 3731,     // group = Corporation Management
+     skillEmpireControl      = 3732,     // group = Corporation Management
+     skillAnchoring      = 11584,        // group = Corporation Management
+     skillSovereignty        = 12241,        // group = Corporation Management
+     skillDrones     = 3436,     // group = Drones
+     skillScoutDroneOperation        = 3437,     // group = Drones
+     skillMiningDroneOperation       = 3438,     // group = Drones
+     skillRepairDroneOperation       = 3439,     // group = Drones
+     skillSalvageDroneOperation      = 3440,     // group = Drones
+     skillHeavyDroneOperation        = 3441,     // group = Drones
+     skillDroneInterfacing       = 3442,     // group = Drones
+     skillDroneNavigation        = 12305,        // group = Drones
+     skillAmarrDroneSpecialization       = 12484,        // group = Drones
+     skillMinmatarDroneSpecialization        = 12485,        // group = Drones
+     skillGallenteDroneSpecialization        = 12486,        // group = Drones
+     skillCaldariDroneSpecialization     = 12487,        // group = Drones
+     skillTESTDroneSkill     = 22172,        // group = Drones
+     skillMiningDroneSpecialization      = 22541,        // group = Drones
+     skillFighters       = 23069,        // group = Drones
+     skillElectronicWarfareDroneInterfacing      = 23566,        // group = Drones
+     skillSentryDroneInterfacing     = 23594,        // group = Drones
+     skillPropulsionJammingDroneInterfacing      = 23599,        // group = Drones
+     skillDroneSharpshooting     = 23606,        // group = Drones
+     skillDroneDurability        = 23618,        // group = Drones
+     skillCombatDroneOperation       = 24241,        // group = Drones
+     skillAdvancedDroneInterfacing       = 24613,        // group = Drones
+     skillFighterBombers     = 32339,        // group = Drones
+     skillElectronics        = 3426,     // group = Electronics
+     skillElectronicWarfare      = 3427,     // group = Electronics
+     skillLongRangeTargeting     = 3428,     // group = Electronics
+     skillTargeting      = 3429,     // group = Electronics
+     skillMultitasking       = 3430,     // group = Electronics
+     skillSignatureAnalysis      = 3431,     // group = Electronics
+     skillElectronicsUpgrades        = 3432,     // group = Electronics
+     skillSensorLinking      = 3433,     // group = Electronics
+     skillWeaponDisruption       = 3434,     // group = Electronics
+     skillPropulsionJamming      = 3435,     // group = Electronics
+     skillSurvey     = 3551,     // group = Electronics
+     skillAdvancedSensorUpgrades     = 11208,        // group = Electronics
+     skillCloaking       = 11579,        // group = Electronics
+     skillHypereuclideanNavigation       = 12368,        // group = Electronics
+     skillLongDistanceJamming        = 19759,        // group = Electronics
+     skillFrequencyModulation        = 19760,        // group = Electronics
+     skillSignalDispersion       = 19761,        // group = Electronics
+     skillSignalSuppression      = 19766,        // group = Electronics
+     skillTurretDestabilization      = 19767,        // group = Electronics
+     skillTargetPainting     = 19921,        // group = Electronics
+     skillSignatureFocusing      = 19922,        // group = Electronics
+     skillCynosuralFieldTheory       = 21603,        // group = Electronics
+     skillProjectedElectronicCounterMeasures     = 27911,        // group = Electronics
+     skillTournamentObservation      = 28604,        // group = Electronics
+     skillImperialNavySecurityClearance      = 28631,        // group = Electronics
+     skillEngineering        = 3413,     // group = Engineering
+     skillShieldOperation        = 3416,     // group = Engineering
+     skillEnergySystemsOperation     = 3417,     // group = Engineering
+     skillEnergyManagement       = 3418,     // group = Engineering
+     skillShieldManagement       = 3419,     // group = Engineering
+     skillTacticalShieldManipulation     = 3420,     // group = Engineering
+     skillEnergyPulseWeapons     = 3421,     // group = Engineering
+     skillShieldEmissionSystems      = 3422,     // group = Engineering
+     skillEnergyEmissionSystems      = 3423,     // group = Engineering
+     skillEnergyGridUpgrades     = 3424,     // group = Engineering
+     skillShieldUpgrades     = 3425,     // group = Engineering
+     skillAdvancedEnergyGridUpgrades     = 11204,        // group = Engineering
+     skillAdvancedShieldUpgrades     = 11206,        // group = Engineering
+     skillThermicShieldCompensation      = 11566,        // group = Engineering
+     skillEMShieldCompensation       = 12365,        // group = Engineering
+     skillKineticShieldCompensation      = 12366,        // group = Engineering
+     skillExplosiveShieldCompensation        = 12367,        // group = Engineering
+     skillShieldCompensation     = 21059,        // group = Engineering
+     skillCapitalShieldOperation     = 21802,        // group = Engineering
+     skillCapitalShieldEmissionSystems       = 24571,        // group = Engineering
+     skillCapitalEnergyEmissionSystems       = 24572,        // group = Engineering
+     skillStealthBombersFakeSkill        = 20127,        // group = Fake Skills
+     skillGunnery        = 3300,     // group = Gunnery
+     skillSmallHybridTurret      = 3301,     // group = Gunnery
+     skillSmallProjectileTurret      = 3302,     // group = Gunnery
+     skillSmallEnergyTurret      = 3303,     // group = Gunnery
+     skillMediumHybridTurret     = 3304,     // group = Gunnery
+     skillMediumProjectileTurret     = 3305,     // group = Gunnery
+     skillMediumEnergyTurret     = 3306,     // group = Gunnery
+     skillLargeHybridTurret      = 3307,     // group = Gunnery
+     skillLargeProjectileTurret      = 3308,     // group = Gunnery
+     skillLargeEnergyTurret      = 3309,     // group = Gunnery
+     skillRapidFiring        = 3310,     // group = Gunnery
+     skillSharpshooter       = 3311,     // group = Gunnery
+     skillMotionPrediction       = 3312,     // group = Gunnery
+     skillSurgicalStrike     = 3315,     // group = Gunnery
+     skillControlledBursts       = 3316,     // group = Gunnery
+     skillTrajectoryAnalysis     = 3317,     // group = Gunnery
+     skillWeaponUpgrades     = 3318,     // group = Gunnery
+     skillSmallRailgunSpecialization     = 11082,        // group = Gunnery
+     skillSmallBeamLaserSpecialization       = 11083,        // group = Gunnery
+     skillSmallAutocannonSpecialization      = 11084,        // group = Gunnery
+     skillAdvancedWeaponUpgrades     = 11207,        // group = Gunnery
+     skillSmallArtillerySpecialization       = 12201,        // group = Gunnery
+     skillMediumArtillerySpecialization      = 12202,        // group = Gunnery
+     skillLargeArtillerySpecialization       = 12203,        // group = Gunnery
+     skillMediumBeamLaserSpecialization      = 12204,        // group = Gunnery
+     skillLargeBeamLaserSpecialization       = 12205,        // group = Gunnery
+     skillMediumRailgunSpecialization        = 12206,        // group = Gunnery
+     skillLargeRailgunSpecialization     = 12207,        // group = Gunnery
+     skillMediumAutocannonSpecialization     = 12208,        // group = Gunnery
+     skillLargeAutocannonSpecialization      = 12209,        // group = Gunnery
+     skillSmallBlasterSpecialization     = 12210,        // group = Gunnery
+     skillMediumBlasterSpecialization        = 12211,        // group = Gunnery
+     skillLargeBlasterSpecialization     = 12212,        // group = Gunnery
+     skillSmallPulseLaserSpecialization      = 12213,        // group = Gunnery
+     skillMediumPulseLaserSpecialization     = 12214,        // group = Gunnery
+     skillLargePulseLaserSpecialization      = 12215,        // group = Gunnery
+     skillCapitalEnergyTurret        = 20327,        // group = Gunnery
+     skillCapitalHybridTurret        = 21666,        // group = Gunnery
+     skillCapitalProjectileTurret        = 21667,        // group = Gunnery
+     skillTacticalWeaponReconfiguration      = 22043,        // group = Gunnery
+     skillIndustry       = 3380,     // group = Industry
+     skillAmarrTech      = 3381,     // group = Industry
+     skillCaldariTech        = 3382,     // group = Industry
+     skillGallenteTech       = 3383,     // group = Industry
+     skillMinmatarTech       = 3384,     // group = Industry
+     skillRefining       = 3385,     // group = Industry
+     skillMining     = 3386,     // group = Industry
+     skillMassProduction     = 3387,     // group = Industry
+     skillProductionEfficiency       = 3388,     // group = Industry
+     skillRefineryEfficiency     = 3389,     // group = Industry
+     skillMobileRefineryOperation        = 3390,     // group = Industry
+     skillMobileFactoryOperation     = 3391,     // group = Industry
+     skillDeepCoreMining     = 11395,        // group = Industry
+     skillArkonorProcessing      = 12180,        // group = Industry
+     skillBistotProcessing       = 12181,        // group = Industry
+     skillCrokiteProcessing      = 12182,        // group = Industry
+     skillDarkOchreProcessing        = 12183,        // group = Industry
+     skillGneissProcessing       = 12184,        // group = Industry
+     skillHedbergiteProcessing       = 12185,        // group = Industry
+     skillHemorphiteProcessing       = 12186,        // group = Industry
+     skillJaspetProcessing       = 12187,        // group = Industry
+     skillKerniteProcessing      = 12188,        // group = Industry
+     skillMercoxitProcessing     = 12189,        // group = Industry
+     skillOmberProcessing        = 12190,        // group = Industry
+     skillPlagioclaseProcessing      = 12191,        // group = Industry
+     skillPyroxeresProcessing        = 12192,        // group = Industry
+     skillScorditeProcessing     = 12193,        // group = Industry
+     skillSpodumainProcessing        = 12194,        // group = Industry
+     skillVeldsparProcessing     = 12195,        // group = Industry
+     skillScrapmetalProcessing       = 12196,        // group = Industry
+     skillIceHarvesting      = 16281,        // group = Industry
+     skillIceProcessing      = 18025,        // group = Industry
+     skillMiningUpgrades     = 22578,        // group = Industry
+     skillSupplyChainManagement      = 24268,        // group = Industry
+     skillAdvancedMassProduction     = 24625,        // group = Industry
+     skillGasCloudHarvesting     = 25544,        // group = Industry
+     skillDrugManufacturing      = 26224,        // group = Industry
+     skillOreCompression     = 28373,        // group = Industry
+     skillIndustrialReconfiguration      = 28585,        // group = Industry
+     skillLeadership     = 3348,     // group = Leadership
+     skillSkirmishWarfare        = 3349,     // group = Leadership
+     skillSiegeWarfare       = 3350,     // group = Leadership
+     skillSiegeWarfareSpecialist     = 3351,     // group = Leadership
+     skillInformationWarfareSpecialist       = 3352,     // group = Leadership
+     skillWarfareLinkSpecialist      = 3354,     // group = Leadership
+     skillArmoredWarfareSpecialist       = 11569,        // group = Leadership
+     skillSkirmishWarfareSpecialist      = 11572,        // group = Leadership
+     skillWingCommand        = 11574,        // group = Leadership
+     skillArmoredWarfare     = 20494,        // group = Leadership
+     skillInformationWarfare     = 20495,        // group = Leadership
+     skillMiningForeman      = 22536,        // group = Leadership
+     skillMiningDirector     = 22552,        // group = Leadership
+     skillFleetCommand       = 24764,        // group = Leadership
+     skillMechanics      = 3392,     // group = Mechanics
+     skillRepairSystems      = 3393,     // group = Mechanics
+     skillHullUpgrades       = 3394,     // group = Mechanics
+     skillFrigateConstruction        = 3395,     // group = Mechanics
+     skillIndustrialConstruction     = 3396,     // group = Mechanics
+     skillCruiserConstruction        = 3397,     // group = Mechanics
+     skillBattleshipConstruction     = 3398,     // group = Mechanics
+     skillOutpostConstruction        = 3400,     // group = Mechanics
+     skillRemoteArmorRepairSystems       = 16069,        // group = Mechanics
+     skillCapitalRepairSystems       = 21803,        // group = Mechanics
+     skillCapitalShipConstruction        = 22242,        // group = Mechanics
+     skillEMArmorCompensation        = 22806,        // group = Mechanics
+     skillExplosiveArmorCompensation     = 22807,        // group = Mechanics
+     skillKineticArmorCompensation       = 22808,        // group = Mechanics
+     skillThermicArmorCompensation       = 22809,        // group = Mechanics
+     skillCapitalRemoteArmorRepairSystems        = 24568,        // group = Mechanics
+     skillSalvaging      = 25863,        // group = Mechanics
+     skillJuryRigging        = 26252,        // group = Mechanics
+     skillArmorRigging       = 26253,        // group = Mechanics
+     skillAstronauticsRigging        = 26254,        // group = Mechanics
+     skillDronesRigging      = 26255,        // group = Mechanics
+     skillElectronicSuperiorityRigging       = 26256,        // group = Mechanics
+     skillProjectileWeaponRigging        = 26257,        // group = Mechanics
+     skillEnergyWeaponRigging        = 26258,        // group = Mechanics
+     skillHybridWeaponRigging        = 26259,        // group = Mechanics
+     skillLauncherRigging        = 26260,        // group = Mechanics
+     skillShieldRigging      = 26261,        // group = Mechanics
+     skillRemoteHullRepairSystems        = 27902,        // group = Mechanics
+     skillTacticalLogisticsReconfiguration       = 27906,        // group = Mechanics
+     skillCapitalRemoteHullRepairSystems     = 27936,        // group = Mechanics
+     skillNaniteOperation        = 28879,        // group = Mechanics
+     skillNaniteInterfacing      = 28880,        // group = Mechanics
+     skillMissileLauncherOperation       = 3319,     // group = Missile Launcher Operation
+     skillRockets        = 3320,     // group = Missile Launcher Operation
+     skillLightMissiles       = 3321,     // group = Missile Launcher Operation
+     skillFoFMissiles        = 3322,     // group = Missile Launcher Operation
+     skillDefenderMissiles       = 3323,     // group = Missile Launcher Operation
+     skillHeavyMissiles      = 3324,     // group = Missile Launcher Operation
+     skillTorpedoes      = 3325,     // group = Missile Launcher Operation
+     skillCruiseMissiles     = 3326,     // group = Missile Launcher Operation
+     skillMissileBombardment     = 12441,        // group = Missile Launcher Operation
+     skillMissileProjection      = 12442,        // group = Missile Launcher Operation
+     skillRocketSpecialization       = 20209,        // group = Missile Launcher Operation
+     skillLightMissileSpecialization      = 20210,        // group = Missile Launcher Operation
+     skillHeavyMissileSpecialization     = 20211,        // group = Missile Launcher Operation
+     skillCruiseMissileSpecialization        = 20212,        // group = Missile Launcher Operation
+     skillTorpedoSpecialization      = 20213,        // group = Missile Launcher Operation
+     skillGuidedMissilePrecision     = 20312,        // group = Missile Launcher Operation
+     skillTargetNavigationPrediction     = 20314,        // group = Missile Launcher Operation
+     skillWarheadUpgrades        = 20315,        // group = Missile Launcher Operation
+     skillRapidLaunch        = 21071,        // group = Missile Launcher Operation
+     skillCitadelTorpedoes       = 21668,        // group = Missile Launcher Operation
+     skillHeavyAssaultMissileSpecialization      = 25718,        // group = Missile Launcher Operation
+     skillHeavyAssaultMissiles       = 25719,        // group = Missile Launcher Operation
+     skillBombDeployment     = 28073,        // group = Missile Launcher Operation
+     skillCitadelCruiseMissiles      = 32435,        // group = Missile Launcher Operation
+     skillNavigation     = 3449,     // group = Navigation
+     skillAfterburner        = 3450,     // group = Navigation
+     skillFuelConservation       = 3451,     // group = Navigation
+     skillAccelerationControl        = 3452,     // group = Navigation
+     skillEvasiveManeuvering     = 3453,     // group = Navigation
+     skillHighSpeedManeuvering       = 3454,     // group = Navigation
+     skillWarpDriveOperation     = 3455,     // group = Navigation
+     skillJumpDriveOperation     = 3456,     // group = Navigation
+     skillJumpFuelConservation       = 21610,        // group = Navigation
+     skillJumpDriveCalibration       = 21611,        // group = Navigation
+     skillAdvancedPlanetology        = 2403,     // group = Planet Management
+     skillPlanetology        = 2406,     // group = Planet Management
+     skillInterplanetaryConsolidation        = 2495,     // group = Planet Management
+     skillCommandCenterUpgrades      = 2505,     // group = Planet Management
+     skillRemoteSensing      = 13279,        // group = Planet Management
+     skillScience        = 3402,     // group = Science
+     skillResearch       = 3403,     // group = Science
+     skillBiology        = 3405,     // group = Science
+     skillLaboratoryOperation        = 3406,     // group = Science
+     skillReverseEngineering     = 3408,     // group = Science
+     skillMetallurgy     = 3409,     // group = Science
+     skillAstrogeology       = 3410,     // group = Science
+     skillCybernetics        = 3411,     // group = Science
+     skillAstrometrics       = 3412,     // group = Science
+     skillHighEnergyPhysics      = 11433,        // group = Science
+     skillPlasmaPhysics      = 11441,        // group = Science
+     skillNaniteEngineering      = 11442,        // group = Science
+     skillHydromagneticPhysics       = 11443,        // group = Science
+     skillAmarrianStarshipEngineering        = 11444,        // group = Science
+     skillMinmatarStarshipEngineering        = 11445,        // group = Science
+     skillGravitonPhysics        = 11446,        // group = Science
+     skillLaserPhysics       = 11447,        // group = Science
+     skillElectromagneticPhysics     = 11448,        // group = Science
+     skillRocketScience      = 11449,        // group = Science
+     skillGallenteanStarshipEngineering      = 11450,        // group = Science
+     skillNuclearPhysics     = 11451,        // group = Science
+     skillMechanicalEngineering      = 11452,        // group = Science
+     skillElectronicEngineering      = 11453,        // group = Science
+     skillCaldariStarshipEngineering     = 11454,        // group = Science
+     skillQuantumPhysics     = 11455,        // group = Science
+     skillAstronauticEngineering     = 11487,        // group = Science
+     skillMolecularEngineering       = 11529,        // group = Science
+     skillHypernetScience        = 11858,        // group = Science
+     skillResearchProjectManagement      = 12179,        // group = Science
+     skillArchaeology        = 13278,        // group = Science
+     skillTalocanTechnology      = 20433,        // group = Science
+     skillHacking        = 21718,        // group = Science
+     skillSleeperTechnology      = 21789,        // group = Science
+     skillCaldariEncryptionMethods       = 21790,        // group = Science
+     skillMinmatarEncryptionMethods      = 21791,        // group = Science
+     skillAmarrEncryptionMethods     = 23087,        // group = Science
+     skillGallenteEncryptionMethods      = 23121,        // group = Science
+     skillTakmahlTechnology      = 23123,        // group = Science
+     skillYanJungTechnology      = 23124,        // group = Science
+     skillInfomorphPsychology        = 24242,        // group = Science
+     skillScientificNetworking       = 24270,        // group = Science
+     skillJumpPortalGeneration       = 24562,        // group = Science
+     skillDoomsdayOperation      = 24563,        // group = Science
+     skillCloningFacilityOperation       = 24606,        // group = Science
+     skillAdvancedLaboratoryOperation        = 24624,        // group = Science
+     skillNeurotoxinRecovery     = 25530,        // group = Science
+     skillNaniteControl      = 25538,        // group = Science
+     skillAstrometricRangefinding        = 25739,        // group = Science
+     skillAstrometricPinpointing     = 25810,        // group = Science
+     skillAstrometricAcquisition     = 25811,        // group = Science
+     skillThermodynamics     = 28164,        // group = Science
+     skillDefensiveSubsystemTechnology       = 30324,        // group = Science
+     skillEngineeringSubsystemTechnology     = 30325,        // group = Science
+     skillElectronicSubsystemTechnology      = 30326,        // group = Science
+     skillOffensiveSubsystemTechnology       = 30327,        // group = Science
+     skillPropulsionSubsystemTechnology      = 30788,        // group = Science
+     skillSocial     = 3355,     // group = Social
+     skillNegotiation        = 3356,     // group = Social
+     skillDiplomacy      = 3357,     // group = Social
+     skillFastTalk       = 3358,     // group = Social
+     skillConnections        = 3359,     // group = Social
+     skillCriminalConnections        = 3361,     // group = Social
+     skillDEDConnections     = 3362,     // group = Social
+     skillMiningConnections      = 3893,     // group = Social
+     skillDistributionConnections        = 3894,     // group = Social
+     skillSecurityConnections        = 3895,     // group = Social
+     skillOREIndustrial      = 3184,     // group = Spaceship Command
+     skillSpaceshipCommand       = 3327,     // group = Spaceship Command
+     skillGallenteFrigate        = 3328,     // group = Spaceship Command
+     skillMinmatarFrigate        = 3329,     // group = Spaceship Command
+     skillCaldariFrigate     = 3330,     // group = Spaceship Command
+     skillAmarrFrigate       = 3331,     // group = Spaceship Command
+     skillGallenteCruiser        = 3332,     // group = Spaceship Command
+     skillMinmatarCruiser        = 3333,     // group = Spaceship Command
+     skillCaldariCruiser     = 3334,     // group = Spaceship Command
+     skillAmarrCruiser       = 3335,     // group = Spaceship Command
+     skillGallenteBattleship     = 3336,     // group = Spaceship Command
+     skillMinmatarBattleship     = 3337,     // group = Spaceship Command
+     skillCaldariBattleship      = 3338,     // group = Spaceship Command
+     skillAmarrBattleship        = 3339,     // group = Spaceship Command
+     skillGallenteIndustrial     = 3340,     // group = Spaceship Command
+     skillMinmatarIndustrial     = 3341,     // group = Spaceship Command
+     skillCaldariIndustrial      = 3342,     // group = Spaceship Command
+     skillAmarrIndustrial        = 3343,     // group = Spaceship Command
+     skillGallenteTitan      = 3344,     // group = Spaceship Command
+     skillMinmatarTitan      = 3345,     // group = Spaceship Command
+     skillCaldariTitan       = 3346,     // group = Spaceship Command
+     skillAmarrTitan     = 3347,     // group = Spaceship Command
+     skillJoveFrigate        = 3755,     // group = Spaceship Command
+     skillJoveCruiser        = 3758,     // group = Spaceship Command
+     skillPolaris        = 9955,     // group = Spaceship Command
+     skillConcord        = 10264,        // group = Spaceship Command
+     skillJoveIndustrial     = 11075,        // group = Spaceship Command
+     skillJoveBattleship     = 11078,        // group = Spaceship Command
+     skillInterceptors       = 12092,        // group = Spaceship Command
+     skillCovertOps      = 12093,        // group = Spaceship Command
+     skillAssaultShips       = 12095,        // group = Spaceship Command
+     skillLogistics      = 12096,        // group = Spaceship Command
+     skillDestroyers     = 12097,        // group = Spaceship Command
+     skillInterdictors       = 12098,        // group = Spaceship Command
+     skillBattlecruisers     = 12099,        // group = Spaceship Command
+     skillHeavyAssaultShips      = 16591,        // group = Spaceship Command
+     skillMiningBarge        = 17940,        // group = Spaceship Command
+     skillOmnipotent     = 19430,        // group = Spaceship Command
+     skillTransportShips     = 19719,        // group = Spaceship Command
+     skillAdvancedSpaceshipCommand       = 20342,        // group = Spaceship Command
+     skillAmarrFreighter     = 20524,        // group = Spaceship Command
+     skillAmarrDreadnought       = 20525,        // group = Spaceship Command
+     skillCaldariFreighter       = 20526,        // group = Spaceship Command
+     skillGallenteFreighter      = 20527,        // group = Spaceship Command
+     skillMinmatarFreighter      = 20528,        // group = Spaceship Command
+     skillCaldariDreadnought     = 20530,        // group = Spaceship Command
+     skillGallenteDreadnought        = 20531,        // group = Spaceship Command
+     skillMinmatarDreadnought        = 20532,        // group = Spaceship Command
+     skillCapitalShips       = 20533,        // group = Spaceship Command
+     skillExhumers       = 22551,        // group = Spaceship Command
+     skillReconShips     = 22761,        // group = Spaceship Command
+     skillCommandShips       = 23950,        // group = Spaceship Command
+     skillAmarrCarrier       = 24311,        // group = Spaceship Command
+     skillCaldariCarrier     = 24312,        // group = Spaceship Command
+     skillGallenteCarrier        = 24313,        // group = Spaceship Command
+     skillMinmatarCarrier        = 24314,        // group = Spaceship Command
+     skillCapitalIndustrialShips     = 28374,        // group = Spaceship Command
+     skillHeavyInterdictors      = 28609,        // group = Spaceship Command
+     skillElectronicAttackShips      = 28615,        // group = Spaceship Command
+     skillBlackOps       = 28656,        // group = Spaceship Command
+     skillMarauders      = 28667,        // group = Spaceship Command
+     skillJumpFreighters     = 29029,        // group = Spaceship Command
+     skillIndustrialCommandShips     = 29637,        // group = Spaceship Command
+     skillAmarrStrategicCruiser      = 30650,        // group = Spaceship Command
+     skillCaldariStrategicCruiser        = 30651,        // group = Spaceship Command
+     skillGallenteStrategicCruiser       = 30652,        // group = Spaceship Command
+     skillMinmatarStrategicCruiser       = 30653,        // group = Spaceship Command
+     skillAmarrDefensiveSystems      = 30532,        // group = Subsystems
+     skillAmarrElectronicSystems     = 30536,        // group = Subsystems
+     skillAmarrOffensiveSystems      = 30537,        // group = Subsystems
+     skillAmarrPropulsionSystems     = 30538,        // group = Subsystems
+     skillAmarrEngineeringSystems        = 30539,        // group = Subsystems
+     skillGallenteDefensiveSystems       = 30540,        // group = Subsystems
+     skillGallenteElectronicSystems      = 30541,        // group = Subsystems
+     skillCaldariElectronicSystems       = 30542,        // group = Subsystems
+     skillMinmatarElectronicSystems      = 30543,        // group = Subsystems
+     skillCaldariDefensiveSystems        = 30544,        // group = Subsystems
+     skillMinmatarDefensiveSystems       = 30545,        // group = Subsystems
+     skillGallenteEngineeringSystems     = 30546,        // group = Subsystems
+     skillMinmatarEngineeringSystems     = 30547,        // group = Subsystems
+     skillCaldariEngineeringSystems      = 30548,        // group = Subsystems
+     skillCaldariOffensiveSystems        = 30549,        // group = Subsystems
+     skillGallenteOffensiveSystems       = 30550,        // group = Subsystems
+     skillMinmatarOffensiveSystems       = 30551,        // group = Subsystems
+     skillCaldariPropulsionSystems       = 30552,        // group = Subsystems
+     skillGallentePropulsionSystems      = 30553,        // group = Subsystems
+     skillMinmatarPropulsionSystems      = 30554,        // group = Subsystems
+     skillTrade      = 3443,     // group = Trade
+     skillRetail     = 3444,     // group = Trade
+     skillBlackMarketTrading     = 3445,     // group = Trade
+     skillBrokerRelations        = 3446,     // group = Trade
+     skillVisibility     = 3447,     // group = Trade
+     skillSmuggling      = 3448,     // group = Trade
+     skillTest       = 11015,        // group = Trade
+     skillGeneralFreight     = 12834,        // group = Trade
+     skillStarshipFreight        = 13069,        // group = Trade
+     skillMineralFreight     = 13070,        // group = Trade
+     skillMunitionsFreight       = 13071,        // group = Trade
+     skillDroneFreight       = 13072,        // group = Trade
+     skillRawMaterialFreight     = 13073,        // group = Trade
+     skillConsumableFreight      = 13074,        // group = Trade
+     skillHazardousMaterialFreight       = 13075,        // group = Trade
+     skillProcurement        = 16594,        // group = Trade
+     skillDaytrading     = 16595,        // group = Trade
+     skillWholesale      = 16596,        // group = Trade
+     skillMarginTrading      = 16597,        // group = Trade
+     skillMarketing      = 16598,        // group = Trade
+     skillAccounting     = 16622,        // group = Trade
+     skillTycoon     = 18580,        // group = Trade
+     skillCorporationContracting     = 25233,        // group = Trade
+     skillContracting        = 25235,        // group = Trade
+     skillTaxEvasion     = 28261     // group = Trade
+ } EVESkillID;
+
 
 //List of eve item types which have special purposes in the game.
 //try to keep this list as short as possible, most things should be accomplish able
@@ -507,7 +937,7 @@ typedef enum:uint64 {
     corpRoleStarbaseCaretaker 	= 288230376151711744LL,
     corpRoleFittingManager 	= 576460752303423488LL,
     corpRoleInfrastructureTacticalOfficer = 144115188075855872LL,
-    
+
     //Some Combos
     corpRoleAllHangar		= (corpRoleHangarCanTake1|corpRoleHangarCanTake2|corpRoleHangarCanTake3|corpRoleHangarCanTake4|corpRoleHangarCanTake5|corpRoleHangarCanTake6|corpRoleHangarCanTake7|corpRoleHangarCanQuery1|corpRoleHangarCanQuery2|corpRoleHangarCanQuery3|corpRoleHangarCanQuery4|corpRoleHangarCanQuery5|corpRoleHangarCanQuery6|corpRoleHangarCanQuery7),
     corpRoleAllAccount 		= (corpRoleJuniorAccountant|corpRoleAccountCanTake1|corpRoleAccountCanTake2|corpRoleAccountCanTake3|corpRoleAccountCanTake4|corpRoleAccountCanTake5|corpRoleAccountCanTake6|corpRoleAccountCanTake7),
@@ -518,14 +948,134 @@ typedef enum:uint64 {
 
 //these come from dgmEffects.
 typedef enum {
-	
+
 	effectShieldBoosting = 4,    //effects.ShieldBoosting
     effectSpeedBoost = 7,    //effects.SpeedBoost
     effectArmorRepair = 27,    //effects.ArmorRepair
     effectEMPWave = 38,
     effectEmpFieldRange = 99,
 	effectTractorBeam = 2255,		// effects.TractorBeam
-	effectAnchorDrop = 649,	effectAnchorDropForStructures = 1022,	effectAnchorLift = 650,	effectAnchorLiftForStructures = 1023,	effectBarrage = 263,	effectBombLaunching = 2971,	effectCloaking = 607,	effectCloakingWarpSafe = 980,	effectCloneVatBay = 2858,	effectCynosuralGeneration = 2857,	effectConcordWarpScramble = 3713,	effectConcordModifyTargetSpeed = 3714,	effectConcordTargetJam = 3710,	effectDecreaseTargetSpeed = 586,	effectDefenderMissileLaunching = 103,	effectDeployPledge = 4774,	effectECMBurst = 53,	effectEmpWave = 38,	effectEmpWaveGrid = 2071,	effectEnergyDestabilizationNew = 2303,	effectEntityCapacitorDrain = 1872,	effectEntitySensorDampen = 1878,	effectEntityTargetJam = 1871,	effectEntityTargetPaint = 1879,	effectEntityTrackingDisrupt = 1877,	effectEwTargetPaint = 1549,	effectEwTestEffectWs = 1355,	effectEwTestEffectJam = 1358,	effectFighterMissile = 4729,	effectFlagshipmultiRelayEffect = 1495,	effectFofMissileLaunching = 104,	effectGangBonusSignature = 1411,	effectGangShieldBoosterAndTransporterSpeed = 2415,	effectGangShieldBoosteAndTransporterCapacitorNeed = 2418,	effectGangIceHarvestingDurationBonus = 2441,	effectGangInformationWarfareRangeBonus = 2642,	effectGangArmorHardening = 1510,	effectGangPropulsionJammingBoost = 1546,	effectGangShieldHardening = 1548,	effectGangECCMfixed = 1648,	effectGangArmorRepairCapReducerSelfAndProjected = 3165,	effectGangArmorRepairSpeedAmplifierSelfAndProjected = 3167,	effectGangMiningLaserAndIceHarvesterAndGasCloudHarvesterMaxRangeBonus = 3296,	effectGangGasHarvesterAndIceHarvesterAndMiningLaserDurationBonus = 3302,	effectGangGasHarvesterAndIceHarvesterAndMiningLaserCapNeedBonus = 3307,	effectGangInformationWarfareSuperiority = 3647,	effectGangAbMwdFactorBoost = 1755,	effectHackOrbital = 4773,	effectHardPointModifier = 3773,	effectHiPower = 12,	effectIndustrialCoreEffect = 4575,	effectJumpPortalGeneration = 2152,	effectJumpPortalGenerationBO = 3674,	effectLauncherFitted = 40,	effectLeech = 3250,	effectLoPower = 11,	effectMedPower = 13,	effectMineLaying = 102,	effectMining = 17,	effectMiningClouds = 2726,	effectMiningLaser = 67,	effectMissileLaunching = 9,	effectMissileLaunchingForEntity = 569,	effectModifyTargetSpeed2 = 575,	effectNPCGroupArmorAssist = 4689,	effectNPCGroupPropJamAssist = 4688,	effectNPCGroupShieldAssist = 4686,	effectNPCGroupSpeedAssist = 4687,	effectNPCRemoteArmorRepair = 3852,	effectNPCRemoteShieldBoost = 3855,	effectNPCRemoteECM = 4656,	effectOffensiveDefensiveReduction = 4728,	effectOnline = 16,	effectOnlineForStructures = 901,	effectOpenSpawnContainer = 1738,	effectProbeLaunching = 3793,	effectProjectileFired = 34,	effectProjectileFiredForEntities = 1086,	effectRemoteHullRepair = 3041,	effectRemoteEcmBurst = 2913,	effectRigSlot = 2663,	effectSalvaging = 2757,	effectScanStrengthBonusTarget = 124,	effectscanStrengthTargetPercentBonus = 2246,	effectShieldResonanceMultiplyOnline = 105,	effectSiegeModeEffect = 4877,	effectSkillEffect = 132,	effectSlotModifier = 3774,	effectSnowBallLaunching = 2413,	effectStructureUnanchorForced = 1129,	effectSubSystem = 3772,	effectSuicideBomb = 885,	effectSuperWeaponAmarr = 4489,	effectSuperWeaponCaldari = 4490,	effectSuperWeaponGallente = 4491,	effectSuperWeaponMinmatar = 4492,	effectTargetAttack = 10,	effectTargetAttackForStructures = 1199,	effectTargetGunneryMaxRangeAndTrackingSpeedBonusHostile = 3555,	effectTargetGunneryMaxRangeAndTrackingSpeedAndFalloffBonusHostile = 3690,	effectTargetMaxTargetRangeAndScanResolutionBonusHostile = 3584,	effectTargetGunneryMaxRangeAndTrackingSpeedBonusAssistance = 3556,	effectTargetMaxTargetRangeAndScanResolutionBonusAssistance = 3583,	effectTargetPassively = 54,	effectTorpedoLaunching = 127,	effectTorpedoLaunchingIsOffensive = 2576,	effectTractorBeamCan = 2255,	effectTriageMode = 4839,	effectTurretFitted = 42,	effectTurretWeaponRangeFalloffTrackingSpeedMultiplyTargetHostile = 3697,	effectUseMissiles = 101,	effectWarpDisruptSphere = 3380,	effectWarpScramble = 39,	effectWarpScrambleForEntity = 563,	effectWarpScrambleTargetMWDBlockActivation = 3725,	effectModifyShieldResonancePostPercent = 2052,	effectModifyArmorResonancePostPercent = 2041,	effectModifyHullResonancePostPercent = 3791,	effectShipMaxTargetRangeBonusOnline = 3659,	effectSensorBoostTargetedHostile = 837,	effectmaxTargetRangeBonus = 2646
+	effectAnchorDrop = 649,
+	effectAnchorDropForStructures = 1022,
+	effectAnchorLift = 650,
+	effectAnchorLiftForStructures = 1023,
+	effectBarrage = 263,
+	effectBombLaunching = 2971,
+	effectCloaking = 607,
+	effectCloakingWarpSafe = 980,
+	effectCloneVatBay = 2858,
+	effectCynosuralGeneration = 2857,
+	effectConcordWarpScramble = 3713,
+	effectConcordModifyTargetSpeed = 3714,
+	effectConcordTargetJam = 3710,
+	effectDecreaseTargetSpeed = 586,
+	effectDefenderMissileLaunching = 103,
+	effectDeployPledge = 4774,
+	effectECMBurst = 53,
+	effectEmpWave = 38,
+	effectEmpWaveGrid = 2071,
+	effectEnergyDestabilizationNew = 2303,
+	effectEntityCapacitorDrain = 1872,
+	effectEntitySensorDampen = 1878,
+	effectEntityTargetJam = 1871,
+	effectEntityTargetPaint = 1879,
+	effectEntityTrackingDisrupt = 1877,
+	effectEwTargetPaint = 1549,
+	effectEwTestEffectWs = 1355,
+	effectEwTestEffectJam = 1358,
+	effectFighterMissile = 4729,
+	effectFlagshipmultiRelayEffect = 1495,
+	effectFofMissileLaunching = 104,
+	effectGangBonusSignature = 1411,
+	effectGangShieldBoosterAndTransporterSpeed = 2415,
+	effectGangShieldBoosteAndTransporterCapacitorNeed = 2418,
+	effectGangIceHarvestingDurationBonus = 2441,
+	effectGangInformationWarfareRangeBonus = 2642,
+	effectGangArmorHardening = 1510,
+	effectGangPropulsionJammingBoost = 1546,
+	effectGangShieldHardening = 1548,
+	effectGangECCMfixed = 1648,
+	effectGangArmorRepairCapReducerSelfAndProjected = 3165,
+	effectGangArmorRepairSpeedAmplifierSelfAndProjected = 3167,
+	effectGangMiningLaserAndIceHarvesterAndGasCloudHarvesterMaxRangeBonus = 3296,
+	effectGangGasHarvesterAndIceHarvesterAndMiningLaserDurationBonus = 3302,
+	effectGangGasHarvesterAndIceHarvesterAndMiningLaserCapNeedBonus = 3307,
+	effectGangInformationWarfareSuperiority = 3647,
+	effectGangAbMwdFactorBoost = 1755,
+	effectHackOrbital = 4773,
+	effectHardPointModifier = 3773,
+	effectHiPower = 12,
+	effectIndustrialCoreEffect = 4575,
+	effectJumpPortalGeneration = 2152,
+	effectJumpPortalGenerationBO = 3674,
+	effectLauncherFitted = 40,
+	effectLeech = 3250,
+	effectLoPower = 11,
+	effectMedPower = 13,
+	effectMineLaying = 102,
+	effectMining = 17,
+	effectMiningClouds = 2726,
+	effectMiningLaser = 67,
+	effectMissileLaunching = 9,
+	effectMissileLaunchingForEntity = 569,
+	effectModifyTargetSpeed2 = 575,
+	effectNPCGroupArmorAssist = 4689,
+	effectNPCGroupPropJamAssist = 4688,
+	effectNPCGroupShieldAssist = 4686,
+	effectNPCGroupSpeedAssist = 4687,
+	effectNPCRemoteArmorRepair = 3852,
+	effectNPCRemoteShieldBoost = 3855,
+	effectNPCRemoteECM = 4656,
+	effectOffensiveDefensiveReduction = 4728,
+	effectOnline = 16,
+	effectOnlineForStructures = 901,
+	effectOpenSpawnContainer = 1738,
+	effectProbeLaunching = 3793,
+	effectProjectileFired = 34,
+	effectProjectileFiredForEntities = 1086,
+	effectRemoteHullRepair = 3041,
+	effectRemoteEcmBurst = 2913,
+	effectRigSlot = 2663,
+	effectSalvaging = 2757,
+	effectScanStrengthBonusTarget = 124,
+	effectscanStrengthTargetPercentBonus = 2246,
+	effectShieldResonanceMultiplyOnline = 105,
+	effectSiegeModeEffect = 4877,
+	effectSkillEffect = 132,
+	effectSlotModifier = 3774,
+	effectSnowBallLaunching = 2413,
+	effectStructureUnanchorForced = 1129,
+	effectSubSystem = 3772,
+	effectSuicideBomb = 885,
+	effectSuperWeaponAmarr = 4489,
+	effectSuperWeaponCaldari = 4490,
+	effectSuperWeaponGallente = 4491,
+	effectSuperWeaponMinmatar = 4492,
+	effectTargetAttack = 10,
+	effectTargetAttackForStructures = 1199,
+	effectTargetGunneryMaxRangeAndTrackingSpeedBonusHostile = 3555,
+	effectTargetGunneryMaxRangeAndTrackingSpeedAndFalloffBonusHostile = 3690,
+	effectTargetMaxTargetRangeAndScanResolutionBonusHostile = 3584,
+	effectTargetGunneryMaxRangeAndTrackingSpeedBonusAssistance = 3556,
+	effectTargetMaxTargetRangeAndScanResolutionBonusAssistance = 3583,
+	effectTargetPassively = 54,
+	effectTorpedoLaunching = 127,
+	effectTorpedoLaunchingIsOffensive = 2576,
+	effectTractorBeamCan = 2255,
+	effectTriageMode = 4839,
+	effectTurretFitted = 42,
+	effectTurretWeaponRangeFalloffTrackingSpeedMultiplyTargetHostile = 3697,
+	effectUseMissiles = 101,
+	effectWarpDisruptSphere = 3380,
+	effectWarpScramble = 39,
+	effectWarpScrambleForEntity = 563,
+	effectWarpScrambleTargetMWDBlockActivation = 3725,
+	effectModifyShieldResonancePostPercent = 2052,
+	effectModifyArmorResonancePostPercent = 2041,
+	effectModifyHullResonancePostPercent = 3791,
+	effectShipMaxTargetRangeBonusOnline = 3659,
+	effectSensorBoostTargetedHostile = 837,
+	effectmaxTargetRangeBonus = 2646
 } EVEEffectID;
 
 typedef enum JournalRefType {
@@ -618,6 +1168,29 @@ typedef enum {
     dgmEffOnline = 4,
 } EffectCategories;
 
+
+//  -allan 5Aug14
+typedef enum {
+    fleetJobNone        = 0,
+    fleetJobScout       = 1,
+    fleetJobCreator     = 2
+} FleetJobs;
+
+//  -allan 5Aug14
+typedef enum {
+    fleetRoleLeader     = 1,
+    fleetRoleWingCmdr   = 2,
+    fleetRoleSquadCmdr  = 3,
+    fleetRoleMember     = 4
+} FleetRoles;
+
+//  -allan 5Aug14
+typedef enum {
+    fleetBoosterNone    = 0,
+    fleetBoosterFleet   = 1,
+    fleetBoosterWing    = 2,
+    fleetBoosterSquad   = 3
+} FleetBoosters;
 
 /*
  *
@@ -751,52 +1324,472 @@ def IsJunkLocation(locationID):
 
 */
 
-// This is the 
-#define EVEMU_MINIMUM_ID 140000000
-#define EVEMU_MINIMUM_ENTITY_ID 90000000
+//  defines based on itemID, per client  -allan 2Nov16
+#define maxNonCapitalModuleSize 500
+
+#define minCharType             1373
+#define maxCharType             1386
+
+#define minEveMarketGroup       0
+#define maxEveMarketGroup       350000
+#define minDustMarketGroup      350001
+#define maxDustMarketGroup      999999
+#define minBMFolder             100000
+#define maxBMFolder             300000
+#define minFaction              500000
+#define maxFaction              599999
+#define minNPCCorporation       1000000
+#define maxNPCCorporation       1000999
+#define maxCorporation          1999999
+#define minAgent                3000000
+#define maxAgent                3999999
+#define minRegion               10000000
+#define maxRegion               19999999
+#define minConstellation        20000000
+#define maxConstellation        29999999
+#define minSolarSystem          30000000
+#define maxSolarSystem          39999999
+#define minValidLocation        30000000
+#define minValidShipLocation    30000000
+#define minUniverseCelestial    40000000
+#define maxUniverseCelestial    49999999
+#define minStargate             50000000
+#define maxStargate             59999999
+#define minValidCharLocation    60000000
+#define minStation              60000000
+#define maxNPCStation           60999999
+#define maxStation              69999999
+#define minUniverseAsteroid     70000000
+#define maxUniverseAsteroid     79999999
+#define minAlliance             99000000
+#define maxAlliance             99900000
+#define minPlayerItem           140000000
+#define maxEveItem              2147483647      // max short int32
+/*
+ * DSTLOCALBALLS = 0x0C0000000h  (3,221,225,472 decimal)      unknown where this is from
+ * missile itemID's  dec = 9,000,000,000,000,000,000    hex = 0x7CE66C50E2840000h        from packet sniff
+ */
+
+/*
+ * maxInt = 2147483647
+ * maxBigint = 9223372036854775807L
+ * minPlayerOwner = 90000000
+ * maxPlayerOwner = 2147483647
+ * minFakeItem = 9000000000000000000L
+ * minFakeClientItem = 17000000000000000000L
+ */
+
+//  allan's static defines to ease code checks
+#define EVEMU_OUTPOST_ID               61000000
+#define EVEMU_SCENERIO_ID              90000000
+#define EVEMU_ASTEROID_ID             100000000
+#define EVEMU_MINIMUM_ID          minPlayerItem
+#define EVEMU_TEMP_ENTITY_ID   EVEMU_MINIMUM_ID
+#define EVEMU_MINIMUM_ENTITY_ID       140000000
+#define EVEMU_DRONE_ID                500000000
+#define EVEMU_NPC_ID                  750000000
+#define EVEMU_MISSILE_ID             1000000000
+#define EVEMU_DUNGEON_ID             1200000000
+#define EVEMU_MAX_SHORT_ID           2147483647
+#define EVEMU_MAX_LONG_ID   9223372036854775807     //this is max for a SIGNED int64.
 #define EVEMU_MAXIMUM_ENTITY_ID (EVEMU_MINIMUM_ID-1)
 
-#define IsAgent(itemID) \
-    ((itemID >= 3008416) && (itemID < 3020000))
+#define IsCharType(typeID) \
+((typeID >= minCharType) && (typeID <= maxCharType))
 
+#define IsContainerLocation(itemID) \
+(itemID >= minValidShipLocation)
+
+#define IsCorp(itemID) \
+((itemID >= minNPCCorporation) && (itemID <= maxCorporation))
+
+#define IsNPCCorp(itemID) \
+((itemID >= minNPCCorporation) && (itemID < maxNPCCorporation))
+
+#define IsPlayerCorp(itemID) \
+((itemID >= maxNPCCorporation) && (itemID < maxCorporation))
+
+#define IsAlliance(itemID) \
+((itemID >= minAlliance) && (itemID < maxAlliance))
+
+#define IsAgent(itemID) \
+((itemID >= minAgent) && (itemID < maxAgent))
+
+#define IsFaction(itemID) \
+((itemID >= minFaction) && (itemID < maxFaction))
+
+// this covers ALL static celestial-type items
 #define IsStaticMapItem(itemID) \
-    ((itemID >= 10000000) && (itemID < 64000000))
+((itemID >= minRegion) && (itemID < maxStation))
 
 #define IsRegion(itemID) \
-    ((itemID >= 10000000) && (itemID < 20000000))
+((itemID >= 10000000) && (itemID < 20000000))
 
 #define IsConstellation(itemID) \
-    ((itemID >= 20000000) && (itemID < 30000000))
+((itemID >= 20000000) && (itemID < 30000000))
 
 #define IsSolarSystem(itemID) \
-    ((itemID >= 30000000) && (itemID < 40000000))
+((itemID >= 30000000) && (itemID < 40000000))
 
 #define IsUniverseCelestial(itemID) \
-    ((itemID >= 40000000) && (itemID < 50000000))
+((itemID >= 40000000) && (itemID < 50000000))
 
 #define IsStargate(itemID) \
-    ((itemID >= 50000000) && (itemID < 60000000))
+((itemID >= 50000000) && (itemID < 60000000))
 
 #define IsStation(itemID) \
-    ((itemID >= 60000000) && (itemID < 64000000))
+((itemID >= minStation) && (itemID < maxStation))
+
+#define IsNPCStation(itemID) \
+((itemID >= minStation) && (itemID <= maxNPCStation))
+
+//#define IsOutpost(itemID) \
+((itemID > maxNPCStation) && (itemID < maxStation))
 
 #define IsTrading(itemID) \
-    ((itemID >= 64000000) && (itemID < 66000000))
+((itemID >= 64000000) && (itemID < 66000000))
 
 #define IsOfficeFolder(itemID) \
-    ((itemID >= 66000000) && (itemID < 68000000))
+((itemID >= 66000000) && (itemID < 68000000))
 
 #define IsFactoryFolder(itemID) \
-    ((itemID >= 68000000) && (itemID < 70000000))
+((itemID >= 68000000) && (itemID < 70000000))
 
 #define IsUniverseAsteroid(itemID) \
-    ((itemID >= 70000000) && (itemID < 80000000))
+((itemID >= 70000000) && (itemID < 80000000))
 
 #define IsScenarioItem(itemID) \
-    ((itemID >= 90000000) && (itemID < (EVEMU_MINIMUM_ID-1)))
+((itemID >= 90000000) && (itemID < EVEMU_MINIMUM_ID))
 
-#define IsNonStaticItem(itemID) \
-    (itemID >= EVEMU_MINIMUM_ID)
+#define IsNotStaticItem(itemID) \
+(itemID >= EVEMU_MINIMUM_ID)
+
+#define IsModuleSlot(flag) \
+(((flag >= flagLowSlot0) && (flag <= flagHiSlot7)) \
+|| ((flag >= flagRigSlot0) && (flag <= flagRigSlot7)) \
+|| ((flag >= flagSubSystem0) && (flag<=flagSubSystem7)))
+
+#define IsCargoHoldFlag(flag) \
+((flag == flagCargoHold) || (flag == flagDroneBay) || (flag == flagSecondaryStorage) || (flag == flagShipHangar) \
+|| ((flag >= flagSpecializedFuelBay) && (flag <= flagSpecializedAmmoHold)))
+
+#define IsHiSlot(flag) \
+((flag >= flagHiSlot0) && (flag <= flagHiSlot7))
+
+#define IsMidSlot(flag) \
+((flag >= flagMedSlot0) && (flag <= flagMedSlot7))
+
+#define IsLowSlot(flag) \
+((flag >= flagLowSlot0) && (flag <= flagLowSlot7))
+
+#define IsRigSlot(flag) \
+((flag >= flagRigSlot0) && (flag <= flagRigSlot7))
+
+#define IsSubSystem(flag) \
+((flag >= flagSubSystem0) && (flag<=flagSubSystem7))
+
+
+/*
+ * def IsSystem(ownerID):
+ *    return ownerID <= 10000
+ *
+ *
+ * def IsNPC(ownerID):
+ *    return ownerID < 90000000 and ownerID > 10000
+ *
+ *
+ * def IsNPCCorporation(ownerID):
+ *    return ownerID < 2000000 and ownerID >= 1000000
+ *
+ *
+ * def IsNPCCharacter(ownerID):
+ *    return ownerID < 4000000 and ownerID >= 3000000
+ *
+ *
+ * def IsSystemOrNPC(ownerID):
+ *    return ownerID < 90000000
+ *
+ *
+ * def IsFaction(ownerID):
+ *    if ownerID >= 500000 and ownerID < 1000000:
+ *        return 1
+ *    else:
+ *        return 0
+ *
+ *
+ * def IsCorporation(ownerID):
+ *    if ownerID >= 1000000 and ownerID < 2000000:
+ *        return 1
+ *    if ownerID < 98000000 or ownerID > 2147483647:
+ *        return 0
+ *    if ownerID < 99000000:
+ *        return 1
+ *    if ownerID < 100000000:
+ *        return 0
+ *    if boot.role == 'server' and sm.GetService('standing2').IsKnownToBeAPlayerCorp(ownerID):
+ *        return 1
+ *    try:
+ *        return cfg.eveowners.Get(ownerID).IsCorporation()
+ *    except KeyError:
+ *        return 0
+ *
+ *
+ * def IsCharacter(ownerID):
+ *    if ownerID >= 3000000 and ownerID < 4000000:
+ *        return 1
+ *    if ownerID < 90000000 or ownerID > 2147483647:
+ *        return 0
+ *    if ownerID < 98000000:
+ *        return 1
+ *    if ownerID < 100000000:
+ *        return 0
+ *    if boot.role == 'server' and sm.GetService('standing2').IsKnownToBeAPlayerCorp(ownerID):
+ *        return 0
+ *    try:
+ *        return cfg.eveowners.Get(ownerID).IsCharacter()
+ *    except KeyError:
+ *        return 0
+ *
+ *
+ * def IsPlayerAvatar(itemID):
+ *    return IsCharacter(itemID)
+ *
+ *
+ * def IsOwner(ownerID, fetch = 1):
+ *    if ownerID >= 500000 and ownerID < 1000000 or ownerID >= 1000000 and ownerID < 2000000 or ownerID >= 3000000 and ownerID < 4000000:
+ *        return 1
+ *    if IsNPC(ownerID):
+ *        return 0
+ *    if ownerID < 90000000 or ownerID > 2147483647:
+ *        return 0
+ *    if ownerID < 100000000:
+ *        return 1
+ *    if fetch:
+ *        try:
+ *            oi = cfg.eveowners.Get(ownerID)
+ *        except KeyError:
+ *            return 0
+ *
+ *        if oi.groupID in (const.groupCharacter, const.groupCorporation):
+ *            return 1
+ *        else:
+ *            return 0
+ *    else:
+ *        return 0
+ *
+ *
+ * def IsAlliance(ownerID):
+ *    if ownerID < 99000000 or ownerID > 2147483647:
+ *        return 0
+ *    if ownerID < 100000000:
+ *        return 1
+ *    if boot.role == 'server' and sm.GetService('standing2').IsKnownToBeAPlayerCorp(ownerID):
+ *        return 0
+ *    try:
+ *        return cfg.eveowners.Get(ownerID).IsAlliance()
+ *    except KeyError:
+ *        return 0
+ *
+ *
+ * def IsRegion(itemID):
+ *    return itemID >= 10000000 and itemID < 20000000
+ *
+ *
+ * def IsConstellation(itemID):
+ *    return itemID >= 20000000 and itemID < 30000000
+ *
+ *
+ * def IsSolarSystem(itemID):
+ *    return itemID >= 30000000 and itemID < 40000000
+ *
+ *
+ * def IsCelestial(itemID):
+ *    return itemID >= 40000000 and itemID < 50000000
+ *
+ *
+ * def IsWormholeSystem(itemID):
+ *    return itemID >= const.mapWormholeSystemMin and itemID < const.mapWormholeSystemMax
+ *
+ *
+ * def IsWormholeConstellation(constellationID):
+ *    return constellationID >= const.mapWormholeConstellationMin and constellationID < const.mapWormholeConstellationMax
+ *
+ *
+ * def IsWormholeRegion(regionID):
+ *    return regionID >= const.mapWormholeRegionMin and regionID < const.mapWormholeRegionMax
+ *
+ *
+ * def IsUniverseCelestial(itemID):
+ *    return itemID >= const.minUniverseCelestial and itemID <= const.maxUniverseCelestial
+ *
+ *
+ * def IsStargate(itemID):
+ *    return itemID >= 50000000 and itemID < 60000000
+ *
+ *
+ * def IsStation(itemID):
+ *    return itemID >= 60000000 and itemID < 64000000
+ *
+ *
+ * def IsWorldSpace(itemID):
+ *    return itemID >= const.mapWorldSpaceMin and itemID < const.mapWorldSpaceMax
+ *
+ *
+ * def IsOutpost(itemID):
+ *    return itemID >= 61000000 and itemID < 64000000
+ *
+ *
+ * def IsTrading(itemID):
+ *    return itemID >= 64000000 and itemID < 66000000
+ *
+ *
+ * def IsOfficeFolder(itemID):
+ *    return itemID >= 66000000 and itemID < 68000000
+ *
+ *
+ * def IsFactoryFolder(itemID):
+ *    return itemID >= 68000000 and itemID < 70000000
+ *
+ *
+ * def IsUniverseAsteroid(itemID):
+ *    return itemID >= 70000000 and itemID < 80000000
+ *
+ *
+ * def IsJunkLocation(locationID):
+ *    if locationID >= 2000:
+ *        return 0
+ *    elif locationID in (6, 8, 10, 23, 25):
+ *        return 1
+ *    elif locationID > 1000 and locationID < 2000:
+ *        return 1
+ *    else:
+ *        return 0
+ *
+ *
+ * def IsControlBunker(itemID):
+ *    return itemID >= 80000000 and itemID < 80100000
+ *
+ *
+ * def IsPlayerItem(itemID):
+ *    return itemID >= const.minPlayerItem and itemID < const.minFakeItem
+ *
+ *
+ * def IsFakeItem(itemID):
+ *    return itemID > const.minFakeItem
+ *
+ *
+ * def IsNewbieSystem(itemID):
+ *    default = [30002547,
+ *     30001392,
+ *     30002715,
+ *     30003489,
+ *     30005305,
+ *     30004971,
+ *     30001672,
+ *     30002505,
+ *     30000141,
+ *     30003410,
+ *     30005042,
+ *     30001407]
+ *    optional = [30001722,
+ *     30002518,
+ *     30003388,
+ *     30003524,
+ *     30005015,
+ *     30010141,
+ *     30011392,
+ *     30011407,
+ *     30011672,
+ *     30012505,
+ *     30012547,
+ *     30012715,
+ *     30013410,
+ *     30013489,
+ *     30014971,
+ *     30015042,
+ *     30015305,
+ *     30020141,
+ *     30021392,
+ *     30021407,
+ *     30021672,
+ *     30022505,
+ *     30022547,
+ *     30022715,
+ *     30023410,
+ *     30023489,
+ *     30024971,
+ *     30025042,
+ *     30025305,
+ *     30030141,
+ *     30031392,
+ *     30031407,
+ *     30031672,
+ *     30032505,
+ *     30032547,
+ *     30032715,
+ *     30033410,
+ *     30033489,
+ *     30034971,
+ *     30035042,
+ *     30035305,
+ *     30040141,
+ *     30041392,
+ *     30041407,
+ *     30041672,
+ *     30042505,
+ *     30042547,
+ *     30042715,
+ *     30043410,
+ *     30043489,
+ *     30044971,
+ *     30045042,
+ *     30045305]
+ *    if boot.region == 'optic':
+ *        return itemID in default + optional
+ *    return itemID in default
+ *
+ *
+ * def IsStructure(categoryID):
+ *    return categoryID in (const.categorySovereigntyStructure, const.categoryStructure)
+ *
+ *
+ * def IsOrbital(categoryID):
+ *    return categoryID == const.categoryOrbital
+ *
+ *
+ * def IsPreviewable(typeID):
+ *    type = cfg.invtypes.GetIfExists(typeID)
+ *    if type is None:
+ *        return False
+ *    groupID = type.groupID
+ *    categoryID = type.categoryID
+ *    return categoryID in const.previewCategories or groupID in const.previewGroups
+ *
+ *
+ * def IsPlaceable(typeID):
+ *    type = cfg.invtypes.GetIfExists(typeID)
+ *    if type is None:
+ *        return False
+ *    return const.categoryPlaceables == type.categoryID
+ *
+ *
+ * def IsEveUser(userID):
+ *    if userID < const.minDustUser:
+ *        return True
+ *    return False
+ *
+ *
+ * def IsDustUser(userID):
+ *    if userID > const.minDustUser:
+ *        return True
+ *    return False
+ *
+ *
+ * def IsDustCharacter(characterID):
+ *    if characterID > const.minDustCharacter and characterID < const.maxDustCharacter:
+ *        return True
+ *    return False
+ */
 
 #endif
 

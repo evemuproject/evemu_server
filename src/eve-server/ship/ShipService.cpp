@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -418,6 +418,12 @@ PyResult ShipBound::Handle_AssembleShip(PyCallArgs &call) {
             subSystemItem->MoveInto( *ship, (EVEItemFlags)(subSystemItem->GetAttribute(AttrSubSystemSlot).get_int()), true );
         }
     }
+
+    // Checked on live, this cannot be larger than 20
+    std::string name = call.client->GetCharacterName().append("'s").append(ship->itemName());
+    if(name.length() > 20)
+        name.resize(20);
+    ship->Rename(name.c_str());
 
     return NULL;
 }

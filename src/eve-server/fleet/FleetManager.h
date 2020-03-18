@@ -3,7 +3,7 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
+    Copyright 2006 - 2016 The EVEmu Team
     For the latest information visit http://evemu.org
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
@@ -20,30 +20,34 @@
     Place - Suite 330, Boston, MA 02111-1307, USA, or go to
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
-    Author:        Reve
+    Author:        Allan
 */
 
-#ifndef fleetProxy_h__
-#define fleetProxy_h__
+#ifndef EVEMU_SHIP_FLEETMGR_H_
+#define EVEMU_SHIP_FLEETMGR_H_
 
 #include "PyService.h"
+#include "fleet/FleetService.h"
 
-class FleetProxyService: public PyService
+class FleetManager: public PyService
 {
 public:
-    FleetProxyService(PyServiceMgr *mgr);
-    ~FleetProxyService();
+    FleetManager(PyServiceMgr *mgr);
+    ~FleetManager();
 
 protected:
+
     class Dispatcher;
     Dispatcher *const m_dispatch;
 
-    PyCallable_DECL_CALL(GetAvailableFleets);
-    PyCallable_DECL_CALL(ApplyToJoinFleet);
-    PyCallable_DECL_CALL(AddFleetFinderAdvert);
-    PyCallable_DECL_CALL(RemoveFleetFinderAdvert);
-    PyCallable_DECL_CALL(GetMyFleetFinderAdvert);
-    PyCallable_DECL_CALL(UpdateAdvertInfo);
+    PyCallable_DECL_CALL(ForceLeaveFleet);
+    PyCallable_DECL_CALL(AddToWatchlist);
+    PyCallable_DECL_CALL(RemoveFromWatchlist);
+    PyCallable_DECL_CALL(RegisterForDamageUpdates);
+    PyCallable_DECL_CALL(GetActiveStatus);
+    PyCallable_DECL_CALL(BroadcastToBubble);
+    PyCallable_DECL_CALL(BroadcastToSystem);
+
 };
 
-#endif
+#endif  // EVEMU_SHIP_FLEETMGR_H_
