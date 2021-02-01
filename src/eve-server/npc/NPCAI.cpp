@@ -29,7 +29,7 @@
 #include "inventory/AttributeEnum.h"
 #include "npc/NPC.h"
 #include "npc/NPCAI.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "system/Damage.h"
 #include "system/SystemBubble.h"
 

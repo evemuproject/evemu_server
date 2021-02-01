@@ -28,7 +28,7 @@
 #include "Client.h"
 #include "inventory/AttributeEnum.h"
 #include "pos/Structure.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 
 /*
  * Structure

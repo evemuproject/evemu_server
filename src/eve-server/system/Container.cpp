@@ -27,7 +27,7 @@
 
 #include "Client.h"
 #include "inventory/AttributeEnum.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "system/Container.h"
 
 /*

@@ -28,7 +28,7 @@
 #include "Client.h"
 #include "PyServiceMgr.h"
 #include "npc/NPC.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "station/Station.h"
 #include "system/SystemBubble.h"
 #include "system/SystemManager.h"

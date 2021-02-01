@@ -370,7 +370,6 @@ SET( search_SOURCE
 
 SET( ship_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/BeyonceService.h"
-     "${TARGET_INCLUDE_DIR}/ship/DestinyManager.h"
      "${TARGET_INCLUDE_DIR}/ship/dgmtypeattributeinfo.h"
      "${TARGET_INCLUDE_DIR}/ship/Drone.h"
      "${TARGET_INCLUDE_DIR}/ship/InsuranceService.h"
@@ -379,11 +378,9 @@ SET( ship_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/Ship.h"
      "${TARGET_INCLUDE_DIR}/ship/ShipDB.h"
      "${TARGET_INCLUDE_DIR}/ship/ShipOperatorInterface.h"
-     "${TARGET_INCLUDE_DIR}/ship/ShipService.h"
-     "${TARGET_INCLUDE_DIR}/ship/TargetManager.h" )
+     "${TARGET_INCLUDE_DIR}/ship/ShipService.h" )
 SET( ship_SOURCE
      "${TARGET_SOURCE_DIR}/ship/BeyonceService.cpp"
-     "${TARGET_SOURCE_DIR}/ship/DestinyManager.cpp"
      "${TARGET_SOURCE_DIR}/ship/dgmtypeattributeinfo.cpp"
      "${TARGET_SOURCE_DIR}/ship/Drone.cpp"
      "${TARGET_SOURCE_DIR}/ship/InsuranceService.cpp"
@@ -392,8 +389,7 @@ SET( ship_SOURCE
      "${TARGET_SOURCE_DIR}/ship/Ship.cpp"
      "${TARGET_SOURCE_DIR}/ship/ShipDB.cpp"
      "${TARGET_SOURCE_DIR}/ship/ShipOperatorInterface.cpp"
-     "${TARGET_SOURCE_DIR}/ship/ShipService.cpp"
-     "${TARGET_SOURCE_DIR}/ship/TargetManager.cpp" )
+     "${TARGET_SOURCE_DIR}/ship/ShipService.cpp" )
 
 SET( ship_modules_INCLUDE
      "${TARGET_INCLUDE_DIR}/ship/modules/ActiveModules.h"
@@ -481,6 +477,7 @@ SET( system_INCLUDE
      "${TARGET_INCLUDE_DIR}/system/Damage.h"
      "${TARGET_INCLUDE_DIR}/system/Deployable.h"
      "${TARGET_INCLUDE_DIR}/system/DungeonService.h"
+     "${TARGET_INCLUDE_DIR}/system/DestinyManager.h"
      "${TARGET_INCLUDE_DIR}/system/KeeperService.h"
      "${TARGET_INCLUDE_DIR}/system/ScenarioService.h"
      "${TARGET_INCLUDE_DIR}/system/SolarSystem.h"
@@ -489,6 +486,7 @@ SET( system_INCLUDE
      "${TARGET_INCLUDE_DIR}/system/SystemEntities.h"
      "${TARGET_INCLUDE_DIR}/system/SystemEntity.h"
      "${TARGET_INCLUDE_DIR}/system/SystemManager.h"
+     "${TARGET_INCLUDE_DIR}/system/TargetManager.h"
      "${TARGET_INCLUDE_DIR}/system/WrecksAndLoot.h" )
 SET( system_SOURCE
      "${TARGET_SOURCE_DIR}/system/BookmarkDB.cpp"
@@ -498,6 +496,7 @@ SET( system_SOURCE
      "${TARGET_SOURCE_DIR}/system/Container.cpp"
      "${TARGET_SOURCE_DIR}/system/Damage.cpp"
      "${TARGET_SOURCE_DIR}/system/Deployable.cpp"
+     "${TARGET_SOURCE_DIR}/system/DestinyManager.cpp"
      "${TARGET_SOURCE_DIR}/system/DungeonService.cpp"
      "${TARGET_SOURCE_DIR}/system/KeeperService.cpp"
      "${TARGET_SOURCE_DIR}/system/ScenarioService.cpp"
@@ -507,6 +506,7 @@ SET( system_SOURCE
      "${TARGET_SOURCE_DIR}/system/SystemEntities.cpp"
      "${TARGET_SOURCE_DIR}/system/SystemEntity.cpp"
      "${TARGET_SOURCE_DIR}/system/SystemManager.cpp"
+     "${TARGET_SOURCE_DIR}/system/TargetManager.cpp"
      "${TARGET_SOURCE_DIR}/system/WrecksAndLoot.cpp" )
 
 ########################

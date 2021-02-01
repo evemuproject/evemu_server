@@ -34,7 +34,7 @@
 #include "inventory/InventoryDB.h"
 #include "inventory/InventoryItem.h"
 #include "manufacturing/Blueprint.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "ship/Drone.h"
 #include "system/Damage.h"
 #include "system/SystemManager.h"

@@ -31,7 +31,7 @@
 #include "chat/LSCService.h"
 #include "imageserver/ImageServer.h"
 #include "npc/NPC.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "ship/ShipOperatorInterface.h"
 #include "system/SystemManager.h"
 #include "character/CharUnboundMgrService.h"

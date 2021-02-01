@@ -26,7 +26,7 @@
 #include "eve-server.h"
 
 #include "character/Character.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "ship/Ship.h"
 #include "ship/ShipOperatorInterface.h"
 #include "system/BubbleManager.h"
