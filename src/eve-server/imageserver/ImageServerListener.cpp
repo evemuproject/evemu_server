@@ -45,11 +45,11 @@ void ImageServerListener::StartAccept()
     boost::asio::execution_context &e_context = e.context();
     boost::asio::io_context &context_instance = static_cast<boost::asio::io_context&>(e_context);
 
-    std::shared_ptr<ImageServerConnection> connection = ImageServerConnection::create(context_instance);
+    std::tr1::shared_ptr<ImageServerConnection> connection = ImageServerConnection::create(context_instance);
     _acceptor->async_accept(connection->socket(), std::bind(&ImageServerListener::HandleAccept, this, connection));
 }
 
-void ImageServerListener::HandleAccept(std::shared_ptr<ImageServerConnection> connection)
+void ImageServerListener::HandleAccept(std::tr1::shared_ptr<ImageServerConnection> connection)
 {
     connection->Process();
     StartAccept();
