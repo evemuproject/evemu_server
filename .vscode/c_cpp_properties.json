@@ -15,7 +15,8 @@
             "cStandard": "gnu11",
             "cppStandard": "gnu++11",
             "intelliSenseMode": "gcc-x64",
-            "compileCommands": ""
+            "compileCommands": "",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
