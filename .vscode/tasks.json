@@ -1,0 +1,10 @@
+{
+    "tasks": [
+        {
+            "label": "build debug cmake",
+            "type": "shell",
+            "command": "mkdir build/src/etc && mkdir build/src/log && mkdir build/src/server_cache && mkdir build/src/image_cache && cp utils/eve-server.xml utils/devtools.raw utils/log.ini build/src/etc && cd build && cmake .. && make -j16"
+        }
+    ],
+    "version": "2.0.0"
+}
