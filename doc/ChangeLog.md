@@ -1,3 +1,6 @@
+*** 0.7.9 ***
+- Returned to numbered versioning
+- Added new SystemEntity implementation with enhanced stability and featureset
 
 *** 22/07/2008 ***
 - Added autotools
