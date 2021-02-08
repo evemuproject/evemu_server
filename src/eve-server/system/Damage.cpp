@@ -35,7 +35,7 @@
 #include "npc/NPCAI.h"
 #include "npc/SpawnManager.h"
 #include "pos/Structure.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "ship/Drone.h"
 #include "ship/Ship.h"
 #include "station/Station.h"

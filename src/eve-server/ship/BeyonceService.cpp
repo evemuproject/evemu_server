@@ -29,7 +29,7 @@
 #include "PyServiceCD.h"
 #include "cache/ObjCacheService.h"
 #include "ship/BeyonceService.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 #include "system/BookmarkService.h"
 #include "system/SystemEntities.h"
 #include "system/SystemManager.h"

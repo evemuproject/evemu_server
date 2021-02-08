@@ -26,7 +26,7 @@
 #include "eve-server.h"
 
 #include "mining/Asteroid.h"
-#include "ship/DestinyManager.h"
+#include "system/DestinyManager.h"
 
 using namespace Destiny;
 
