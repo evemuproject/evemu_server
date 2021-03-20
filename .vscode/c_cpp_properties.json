@@ -7,7 +7,6 @@
                 "${workspaceFolder}/src/eve-server/**",
                 "${workspaceFolder}/src/eve-core/**",
                 "${workspaceFolder}/src/eve-common/**",
-                "/usr/include/x86_64-linux-gnu/sys/",
                 "/usr/include/linux"
             ],
             "defines": [],
