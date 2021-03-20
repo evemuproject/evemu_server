@@ -292,8 +292,8 @@ public:
 
     // this clears m_modifiers
     void ClearModifiers();
-    void AddModifier(fxData &data);
-    void RemoveModifier(fxData &data);
+    //void AddModifier(fxData &data);
+    //void RemoveModifier(fxData &data);
     // this deletes all attributes, reloads default attribs from itemType and
     void ResetAttributes();   //  when called at the wrong time, this will really fuck up ship attributes.  ;)
 
@@ -301,7 +301,7 @@ public:
     bool HasReqSkill(const uint16 skillID)              { return m_type.HasReqSkill(skillID); }
 
     // gotta make this public for now...
-    std::multimap<int8, fxData> m_modifiers;     // k,v of math, data<math, src, targLoc, targAttr, srcAttr, grpID, typeID>, ordered by key (mathMethod)
+    //wstd::multimap<int8, fxData> m_modifiers;     // k,v of math, data<math, src, targLoc, targAttr, srcAttr, grpID, typeID>, ordered by key (mathMethod)
 
 
 /*  new attribute system */

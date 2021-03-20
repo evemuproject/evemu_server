@@ -5,7 +5,7 @@
 // #include "admin/MiningCommands.h"
 #include "admin/SystemCommands.h"
 
-#include "admin/allans_commands.h"
+#include "admin/debug_commands.h"
 
 //clean up macros
 #undef COMMAND

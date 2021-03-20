@@ -32,10 +32,10 @@
 #include "ConsoleCommands.h"
 #include "EntityList.h"
 #include "character/Skill.h"
-#include "effects/EffectsProcessor.h"
+//#include "effects/EffectsProcessor.h"
 #include "exploration/Probes.h"
 #include "manufacturing/Blueprint.h"
-#include "pos/Structure.h"
+//#include "pos/Structure.h"
 #include "ship/Ship.h"
 #include "ship/modules/ModuleItem.h"
 #include "station/Station.h"
@@ -59,7 +59,7 @@ m_delete(false)
 {
     // assert for data consistency
     assert(_data.typeID == _type.id());
-    m_modifiers.clear();
+    //m_modifiers.clear();
 
     _log(ITEM__TRACE, "II::C'tor - Created Generic Item %p for item %s (%u).", this, m_data.name.c_str(), m_itemID);
 }
@@ -260,9 +260,9 @@ RefPtr<_Ty> InventoryItem::_LoadItem(uint32 itemID, const ItemType &type, const 
         case EVEDB::invCategories::Structure:
         case EVEDB::invCategories::Orbitals:
         case EVEDB::invCategories::SovereigntyStructure:
-        case EVEDB::invCategories::StructureUpgrade: {
+        /*case EVEDB::invCategories::StructureUpgrade: {
             return StructureItem::_LoadItem<StructureItem>(itemID, type, data);
-        } break;
+        } break;*/
         case EVEDB::invCategories::Charge: {      // probes are charges.
             switch (type.groupID()) {
                 case EVEDB::invGroups::Scanner_Probe:
@@ -424,9 +424,9 @@ InventoryItemRef InventoryItem::Spawn(ItemData &data)
         } break;
         case EVEDB::invCategories::Orbitals:
         case EVEDB::invCategories::Structure:
-        case EVEDB::invCategories::SovereigntyStructure: {
+        /*case EVEDB::invCategories::SovereigntyStructure: {
             return StructureItem::Spawn(data);
-        } break;
+        } break;*/
         case EVEDB::invCategories::Blueprint: {
             // this needs to distinguish between copy and orig
             EvERam::bpData bdata = EvERam::bpData();
@@ -1461,7 +1461,7 @@ bool InventoryItem::SkillCheck(InventoryItemRef refItem)
 }
 
 // new effects system  -allan 4Feb17
-void InventoryItem::AddModifier(fxData &data)
+/*void InventoryItem::AddModifier(fxData &data)
 {
     m_modifiers.emplace(data.math, data);
 }
@@ -1491,4 +1491,4 @@ void InventoryItem::ClearModifiers()
 void InventoryItem::ResetAttributes() {
     _log(EFFECTS__TRACE, "Resetting attrib map for %s", m_data.name.c_str());
     pAttributeMap->Load(true);
-}
+}*/

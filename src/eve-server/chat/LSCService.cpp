@@ -998,7 +998,7 @@ void LSCService::CreateSystemChannel(int32 channelID)
         motd = m_db->GetAllianceName(channelID);
         grpMsgID = 5;
         messageID = 0;
-    } else if (IsFleet(channelID)) {
+    } /*else if (IsFleet(channelID)) {
         type = LSC::Type::fleet;
         name = sFltSvc.GetFleetName(channelID);
         motd = sFltSvc.GetFleetDescription(channelID);
@@ -1022,7 +1022,7 @@ void LSCService::CreateSystemChannel(int32 channelID)
         messageID = 0;
         //ownerID = sFltSvc.GetSquadLeaderID(channelID);
         ownerID = sFltSvc.GetFleetLeaderID(channelID);
-    } else {
+    } */else {
         // not sure what to do here....should never hit
     }
     std::string comStr = motd;

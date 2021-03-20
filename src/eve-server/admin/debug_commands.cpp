@@ -652,9 +652,9 @@ PyResult Command_showsession(Client* pClient, CommandDB* db, PyServiceMgr* servi
              pClient->GetCharacterID(), pClient->GetName(), pClient->GetShipID(), pClient->GetCloneStationID(), pClient->GetClientID(), pClient->GetUserID(),
              pClient->GetSession()->GetSessionID(), pClient->GetLocationID(), pClient->GetStationID(), pClient->GetStationID2(), pClient->GetSystemID(), pClient->GetConstellationID(),
              pClient->GetRegionID(), pClient->GetCorporationID(), pClient->GetCorpHQ(), pClient->GetCorpAccountKey(), pClient->GetCorpRole(), pClient->GetRolesAtAll(),
-             pClient->GetRolesAtBase(), pClient->GetRolesAtHQ(), pClient->GetRolesAtOther(), pClient->GetChar()->fleetID(), pClient->GetChar()->wingID(),
-             pClient->GetChar()->squadID(), sFltSvc.GetJobName(pClient->GetChar()->fleetJob()).c_str(), sFltSvc.GetRoleName(pClient->GetChar()->fleetRole()).c_str(),
-             sFltSvc.GetBoosterName(pClient->GetChar()->fleetBooster()).c_str(),pClient->GetChar()->fleetJoinTime());
+             pClient->GetRolesAtBase(), pClient->GetRolesAtHQ(), pClient->GetRolesAtOther(), pClient->GetChar()->fleetID(), pClient->GetChar()->wingID());
+             //pClient->GetChar()->squadID(), sFltSvc.GetJobName(pClient->GetChar()->fleetJob()).c_str(), sFltSvc.GetRoleName(pClient->GetChar()->fleetRole()).c_str(),
+             //sFltSvc.GetBoosterName(pClient->GetChar()->fleetBooster()).c_str(),pClient->GetChar()->fleetJoinTime());
 
     pClient->SendInfoModalMsg(reply);
     return new PyString(reply);
@@ -824,7 +824,7 @@ PyResult Command_entityspawn(Client* pClient, CommandDB* db, PyServiceMgr* servi
     pClient->SendInfoModalMsg(reply);
     return new PyString(reply);
 }
-
+/*
 PyResult Command_fleetboost(Client* pClient, CommandDB* db, PyServiceMgr* services, const Seperator& args)
 {
     uint32 fleetID = pClient->GetChar()->fleetID();
@@ -850,9 +850,9 @@ PyResult Command_fleetboost(Client* pClient, CommandDB* db, PyServiceMgr* servic
 
     pClient->SendInfoModalMsg(reply);
     return new PyString(reply);
-}
+}*/
 
-PyResult Command_fleetinvite(Client* pClient, CommandDB* db, PyServiceMgr* services, const Seperator& args)
+/*PyResult Command_fleetinvite(Client* pClient, CommandDB* db, PyServiceMgr* services, const Seperator& args)
 {
     if (!pClient->InFleet())
         throw PyException(MakeCustomError("You're not in a fleet."));
@@ -867,7 +867,7 @@ PyResult Command_fleetinvite(Client* pClient, CommandDB* db, PyServiceMgr* servi
 
     pClient->SendInfoModalMsg(reply);
     return new PyString(reply);
-}
+}*/
 
 PyResult Command_getposition(Client* pClient, CommandDB* db, PyServiceMgr* services, const Seperator& args)
 {

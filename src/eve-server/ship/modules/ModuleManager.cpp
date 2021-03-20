@@ -15,7 +15,7 @@
 #include "EVEServerConfig.h"
 #include "Client.h"
 #include "StaticDataMgr.h"
-#include "effects/EffectsDataMgr.h"
+//#include "effects/EffectsDataMgr.h"
 #include "ship/Ship.h"
 #include "ship/modules/ModuleItem.h"
 #include "ship/modules/ModuleManager.h"
@@ -675,19 +675,19 @@ void ModuleManager::Activate(int32 itemID, uint16 effectID, int32 targetID, int3
         return;
     }
 
-    _log(MODULE__TRACE, "MM::Activate() - %s (%u - %s)  targetID: %i, repeat: %i.", \
-                pMod->GetSelf()->name(), effectID, sFxDataMgr.GetEffectName(effectID).c_str(), targetID, repeat);
+    //_log(MODULE__TRACE, "MM::Activate() - %s (%u - %s)  targetID: %i, repeat: %i.", \
+                //pMod->GetSelf()->name(), effectID, sFxDataMgr.GetEffectName(effectID).c_str(), targetID, repeat);
 
-    if (effectID == 16) { //16    online
+    /*if (effectID == 16) { //16    online
         pMod->Online();
         return;
-    }
+    }*/
     /*{'FullPath': u'UI/Messages', 'messageID': 259628, 'label': u'InvalidTargetCanAlreadyTractoredBody'}(u'The {[item]module.name} cannot engage a tractor beam on that object as it is already being tractor beamed by something else.', None, {u'{[item]module.name}': {'conditionalValues': [], 'variableType': 2, 'propertyName': 'name', 'args': 0, 'kwargs': {}, 'variableName': 'module'}})
      * {'FullPath': u'UI/Messages', 'messageID': 259629, 'label': u'InvalidTargetCanOwnerBody'}(u'The {[item]module.name} cannot engage a tractor beam on that object as it is not owned by you, a fellow fleet member or another member of a player corporation you belong to.', None, {u'{[item]module.name}': {'conditionalValues': [], 'variableType': 2, 'propertyName': 'name', 'args': 0, 'kwargs': {}, 'variableName': 'module'}})
      * {'FullPath': u'UI/Messages', 'messageID': 259630, 'label': u'InvalidTargetGroupBody'}(u'Invalid target, can only activate this on {groupName}.', None, {u'{groupName}': {'conditionalValues': [], 'variableType': 10, 'propertyName': None, 'args': 0, 'kwargs': {}, 'variableName': 'groupName'}})
      */
 
-    if (effectID == 2255) { // tractorBeamCan
+    /*if (effectID == 2255) { // tractorBeamCan
         SystemEntity* pSE = pShipItem->GetPilot()->SystemMgr()->GetSE(targetID);
         if (pSE == nullptr)
             throw PyException(MakeUserError("DeniedActivateTargetNotPresent"));
@@ -699,23 +699,23 @@ void ModuleManager::Activate(int32 itemID, uint16 effectID, int32 targetID, int3
         //args["module"]  = new PyInt(itemID);
         //throw PyException(MakeUserError("InvalidTargetCanAlreadyTractored", args));
         }
-    }
+    }*/
 
     if (!pMod->isOnline()) {
         // client wont allow activating an offline module.  this is catchall. (but should never hit)
         pShipItem->GetPilot()->SendErrorMsg("You cannot activate an offline module. Ref: ServerError 25164");
         return;
     } else if (pDestiny->IsWarping()) {
-        if (pMod->HasAttribute(AttrDisallowActivateOnWarp) or !sFxDataMgr.isWarpSafe(effectID))
-            throw PyException(MakeUserError("DeniedActivateInWarp"));
+        //if (pMod->HasAttribute(AttrDisallowActivateOnWarp) or !sFxDataMgr.isWarpSafe(effectID))
+         //   throw PyException(MakeUserError("DeniedActivateInWarp"));
     } else if (pDestiny->IsCloaked()) {
         throw PyException(MakeUserError("DeniedActivateCloaked"));
     } else if (pShipItem->GetPilot()->IsJump()) {
         throw PyException(MakeUserError("DeniedActivateInJump"));
     }
 
-    if (!pMod->IsLinked() or pMod->IsMaster())
-        pMod->Activate(effectID, targetID, repeat);
+    //if (!pMod->IsLinked() or pMod->IsMaster())
+    //    pMod->Activate(effectID, targetID, repeat);
 }
 
 void ModuleManager::Deactivate(uint32 itemID, std::string effectName)
@@ -1527,7 +1527,7 @@ void ModuleManager::addModuleRef(EVEItemFlags flag, GenericModule* pMod)
     // update available slots
     if (pMod->isHighPower()) {
         bool update = !pShipItem->GetPilot()->IsLogin();
-        if (pMod->isTurretFitted()) {
+        /*if (pMod->isTurretFitted()) {
             // apply config modifier, if applicable
             pMod->GetSelf()->MultiplyAttribute(AttrSpeed, sConfig.rates.turretRoF);
             uint8 count = pShipItem->GetAttribute(AttrTurretSlotsLeft).get_uint32() -1;
@@ -1537,7 +1537,7 @@ void ModuleManager::addModuleRef(EVEItemFlags flag, GenericModule* pMod)
             pMod->GetSelf()->MultiplyAttribute(AttrSpeed, sConfig.rates.missileRoF);
             uint8 count = pShipItem->GetAttribute(AttrLauncherSlotsLeft).get_uint32() -1;
             pShipItem->SetAttribute(AttrLauncherSlotsLeft, count, update);
-        }
+        }*/
         --m_HighSlots;
     } else if (pMod->isMediumPower()) {
         --m_MidSlots;
@@ -1584,13 +1584,13 @@ void ModuleManager::deleteModuleRef(EVEItemFlags flag, GenericModule* pMod)
 
     // update available slots
     if (pMod->isHighPower()) {
-        if (pMod->isTurretFitted()) {
+        /*if (pMod->isTurretFitted()) {
             uint8 count = pShipItem->GetAttribute(AttrTurretSlotsLeft).get_uint32() + 1;
             pShipItem->SetAttribute(AttrTurretSlotsLeft, count);
         } else if (pMod->isLauncherFitted()) {
             uint8 count = pShipItem->GetAttribute(AttrLauncherSlotsLeft).get_uint32() + 1;
             pShipItem->SetAttribute(AttrLauncherSlotsLeft, count);
-        }
+        }*/
         ++m_HighSlots;
     } else if (pMod->isMediumPower()) {
         ++m_MidSlots;

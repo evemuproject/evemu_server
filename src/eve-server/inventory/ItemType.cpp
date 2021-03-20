@@ -27,7 +27,7 @@
 #include "eve-server.h"
 
 #include "character/Character.h"
-#include "effects/EffectsDataMgr.h"
+//#include "effects/EffectsDataMgr.h"
 #include "inventory/ItemType.h"
 #include "manufacturing/Blueprint.h"
 #include "ship/Ship.h"
@@ -186,7 +186,7 @@ bool ItemType::HasReqSkill(const uint16 skillID) const
 
     return false;
 }
-
+/*
 void ItemType::LoadEffects()
 {
     std::vector< TypeEffects > typeEffMap;
@@ -219,7 +219,7 @@ void ItemType::GetEffectMap(const int8 state, std::map<uint16, Effect>& effectMa
     auto itr = m_stateFxMap.equal_range(state);
     for (auto it = itr.first; it != itr.second; ++it)
         effectMap.insert(std::pair<uint16, Effect>(it->second.effectID, it->second));
-}
+}*/
 
 
 /*

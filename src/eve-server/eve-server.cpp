@@ -33,7 +33,6 @@
 // data managers
 #include "StaticDataMgr.h"
 #include "StatisticMgr.h"
-#include "missions/MissionDataMgr.h"
 //console commands
 #include "ConsoleCommands.h"
 // account services
@@ -52,9 +51,6 @@
 #include "admin/DevToolsProviderService.h"
 #include "admin/PetitionerService.h"
 #include "admin/SlashService.h"
-// agent services
-#include "agents/Agent.h"
-#include "agents/AgentMgrService.h"
 // alliance services
 #include "alliance/AllianceRegistry.h"
 // calendar services
@@ -98,7 +94,6 @@
 // dogmaim services
 #include "dogmaim/DogmaIMService.h"
 #include "dogmaim/DogmaService.h"
-#include "effects/EffectsDataMgr.h"
 // dungeon services
 #include "dungeon/DungeonExplorationMgrService.h"
 #include "dungeon/DungeonService.h"
@@ -142,8 +137,7 @@
 #include "planet/PlanetMgrBound.h"
 #include "planet/PlanetORBBound.h"
 // pos services
-#include "pos/PosMgr.h"
-#include "pos/Structure.h"
+//#include "pos/Structure.h"
 // qaTools
 #include "qaTools/encounterSpawnServer.h"
 #include "qaTools/netStateServer.h"
@@ -648,8 +642,8 @@ int main( int argc, char* argv[] )
     sLog.Green("       ServerInit", "Starting Standings Manager");
     sStandingMgr.Initialize();
     /* create the FleetService singleton */
-    sLog.Green("       ServerInit", "Starting Fleet Services");
-    sFltSvc.Initialize(&pyServMgr);
+    //sLog.Green("       ServerInit", "Starting Fleet Services");
+    //sFltSvc.Initialize(&pyServMgr);
     /* create the MarketMgr singleton */
     sLog.Green("       ServerInit", "Starting Market Manager");
     sMktMgr.Initialize(&pyServMgr);
@@ -686,7 +680,7 @@ int main( int argc, char* argv[] )
     /* 'services' here are systems that respond to client calls */
     // move this into a service Init() function?   will need more work to do...
     pyServMgr.RegisterService("account", new AccountService(&pyServMgr));
-    pyServMgr.RegisterService("agentMgr", new AgentMgrService(&pyServMgr));
+    //pyServMgr.RegisterService("agentMgr", new AgentMgrService(&pyServMgr));
     pyServMgr.RegisterService("aggressionMgr", new AggressionMgrService(&pyServMgr));
     pyServMgr.RegisterService("alert", new AlertService(&pyServMgr));
     pyServMgr.RegisterService("allianceRegistry", new AllianceRegistry(&pyServMgr));
@@ -723,7 +717,7 @@ int main( int argc, char* argv[] )
     pyServMgr.RegisterService("factory", new FactoryService(&pyServMgr));
     pyServMgr.RegisterService("fleetMgr", new FleetManager(&pyServMgr));
     pyServMgr.RegisterService("fleetObjectHandler", new FleetObject(&pyServMgr));
-    pyServMgr.RegisterService("fleetProxy", new FleetProxy(&pyServMgr));
+    //pyServMgr.RegisterService("fleetProxy", new FleetProxy(&pyServMgr));
     pyServMgr.RegisterService("holoscreenMgr", new HoloscreenMgrService(&pyServMgr));
     pyServMgr.RegisterService("devIndexManager", new IndexManager(&pyServMgr));
     pyServMgr.RegisterService("infoGatheringMgr", new InfoGatheringMgr(&pyServMgr));
@@ -754,7 +748,7 @@ int main( int argc, char* argv[] )
     pyServMgr.RegisterService("photoUploadSvc", new PhotoUploadService(&pyServMgr));
     pyServMgr.RegisterService("planetMgr", new PlanetMgrService(&pyServMgr));
     pyServMgr.RegisterService("planetOrbitalRegistryBroker", new PlanetORB(&pyServMgr));
-    pyServMgr.RegisterService("posMgr", new PosMgr(&pyServMgr));
+    //pyServMgr.RegisterService("posMgr", new PosMgr(&pyServMgr));
     pyServMgr.RegisterService("ramProxy", new RamProxyService(&pyServMgr));
     pyServMgr.RegisterService("repairSvc", new RepairService(&pyServMgr));
     pyServMgr.RegisterService("reprocessingSvc", new ReprocessingService(&pyServMgr));
@@ -797,9 +791,9 @@ int main( int argc, char* argv[] )
     sLog.Green("       ServerInit", "Loading Data Sets");
     sDataMgr.Initialize();
     std::printf("\n");     // spacer
-    sMissionDataMgr.Initialize();
+    //sMissionDataMgr.Initialize();
     std::printf("\n");     // spacer
-    sFxDataMgr.Initialize();
+    //sFxDataMgr.Initialize();
     std::printf("\n");     // spacer
     sMapData.Initialize();
     std::printf("\n");     // spacer

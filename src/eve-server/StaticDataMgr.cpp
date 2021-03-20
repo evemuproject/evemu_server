@@ -1538,7 +1538,7 @@ const char* StaticDataMgr::GetRigSizeName(uint8 size)
 
 const char* StaticDataMgr::GetProcStateName(int8 state)
 {
-    using namespace EVEPOS;
+    /*using namespace EVEPOS;
     switch(state) {
         case ProcState::Invalid:            return "Invalid";
         case ProcState::Unanchoring:        return "Unanchoring";
@@ -1551,7 +1551,7 @@ const char* StaticDataMgr::GetProcStateName(int8 state)
         case ProcState::SheildReinforcing:  return "SheildReinforcing";
         case ProcState::ArmorReinforcing:   return "ArmorReinforcing";
         default:                            return "Bad State";
-    }
+    }*/
     return "Undefined";
 }
 

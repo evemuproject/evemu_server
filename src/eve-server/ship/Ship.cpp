@@ -6,7 +6,7 @@
 #include "StaticDataMgr.h"
 #include "account/AccountService.h"
 #include "character/Character.h"
-#include "effects/EffectsProcessor.h"
+//#include "effects/EffectsProcessor.h"
 #include "npc/Drone.h"
 #include "ship/Ship.h"
 #include "ship/modules/GenericModule.h"
@@ -744,27 +744,27 @@ void ShipItem::TryModuleLimitChecks(EVEItemFlags flag, InventoryItemRef iRef)
 
     if (IsHiSlot(flag)) {
         // check available turret/launcher hardpoints
-        if (iRef->type().HasEffect(EVEEffectID::turretFitted)) {
+        /*if (iRef->type().HasEffect(EVEEffectID::turretFitted)) {
             if (GetAttribute(AttrTurretSlotsLeft) < 1) {
                 std::map<std::string, PyRep *> args;
                 args["moduleName"] = new PyString(iRef->itemName());
-                throw PyException( MakeUserError("NotEnoughTurretSlots", args));
+                throw PyException( MakeUserError("NotEnoughTurretSlots", args));*/
                 /*u'NotEnoughTurretSlotsBody'}(u"You cannot fit the {moduleName} because your ship doesn't have any turret slots left for fitting, possibly because you have already filled your ship with turrets or that the ship simply can not be fitted with turrets.\r\n<br>
                  * <br>Turret slots represent how many weapons of a certain type can be fitted on a ship. The current design is over a hundred years old, and is modular enough to allow for a great leeway in the fitting of various weaponry.", None,
                  * {u'{moduleName}': {'conditionalValues': [], 'variableType': 10, 'propertyName': None, 'args': 0, 'kwargs': {}, 'variableName': 'moduleName'}})
                  */
-            }
+            /*}
         } else if (iRef->type().HasEffect(EVEEffectID::launcherFitted)) {
             if (GetAttribute(AttrLauncherSlotsLeft) < 1) {
                 std::map<std::string, PyRep *> args;
                 args["moduleName"] = new PyString(iRef->itemName());
-                throw PyException( MakeUserError("NotEnoughLauncherSlots", args));
+                throw PyException( MakeUserError("NotEnoughLauncherSlots", args));*/
                 /*NotEnoughLauncherSlotsBody'}(u"You cannot fit the {moduleName} because your ship doesn't have any launcher slots left for fitting, possibly because you have already filled your ship with launchers or that the ship simply can not be fitted with launchers.<br>
                  * <br>Launcher slots represent how many weapons of a certain type can be fitted on a ship. The current design is over a hundred years old, and is modular enough to allow for a great leeway in the fitting of various weaponry.", None,
                  * {u'{moduleName}': {'conditionalValues': [], 'variableType': 10, 'propertyName': None, 'args': 0, 'kwargs': {}, 'variableName': 'moduleName'}})
                  */
-            }
-        }
+            /*}
+        }*/
     } else if (IsRigSlot(flag)) {
         if (GetAttribute(AttrRigSize) != iRef->GetAttribute(AttrRigSize)) {
             std::map<std::string, PyRep *> args;
@@ -802,7 +802,7 @@ void ShipItem::TryModuleLimitChecks(EVEItemFlags flag, InventoryItemRef iRef)
 
 EVEItemFlags ShipItem::FindAvailableModuleSlot(InventoryItemRef iRef) {
     uint16 slotFound(flagIllegal);
-    if (iRef->type().HasEffect(EVEEffectID::loPower)) {
+    /**if (iRef->type().HasEffect(EVEEffectID::loPower)) {
         slotFound = m_ModuleManager->GetAvailableSlotInBank(EVEEffectID::loPower);
     } else if (iRef->type().HasEffect(EVEEffectID::medPower)) {
         slotFound = m_ModuleManager->GetAvailableSlotInBank(EVEEffectID::medPower);
@@ -814,7 +814,7 @@ EVEItemFlags ShipItem::FindAvailableModuleSlot(InventoryItemRef iRef) {
         slotFound = m_ModuleManager->GetAvailableSlotInBank(EVEEffectID::rigSlot);
     } else {
         codelog(SHIP__ERROR, "ShipItem::FindAvailableModuleSlot() - iRef %s has no bank effect.", iRef->name());
-    }
+    }*/
 
     return (EVEItemFlags)slotFound;
 }
@@ -1050,7 +1050,7 @@ void ShipItem::Activate(int32 itemID, std::string effectName, int32 targetID, in
         m_targetRef = InventoryItemRef(nullptr);
     }
 
-    m_ModuleManager->Activate( itemID, sFxDataMgr.GetEffectID(effectName), targetID, repeat);
+    //m_ModuleManager->Activate( itemID, sFxDataMgr.GetEffectID(effectName), targetID, repeat);
 }
 
 void ShipItem::OnlineAll()
@@ -1840,7 +1840,7 @@ void ShipItem::ProcessEffects(bool add/*false*/, bool update/*false*/)
 
 void ShipItem::ProcessShipEffects(bool update/*false*/)
 {
-    _log(EFFECTS__TRACE, "ShipItem::ProcessShipEffects()");
+    /*_log(EFFECTS__TRACE, "ShipItem::ProcessShipEffects()");
     for (auto it : type().m_stateFxMap) {
         fxData data = fxData();
         data.action = FX::Action::Invalid;
@@ -1849,7 +1849,7 @@ void ShipItem::ProcessShipEffects(bool update/*false*/)
     }
     // apply processed ship effects
     sFxProc.ApplyEffects(this, m_pilot->GetChar().get(), this, update);
-    //ClearModifiers();
+    //ClearModifiers();*/
 
     if (m_isUndocking) {
         // online modules sent from client (these are onlined in fit window while docked)
@@ -2414,7 +2414,7 @@ m_allowFleetSMBUsage(false)
     m_corpID = data.corporationID;
     m_ownerID = data.ownerID;
 
-    m_boost = BoostData();
+    //m_boost = BoostData();
 
     m_towerPass = "";
     m_processTimer.Start(m_processTimerTick);
@@ -2743,8 +2743,8 @@ void ShipSE::ClearBoostData()
     m_oldInertia     = 0.0f;
     m_oldTargetRange = 0;
 
-    m_boost = BoostData();
-    m_boosted = false;
+    //m_boost = BoostData();
+    //m_boosted = false;
 }
 
 void ShipSE::RemoveBoost()
@@ -2761,7 +2761,7 @@ void ShipSE::RemoveBoost()
 
     ClearBoostData();
 }
-
+/*
 void ShipSE::ApplyBoost(BoostData& bData)
 {
     // note:  mining boost applied in mining module code
@@ -2794,7 +2794,7 @@ void ShipSE::ApplyBoost(BoostData& bData)
     m_destiny->UpdateShipVariables();
 
     m_boosted = true;
-}
+}*/
 //{'FullPath': u'UI/Messages', 'messageID': 257802, 'label': u'DronesDroppedBecauseOfBandwidthModificationBody'}(u'The drone control bandwidth of your ship has been modified causing you to lose the ability to control some drones.', None, None)
 
 bool ShipSE::LaunchDrone(InventoryItemRef dRef) {

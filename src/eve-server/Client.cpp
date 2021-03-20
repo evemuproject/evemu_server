@@ -39,7 +39,7 @@
 #include "corporation/CorporationDB.h"
 #include "fleet/FleetService.h"
 #include "imageserver/ImageServer.h"
-#include "missions/MissionDataMgr.h"
+//#include "missions/MissionDataMgr.h"
 #include "npc/NPC.h"
 //#include "npc/Drone.h"
 //#include "npc/DroneAI.h"
@@ -52,7 +52,7 @@
 #include "exploration/Scan.h"
 #include "station/Station.h"
 #include "station/TradeService.h"
-#include "pos/Tower.h"
+//#include "pos/Tower.h"
 
 static const uint32 PING_INTERVAL_MS = 600000; //10m
 
@@ -584,6 +584,7 @@ void Client::ProcessClient() {
         }
 
     // only set for location change
+    /*
     if (m_fleetTimer.Enabled())
         if (m_fleetTimer.Check(false)) {
             m_fleetTimer.Disable();
@@ -615,7 +616,7 @@ void Client::ProcessClient() {
                     }
             }
             pShipSE->ApplyBoost(bData);
-        }
+        }*/
 
     if (sConfig.debug.UseProfiling)
         sProfiler.AddTime(Profile::client, GetTimeUSeconds() - profileStartTime);
@@ -760,7 +761,7 @@ void Client::MoveToLocation(uint32 locationID, const GPoint& pt) {
 
         if (IsFleet(m_fleet)) {
             m_fleetTimer.Disable();
-            if (IsFleetBooster()) {
+            /*if (IsFleetBooster()) {
                 std::list<int32> wing, squad;
                 wing.clear();
                 squad.clear();
@@ -770,7 +771,7 @@ void Client::MoveToLocation(uint32 locationID, const GPoint& pt) {
                     wing.emplace(wing.end(), m_wing);
                 }
                 sFltSvc.UpdateBoost(m_fleet, IsFleetBoss(), wing, squad);
-            }
+            }*/
         }
 
         if (!IsHangarLoaded(m_locationID))
@@ -794,7 +795,7 @@ void Client::MoveToLocation(uint32 locationID, const GPoint& pt) {
 
         if (IsFleet(m_fleet)) {
             m_fleetTimer.Start(Player::Timer::Fleet);
-            if (IsFleetBooster()) {
+            /*if (IsFleetBooster()) {
                 std::list<int32> wing, squad;
                 wing.clear();
                 squad.clear();
@@ -804,7 +805,7 @@ void Client::MoveToLocation(uint32 locationID, const GPoint& pt) {
                     wing.emplace(wing.end(), m_wing);
                 }
                 sFltSvc.UpdateBoost(m_fleet, IsFleetBoss(), wing, squad);
-            }
+            }*/
         }
 
         if (m_char->flag() != flagPilot)
@@ -1090,12 +1091,12 @@ void Client::Board(ShipSE* newShipSE)
     } else {    // you can xfer direct from one ship from another.
         //  check for POS/FF in bubble.  check for ship in FF.  if so, then not abandoned.
         bool abandoned = true;
-        if (pShipSE->SysBubble()->HasTower()) {
+        /*if (pShipSE->SysBubble()->HasTower()) {
             TowerSE* ptSE = pShipSE->SysBubble()->GetTowerSE();
             if (ptSE->HasForceField())
                 if (pShipSE->GetPosition().distance(ptSE->GetPosition()) < ptSE->GetSOI())
                     abandoned = false;
-        }
+        }*/
 
         char ci[45];
         if (abandoned) {
@@ -1144,12 +1145,12 @@ void Client::Eject()
 
     //  check for POS/FF in bubble.  check for ship in FF.  if so, then not abandoned.
     bool abandoned = true;
-    if (pShipSE->SysBubble()->HasTower()) {
+    /*if (pShipSE->SysBubble()->HasTower()) {
         TowerSE* ptSE = pShipSE->SysBubble()->GetTowerSE();
         if (ptSE->HasForceField())
             if (pShipSE->GetPosition().distance(ptSE->GetPosition()) < ptSE->GetSOI())
                 abandoned = false;
-    }
+    }*/
 
     char ci[45];
     if (abandoned) {

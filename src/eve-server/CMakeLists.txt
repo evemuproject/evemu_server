@@ -77,7 +77,7 @@ SET( account_SOURCE
 
 SET( admin_INCLUDE
      "${TARGET_INCLUDE_DIR}/admin/AlertService.h"
-     "${TARGET_INCLUDE_DIR}/admin/allans_commands.h"
+     "${TARGET_INCLUDE_DIR}/admin/debug_commands.h"
      "${TARGET_INCLUDE_DIR}/admin/AllCommands.h"
      "${TARGET_INCLUDE_DIR}/admin/AllCommandsList.h"
      "${TARGET_INCLUDE_DIR}/admin/ClientStatLogger.h"
@@ -92,7 +92,7 @@ SET( admin_INCLUDE
      "${TARGET_INCLUDE_DIR}/admin/CommandHelper.h" )
 SET( admin_SOURCE
      "${TARGET_SOURCE_DIR}/admin/AlertService.cpp"
-     "${TARGET_SOURCE_DIR}/admin/allans_commands.cpp"
+     "${TARGET_SOURCE_DIR}/admin/debug_commands.cpp"
      "${TARGET_SOURCE_DIR}/admin/AllCommands.cpp"
      "${TARGET_SOURCE_DIR}/admin/ClientStatLogger.cpp"
      "${TARGET_SOURCE_DIR}/admin/CommandDB.cpp"
@@ -104,17 +104,6 @@ SET( admin_SOURCE
      "${TARGET_SOURCE_DIR}/admin/SlashService.cpp"
      "${TARGET_SOURCE_DIR}/admin/SystemCommands.cpp"
      "${TARGET_SOURCE_DIR}/admin/CommandHelper.cpp" )
-
-SET( agent_INCLUDE
-     "${TARGET_INCLUDE_DIR}/agents/Agent.h"
-     "${TARGET_INCLUDE_DIR}/agents/AgentBound.h"
-     "${TARGET_INCLUDE_DIR}/agents/AgentDB.h"
-     "${TARGET_INCLUDE_DIR}/agents/AgentMgrService.h")
-SET( agent_SOURCE
-     "${TARGET_SOURCE_DIR}/agents/Agent.cpp"
-     "${TARGET_SOURCE_DIR}/agents/AgentBound.cpp"
-     "${TARGET_SOURCE_DIR}/agents/AgentDB.cpp"
-     "${TARGET_SOURCE_DIR}/agents/AgentMgrService.cpp")
 
 SET( alliance_INCLUDE
      "${TARGET_INCLUDE_DIR}/alliance/AllianceBound.h"
@@ -243,16 +232,6 @@ SET( dungeon_SOURCE
      "${TARGET_SOURCE_DIR}/dungeon/DungeonExplorationMgrService.cpp"
      "${TARGET_SOURCE_DIR}/dungeon/DungeonService.cpp" )
 
-SET( effects_INCLUDE
-     #"${TARGET_INCLUDE_DIR}/effects/EffectsActions.h"
-     "${TARGET_INCLUDE_DIR}/effects/EffectsData.h"
-     "${TARGET_INCLUDE_DIR}/effects/EffectsDataMgr.h"
-     "${TARGET_INCLUDE_DIR}/effects/EffectsProcessor.h")
-SET( effects_SOURCE
-     #"${TARGET_SOURCE_DIR}/effects/EffectsActions.cpp"
-     "${TARGET_SOURCE_DIR}/effects/EffectsDataMgr.cpp"
-     "${TARGET_SOURCE_DIR}/effects/EffectsProcessor.cpp" )
-
 SET( explore_INCLUDE
      "${TARGET_INCLUDE_DIR}/exploration/Exploration.h"
      "${TARGET_INCLUDE_DIR}/exploration/Probes.h"
@@ -276,14 +255,11 @@ SET( faction_SOURCE
      "${TARGET_SOURCE_DIR}/faction/WarRegistryService.cpp")
 
 SET( fleet_INCLUDE
-     "${TARGET_INCLUDE_DIR}/fleet/FleetBound.h"
-     "${TARGET_INCLUDE_DIR}/fleet/FleetData.h"
      "${TARGET_INCLUDE_DIR}/fleet/FleetManager.h"
      "${TARGET_INCLUDE_DIR}/fleet/FleetObject.h"
      "${TARGET_INCLUDE_DIR}/fleet/FleetProxy.h"
      "${TARGET_INCLUDE_DIR}/fleet/FleetService.h")
 SET( fleet_SOURCE
-     "${TARGET_SOURCE_DIR}/fleet/FleetBound.cpp"
      "${TARGET_SOURCE_DIR}/fleet/FleetManager.cpp"
      "${TARGET_SOURCE_DIR}/fleet/FleetObject.cpp"
      "${TARGET_SOURCE_DIR}/fleet/FleetProxy.cpp"
@@ -375,11 +351,9 @@ SET( market_SOURCE
 
 SET( missions_INCLUDE
      "${TARGET_INCLUDE_DIR}/missions/MissionDB.h"
-     "${TARGET_INCLUDE_DIR}/missions/MissionDataMgr.h"
      "${TARGET_INCLUDE_DIR}/missions/MissionMgrService.h" )
 SET( missions_SOURCE
      "${TARGET_SOURCE_DIR}/missions/MissionDB.cpp"
-     "${TARGET_SOURCE_DIR}/missions/MissionDataMgr.cpp"
      "${TARGET_SOURCE_DIR}/missions/MissionMgrService.cpp" )
 
 SET( npc_INCLUDE
@@ -421,27 +395,6 @@ SET( planet_SOURCE
      "${TARGET_SOURCE_DIR}/planet/PlanetMgr.cpp"
      "${TARGET_SOURCE_DIR}/planet/PlanetMgrBound.cpp"
      "${TARGET_SOURCE_DIR}/planet/PlanetORBBound.cpp")
-
-SET( pos_INCLUDE
-     "${TARGET_INCLUDE_DIR}/pos/Array.h"
-     "${TARGET_INCLUDE_DIR}/pos/Battery.h"
-     "${TARGET_INCLUDE_DIR}/pos/Module.h"
-     "${TARGET_INCLUDE_DIR}/pos/POS_AI.h"
-     "${TARGET_INCLUDE_DIR}/pos/PosMgr.h"
-     "${TARGET_INCLUDE_DIR}/pos/PosMgrDB.h"
-     "${TARGET_INCLUDE_DIR}/pos/Structure.h"
-     "${TARGET_INCLUDE_DIR}/pos/Tower.h"
-     "${TARGET_INCLUDE_DIR}/pos/Weapon.h" )
-SET( pos_SOURCE
-     "${TARGET_SOURCE_DIR}/pos/Array.cpp"
-     "${TARGET_SOURCE_DIR}/pos/Battery.cpp"
-     "${TARGET_SOURCE_DIR}/pos/Module.cpp"
-     "${TARGET_SOURCE_DIR}/pos/POS_AI.cpp"
-     "${TARGET_SOURCE_DIR}/pos/PosMgr.cpp"
-     "${TARGET_SOURCE_DIR}/pos/PosMgrDB.cpp"
-     "${TARGET_SOURCE_DIR}/pos/Structure.cpp"
-     "${TARGET_SOURCE_DIR}/pos/Tower.cpp"
-     "${TARGET_SOURCE_DIR}/pos/Weapon.cpp" )
 
 SET( qaTools_INCLUDE
      "${TARGET_INCLUDE_DIR}/qaTools/encounterSpawnServer.h"
@@ -618,7 +571,6 @@ SET( test_SOURCE
 SOURCE_GROUP( "src"                FILES ${INCLUDE} )
 SOURCE_GROUP( "src\\account"       FILES ${account_INCLUDE} )
 SOURCE_GROUP( "src\\admin"         FILES ${admin_INCLUDE} )
-SOURCE_GROUP( "src\\agent"         FILES ${agent_INCLUDE} )
 SOURCE_GROUP( "src\\alliance"      FILES ${alliance_INCLUDE} )
 SOURCE_GROUP( "src\\cache"         FILES ${cache_INCLUDE} )
 SOURCE_GROUP( "src\\character"     FILES ${character_INCLUDE} )
@@ -628,10 +580,9 @@ SOURCE_GROUP( "src\\contract"      FILES ${contract_INCLUDE} )
 SOURCE_GROUP( "src\\corporation"   FILES ${corporation_INCLUDE} )
 SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_INCLUDE} )
 SOURCE_GROUP( "src\\dungeon"       FILES ${dungeon_INCLUDE} )
-SOURCE_GROUP( "src\\effects"       FILES ${effects_INCLUDE} )
 SOURCE_GROUP( "src\\exploration"   FILES ${explore_INCLUDE} )
 SOURCE_GROUP( "src\\faction"       FILES ${faction_INCLUDE} )
-SOURCE_GROUP( "src\\fleet"         FILES ${fleet_INCLUDE} )
+#SOURCE_GROUP( "src\\fleet"         FILES ${fleet_INCLUDE} )
 SOURCE_GROUP( "src\\imageserver"   FILES ${imageserver_INCLUDE} )
 SOURCE_GROUP( "src\\inventory"     FILES ${inventory_INCLUDE} )
 SOURCE_GROUP( "src\\mail"          FILES ${mail_INCLUDE} )
@@ -640,8 +591,8 @@ SOURCE_GROUP( "src\\map"           FILES ${map_INCLUDE} )
 SOURCE_GROUP( "src\\market"        FILES ${market_INCLUDE} )
 SOURCE_GROUP( "src\\missions"      FILES ${missions_INCLUDE} )
 SOURCE_GROUP( "src\\npc"           FILES ${npc_INCLUDE} )
-SOURCE_GROUP( "src\\planet"        FILES ${planet_INCLUDE} )
-SOURCE_GROUP( "src\\pos"           FILES ${pos_INCLUDE} )
+#SOURCE_GROUP( "src\\planet"        FILES ${planet_INCLUDE} )
+#SOURCE_GROUP( "src\\pos"           FILES ${pos_INCLUDE} )
 SOURCE_GROUP( "src\\qaTools"       FILES ${qaTools_INCLUDE} )
 SOURCE_GROUP( "src\\search"        FILES ${search_INCLUDE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_INCLUDE} )
@@ -655,7 +606,6 @@ SOURCE_GROUP( "src\\system\\test"  FILES ${test_INCLUDE} )
 SOURCE_GROUP( "src"                FILES ${SOURCE} )
 SOURCE_GROUP( "src\\account"       FILES ${account_SOURCE} )
 SOURCE_GROUP( "src\\admin"         FILES ${admin_SOURCE} )
-SOURCE_GROUP( "src\\agent"         FILES ${agent_SOURCE} )
 SOURCE_GROUP( "src\\alliance"      FILES ${alliance_SOURCE} )
 SOURCE_GROUP( "src\\cache"         FILES ${cache_SOURCE} )
 SOURCE_GROUP( "src\\character"     FILES ${character_SOURCE} )
@@ -665,10 +615,9 @@ SOURCE_GROUP( "src\\contract"      FILES ${contract_SOURCE} )
 SOURCE_GROUP( "src\\corporation"   FILES ${corporation_SOURCE} )
 SOURCE_GROUP( "src\\dogmaim"       FILES ${dogmaim_SOURCE} )
 SOURCE_GROUP( "src\\dungeon"       FILES ${dungeon_SOURCE} )
-SOURCE_GROUP( "src\\effects"       FILES ${effects_SOURCE} )
 SOURCE_GROUP( "src\\exploration"   FILES ${explore_SOURCE} )
 SOURCE_GROUP( "src\\faction"       FILES ${faction_SOURCE} )
-SOURCE_GROUP( "src\\fleet"         FILES ${fleet_SOURCE} )
+#SOURCE_GROUP( "src\\fleet"         FILES ${fleet_SOURCE} )
 SOURCE_GROUP( "src\\imageserver"   FILES ${imageserver_SOURCE} )
 SOURCE_GROUP( "src\\inventory"     FILES ${inventory_SOURCE} )
 SOURCE_GROUP( "src\\mail"          FILES ${mail_SOURCE} )
@@ -677,8 +626,8 @@ SOURCE_GROUP( "src\\map"           FILES ${map_SOURCE} )
 SOURCE_GROUP( "src\\market"        FILES ${market_SOURCE} )
 SOURCE_GROUP( "src\\missions"      FILES ${missions_SOURCE} )
 SOURCE_GROUP( "src\\npc"           FILES ${npc_SOURCE} )
-SOURCE_GROUP( "src\\planet"        FILES ${planet_SOURCE} )
-SOURCE_GROUP( "src\\pos"           FILES ${pos_SOURCE} )
+#SOURCE_GROUP( "src\\planet"        FILES ${planet_SOURCE} )
+#SOURCE_GROUP( "src\\pos"           FILES ${pos_SOURCE} )
 SOURCE_GROUP( "src\\qaTools"       FILES ${qaTools_SOURCE} )
 SOURCE_GROUP( "src\\search"        FILES ${search_SOURCE} )
 SOURCE_GROUP( "src\\ship"          FILES ${ship_SOURCE} )
@@ -693,7 +642,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${INCLUDE}                ${SOURCE}
                 ${account_INCLUDE}        ${account_SOURCE}
                 ${admin_INCLUDE}          ${admin_SOURCE}
-                ${agent_INCLUDE}          ${agent_SOURCE}
+                #${agent_INCLUDE}          ${agent_SOURCE}
                 ${alliance_INCLUDE}       ${alliance_SOURCE}
                 ${cache_INCLUDE}          ${cache_SOURCE}
                 ${character_INCLUDE}      ${character_SOURCE}
@@ -703,10 +652,10 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${corporation_INCLUDE}    ${corporation_SOURCE}
                 ${dogmaim_INCLUDE}        ${dogmaim_SOURCE}
                 ${dungeon_INCLUDE}        ${dungeon_SOURCE}
-                ${effects_INCLUDE}        ${effects_SOURCE}
+                #${effects_INCLUDE}        ${effects_SOURCE}
                 ${explore_INCLUDE}        ${explore_SOURCE}
                 ${faction_INCLUDE}        ${faction_SOURCE}
-                ${fleet_INCLUDE}          ${fleet_SOURCE}
+                #${fleet_INCLUDE}          ${fleet_SOURCE}
                 ${imageserver_INCLUDE}    ${imageserver_SOURCE}
                 ${inventory_INCLUDE}      ${inventory_SOURCE}
                 ${mail_INCLUDE}           ${mail_SOURCE}
@@ -715,8 +664,8 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${market_INCLUDE}         ${market_SOURCE}
                 ${missions_INCLUDE}       ${missions_SOURCE}
                 ${npc_INCLUDE}            ${npc_SOURCE}
-                ${planet_INCLUDE}         ${planet_SOURCE}
-                ${pos_INCLUDE}            ${pos_SOURCE}
+                #${planet_INCLUDE}         ${planet_SOURCE}
+                #${pos_INCLUDE}            ${pos_SOURCE}
                 ${qaTools_INCLUDE}        ${qaTools_SOURCE}
                 ${search_INCLUDE}         ${search_SOURCE}
                 ${ship_INCLUDE}           ${ship_SOURCE}
