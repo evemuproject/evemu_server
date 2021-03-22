@@ -142,8 +142,8 @@
 #include "planet/PlanetMgrBound.h"
 #include "planet/PlanetORBBound.h"
 // pos services
-#include "pos/PosMgr.h"
-#include "pos/Structure.h"
+//#include "pos/PosMgr.h"
+//#include "pos/Structure.h"
 // qaTools
 #include "qaTools/encounterSpawnServer.h"
 #include "qaTools/netStateServer.h"
@@ -721,8 +721,8 @@ int main( int argc, char* argv[] )
     pyServMgr.RegisterService("entity", new EntityService(&pyServMgr));
     pyServMgr.RegisterService("facWarMgr", new FactionWarMgrService(&pyServMgr));
     pyServMgr.RegisterService("factory", new FactoryService(&pyServMgr));
-    pyServMgr.RegisterService("fleetMgr", new FleetManager(&pyServMgr));
-    pyServMgr.RegisterService("fleetObjectHandler", new FleetObject(&pyServMgr));
+    //pyServMgr.RegisterService("fleetMgr", new FleetManager(&pyServMgr));
+    //pyServMgr.RegisterService("fleetObjectHandler", new FleetObject(&pyServMgr));
     //pyServMgr.RegisterService("fleetProxy", new FleetProxy(&pyServMgr));
     pyServMgr.RegisterService("holoscreenMgr", new HoloscreenMgrService(&pyServMgr));
     pyServMgr.RegisterService("devIndexManager", new IndexManager(&pyServMgr));
@@ -743,7 +743,7 @@ int main( int argc, char* argv[] )
     pyServMgr.RegisterService("mailingListsMgr", new MailingListMgrService(&pyServMgr));
     pyServMgr.RegisterService("map", new MapService(&pyServMgr));
     pyServMgr.RegisterService("marketProxy", new MarketProxyService(&pyServMgr));
-    pyServMgr.RegisterService("missionMgr", new MissionMgrService(&pyServMgr));
+    //pyServMgr.RegisterService("missionMgr", new MissionMgrService(&pyServMgr));
     pyServMgr.RegisterService("movementServer", new MovementService(&pyServMgr));
     pyServMgr.RegisterService("notificationMgr", new NotificationMgrService(&pyServMgr));
     pyServMgr.cache_service = new ObjCacheService(&pyServMgr, sConfig.files.cacheDir.c_str());
@@ -752,8 +752,8 @@ int main( int argc, char* argv[] )
     pyServMgr.RegisterService("paperDollServer", new PaperDollService(&pyServMgr));
     pyServMgr.RegisterService("petitioner", new PetitionerService(&pyServMgr));
     pyServMgr.RegisterService("photoUploadSvc", new PhotoUploadService(&pyServMgr));
-    pyServMgr.RegisterService("planetMgr", new PlanetMgrService(&pyServMgr));
-    pyServMgr.RegisterService("planetOrbitalRegistryBroker", new PlanetORB(&pyServMgr));
+    //pyServMgr.RegisterService("planetMgr", new PlanetMgrService(&pyServMgr));
+    //pyServMgr.RegisterService("planetOrbitalRegistryBroker", new PlanetORB(&pyServMgr));
     //pyServMgr.RegisterService("posMgr", new PosMgr(&pyServMgr));
     pyServMgr.RegisterService("ramProxy", new RamProxyService(&pyServMgr));
     pyServMgr.RegisterService("repairSvc", new RepairService(&pyServMgr));
@@ -805,9 +805,9 @@ int main( int argc, char* argv[] )
     std::printf("\n");     // spacer
     sDunDataMgr.Initialize();
     std::printf("\n");     // spacer
-    sPlanetDataMgr.Initialize();
+    //sPlanetDataMgr.Initialize();
     std::printf("\n");     // spacer
-    sPIDataMgr.Initialize();
+    //sPIDataMgr.Initialize();
     std::printf("\n");     // spacer
     stDataMgr.Initialize();
     std::printf("\n");     // spacer

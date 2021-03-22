@@ -29,9 +29,9 @@
 
 #include "EVEServerConfig.h"
 #include "npc/Drone.h"
-#include "planet/CustomsOffice.h"
+//#include "planet/CustomsOffice.h"
 #include "planet/Moon.h"
-#include "pos/Structure.h"
+//#include "pos/Structure.h"
 #include "ship/ShipService.h"
 #include "system/Container.h"
 #include "system/DestinyManager.h"

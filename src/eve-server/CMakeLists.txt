@@ -675,7 +675,7 @@ SOURCE_GROUP( "src\\mail"          FILES ${mail_SOURCE} )
 SOURCE_GROUP( "src\\manufacturing" FILES ${manufacturing_SOURCE} )
 SOURCE_GROUP( "src\\map"           FILES ${map_SOURCE} )
 SOURCE_GROUP( "src\\market"        FILES ${market_SOURCE} )
-SOURCE_GROUP( "src\\missions"      FILES ${missions_SOURCE} )
+#SOURCE_GROUP( "src\\missions"      FILES ${missions_SOURCE} )
 SOURCE_GROUP( "src\\npc"           FILES ${npc_SOURCE} )
 #SOURCE_GROUP( "src\\planet"        FILES ${planet_SOURCE} )
 #SOURCE_GROUP( "src\\pos"           FILES ${pos_SOURCE} )
@@ -713,7 +713,7 @@ ADD_EXECUTABLE( "${TARGET_NAME}"
                 ${manufacturing_INCLUDE}  ${manufacturing_SOURCE}
                 ${map_INCLUDE}            ${map_SOURCE}
                 ${market_INCLUDE}         ${market_SOURCE}
-                ${missions_INCLUDE}       ${missions_SOURCE}
+                #${missions_INCLUDE}       ${missions_SOURCE}
                 ${npc_INCLUDE}            ${npc_SOURCE}
                 #${planet_INCLUDE}         ${planet_SOURCE}
                 #${pos_INCLUDE}            ${pos_SOURCE}

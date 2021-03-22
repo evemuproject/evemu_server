@@ -46,7 +46,7 @@ MapService::MapService(PyServiceMgr *mgr)
     PyCallable_REG_CALL(MapService, GetMyExtraMapInfo);     //ColorStarsByCorpMates
     PyCallable_REG_CALL(MapService, GetStationExtraInfo);
     PyCallable_REG_CALL(MapService, GetSolarSystemVisits);
-    PyCallable_REG_CALL(MapService, GetLinkableJumpArrays);
+    //PyCallable_REG_CALL(MapService, GetLinkableJumpArrays);
     PyCallable_REG_CALL(MapService, GetMyExtraMapInfoAgents);  //ColorStarsByMyAgents
     PyCallable_REG_CALL(MapService, GetSolarSystemPseudoSecurities);
 
