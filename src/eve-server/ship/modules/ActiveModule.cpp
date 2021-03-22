@@ -270,8 +270,8 @@ void ActiveModule::Process()
             // charge loading complete
             m_reloadTimer.Disable();
             // apply charge effects here after loading is complete, but only for empty modules (no previous charge fx)
-            //if (!m_chargeLoaded)
-            //    sFxProc.ApplyEffects(m_chargeRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
+            if (!m_chargeLoaded)
+                sFxProc.ApplyEffects(m_chargeRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
 
             m_ChargeState = Module::State::Loaded;
             m_chargeLoaded = true;
@@ -351,7 +351,7 @@ void ActiveModule::Activate(uint16 effectID, uint32 targetID/*0*/, int16 repeat/
          */
 
         // if target is non-combatant deny attack
-        /*if (sFxDataMgr.isOffensive(effectID))
+        if (sFxDataMgr.isOffensive(effectID))
             if (m_targetSE->IsItemEntity() or m_targetSE->IsStaticEntity() or m_targetSE->IsWreckSE())
                 // or (m_targetSE->IsLogin()))       // this is incomplete, so always returns false
             {
@@ -368,7 +368,7 @@ void ActiveModule::Activate(uint16 effectID, uint32 targetID/*0*/, int16 repeat/
                 if (m_targetSE->GetPilot()->IsCriminal())
                     throw PyException(MakeUserError("ModuleActivationDeniedCriminalAssistance"));
              */
-        }/*
+        }
         if (m_targetSE->IsCOSE()) {
             Clear();
             throw PyException(MakeCustomError("Attacking Customs Offices isn't implemented at this time."));
@@ -660,10 +660,10 @@ void ActiveModule::DeactivateCycle(bool abort/*false*/)
         ShowEffect(false, abort);
     }
 
-    /*ApplyEffect(FX::State::Active, false);
+    ApplyEffect(FX::State::Active, false);
     if (IsValidTarget(m_targetID)
     and (m_targetSE != nullptr))
-        ApplyEffect(FX::State::Target, false);*/
+        ApplyEffect(FX::State::Target, false);
         /*
     else if (m_needsTarget) {
         _log(MODULE__INFO, "%s - DeactivateCycle() - need target = true and targetID: %u, targSE: %x", \
@@ -831,12 +831,12 @@ void ActiveModule::LoadCharge(InventoryItemRef chargeRef)
     if (!pClient->IsLogin()) {
         // process new charge's effects (load timer will determine if fx are applied based on existing charge)
         // GM::Online proc fx when client logs in...this is to avoid dupe calls
-        /*for (auto it : chargeRef->type().m_stateFxMap) {
+        for (auto it : chargeRef->type().m_stateFxMap) {
             fxData data = fxData();
             data.action = FX::Action::Invalid;
             data.srcRef = chargeRef;
             sFxProc.ParseExpression(m_modRef.get(), sFxDataMgr.GetExpression(it.second.preExpression), data, this);
-        }*/
+        }
         if (pClient->IsInSpace()) {
             /*  **** this sets "reload blink" status on weapon button
              * def OnChargeBeingLoadedToModule(self, moduleIDs, chargeTypeID, reloadTime):
@@ -860,8 +860,8 @@ void ActiveModule::LoadCharge(InventoryItemRef chargeRef)
 
     if (!m_reloadTimer.Enabled()) {
         // apply charge effects only for empty modules (no previous charge fx)
-        //if (!m_chargeLoaded)
-        //    sFxProc.ApplyEffects(m_chargeRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
+        if (!m_chargeLoaded)
+            sFxProc.ApplyEffects(m_chargeRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
 
         // set immediately on login or when docked
         m_chargeLoaded = true;
@@ -890,7 +890,7 @@ void ActiveModule::UnloadCharge()
         }
 
         m_modRef->ClearModifiers();
-        /*for (auto it : m_chargeRef->type().m_stateFxMap) {
+        for (auto it : m_chargeRef->type().m_stateFxMap) {
             fxData data = fxData();
             data.action = FX::Action::Invalid;
             data.srcRef = m_chargeRef;
@@ -898,7 +898,7 @@ void ActiveModule::UnloadCharge()
         }
 
         // apply to containing module to properly remove effects
-        sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), m_shipRef->GetPilot()->IsInSpace());*/
+        sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), m_shipRef->GetPilot()->IsInSpace());
     }
 
     m_chargeRef = InventoryItemRef(nullptr);       // Ensure ref is NULL
@@ -923,7 +923,7 @@ void ActiveModule::ApplyEffect(int8 state, bool active/*false*/)
 {
     // process and apply module's active effects
     ProcessEffects(state, active);
-    //sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
+    sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
 }
 
 void ActiveModule::UpdateCharge(uint16 attrID, uint16 testAttrID, uint16 srcAttrID, InventoryItemRef iRef)
@@ -968,7 +968,7 @@ void ActiveModule::ReprocessCharge()
         data.srcRef = m_chargeRef;
         sFxProc.ParseExpression(m_chargeRef.get(), sFxDataMgr.GetExpression(it.second.preExpression), data, this);
     } */
-    //sFxProc.ApplyEffects(m_chargeRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), m_shipRef->GetPilot()->IsInSpace());
+    sFxProc.ApplyEffects(m_chargeRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), m_shipRef->GetPilot()->IsInSpace());
     m_chargeRef->ClearModifiers();
 }
 
@@ -1124,15 +1124,15 @@ void ActiveModule::ShowEffect(bool active/*false*/, bool abort/*false*/)
 
     uint16 effectID(m_effectID);
     // there may be others here like this...this is ONLY for OnSpecialFX data
-    //if ((m_effectID == EVEEffectID::useMissiles) and (m_chargeRef.get() != nullptr))   //operation defined by charge (use charge's default effectID)
-    //    effectID = m_chargeRef->type().GetDefaultEffect();
-    //std::string guidStr = sFxDataMgr.GetEffectGuid(effectID);
-    //if (guidStr.empty())
-    //    _log(EFFECTS__ERROR, "guid empty for %s using effectID %u", m_modRef->name(), effectID);
+    if ((m_effectID == EVEEffectID::useMissiles) and (m_chargeRef.get() != nullptr))   //operation defined by charge (use charge's default effectID)
+        effectID = m_chargeRef->type().GetDefaultEffect();
+    std::string guidStr = sFxDataMgr.GetEffectGuid(effectID);
+    if (guidStr.empty())
+        _log(EFFECTS__ERROR, "guid empty for %s using effectID %u", m_modRef->name(), effectID);
 
     uint16 chgTypeID(((m_chargeRef.get() != nullptr) ? m_chargeRef->typeID() : 0));
     uint32 timeLeft(GetRemainingCycleTimeMS());
-    /*
+
     if (m_destinyMgr != nullptr)
         m_destinyMgr->SendSpecialEffect(
                 m_shipRef->itemID(),
@@ -1145,7 +1145,7 @@ void ActiveModule::ShowEffect(bool active/*false*/, bool abort/*false*/)
                 active,         // start    - if (start = 0) THEN remove effect
                 active,         // active   - if (start and active) THEN starting ONE-SHOT event of (duration)  (dunno what 'ONE-SHOT event' is)
                 timeLeft,       // duration in ms
-                m_repeat);      // repeat   - if (repeat > 0) THEN starting REPEAT event  ELSE (repeat == 0) THEN starting TOGGLE event*/
+                m_repeat);      // repeat   - if (repeat > 0) THEN starting REPEAT event  ELSE (repeat == 0) THEN starting TOGGLE event
 
 
     // Create Destiny Updates and GFx

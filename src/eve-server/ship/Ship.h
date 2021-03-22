@@ -29,6 +29,8 @@
 
 #include "EVEServerConfig.h"
 #include "StaticDataMgr.h"
+#include "effects/EffectsData.h"
+//#include "fleet/FleetData.h"
 #include "inventory/ItemType.h"
 #include "inventory/InventoryItem.h"
 #include "ship/ShipDB.h"

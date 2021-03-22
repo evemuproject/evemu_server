@@ -30,6 +30,7 @@
 #include <unordered_map>
 
 #include "StaticDataMgr.h"
+#include "effects/EffectsData.h"
 #include "inventory/AttributeMap.h"
 #include "inventory/ItemFactory.h"
 
@@ -90,10 +91,10 @@ public:
     bool HasReqSkill(const uint16 skillID) const;
 
     /* new effects processing system */
-    /*void GetEffectMap(const int8 state, std::map<uint16, Effect>& effectMap) const;
+    void GetEffectMap(const int8 state, std::map<uint16, Effect>& effectMap) const;
     uint16 GetDefaultEffect() const                     { return m_defaultFxID; }
 
-    bool HasEffect(uint16 effectID) const;*/
+    bool HasEffect(uint16 effectID) const;
 
     // load method
     static ItemType* Load( uint16 typeID);
@@ -150,7 +151,7 @@ protected:
 public:
     // i dont like this......MUST fix later....
     // UD: ive no clue what i didnt like about it
-    //std::unordered_multimap<int8, Effect> m_stateFxMap; // k,v map of state, data   -to search by state
+    std::unordered_multimap<int8, Effect> m_stateFxMap; // k,v map of state, data   -to search by state
 
 private:
     Inv::GrpData m_group;

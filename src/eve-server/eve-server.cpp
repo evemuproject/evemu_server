@@ -33,6 +33,7 @@
 // data managers
 #include "StaticDataMgr.h"
 #include "StatisticMgr.h"
+//#include "missions/MissionDataMgr.h"
 //console commands
 #include "ConsoleCommands.h"
 // account services
@@ -51,6 +52,9 @@
 #include "admin/DevToolsProviderService.h"
 #include "admin/PetitionerService.h"
 #include "admin/SlashService.h"
+// agent services
+//#include "agents/Agent.h"
+//#include "agents/AgentMgrService.h"
 // alliance services
 #include "alliance/AllianceRegistry.h"
 // calendar services
@@ -94,6 +98,7 @@
 // dogmaim services
 #include "dogmaim/DogmaIMService.h"
 #include "dogmaim/DogmaService.h"
+#include "effects/EffectsDataMgr.h"
 // dungeon services
 #include "dungeon/DungeonExplorationMgrService.h"
 #include "dungeon/DungeonService.h"
@@ -137,7 +142,8 @@
 #include "planet/PlanetMgrBound.h"
 #include "planet/PlanetORBBound.h"
 // pos services
-//#include "pos/Structure.h"
+#include "pos/PosMgr.h"
+#include "pos/Structure.h"
 // qaTools
 #include "qaTools/encounterSpawnServer.h"
 #include "qaTools/netStateServer.h"
@@ -793,7 +799,7 @@ int main( int argc, char* argv[] )
     std::printf("\n");     // spacer
     //sMissionDataMgr.Initialize();
     std::printf("\n");     // spacer
-    //sFxDataMgr.Initialize();
+    sFxDataMgr.Initialize();
     std::printf("\n");     // spacer
     sMapData.Initialize();
     std::printf("\n");     // spacer

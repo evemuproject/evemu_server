@@ -168,8 +168,8 @@ void MiningLaser::DeactivateCycle(bool abort/*false*/)
     if (m_ModuleState != Module::State::Deactivating)
         return;
 
-    //ApplyEffect(FX::State::Active, false);
-    //ShowEffect(false, abort);
+    ApplyEffect(FX::State::Active, false);
+    ShowEffect(false, abort);
 
     ProcessCycle(abort);
     m_holdFlag = flagCargoHold;
@@ -396,10 +396,10 @@ float MiningLaser::GetMiningVolume()
     // this should apply to modules/ship when boost activated, but this is easier at this time.
     //  downside is client will have the original, lower cycle amount as this isnt set in module (but should be)
     ShipSE* pShip(m_shipRef->GetPilot()->GetShipSE());
-    /*if (pShip != nullptr)
+    if (pShip != nullptr)
         if (pShip->IsBoosted())
             cycleVol *= (1 + (0.03f * pShip->GetMiningBoostAmount())); // 3% increase/level
-    */
+
     return cycleVol;
 }
 

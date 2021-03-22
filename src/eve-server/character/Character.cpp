@@ -33,6 +33,7 @@
 #include "StatisticMgr.h"
 #include "account/AccountService.h"
 #include "character/Character.h"
+#include "effects/EffectsProcessor.h"
 #include "fleet/FleetService.h"
 #include "inventory/AttributeEnum.h"
 #include "ship/Ship.h"
@@ -337,8 +338,8 @@ void Character::LogOut()
     SaveFullCharacter();
     m_db.SetLogOffTime(m_itemID);
     if (!sConsole.IsShutdown())
-        /*if (IsFleet(m_fleetData.fleetID))
-            sFltSvc.LeaveFleet(m_pClient);*/
+        //if (IsFleet(m_fleetData.fleetID))
+        //    sFltSvc.LeaveFleet(m_pClient);
 
     pInventory->Unload();
 
@@ -490,7 +491,7 @@ void Character::ResetModifiers()
         curSkill->ResetAttributes();
     }
 }
-/*
+
 void Character::ProcessEffects(ShipItem* pShip)
 {
     _log(EFFECTS__TRACE, "Character::ProcessEffects()");
@@ -515,7 +516,7 @@ void Character::ProcessEffects(ShipItem* pShip)
     }
     // apply processed char effects
     sFxProc.ApplyEffects(this, this, pShip);
-}*/
+}
 
 /*
  * SKILL__ERROR

@@ -31,9 +31,11 @@
 #include "ConsoleCommands.h"
 #include "../eve-common/EVEVersion.h"
 #include "StatisticMgr.h"
+#include "effects/EffectsProcessor.h"
 #include "inventory/ItemDB.h"
 #include "market/MarketDB.h"
 #include "market/MarketMgr.h"
+//#include "missions/MissionDataMgr.h"
 #include "threading/Threading.h"
 // #include "testing/test.h"
 
@@ -370,3 +372,70 @@ void ConsoleCommand::UpdateStatus() {
     sStatMgr.Process();
 }
 
+void ConsoleCommand::FxProc(uint8 idx/*0*/) {
+
+    double start = GetTimeMSeconds();
+    sLog.Green("  EVEmu", "FxProcess(%u)", idx);
+
+    // load items from db
+    std::map<uint16, std::string> typeIDs;
+    switch(idx) {
+        case 1: {
+            sLog.Green("        FxProcess", "Parsing Effects for Module Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Module, typeIDs);
+        } break;
+        case 2: {
+            sLog.Green("        FxProcess", "Parsing Effects for Charge Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Charge, typeIDs);
+        } break;
+        case 3: {
+            sLog.Green("        FxProcess", "Parsing Effects for Subsystem Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Subsystem, typeIDs);
+        } break;
+        case 4: {
+            sLog.Green("        FxProcess", "Parsing Effects for Skill Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Skill, typeIDs);
+        } break;
+        case 5: {
+            sLog.Green("        FxProcess", "Parsing Effects for Implant Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Implant, typeIDs); // this is implants and boosters
+        } break;
+        case 6: {
+            sLog.Green("        FxProcess", "Parsing Effects for Ship Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Ship, typeIDs);
+        } break;
+        case 9: {
+            sLog.Green("        FxProcess", "Parsing Effects for All Possible Items.");
+            std::printf("\n");     // spacer
+            ItemDB::GetItems(EVEDB::invCategories::Module, typeIDs);
+            ItemDB::GetItems(EVEDB::invCategories::Charge, typeIDs);
+            ItemDB::GetItems(EVEDB::invCategories::Subsystem, typeIDs);
+            ItemDB::GetItems(EVEDB::invCategories::Skill, typeIDs);
+            ItemDB::GetItems(EVEDB::invCategories::Implant, typeIDs); // this is implants and boosters
+            ItemDB::GetItems(EVEDB::invCategories::Ship, typeIDs);
+        } break;
+        default: {
+            sLog.Green("        FxProcess", "Usage of Item Fx process reporting.");
+            sLog.Green("        FxProcess", "fx where 'x' is a number corresponding to the item category you wish to process.");
+            sLog.Green("        FxProcess", "1=Modules, 2=Charges, 3=Subsystems, 4=Skills, 5=Implants/Boosters, 6=Ships, 9=all");
+            return;
+        }
+    }
+
+    for (auto cur : typeIDs) {
+        sLog.Yellow("CC::FxProc", "Processing %s (%u)", cur.second.c_str(), cur.first);
+        // proc and print skill fx
+        std::vector< TypeEffects > typeEffMap;
+        sFxDataMgr.GetTypeEffect(cur.first, typeEffMap);
+        for (auto cur2: typeEffMap)
+            sFxProc.DecodeEffects(cur2.effectID);
+    }
+
+    sLog.Magenta("CC::FxProc", "- effects processed in %.3fms", (GetTimeMSeconds() - start));
+}

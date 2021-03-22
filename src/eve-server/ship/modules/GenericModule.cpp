@@ -39,7 +39,7 @@ m_subSystem(false),
 m_turret(false),
 m_launcher(false)
 {
-    /*if (mRef->type().HasEffect(EVEEffectID::loPower)) {
+    if (mRef->type().HasEffect(EVEEffectID::loPower)) {
         m_loPower = true;
     } else if (mRef->type().HasEffect(EVEEffectID::medPower)) {
         m_medPower = true;
@@ -54,7 +54,7 @@ m_launcher(false)
         m_rigSlot = true;
     } else if (mRef->type().HasEffect(EVEEffectID::subSystem)) {
         m_subSystem = true;
-    }*/
+    }
 
     _log(MODULE__DEBUG, "Created GenericModule %p for item %s (%u).", this, mRef->name(), mRef->itemID());
 }
@@ -128,8 +128,8 @@ void GenericModule::Online()
     _log(MODULE__MESSAGE, "GenericModule::Online() - %u(%s) cpu: %.2f, pg: %.2f, loaded: %s", \
             itemID(), m_modRef->name(), cpuNeed.get_float(), pgNeed.get_float(), m_ChargeState == Module::State::Loaded?"true":"false");
 
-    //ProcessEffects(FX::State::Passive, true);
-    //ProcessEffects(FX::State::Online, true);
+    ProcessEffects(FX::State::Passive, true);
+    ProcessEffects(FX::State::Online, true);
     if (m_ChargeState == Module::State::Loaded) {
         if (!m_chargeLoaded) {
             _log(MODULE__ERROR, "GenericModule::Online() - module %u(%s) has ChargeState(CHG_LOADED) but m_chargeLoaded = false.", \
@@ -139,19 +139,19 @@ void GenericModule::Online()
                     itemID(), m_modRef->name());
         } else {
             _log(MODULE__MESSAGE, "GenericModule::Online() - module %u(%s) loading charge fx for %s.", itemID(), m_modRef->name(), m_chargeRef->name());
-            /*for (auto it : m_chargeRef->type().m_stateFxMap) {
+            for (auto it : m_chargeRef->type().m_stateFxMap) {
                 fxData data = fxData();
                 data.action = FX::Action::Invalid;
                 data.srcRef = m_chargeRef;
                 sFxProc.ParseExpression(m_modRef.get(), sFxDataMgr.GetExpression(it.second.preExpression), data, this);
-            }*/
+            }
         }
     }
 
     // update available ship resources.
     m_shipRef->SetAttribute(AttrCpuLoad, cpuNeed, !m_shipRef->IsUndocking());
     m_shipRef->SetAttribute(AttrPowerLoad, pgNeed, !m_shipRef->IsUndocking());
-    //sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), !m_shipRef->IsUndocking());
+    sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), !m_shipRef->IsUndocking());
 }
 
 void GenericModule::Offline()
@@ -205,18 +205,18 @@ void GenericModule::Offline()
             _log(MODULE__ERROR, "GenericModule::Offline() - module %u(%s) has ChargeState(CHG_LOADED) but m_chargeRef = NULL.", \
                     itemID(), m_modRef->name());
         } else {
-            /*for (auto it : m_chargeRef->type().m_stateFxMap) {
+            for (auto it : m_chargeRef->type().m_stateFxMap) {
                 fxData data = fxData();
                 data.action = FX::Action::Invalid;
                 data.srcRef = m_chargeRef;
                 sFxProc.ParseExpression(m_modRef.get(), sFxDataMgr.GetExpression(it.second.postExpression), data, this);
-            }*/
+            }
         }
     }
 
-    //ProcessEffects(FX::State::Passive, false);
-    //ProcessEffects(FX::State::Online, false);
-    //sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
+    ProcessEffects(FX::State::Passive, false);
+    ProcessEffects(FX::State::Online, false);
+    sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
 
     m_ModuleState = Module::State::Offline;
     m_modRef->SetOnline(false, isRig());
@@ -224,19 +224,19 @@ void GenericModule::Offline()
 
 void GenericModule::Overload()
 {
-    //ProcessEffects(FX::State::Overloaded, true);
-    //sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
+    ProcessEffects(FX::State::Overloaded, true);
+    sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
     //m_modRef->ClearModifiers();
 }
 
 void GenericModule::DeOverload()
 {
-    //ProcessEffects(FX::State::Overloaded, false);
-    //sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
+    ProcessEffects(FX::State::Overloaded, false);
+    sFxProc.ApplyEffects(m_modRef.get(), m_shipRef->GetPilot()->GetChar().get(), m_shipRef.get(), true);
     //m_modRef->ClearModifiers();
 }
 
-/*void GenericModule::ProcessEffects(int8 state, bool active)
+void GenericModule::ProcessEffects(int8 state, bool active/*false*/)
 {
     // get module/charge pre/post effects in state x
     std::map<uint16, Effect> effectMap;
@@ -249,15 +249,16 @@ void GenericModule::DeOverload()
         fxData data = fxData();
         data.action = FX::Action::Invalid;
         data.srcRef = m_modRef;
-        //module and charge effects will be added/removed from it's item
-        //active/overload/gang/other effects will be applied and removed when called.
+        /* module and charge effects will be added/removed from it's item
+         * active/overload/gang/other effects will be applied and removed when called.
+         */
         if (active) {
             sFxProc.ParseExpression(m_modRef.get(), sFxDataMgr.GetExpression(it.second.preExpression), data, this);
         } else {
             sFxProc.ParseExpression(m_modRef.get(), sFxDataMgr.GetExpression(it.second.postExpression), data, this);
         }
     }
-}*/
+}
 
 // not used
 void GenericModule::Repair(EvilNumber amount)

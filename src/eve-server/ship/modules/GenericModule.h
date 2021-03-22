@@ -11,7 +11,7 @@
 #define _EVE_SHIP_MODULES_GENERIC_MODULE_H
 
 #include "EVEServerConfig.h"
-//#include "effects/EffectsProcessor.h"
+#include "effects/EffectsProcessor.h"
 #include "inventory/InventoryItem.h"
 #include "ship/Ship.h"
 #include "ship/modules/ModuleDefs.h"
@@ -52,8 +52,8 @@ public:
     EvilNumber GetAttribute(uint32 attrID)              { return m_modRef->GetAttribute(attrID); }
 
     bool                isWarpSafe()                    { return m_isWarpSafe; }
-    //bool                isTurretFitted()                { return m_modRef->type().HasEffect(EVEEffectID::turretFitted); }
-    //bool                isLauncherFitted()              { return m_modRef->type().HasEffect(EVEEffectID::launcherFitted); }
+    bool                isTurretFitted()                { return m_modRef->type().HasEffect(EVEEffectID::turretFitted); }
+    bool                isLauncherFitted()              { return m_modRef->type().HasEffect(EVEEffectID::launcherFitted); }
 
     /* class type pointer querys, public for anyone to access. */
     virtual ActiveModule*       GetActiveModule()       { return nullptr; }
