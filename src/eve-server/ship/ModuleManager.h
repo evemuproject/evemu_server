@@ -72,7 +72,7 @@ class Basic_Log;
 // ModuleManager class, one for Subsystems, one for Ships and Skills, one for Modules and Rigs, one for Implants, and one for
 // Remotely applied modifiers from external hostile entities.
 //
-// More to follow, and this will be copied to http://wiki.evemu.org
+// More to follow, and this will be copied to https://evemu.dev
 //
 //     -- Aknor Jaden
 //

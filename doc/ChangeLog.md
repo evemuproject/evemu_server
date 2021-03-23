@@ -1,6 +1,9 @@
 *** 0.7.9 ***
 - Returned to numbered versioning
 - Large new update to all core systems from Alasiya EVE (all credits to Allan for his fantastic work here)
+- Database has been updated to reflect core changes to the server code
+- Repository has been organized for quality of life
+- CI configuration has been added for automated building of EVEmu binaries to be distributed
 
 *** 22/07/2008 ***
 - Added autotools

@@ -97,6 +97,7 @@ buildRel/
 
 # doxygen output
 doc/
+!doc/ChangeLog.md
 
 # DS_Store stuff
 .DS_Store

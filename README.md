@@ -1,28 +1,30 @@
-# Introduction
+# [EVEmu](https://evemu.dev) - An EVE Online Emulator
+
+## Introduction
 EVEmu is a work-in-progress server emulator for the space MMO EVE Online. This is an educational project. Please see the disclaimer below for details.
 
-# Status
+## Status
 This release brings in massive new core system updates to EVEmu. These changes will dramatically increase the rate of change to this repository and make future contributions easier.
 
-# ChangeLog
+## ChangeLog
 [ChangeLog](doc/ChangeLog.md)
 
-# TODO (Systems requiring implementation and rework)
+## TODO (Systems requiring implementation and rework)
 - Missions / Agents
 - Fleet
 - POS
+- Planetary Interaction
 
-# Building with Docker
+## Building with Docker
  EVEmu can now be built with docker to ensure a consistent dependency base. This can be done by executing `docker build .` in the root directory.
  It is highly suggested to build EVEmu from the latest release available on the releases page.
 
  [Releases](https://github.com/evemuproject/evemu_server/releases)
 
-# Communication / Contact
- This project has its own Discord community. Please feel free to join for the latest information, updates, and discussion. If you are interested in contributing, this is a great place to start.
- [EVEmu Discord](https://discord.gg/fTfAREYxbz)
+## Communication / Contact
+ Check out the new [EVEmu Project website](https://evemu.dev), our [Discord](https://discord.gg/fTfAREYxbz) and [Forums](https://forums.evemu.dev)!
 
-# Disclaimer
+## Disclaimer
 ***EVEmu is an educational project.***
  This means, our primary interest is to learn and teach us
 and our users more about C++ project development in a large
@@ -30,13 +32,13 @@ scale. Our software is not intended for running public servers,
 and we do not support that. We are not responsible for what others
 do with the source code downloaded from this project.
 
-# Legal
+## Legal
     ------------------------------------------------------------------------------------
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
     Copyright 2006 - 2021 The EVEmu Team
-    For the latest information visit http://evemu.wikia.com/
+    For the latest information visit https://evemu.dev/
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License as published by the Free Software
