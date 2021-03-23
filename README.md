@@ -11,7 +11,6 @@ This release brings in massive new core system updates to EVEmu. These changes w
 - Missions / Agents
 - Fleet
 - POS
-- Effects
 
 # Building with Docker
  EVEmu can now be built with docker to ensure a consistent dependency base. This can be done by executing `docker build .` in the root directory.
