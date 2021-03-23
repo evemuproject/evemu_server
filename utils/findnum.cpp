@@ -5,7 +5,6 @@
 
 typedef unsigned char byte;
 typedef long long int64;
-typedef unsigned long long uint64;
 typedef signed long long sint64;
 
 
@@ -59,8 +58,8 @@ bool FindNumber(const std::vector<byte> &digits, int byte, const FindSpec *f) {
 	if(maxlen >= sizeof(long)) {
 		const unsigned long *le = (const unsigned long *) bptr;
 		signed long sle = *le;
-		unsigned long be = 
-			  ((*le & 0x000000FF) <<24) 
+		unsigned long be =
+			  ((*le & 0x000000FF) <<24)
 			| ((*le & 0x0000FF00L)<<8)
 			| ((*le & 0x00FF0000L)>>8)
 			| ((*le & 0xFF000000L)>>24)
@@ -85,7 +84,7 @@ bool FindNumber(const std::vector<byte> &digits, int byte, const FindSpec *f) {
 		}
 	}
 
-	
+
 	if(f->fval != 0.0f && maxlen >= sizeof(float)) {
 		const float *fv = (const float *) bptr;
 
@@ -119,8 +118,8 @@ bool FindNumber(const std::vector<byte> &digits, int byte, const FindSpec *f) {
 	if(maxlen >= sizeof(int64)) {
 		const int64 *le = (const int64 *) bptr;
 		sint64 sle = *le;
-		int64 be = 
-			  ((*le & 0x00000000000000FFLL)<<56) 
+		int64 be =
+			  ((*le & 0x00000000000000FFLL)<<56)
 			| ((*le & 0x000000000000FF00LL)<<40)
 			| ((*le & 0x0000000000FF0000LL)<<24)
 			| ((*le & 0x00000000FF000000LL)<<8)
@@ -130,7 +129,7 @@ bool FindNumber(const std::vector<byte> &digits, int byte, const FindSpec *f) {
 			| ((*le & 0xFF00000000000000LL)>>56)
 			;
 		sint64 sbe = be;
-		
+
 		if(*le == f->intval) {
 			found_it(byte, "native int64");
 			return(true);
@@ -163,16 +162,16 @@ int main(int argc, char *argv[]) {
 	s.intval = strtol(argv[1], NULL, 0);
 	s.dval = strtod(argv[1], NULL);
 	s.fval = s.dval;	//only cast it down once.
-	
+
 	FILE *f = fopen(argv[2], "rb");
 	if(f == NULL) {
 		printf("Unable to open input file\n");
 		return(1);
 	}
-	
+
 	int block_size = 102400;
 	int find_unit_length = sizeof(int64);
-	
+
 	std::vector<byte> curdata;
 	std::vector<byte> tail(find_unit_length);
 	curdata.reserve(block_size+sizeof(int64)*2);
@@ -205,6 +204,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	fclose(f);
-	
+
 	return(0);
 }

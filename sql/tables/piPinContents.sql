@@ -1,0 +1,73 @@
+-- phpMyAdmin SQL Dump
+-- version 4.4.15.10
+-- https://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Jul 19, 2019 at 09:14 PM
+-- Server version: 10.0.36-MariaDB
+-- PHP Version: 5.6.36
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `EVE_Crucible`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `piPinContents`
+--
+
+CREATE TABLE IF NOT EXISTS `piPinContents` (
+  `ccPinID` int(10) NOT NULL DEFAULT '0',
+  `pinID` int(10) NOT NULL DEFAULT '0',
+  `typeID` smallint(5) NOT NULL DEFAULT '0',
+  `itemQty` int(10) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Colony pin contents data';
+
+--
+-- Dumping data for table `piPinContents`
+--
+
+INSERT INTO `piPinContents` (`ccPinID`, `pinID`, `typeID`, `itemQty`) VALUES
+(140000710, 140000713, 2312, 180),
+(140000710, 140000713, 2321, 220),
+(140000710, 140000713, 2327, 140),
+(140000710, 140000713, 2329, 3300),
+(140000710, 140000713, 3697, 420),
+(140000710, 140000713, 9840, 140),
+(140000710, 140000748, 2329, 500),
+(140000710, 140000748, 2389, 2000),
+(140000710, 140000748, 2392, 1840),
+(140000710, 140000748, 2397, 135),
+(140000710, 140000748, 2401, 4080),
+(140000710, 140000748, 3697, 2020),
+(140000710, 140000748, 3779, 2000),
+(140000710, 140000748, 9828, 2840),
+(140000710, 140000787, 2329, 3220),
+(140000710, 140000787, 2389, 1960),
+(140000710, 140000787, 3683, 2620),
+(140000710, 140000787, 3779, 1520),
+(140000710, 140000787, 9828, 3920);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `piPinContents`
+--
+ALTER TABLE `piPinContents`
+  ADD PRIMARY KEY (`pinID`,`typeID`);
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

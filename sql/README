@@ -1,8 +1,24 @@
-DATABASE SETUP:  Please see the following URL for full instructions on setting up the Database for the Crucible server:
+DATABASE SETUP:
+Thanks to (Thunder)Groove, we now have our own specialized data and tables for EVEmu server emulator, with dump and install scripts.
 
-http://wiki.evemu.org/index.php/Category:Crucible#STEP_3.4_-_Database_Installation_and_Setup
+To install, edit Install.sh for pertinent information and run.
+
+To dump existing database, edit Dump.sh and run.
 
 
-For all other information regarding the Crucible server, see this URL, it is the main Crucible wiki page:
+new directory structure
+sql/
+    contains this README and the new db scripts
 
-http://wiki.evemu.org/index.php/Category:Crucible
+sql/optional/
+    contains stargate db examples, market seeding sql code (some editing required), and some data on tutorials I have not looked into yet.
+
+sql/tables/
+    contains all db tables for the server emulator for EVEmu
+
+sql/testScripts/
+    misc data for testing/debugging some systems i was working on
+    
+sql/testScripts/dungeons/
+    dungeon system testing data
+

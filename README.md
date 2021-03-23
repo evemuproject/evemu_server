@@ -1,16 +1,17 @@
 # Introduction
-EVEmu modified to support the latest Crucible client v360229
+EVEmu is a work-in-progress server emulator for the space MMO EVE Online. This is an educational project. Please see the disclaimer below for details.
 
 # Status
-- Login works again
-- Character selection and creation is working
-- Character avatar creation is working
-- Walking in station is now possible
-- Items and Ships display in station
-- Undocking and Docking is working
+This release brings in massive new core system updates to EVEmu. These changes will dramatically increase the rate of change to this repository and make future contributions easier.
 
 # ChangeLog
 [ChangeLog](doc/ChangeLog.md)
+
+# TODO (Systems requiring implementation and rework)
+- Missions / Agents
+- Fleet
+- POS
+- Effects
 
 # Building with Docker
  EVEmu can now be built with docker to ensure a consistent dependency base. This can be done by executing `docker build .` in the root directory.

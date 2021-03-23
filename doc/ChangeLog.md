@@ -1,6 +1,6 @@
 *** 0.7.9 ***
 - Returned to numbered versioning
-- Added new SystemEntity implementation with enhanced stability and featureset
+- Large new update to all core systems from Alasiya EVE (all credits to Allan for his fantastic work here)
 
 *** 22/07/2008 ***
 - Added autotools

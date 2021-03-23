@@ -3,8 +3,8 @@
     LICENSE:
     ------------------------------------------------------------------------------------
     This file is part of EVEmu: EVE Online Server Emulator
-    Copyright 2006 - 2011 The EVEmu Team
-    For the latest information visit http://evemu.org
+    Copyright 2006 - 2021 The EVEmu Team
+    For the latest information visit https://github.com/evemuproject/evemu_server
     ------------------------------------------------------------------------------------
     This program is free software; you can redistribute it and/or modify it under
     the terms of the GNU Lesser General Public License as published by the Free Software
@@ -21,7 +21,7 @@
     http://www.gnu.org/copyleft/lesser.txt.
     ------------------------------------------------------------------------------------
     Author:        Zhur
-    Updates:    Allan (complete rewrite)
+    Rewrite:    Allan
 */
 
 #ifndef __SYSTEMENTITY_H_INCL__
@@ -39,9 +39,8 @@ class Client;
 class Concord;
 class ContainerSE;
 class Damage;
-class Drone;
+class DroneSE;
 class NPC;
-class Player;
 class Sentry;
 class SystemBubble;
 class SystemManager;
@@ -64,7 +63,7 @@ class StructureSE;
 class CustomsSE;
 class DeployableSE;
 class AsteroidSE;
-class Ship;
+class ShipSE;
 class DungeonSE;
 
 class TowerSE;
@@ -75,18 +74,18 @@ class WeaponSE;
 class ReactorSE;
 
 /*
- * base class for all SystemEntities  - no TargetMgr
+ * base class for all SystemEntities  - no TargetMgr or DestinyMgr
  * complete rewrite of entity class system  - allan  9 January 2016
  */
 class SystemEntity {
     friend class SystemBubble;    /* only to update m_bubble */
 public:
     SystemEntity(InventoryItemRef self, PyServiceMgr &services, SystemManager* system);
-    virtual ~SystemEntity();
+    virtual ~SystemEntity()                             { /* do nothing here */ }
 
     /* Process Calls - Overridden as needed in derived classes */
     virtual void                Process();
-    virtual void                ProcessTic()            { /* do nothing here */ }   // not used yet
+    virtual bool                ProcessTic()            { return true; }   // not used yet
 
     /* (Allan) the next two sections eliminate the overhead of RTTI static casting.  */
     /* class type pointer querys, grouped by base class.  public for anyone to access. */
@@ -128,14 +127,14 @@ public:
     /* Dynamic */
     virtual DynamicSystemEntity* GetDynamicSE()         { return nullptr; }
     virtual NPC*                GetNPCSE()              { return nullptr; }
-    virtual Drone*              GetDroneSE()            { return nullptr; }
+    virtual DroneSE*            GetDroneSE()            { return nullptr; }
     virtual Missile*            GetMissileSE()          { return nullptr; }
-    virtual Ship*               GetShipSE()             { return nullptr; }
+    virtual ShipSE*             GetShipSE()             { return nullptr; }
     virtual Concord*            GetConcordSE()          { return nullptr; }
 
     /* class type tests, grouped by base class.  public for anyone to access. */
     /* Base */
-    virtual bool                isGlobal()              { return m_self->isGlobal(); }    // not all items have this attribute set
+    virtual bool                isGlobal()              { return true; } //m_self->isGlobal(); }    // not all items have this attribute set
     virtual bool                IsSystemEntity()        { return true; }
     virtual bool                IsInanimateSE()         { return false; }
     /* Static */
@@ -147,7 +146,6 @@ public:
     virtual bool                IsStationSE()           { return false; }
     /* Item */
     virtual bool                IsItemEntity()          { return false; }
-    virtual bool                IsWreckSE()             { return false; }
     virtual bool                IsAnomalySE()           { return false; }
     virtual bool                IsWormholeSE()          { return false; }
     virtual bool                IsCelestialSE()         { return false; }
@@ -180,6 +178,7 @@ public:
     virtual bool                IsFrozen()              { return false; }
     virtual bool                IsNPCSE()               { return false; }
     virtual bool                IsDroneSE()             { return false; }
+    virtual bool                IsWreckSE()             { return false; }
     virtual bool                IsMissileSE()           { return false; }
     virtual bool                IsShipSE()              { return false; }
     virtual bool                IsConcord()             { return false; }
@@ -194,14 +193,14 @@ public:
     /* common functions for all entities handled here */
     /* public data queries  */
     InventoryItemRef            GetSelf()               { return m_self; }
-    uint32                      GetTypeID()             { return m_self->typeID(); }
+    uint16                      GetTypeID()             { return m_self->typeID(); }
     uint32                      GetGroupID()            { return m_self->groupID(); }
-    EVEItemCategories           GetCategoryID()         { return m_self->categoryID(); }
+    uint8                       GetCategoryID()         { return m_self->categoryID(); }
     EVEItemFlags                GetFlag()               { return m_self->flag(); }
     uint32                      GetID()                 { return m_self->itemID(); }
     double                      GetRadius()             { return m_radius; }
     uint32                      GetLocationID()         { return m_self->locationID(); }
-    const char*                 GetName() const         { return m_self->itemName().c_str(); }
+    const char*                 GetName() const         { return m_self->name(); }
     const GPoint&               GetPosition() const     { return m_self->position(); }
     void                  SetPosition(const GPoint &pos){ m_self->SetPosition(pos); }
     inline double               x()                     { return m_self->position().x; }
@@ -221,7 +220,7 @@ public:
     /* public generic functions handled in base class. */
     void                        DropLoot(WreckContainerRef wreckRef, uint32 groupID, uint32 owner);
     void                        AwardSecurityStatus(InventoryItemRef iRef, Character* pChar);
-    void                        SendDamageStateChanged();
+    void                        SendDamageStateChanged();  /* this uses targetMgr update to send to all interested parties */
     bool                        ApplyDamage(Damage &d); /* This method is defined in Damage.cpp */
     double                      DistanceTo2(const SystemEntity* other);
     PyTuple*                    MakeDamageState();
@@ -243,7 +242,7 @@ public:
     virtual void     MissileLaunched(Missile* pMissile) { /* Do nothing here */ }
     virtual void                UpdateDamage()          { /* Do nothing here */ }
     virtual bool                LoadExtras()            { return true; }
-    // this will remove SE* from system and call Delete() on it's itemRef.
+    // this will remove SE* from system and call Delete() on it's itemRef for non-containers.
     //caller MUST call SafeDelete() on SE after this returns.
     virtual void                Delete();
 
@@ -279,7 +278,9 @@ protected:
 };
 
 
-/* Static / Non-Mobile / Non-Destructable / Celestial Objects - Suns, Planets, Moons, Belts, Gates, Stations   - no TargetMgr*/
+/* Static / Non-Mobile / Non-Destructable / Celestial Objects
+ * - Suns, Planets, Moons, Belts, Gates, Static NPC Stations
+ *- no TargetMgr or DestinyMgr*/
 class StaticSystemEntity : public SystemEntity {
 public:
     StaticSystemEntity(InventoryItemRef self, PyServiceMgr &services, SystemManager* system);
@@ -289,9 +290,9 @@ public:
     virtual StaticSystemEntity* GetStaticSE()           { return this; }
     /* class type tests. */
     /* Base */
+    virtual bool                isGlobal()              { return true; }    // just in case item->isGlobal() fails here...which it may
     virtual bool                IsInanimateSE()         { return true; }
     /* Static */
-    virtual bool                isGlobal()              { return true; }    // just in case item->isGlobal() fails here...which it may
     virtual bool                IsStaticEntity()        { return true; }
 
     /* SystemEntity interface */
@@ -353,7 +354,9 @@ protected:
 };
 
 
-/* Non-Static / Non-Mobile / Non-Destructible / Celestial Objects - Containers, Wrecks, DeadSpace  - no TargetMgr*/
+/* Non-Static / Non-Mobile / Non-Destructible / Celestial Objects
+ * - Containers, DeadSpace, ForceFields, ScanProbes
+ *- no TargetMgr or DestinyMgr*/
 class ItemSystemEntity : public SystemEntity {
 public:
     ItemSystemEntity(InventoryItemRef self, PyServiceMgr &services, SystemManager* system);
@@ -363,6 +366,7 @@ public:
     virtual ItemSystemEntity*   GetItemSE()             { return this; }
     /* class type tests. */
     /* Base */
+    virtual bool                isGlobal()              { return false; }
     virtual bool                IsInanimateSE()         { return true; }
     /* Item */
     virtual bool                IsItemEntity()          { return true; }
@@ -377,7 +381,29 @@ private:
     uint16 m_keyType;
 };
 
-/* Non-Static / Non-Mobile / Destructable / Celestial Objects - POS Structures, Outposts, Asteroids, Deployables  - has TargetMgr*/
+/* POS ForceField */
+class FieldSE
+: public ItemSystemEntity
+{
+public:
+    FieldSE(InventoryItemRef self, PyServiceMgr& services, SystemManager* system, const FactionData& data);
+    virtual ~FieldSE()                             { /* Do nothing here */ }
+
+    /* class type pointer querys. */
+    virtual FieldSE*            GetFieldSE()            { return this; }
+    /* class type tests. */
+    virtual bool                IsFieldSE()             { return true; }
+
+    /* SystemEntity interface */
+    virtual void                EncodeDestiny( Buffer& into );
+
+    virtual PyDict*             MakeSlimItem();
+
+};
+
+/* Non-Static / Non-Mobile / Destructible / Celestial Objects
+ * - POS Structures, Outposts, Deployables, empty Ships, Asteroids
+ *- has TargetMgr  no DestinyMgr*/
 class ObjectSystemEntity : public SystemEntity {
 public:
     ObjectSystemEntity(InventoryItemRef self, PyServiceMgr &services, SystemManager* system);
@@ -387,6 +413,7 @@ public:
     virtual ObjectSystemEntity* GetObjectSE()           { return this; }
     /* class type tests. */
     /* Base */
+    virtual bool                isGlobal()              { return false; }
     virtual bool                IsInanimateSE()         { return true; }
     /* Object */
     virtual bool                IsObjectEntity()        { return true; }
@@ -416,29 +443,11 @@ public:
     virtual bool                IsDeployableSE()        { return true; }
 };
 
-/* POS ForceField */
-class FieldSE
-: public ObjectSystemEntity
-{
-public:
-    FieldSE(InventoryItemRef self, PyServiceMgr& services, SystemManager* system, const FactionData& data);
-    virtual ~FieldSE()                             { /* Do nothing here */ }
-
-    /* class type pointer querys. */
-    virtual FieldSE*            GetFieldSE()            { return this; }
-    /* class type tests. */
-    virtual bool                IsFieldSE()             { return true; }
-
-    /* SystemEntity interface */
-    virtual void                EncodeDestiny( Buffer& into );
-
-    virtual PyDict*             MakeSlimItem();
-
-};
 
 
-
-/* Non-Static / Mobile / Destructable / Celestial Objects - PC's, NPC's, Drones, Ships, Missiles  - has TargetMgr*/
+/* Non-Static / Mobile / Destructible / Celestial Objects
+ *- Drones, Ships, Missiles, Wrecks
+ * - has TargetMgr and DestinyMgr*/
 class DynamicSystemEntity : public SystemEntity {
 public:
     DynamicSystemEntity(InventoryItemRef self, PyServiceMgr &services, SystemManager* system);
@@ -447,6 +456,8 @@ public:
     /* class type pointer querys. */
     virtual DynamicSystemEntity* GetDynamicSE()         { return this; }
     /* class type tests. */
+    /* Base */
+    virtual bool                isGlobal()              { return false; }
     /* Dynamic */
     virtual bool                IsDynamicEntity()       { return true; }
 
@@ -458,7 +469,7 @@ public:
     virtual PyDict*             MakeSlimItem();
 
     /* virtual functions default to base class and overridden as needed */
-    virtual bool                Load();
+    virtual bool                Load()                  { return true; }
     virtual bool                IsInvul()               { return m_invul; }
     virtual bool                IsFrozen()              { return m_frozen; }
 
