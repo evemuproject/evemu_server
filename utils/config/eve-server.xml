@@ -256,7 +256,7 @@ boolean can use either 0/1 OR true/false.
     <database>
         <host>localhost</host><!--  must be 'localhost' for socket connection -->
         <username>evemu</username>
-        <password>none</password>
+        <password>evemu</password>
         <db>evemu</db>
         <port>3306</port><!-- 3306 default -->
         <ssl>false</ssl><!-- bool   enable ssl for db connection (NOTE: NOT coded. DO NOT USE) -not needed when using socket under linux-->

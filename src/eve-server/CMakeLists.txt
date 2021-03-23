@@ -739,10 +739,10 @@ TARGET_LINK_LIBRARIES( "${TARGET_NAME}"
 
 INSTALL( TARGETS "${TARGET_NAME}"
          RUNTIME DESTINATION "bin" )
-INSTALL( FILES "${TARGET_UTILS_DIR}/devtools.raw"
+INSTALL( FILES "${TARGET_UTILS_DIR}/config/devtools.raw"
          DESTINATION "etc" )
 #Install configuration files as well     
-INSTALL( FILES "${TARGET_UTILS_DIR}/eve-server.xml"
+INSTALL( FILES "${TARGET_UTILS_DIR}/config/eve-server.xml"
          DESTINATION "etc" )
-INSTALL( FILES "${TARGET_UTILS_DIR}/log.ini"
+INSTALL( FILES "${TARGET_UTILS_DIR}/config/log.ini"
          DESTINATION "etc" )
