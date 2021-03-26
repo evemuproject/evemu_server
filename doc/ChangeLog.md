@@ -1,9 +1,12 @@
 *** 0.7.9 ***
+This release brings in massive new core system updates to EVEmu. These changes will dramatically increase the rate of change to this repository and make future contributions easier.
+
 - Returned to numbered versioning
 - Large new update to all core systems from Alasiya EVE (all credits to Allan for his fantastic work here)
 - Database has been updated to reflect core changes to the server code
 - Repository has been organized for quality of life
 - CI configuration has been added for automated building of EVEmu binaries to be distributed
+- Docker Compose support has been added to make the setting up of a new server quick and easy
 
 *** 22/07/2008 ***
 - Added autotools

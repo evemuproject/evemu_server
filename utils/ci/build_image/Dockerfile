@@ -1,3 +1,3 @@
-FROM debian:buster
+FROM quay.io/fedora/fedora:33-x86_64
 
-RUN apt update && apt install -y build-essential cmake git zlib1g-dev libmariadbclient-dev libboost-all-dev libutfcpp-dev libtinyxml-dev libmariadb-dev-compat
+RUN dnf groupinstall -y "Development Tools" && dnf install -y cmake git zlib-devel mariadb-devel boost-devel tinyxml-devel utf8cpp-devel podman buildah mariadb

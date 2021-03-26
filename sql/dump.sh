@@ -32,7 +32,12 @@ TABLES=$(echo $SQL_STRING | mysql -u$MYSQL_USER -p$MYSQL_PASS $DB_NAME -Bs)
 
 mkdir -p dump
 
-#echo $TABLES
+# Check if mysql client is available or not
+if ! command -v mysqldump &> /dev/null
+then
+    echo "Client not found, please install the latest MariaDB client"
+    exit
+fi
 
 #Updated to use gzipped .sql files to reduce size of repository and not require use of Git LFS.
 for i in ${TABLES} ; do

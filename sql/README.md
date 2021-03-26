@@ -4,7 +4,9 @@ Updates: James
 
 These scripts manage the importing and dumping of SQL tables for EVEmu.
 
-To install, edit install.sh for pertinent information and run.
+## Manual Installation
+
+To install the SQL tables, edit install.sh for pertinent information and run.
 
 To dump existing database, edit dump.sh and run.
 

@@ -254,14 +254,14 @@ boolean can use either 0/1 OR true/false.
     </threads>
 
     <database>
-        <host>localhost</host><!--  must be 'localhost' for socket connection -->
+        <host>db</host><!--  must be 'localhost' for socket connection -->
         <username>evemu</username>
         <password>evemu</password>
         <db>evemu</db>
         <port>3306</port><!-- 3306 default -->
         <ssl>false</ssl><!-- bool   enable ssl for db connection (NOTE: NOT coded. DO NOT USE) -not needed when using socket under linux-->
         <compress>false</compress><!-- bool   compressed protocol for client server communication - not sure if needed. -->
-        <useSocket>true</useSocket><!-- bool  use socket connection instead of port (MUST be local)  (SIGPIPE hits on debug code) -->
+        <useSocket>false</useSocket><!-- bool  use socket connection instead of port (MUST be local)  (SIGPIPE hits on debug code) -->
         <autoReconnect>true</autoReconnect><!-- bool  enable auto Reconnect on lost connection -->
         <dbTimeout>2</dbTimeout><!-- seconds  timeout value for db response, in seconds  default: 2s  **NOT USED** -->
         <pingTime>10</pingTime><!-- minutes  ping db every x minutes  default: 10m  **NOT USED**  hard-coded to 10m -->
@@ -277,7 +277,7 @@ boolean can use either 0/1 OR true/false.
     <net>
         <!--  for internal network only-->
         <port>26000</port>
-        <imageServer>192.168.1.14</imageServer>
+        <imageServer>127.0.0.1</imageServer>
         <imageServerPort>26001</imageServerPort>
 
         <!-- to allow external access to internal dev server (network server config'd to port-forward this one)
