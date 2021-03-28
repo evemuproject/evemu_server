@@ -15,18 +15,14 @@ ENDIF( PKG_FOUND )
 IF( WIN32 )
   IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     # Windows 64-bit
-    SET( PKG_NAME "mysql-5.5.25a-winx64" )
-    SET( PKG_MD5 "8157cafab6f57418b441c228f6db3992" )
-#    # Windows 64-bit
-#    SET( PKG_NAME "mysql-noinstall-5.1.63-winx64" )
-#    SET( PKG_MD5 "ae0289b7788666b1254d14b001ff6ba9" )
+    SET( PKG_NAME "mariadb-10.5.9-winx64" )
+    SET( PKG_MD5 "2e1252fb008c2697471b16b0b8b4d601" )
+    SET( MYSQL_DOWNLOAD_URL "https://downloads.mariadb.com/MariaDB/mariadb-10.5.9/winx64-packages/mariadb-10.5.9-winx64.zip")
   ELSE()
     # Windows 32-bit
-    SET( PKG_NAME "mysql-5.5.25a-win32" )
-    SET( PKG_MD5 "df745c7bb9d34cac29503a4e36e3e8c8" )
-#    # Windows 32-bit
-#    SET( PKG_NAME "mysql-5.1.63" )
-#    SET( PKG_MD5 "606c3edc0bba77a033e0b2bf134306d9" )
+    SET( PKG_NAME "mariadb-10.5.9-win32" )
+    SET( PKG_MD5 "96ae3f43ffa9586a083ce08b858eb0c4" )
+    SET( MYSQL_DOWNLOAD_URL "https://downloads.mariadb.com/MariaDB/mariadb-10.5.9/win32-packages/mariadb-10.5.9-win32.zip")
   ENDIF()
 
   # Windows
@@ -48,22 +44,18 @@ ELSEIF( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
   SET( PKG-ARCHIVE "${PKG_NAME}.tar.gz" )
   SET( PKG-IMPLIB "libmysqlclient_r.a" )
   SET( PKG-LIBRARY "libmysqlclient_r.dylib" )
-
+  SET( MYSQL_DOWNLOAD_URL "https://downloads.mysql.com/archives/get/p/23/file/${PKG_ARCHIVE}")
 ELSE ( WIN32 )
   IF( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     # Linux 64-bit
-    SET( PKG_NAME "mysql-5.5.25a-linux2.6-x86_64" )
-    SET( PKG_MD5 "217f97e79d68d931a4790790ea8a8894" )
-#    # Linux 64-bit
-#    SET( PKG_NAME "mysql-5.1.63-linux-x86_64-glibc23" )
-#    SET( PKG_MD5 "594ea37fcd9f29a9e3eddf38e7288e3f" )
+    SET( PKG_NAME "mariadb-10.5.9-linux-x86_64" )
+    SET( PKG_MD5 "0f94e0f2a925a4eb2e334f6b188cfbb9" )
+    SET( MYSQL_DOWNLOAD_URL "https://downloads.mariadb.com/MariaDB/mariadb-10.5.9/bintar-linux-x86_64/mariadb-10.5.9-linux-x86_64.tar.gz")
   ELSE()
     # Linux 32-bit
-    SET( PKG_NAME "mysql-5.5.25a-linux2.6-i686" )
-    SET( PKG_MD5 "ff5d742bfff4a0b8ef48da336f13e6a6" )
-#    # Linux 32-bit
-#    SET( PKG_NAME "mysql-5.1.63-linux-i686-glibc23" )
-#    SET( PKG_MD5 "c3a8581320fdd7d11946456d6b3e9d7b" )
+    SET( PKG_NAME "mariadb-10.5.9-linux-i686" )
+    SET( PKG_MD5 "6821fd0f565261a9b9c8ba10f6999d14" )
+    SET( MYSQL_DOWNLOAD_URL "https://downloads.mariadb.com/MariaDB/mariadb-10.5.9/bintar-linux-x86/mariadb-10.5.9-linux-i686.tar.gz")
   ENDIF()
 
   # Linux
@@ -77,7 +69,7 @@ SET( MYSQL_URL
 #  "http://downloads.mysql.com/archives/mysql-5.1/${PKG_ARCHIVE}"
 #  "http://downloads.mysql.com/archives/mysql-5.5/${PKG_ARCHIVE}"
 #  "https://downloads.skysql.com/archives/mysql-5.5/${PKG_ARCHIVE}"
-   "https://downloads.mysql.com/archives/get/p/23/file/${PKG_ARCHIVE}"
+   "${MYSQL_DOWNLOAD_URL}"
   CACHE STRING "URL of the MySQL source archive" )
 MARK_AS_ADVANCED( MYSQL_URL )
 
@@ -98,6 +90,7 @@ SET_TARGET_PROPERTIES(
 
 SET( MYSQL_INCLUDE_DIRS
   \"\${CMAKE_CURRENT_SOURCE_DIR}/include\"
+  \"\${CMAKE_CURRENT_SOURCE_DIR}/include/mysql\"
   PARENT_SCOPE )
 SET( MYSQL_LIBRARIES
   \"mysql\"
