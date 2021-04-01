@@ -369,16 +369,7 @@ bool Client::SelectCharacter(int32 charID/*0*/)
             sLog.Error("Client::SelectCharacter()", "shipID %u for %u also invalid.  Loading Pod.", m_shipId, charID);
             m_ship = m_pod;
         }
-        SetShip(m_ship);
     }
-
-    m_ship->SetPlayer(this);
-
-    GPoint pos(NULL_ORIGIN);
-    if (IsSolarSystem(m_locationID))
-        pos = m_ship->position();
-
-    MoveToLocation(m_locationID, pos);
 
     if (IsSolarSystem(m_locationID)) {
         WarpIn();
@@ -389,13 +380,23 @@ bool Client::SelectCharacter(int32 charID/*0*/)
                 if (sRef.get() == nullptr) {
                     // error here...
                 } else if (!sRef->HasShip(this)) {
-                    SpawnNewRookieShip(m_locationID);
+                    m_ship = SpawnNewRookieShip(m_locationID);
                 }
             } else {
-                SpawnNewRookieShip(m_locationID);
+                m_ship = SpawnNewRookieShip(m_locationID);
             }
         }
     }
+
+    SetShip(m_ship);
+
+    m_ship->SetPlayer(this);
+
+    GPoint pos(NULL_ORIGIN);
+    if (IsSolarSystem(m_locationID))
+        pos = m_ship->position();
+
+    MoveToLocation(m_locationID, pos);
 
     //create corp and ally chat channels (if not already created)
     m_services.lsc_service->CharacterLogin(this);
@@ -1265,7 +1266,7 @@ void Client::ResetAfterPodded() {
 }
 
 void Client::SetShip(ShipItemRef shipRef) {
-    shipRef->ChangeOwner(m_char->itemID());
+    // shipRef->ChangeOwner(m_char->itemID());
     if (pShipSE != nullptr)
         pShipSE->SetPilot(nullptr);
 
@@ -1277,8 +1278,9 @@ void Client::SetShip(ShipItemRef shipRef) {
     m_char->SetActiveShip(m_shipId);
     if (IsSolarSystem(m_locationID)) {
         m_char->Move(m_shipId, flagPilot, true);
-        pSession->SetInt("shipid", m_shipId); // update shipID in session
     }
+
+    pSession->SetInt("shipid", m_shipId); // update shipID in session
 
     if (m_validSession or m_charCreation)
         m_ship->SetPlayer(this);
