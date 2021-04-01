@@ -1266,7 +1266,7 @@ void Client::ResetAfterPodded() {
 }
 
 void Client::SetShip(ShipItemRef shipRef) {
-    // shipRef->ChangeOwner(m_char->itemID());
+    shipRef->ChangeOwner(m_char->itemID());
     if (pShipSE != nullptr)
         pShipSE->SetPilot(nullptr);
 
